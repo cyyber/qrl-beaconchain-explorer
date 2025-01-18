@@ -240,9 +240,8 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			blocks.status,
 			exec_block_number,
 			jsonb_agg(tags.metadata) as tags,
-			COALESCE(not 'invalid-relay-reward'=ANY(array_agg(tags.id)), true) as is_valid_mev,
 			COALESCE(validator_names.name, '') AS name,
-			(SELECT count(*) from blocks_bls_change where block_slot = $1) as bls_change_count
+			(SELECT count(*) from blocks_dilithium_change where block_slot = $1) as dilithium_change_count
 		FROM blocks 
 		LEFT JOIN validators ON blocks.proposer = validators.validatorindex
 		LEFT JOIN validator_names ON validators.pubkey = validator_names.publickey
@@ -814,14 +813,14 @@ func SlotDilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 		tableData = append(tableData, []interface{}{
 			utils.FormatValidator(c.Validatorindex),
 			utils.FormatHashWithCopy(c.Signature),
-			utils.FormatHashWithCopy(c.BlsPubkey),
+			utils.FormatHashWithCopy(c.DilithiumPubkey),
 			utils.FormatAddress(c.Address, nil, "", false, false, true),
 		})
 	}
 
 	data := &types.DataTableResponse{
 		Draw:         1,
-		RecordsTotal: uint64(len(blsChange)),
+		RecordsTotal: uint64(len(dilithiumChange)),
 		// RecordsFiltered: uint64(len(withdrawals)),
 		Data: tableData,
 	}

@@ -50,8 +50,6 @@ type ClChainConfig struct {
 	AttestationSubnetExtraBits      uint64 `yaml:"ATTESTATION_SUBNET_EXTRA_BITS"`
 	AttestationSubnetPrefixBits     uint64 `yaml:"ATTESTATION_SUBNET_PREFIX_BITS"`
 
-	// phase0
-	// https://github.com/ethereum/consensus-specs/blob/dev/presets/mainnet/phase0.yaml
 	MaxCommitteesPerSlot                    uint64 `yaml:"MAX_COMMITTEES_PER_SLOT"`
 	TargetCommitteeSize                     uint64 `yaml:"TARGET_COMMITTEE_SIZE"`
 	MaxValidatorsPerCommittee               uint64 `yaml:"MAX_VALIDATORS_PER_COMMITTEE"`

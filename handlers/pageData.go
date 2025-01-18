@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -24,24 +23,22 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 	fullTitle := fmt.Sprintf("%v - %v - explorer.zond.theqrl.org - %v", title, utils.Config.Frontend.SiteName, time.Now().Year())
 
 	if title == "" {
-		fullTitle = fmt.Sprintf("%v - beaconcha.in - %v", utils.Config.Frontend.SiteName, time.Now().Year())
+		fullTitle = fmt.Sprintf("%v - explorer.zond.theqrl.org - %v", utils.Config.Frontend.SiteName, time.Now().Year())
 	}
 
 	isMainnet := utils.Config.Chain.ClConfig.ConfigName == "mainnet"
-	// user := getUser(r)
 	data := &types.PageData{
 		Meta: &types.Meta{
 			Title:       fullTitle,
-			Description: "beaconcha.in makes Ethereum accessible to non-technical end users",
+			Description: "explorer.zond.theqrl.org makes Zond accessible to non-technical end users",
 			Path:        path,
 			GATag:       utils.Config.Frontend.GATag,
 			NoTrack:     false,
 			Templates:   strings.Join(mainTemplates, ","),
 		},
 
-		Active: active,
-		Data:   &types.Empty{},
-		// User:                  user,
+		Active:                active,
+		Data:                  &types.Empty{},
 		Version:               version.Version,
 		Year:                  time.Now().UTC().Year(),
 		ChainSlotsPerEpoch:    utils.Config.Chain.ClConfig.SlotsPerEpoch,
@@ -64,13 +61,6 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 		MainMenuItems:       createMenuItems(active, isMainnet),
 		TermsOfServiceUrl:   utils.Config.Frontend.Legal.TermsOfServiceUrl,
 		PrivacyPolicyUrl:    utils.Config.Frontend.Legal.PrivacyPolicyUrl,
-	}
-
-	adConfigurations, err := db.GetAdConfigurationsForTemplate(mainTemplates, data.NoAds)
-	if err != nil {
-		utils.LogError(err, fmt.Sprintf("error loading the ad configurations for template %v", path), 0)
-	} else {
-		data.AdConfigurations = adConfigurations
 	}
 
 	acceptedLangs := strings.Split(r.Header.Get("Accept-Language"), ",")
@@ -199,11 +189,6 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 			Path:     "/dashboard",
 		},
 		{
-			Label:    "Notifications",
-			IsActive: false,
-			Path:     "/user/notifications",
-		},
-		{
 			Label:        "More",
 			IsActive:     active == "more",
 			HasBigGroups: true,
@@ -230,11 +215,6 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 							Label: "Block Viz",
 							Path:  "/vis",
 							Icon:  "fa-project-diagram",
-						},
-						{
-							Label: "Relays",
-							Path:  "/relays",
-							Icon:  "fa-robot",
 						},
 						{
 							Label: "EIP-1559 Burn",
@@ -392,11 +372,6 @@ func createMenuItemsGnosis(active string, isMain bool) []types.MainMenuItem {
 			Path:     "/dashboard",
 		},
 		{
-			Label:    "Notifications",
-			IsActive: false,
-			Path:     "/user/notifications",
-		},
-		{
 			Label:        "More",
 			IsActive:     active == "more",
 			HasBigGroups: true,
@@ -431,24 +406,9 @@ func createMenuItemsGnosis(active string, isMain bool) []types.MainMenuItem {
 					Label: "Tools",
 					Links: []types.NavigationLink{
 						{
-							Label: "beaconcha.in App",
-							Path:  "/mobile",
-							Icon:  "fa-mobile-alt",
-						},
-						{
-							Label:      "Webhooks",
-							Path:       "/user/webhooks",
-							CustomIcon: "webhook_logo_svg",
-						},
-						{
 							Label: "API Docs",
 							Path:  "/api/v1/docs/index.html",
 							Icon:  "fa-book-reader",
-						},
-						{
-							Label: "API Pricing",
-							Path:  "/pricing",
-							Icon:  "fa-laptop-code",
 						},
 						{
 							Label: "Broadcast Signed Messages",
@@ -464,11 +424,6 @@ func createMenuItemsGnosis(active string, isMain bool) []types.MainMenuItem {
 							Label: "Knowledge Base",
 							Path:  "https://kb.beaconcha.in",
 							Icon:  "fa-external-link-alt",
-						},
-						{
-							Label: "Notifications",
-							Path:  "/user/notifications",
-							Icon:  "fa-bell",
 						},
 					},
 				},

@@ -1584,7 +1584,7 @@ this method will replace each sync committee period one by one with the new one.
 func exportSyncCommitteePeriods(rpcClient rpc.Client, startDay, endDay uint64, dryRun bool) {
 	var lastEpoch = uint64(0)
 
-	firstPeriod := utils.SyncPeriodOfEpoch(0)
+	firstPeriod := uint64(0)
 	if startDay > 0 {
 		firstEpoch, _ := utils.GetFirstAndLastEpochForDay(startDay)
 		firstPeriod = utils.SyncPeriodOfEpoch(firstEpoch)

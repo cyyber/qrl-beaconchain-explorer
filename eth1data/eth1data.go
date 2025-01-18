@@ -18,7 +18,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
-	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/core"
@@ -124,50 +123,51 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 		txPageData.Gas.TxFee = msg.GasFeeCap.Mul(msg.GasFeeCap, big.NewInt(int64(receipt.GasUsed))).Bytes()
 	}
 
-	data, err := rpc.CurrentGzondClient.TraceParityTx(tx.Hash().Hex())
-	if err != nil {
-		return nil, fmt.Errorf("failed to get parity trace for revert reason: %w", err)
-	}
+	// data, err := rpc.CurrentGzondClient.TraceParityTx(tx.Hash().Hex())
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to get parity trace for revert reason: %w", err)
+	// }
 	if receipt.Status != 1 {
-		errorMsg, err := abi.UnpackRevert(utils.MustParseHex(data[0].Result.Output))
-		if err == nil {
-			txPageData.ErrorMsg = errorMsg
-		}
+		// TODO(rgeraldes24)
+		// errorMsg, err := abi.UnpackRevert(utils.MustParseHex(data[0].Result.Output))
+		// if err == nil {
+		// 	txPageData.ErrorMsg = errorMsg
+		// }
 	} else {
 		txPageData.Transfers, err = db.BigtableClient.GetArbitraryTokenTransfersForTransaction(tx.Hash().Bytes())
 		if err != nil {
 			return nil, fmt.Errorf("error loading token transfers from tx: %w", err)
 		}
 	}
-	txPageData.InternalTxns, err = db.BigtableClient.GetInternalTransfersForTransaction(tx.Hash().Bytes(), msg.From.Bytes(), data, currency)
-	if err != nil {
-		return nil, fmt.Errorf("error loading internal transfers from tx: %w", err)
-	}
-	txPageData.FromName, err = db.BigtableClient.GetAddressName(msg.From.Bytes())
-	if err != nil {
-		return nil, fmt.Errorf("error retrieveing from name for tx: %w", err)
-	}
-	if msg.To != nil {
-		txPageData.ToName, err = db.BigtableClient.GetAddressName(msg.To.Bytes())
-		if err != nil {
-			return nil, fmt.Errorf("error retrieveing to name for tx: %w", err)
-		}
-	}
+	// txPageData.InternalTxns, err = db.BigtableClient.GetInternalTransfersForTransaction(tx.Hash().Bytes(), msg.From.Bytes(), data, currency)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error loading internal transfers from tx: %w", err)
+	// }
+	// txPageData.FromName, err = db.BigtableClient.GetAddressName(msg.From.Bytes())
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error retrieveing from name for tx: %w", err)
+	// }
+	// if msg.To != nil {
+	// 	txPageData.ToName, err = db.BigtableClient.GetAddressName(msg.To.Bytes())
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("error retrieveing to name for tx: %w", err)
+	// 	}
+	// }
 
 	if len(receipt.Logs) > 0 {
-		var wasContractMetadataCached bool
+		// var wasContractMetadataCached bool
 		type contractMetadataMapEntry struct {
 			err  error
 			meta *types.ContractMetadata
 		}
 		var cmEntry contractMetadataMapEntry
-		contractMetadataCache := make(map[common.Address]contractMetadataMapEntry)
+		// contractMetadataCache := make(map[common.Address]contractMetadataMapEntry)
 
 		for _, log := range receipt.Logs {
-			if cmEntry, wasContractMetadataCached = contractMetadataCache[log.Address]; !wasContractMetadataCached {
-				cmEntry.meta, cmEntry.err = db.BigtableClient.GetContractMetadata(log.Address.Bytes())
-				contractMetadataCache[log.Address] = cmEntry
-			}
+			// if cmEntry, wasContractMetadataCached = contractMetadataCache[log.Address]; !wasContractMetadataCached {
+			// 	cmEntry.meta, cmEntry.err = db.BigtableClient.GetContractMetadata(log.Address.Bytes())
+			// 	contractMetadataCache[log.Address] = cmEntry
+			// }
 			if cmEntry.err != nil || cmEntry.meta == nil || cmEntry.meta.ABI == nil {
 				name := ""
 				if len(log.Topics) > 0 {
@@ -238,7 +238,11 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 
 	// staking deposit information (only add complete events if any)
 	for _, v := range txPageData.Events {
-		if v.Address == common.HexToAddress(utils.Config.Chain.ClConfig.DepositContractAddress) && strings.HasPrefix(v.Name, "DepositEvent") {
+		addr, err := common.NewAddressFromString(utils.Config.Chain.ClConfig.DepositContractAddress)
+		if err != nil {
+			return nil, err
+		}
+		if v.Address == addr && strings.HasPrefix(v.Name, "DepositEvent") {
 			var d types.DepositContractInteraction
 
 			if pubkey, found := v.DecodedData["pubkey"]; found {

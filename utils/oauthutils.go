@@ -26,8 +26,6 @@ const TemporarilyUnavailable = "temporarily_unavailable"
 // UserIDKey Key for context access to get the validated userID
 const ClaimsContextKey = "ClaimsKey"
 
-const MobileAuthorizedKey = "MobileAuthKey"
-
 const JsonBodyKey = "JsonBodyKey"
 const JsonBodyNakedKey = "JsonBodyNakedKey"
 

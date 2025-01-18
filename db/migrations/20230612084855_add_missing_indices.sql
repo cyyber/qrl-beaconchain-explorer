@@ -9,7 +9,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_node_jobs_type_status ON public.node
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_validators_activationepoch_status ON public.validators USING btree (activationepoch, status);
 -- +goose StatementEnd
 -- +goose StatementBegin
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_bls_change_block_root_validatorindex ON public.blocks_bls_change USING btree (block_root, validatorindex);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_dilithium_change_block_root_validatorindex ON public.blocks_dilithium_change USING btree (block_root, validatorindex);
 -- +goose StatementEnd
 -- +goose StatementBegin
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_eth1_deposits_from_address_publickey ON public.eth1_deposits USING btree (from_address, publickey);
@@ -66,9 +66,6 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_proposer_epoch_exec_block_num
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_graffiti ON public.blocks USING btree (graffiti);
 -- +goose StatementEnd
 -- +goose StatementBegin
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_relays_blocks_tag_id ON public.relays_blocks USING btree (tag_id);
--- +goose StatementEnd
--- +goose StatementBegin
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_chart_series_indicator_time ON public.chart_series USING btree (indicator, "time");
 -- +goose StatementEnd
 -- +goose StatementBegin
@@ -99,7 +96,7 @@ DROP INDEX CONCURRENTLY idx_node_jobs_type_status;
 DROP INDEX CONCURRENTLY idx_validators_activationepoch_status;
 -- +goose StatementEnd
 -- +goose StatementBegin
-DROP INDEX CONCURRENTLY idx_blocks_bls_change_block_root_validatorindex;
+DROP INDEX CONCURRENTLY idx_blocks_dilithium_change_block_root_validatorindex;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_eth1_deposits_from_address_publickey;
@@ -154,9 +151,6 @@ DROP INDEX CONCURRENTLY idx_blocks_proposer_epoch_exec_block_number;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_blocks_graffiti;
--- +goose StatementEnd
--- +goose StatementBegin
-DROP INDEX CONCURRENTLY idx_relays_blocks_tag_id;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_chart_series_indicator_time;

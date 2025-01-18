@@ -58,9 +58,7 @@ type ZondClientServicesPageData struct {
 	LastUpdate time.Time
 	Gzond      ZondClients
 	Qrysm      ZondClients
-	// Lighthouse          EthClients
-	Banner    string
-	CsrfField template.HTML
+	CsrfField  template.HTML
 }
 
 var zondClients = ZondClientServicesPageData{}
@@ -221,9 +219,9 @@ func updateZondClient() {
 	defer bannerClientsMux.Unlock()
 	bannerClients = []clientUpdateInfo{}
 	updateZondClientNetShare()
-	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareEthClientData("/ethereum/go-ethereum", "Geth", curTime)
+	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareEthClientData("/theQRL/go-zond", "Geth", curTime)
 
-	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareEthClientData("/prysmaticlabs/prysm", "Prysm", curTime)
+	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareEthClientData("/theQRL/qrysm", "Prysm", curTime)
 	// ethClients.Lighthouse.ClientReleaseVersion, ethClients.Lighthouse.ClientReleaseDate = prepareEthClientData("/sigp/lighthouse", "Lighthouse", curTime)
 
 	zondClients.LastUpdate = curTime
@@ -237,7 +235,7 @@ func update() {
 }
 
 // GetZondClientData returns a ZondClientServicesPageData
-func GetEthClientData() ZondClientServicesPageData {
+func GetZondClientData() ZondClientServicesPageData {
 	zondClientsMux.Lock()
 	defer zondClientsMux.Unlock()
 	return zondClients

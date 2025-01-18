@@ -17,7 +17,6 @@ import (
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -26,8 +25,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"github.com/mitchellh/mapstructure"
-	utilMath "github.com/protolambda/zrnt/eth2/util/math"
-	"github.com/theQRL/go-zond/common"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -1567,6 +1564,7 @@ func ApiValidatorDailyStats(w http.ResponseWriter, r *http.Request) {
 	returnQueryResultsAsArray(rows, w, r, addDayTime)
 }
 
+/*
 // ApiValidatorByEth1Address godoc
 // @Summary Get all validators that belong to an eth1 address
 // @Tags Validator
@@ -1619,6 +1617,7 @@ func ApiValidatorByEth1Address(w http.ResponseWriter, r *http.Request) {
 
 	returnQueryResultsAsArray(rows, w, r)
 }
+*/
 
 // ApiValidator godoc
 // @Summary Get the income detail history of up to 100 validators
@@ -1859,7 +1858,7 @@ func ApiValidatorDilithiumChange(w http.ResponseWriter, r *http.Request) {
 	dataFormatted := make([]*types.ApiValidatorDilithiumChangeResponse, 0, len(data))
 
 	for _, d := range data {
-		dataFormatted = append(dataFormatted, &types.ApiValidatorDilithumChangeResponse{
+		dataFormatted = append(dataFormatted, &types.ApiValidatorDilithiumChangeResponse{
 			Epoch:                    d.Slot / utils.Config.Chain.ClConfig.SlotsPerEpoch,
 			Slot:                     d.Slot,
 			BlockRoot:                fmt.Sprintf("0x%x", d.BlockRoot),
@@ -2472,6 +2471,7 @@ func parseUintWithDefault(input string, defaultValue uint64) uint64 {
 	return result
 }
 
+/*
 // ApiWithdrawalCredentialsValidators godoc
 // @Summary Get validator indexes and pubkeys of a withdrawal credential or eth1 address
 // @Tags Validator
@@ -2549,6 +2549,7 @@ func ApiWithdrawalCredentialsValidators(w http.ResponseWriter, r *http.Request) 
 
 	SendOKResponse(json.NewEncoder(w), r.URL.String(), []interface{}{response})
 }
+*/
 
 // ApiProposalLuck godoc
 // @Summary Get the proposal luck of a validator or a list of validators
@@ -2674,6 +2675,7 @@ func DecodeMapStructure(input interface{}, output interface{}) error {
 	return decoder.Decode(input)
 }
 
+/*
 // TODO Replace app code to work with new income balance dashboard
 // Meanwhile keep old code from Feb 2021 to be app compatible
 func APIDashboardDataBalance(w http.ResponseWriter, r *http.Request) {
@@ -2738,7 +2740,9 @@ func APIDashboardDataBalance(w http.ResponseWriter, r *http.Request) {
 	})
 
 	balanceHistoryChartData := make([][4]float64, len(data))
-	clPrice := price.GetPrice(utils.Config.Frontend.ClCurrency, currency)
+	// TODO(rgeraldes24)
+	// clPrice := price.GetPrice(utils.Config.Frontend.ClCurrency, currency)
+	clPrice := 1.0
 	for i, item := range data {
 		balanceHistoryChartData[i][0] = float64(utils.EpochToTime(item.Epoch).Unix() * 1000)
 		balanceHistoryChartData[i][1] = item.ValidatorCount
@@ -2753,6 +2757,7 @@ func APIDashboardDataBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+*/
 
 // Saves the result of a query converted to JSON in the response writer.
 // An arbitrary amount of functions adjustQueryEntriesFuncs can be added to adjust the JSON response.

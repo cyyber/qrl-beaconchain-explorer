@@ -90,11 +90,6 @@ CREATE TABLE IF NOT EXISTS
         el_performance_31d BIGINT NOT NULL,
         el_performance_365d BIGINT NOT NULL,
         el_performance_total BIGINT NOT NULL,
-        mev_performance_1d BIGINT NOT NULL,
-        mev_performance_7d BIGINT NOT NULL,
-        mev_performance_31d BIGINT NOT NULL,
-        mev_performance_365d BIGINT NOT NULL,
-        mev_performance_total BIGINT NOT NULL,
         rank7d INT NOT NULL,
         PRIMARY KEY (validatorindex)
     );
@@ -174,8 +169,6 @@ CREATE TABLE IF NOT EXISTS
         cl_rewards_gwei_total BIGINT,
         el_rewards_wei DECIMAL,
         el_rewards_wei_total DECIMAL,
-        mev_rewards_wei DECIMAL,
-        mev_rewards_wei_total DECIMAL,
         PRIMARY KEY (validatorindex, DAY)
     );
 
@@ -504,32 +497,6 @@ CREATE TABLE IF NOT EXISTS
         PRIMARY KEY (from_address)
     );
 
-DO $$
-BEGIN
-IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notification_channels') THEN
-        CREATE TYPE notification_channels AS ENUM('webhook_discord', 'webhook', 'email', 'push');
-END IF;
-END$$;
-
-CREATE TABLE IF NOT EXISTS
-    users_notification_channels (
-        user_id INT NOT NULL,
-        channel notification_channels NOT NULL,
-        active BOOLEAN DEFAULT 't' NOT NULL,
-        PRIMARY KEY (user_id, channel)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    notification_queue (
-        id serial NOT NULL,
-        created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        sent TIMESTAMP WITHOUT TIME ZONE,
-        -- record when the transaction was dispatched
-        -- delivered           timestamp without time zone,  --record when the transaction arrived
-        channel notification_channels NOT NULL,
-        CONTENT jsonb NOT NULL
-    );
-
 CREATE TABLE IF NOT EXISTS
     users_validators_tags (
         user_id INT NOT NULL,
@@ -725,7 +692,7 @@ CREATE TABLE IF NOT EXISTS
     node_jobs (
         id VARCHAR(40),
         TYPE VARCHAR(40) NOT NULL,
-        -- can be one of: BLS_TO_EXECUTION_CHANGES, VOLUNTARY_EXITS
+        -- can be one of: DILITHIUM_TO_EXECUTION_CHANGES, VOLUNTARY_EXITS
         status VARCHAR(40) NOT NULL,
         -- can be one of: PENDING, SUBMITTED_TO_NODE, COMPLETED
         created_time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),

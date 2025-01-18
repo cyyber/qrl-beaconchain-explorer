@@ -12,15 +12,12 @@ import (
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
-	"github.com/shopspring/decimal"
-	"github.com/theQRL/go-zond/common"
 	"golang.org/x/exp/maps"
 )
 
@@ -104,6 +101,7 @@ func ApiETH1ExecBlocks(w http.ResponseWriter, r *http.Request) {
 	SendOKResponse(j, r.URL.String(), []interface{}{results})
 }
 
+/*
 // ApiETH1AccountProposedBlocks godoc
 // @Summary Get proposed or mined blocks
 // @Tags Execution
@@ -230,6 +228,7 @@ func ApiETH1AccountProducedBlocks(w http.ResponseWriter, r *http.Request) {
 	j := json.NewEncoder(w)
 	SendOKResponse(j, r.URL.String(), []interface{}{results})
 }
+*/
 
 // ApiETH1GasNowData godoc
 // @Summary Gets the current estimation for gas prices in GWei.
@@ -252,7 +251,9 @@ func ApiEth1GasNowData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gasnowData.Data.PriceUSD = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
+	// TODO(rgeraldes24)
+	// gasnowData.Data.PriceUSD = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
+	gasnowData.Data.PriceUSD = 1.0
 	gasnowData.Data.Currency = ""
 
 	err := json.NewEncoder(w).Encode(gasnowData)
@@ -263,6 +264,7 @@ func ApiEth1GasNowData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
 // ApiEth1Address godoc
 // @Summary Gets information about an Zond address.
 // @Tags Execution
@@ -325,7 +327,9 @@ func ApiEth1Address(w http.ResponseWriter, r *http.Request) {
 
 	SendOKResponse(json.NewEncoder(w), r.URL.String(), []interface{}{response})
 }
+*/
 
+/*
 // ApiEth1AddressERC20Tokens godoc
 // @Summary Returns the ERC20 token balances for a given Ethereum address.
 // @Tags Execution
@@ -394,6 +398,7 @@ func ApiEth1AddressERC20Tokens(w http.ResponseWriter, r *http.Request) {
 
 	SendOKResponse(json.NewEncoder(w), r.URL.String(), []interface{}{response})
 }
+*/
 
 func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, beaconDataMap map[uint64]types.ExecBlockProposer, sortFunc func(i, j types.ExecutionBlockApiResponse) bool) []types.ExecutionBlockApiResponse {
 	results := []types.ExecutionBlockApiResponse{}
@@ -679,6 +684,7 @@ func resolveIndices(pubkeys [][]byte) ([]uint64, error) {
 	return indicesFromPubkeys, err
 }
 
+/*
 func getAddressesOrIndicesFromAddressIndexOrPubkey(search string, max int) ([][]byte, []uint64, error) {
 	individuals := strings.Split(search, ",")
 	if len(individuals) > max {
@@ -717,7 +723,9 @@ func getAddressesOrIndicesFromAddressIndexOrPubkey(search string, max int) ([][]
 
 	return resultAddresses, nil, nil
 }
+*/
 
+/*
 func parseFromAddressIndexOrPubkey(search string) (types.AddressIndexOrPubkey, error) {
 	search = ReplaceEnsNameWithAddress(search)
 	if strings.Contains(search, "0x") && len(search) == 42 {
@@ -753,3 +761,4 @@ func parseFromAddressIndexOrPubkey(search string) (types.AddressIndexOrPubkey, e
 		}, nil
 	}
 }
+*/

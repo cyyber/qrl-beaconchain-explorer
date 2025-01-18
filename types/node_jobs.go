@@ -4,11 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"sort"
 	"time"
-
-	"github.com/attestantio/go-eth2-client/spec/capella"
-	"github.com/attestantio/go-eth2-client/spec/phase0"
 )
 
 type NodeJobStatus string
@@ -72,23 +68,23 @@ func (nj *NodeJob) ParseData() error {
 		return CreateNodeJobUserError{Message: "data is empty"}
 	}
 	{
-		d := []*capella.SignedDilithiumToExecutionChange{}
-		err := json.Unmarshal(nj.RawData, &d)
-		if err == nil {
-			if nj.Type != "" && nj.Type != UnknownNodeJobType && nj.Type != DilithiumToExecutionChangesNodeJobType {
-				return fmt.Errorf("nodejob.RawData mismatches nodejob.Type (%v)", nj.Type)
-			}
-			sort.Slice(d, func(i, j int) bool {
-				return d[i].Message.ValidatorIndex < d[j].Message.ValidatorIndex
-			})
-			nj.Type = DilithiumToExecutionChangesNodeJobType
-			nj.Data = d
-			return nj.SanitizeRawData()
-		}
+		// d := []*capella.SignedDilithiumToExecutionChange{}
+		// err := json.Unmarshal(nj.RawData, &d)
+		// if err == nil {
+		// 	if nj.Type != "" && nj.Type != UnknownNodeJobType && nj.Type != DilithiumToExecutionChangesNodeJobType {
+		// 		return fmt.Errorf("nodejob.RawData mismatches nodejob.Type (%v)", nj.Type)
+		// 	}
+		// 	// sort.Slice(d, func(i, j int) bool {
+		// 	// 	return d[i].Message.ValidatorIndex < d[j].Message.ValidatorIndex
+		// 	// })
+		// 	nj.Type = DilithiumToExecutionChangesNodeJobType
+		// 	// nj.Data = d
+		// 	return nj.SanitizeRawData()
+		// }
 	}
 	{
 		//var d *VoluntaryExitsNodeJobData
-		var d *phase0.SignedVoluntaryExit
+		var d *SignedVoluntaryExit
 		err := json.Unmarshal(nj.RawData, &d)
 		if err == nil {
 			if nj.Type != "" && nj.Type != UnknownNodeJobType && nj.Type != VoluntaryExitsNodeJobType {
@@ -111,12 +107,21 @@ func (nj *NodeJob) SanitizeRawData() error {
 	return nil
 }
 
-func (nj NodeJob) GetDilithiumToExecutionChangesNodeJobData() ([]*capella.SignedDilithiumToExecutionChange, bool) {
-	d, ok := nj.Data.([]*capella.SignedDilithiumToExecutionChange)
+// func (nj NodeJob) GetDilithiumToExecutionChangesNodeJobData() ([]*capella.SignedDilithiumToExecutionChange, bool) {
+// 	d, ok := nj.Data.([]*capella.SignedDilithiumToExecutionChange)
+// 	return d, ok
+// }
+
+func (nj NodeJob) GetVoluntaryExitsNodeJobData() (*SignedVoluntaryExit, bool) {
+	d, ok := nj.Data.(*SignedVoluntaryExit)
 	return d, ok
 }
 
-func (nj NodeJob) GetVoluntaryExitsNodeJobData() (*phase0.SignedVoluntaryExit, bool) {
-	d, ok := nj.Data.(*phase0.SignedVoluntaryExit)
-	return d, ok
+// SignedVoluntaryExit provides information about a signed voluntary exit.
+type SignedVoluntaryExit struct {
+	Message   *VoluntaryExit
+	Signature DilithiumSignature `ssz-size:"4595"`
 }
+
+// DilithiumSignature is a Dilithium signature.
+type DilithiumSignature [4595]byte

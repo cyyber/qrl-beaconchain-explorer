@@ -83,15 +83,6 @@ type WidgetResponse struct {
 	Epoch     int64 `json:"epoch"`
 }
 
-type UsersNotificationsRequest struct {
-	EventNames    []string `json:"event_names"`
-	EventFilters  []string `json:"event_filters"`
-	Search        string   `json:"search"`
-	Limit         uint64   `json:"limit"`
-	Offset        uint64   `json:"offset"`
-	JoinValidator bool     `json:"join_validator"`
-}
-
 type DashboardRequest struct {
 	IndicesOrPubKey string `json:"indicesOrPubkey"`
 }
@@ -518,13 +509,13 @@ type ApiValidatorWithdrawalResponse struct {
 	Amount         uint64 `json:"amount"`
 }
 
-type ApiValidatorBlsChangeResponse struct {
+type ApiValidatorDilithiumChangeResponse struct {
 	Epoch                    uint64 `db:"epoch" json:"epoch,omitempty"`
 	Slot                     uint64 `db:"slot" json:"slot,omitempty"`
 	BlockRoot                string `db:"block_rot" json:"blockroot,omitempty"`
 	Validatorindex           uint64 `db:"validatorindex" json:"validatorindex,omitempty"`
-	BlsPubkey                string `db:"pubkey" json:"bls_pubkey,omitempty"`
-	Signature                string `db:"signature" json:"bls_signature,omitempty"`
+	DilithiumPubkey          string `db:"pubkey" json:"dilithium_pubkey,omitempty"`
+	Signature                string `db:"signature" json:"dilithium_signature,omitempty"`
 	Address                  string `db:"address" json:"address,omitempty"`
 	WithdrawalCredentialsOld string `db:"withdrawalcredentials_0x00" json:"withdrawalcredentials_0x00,omitempty"`
 	WithdrawalCredentialsNew string `db:"withdrawalcredentials_0x01" json:"withdrawalcredentials_0x01,omitempty"`

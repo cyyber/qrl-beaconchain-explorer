@@ -101,7 +101,7 @@
         </div>
         {{ if ne .Slot 0 }}
           <div class="row border-bottom p-3 mx-0">
-            <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="The BLS signature obtained by using the BeaconState, BeaconBlock and private key">Signature:</span></div>
+            <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="The Dilithium signature obtained by using the BeaconState, BeaconBlock and private key">Signature:</span></div>
             <div class="col-md-10 text-monospace text-break">0x{{ printf "%x" .Signature }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .Signature }}"></i></div>
           </div>
           <div class="row border-bottom p-3 mx-0">
@@ -284,8 +284,8 @@
           <div class="col-md-10"><b>{{ formatAddCommas .WithdrawalCount }}</b></div>
         </div>
         <div class="row border-bottom p-3 mx-0">
-          <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Amount of validators that changed their withdrawal address from 0x00 to 0x01">BLS Address Changes:</span></div>
-          <div class="col-md-10"><b>{{ formatAddCommas .BLSChangeCount }}</b></div>
+          <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Amount of validators that changed their withdrawal address from 0x00 to 0x01">Dilithium Address Changes:</span></div>
+          <div class="col-md-10"><b>{{ formatAddCommas .DilithiumChangeCount }}</b></div>
         </div>
       {{ end }}
     </div>

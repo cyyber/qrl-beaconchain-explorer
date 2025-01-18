@@ -3,8 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"encoding/hex"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -30,38 +28,6 @@ func GetUserEmailById(id uint64) (string, error) {
 	return mail, err
 }
 
-func MobileDeviceSettingsUpdate(userID, deviceID uint64, notifyEnabled, active string) (*sql.Rows, error) {
-	var query = ""
-	var args []interface{}
-
-	args = append(args, userID)
-	args = append(args, deviceID)
-
-	if notifyEnabled != "" {
-		args = append(args, notifyEnabled == "true")
-		query = addParamToQuery(query, fmt.Sprintf("notify_enabled = $%d", len(args)))
-	}
-
-	if active != "" {
-		args = append(args, active == "true")
-		query = addParamToQuery(query, fmt.Sprintf("active = $%d", len(args)))
-	}
-
-	if query == "" {
-		return nil, errors.New("no params for change provided")
-	}
-
-	rows, err := FrontendWriterDB.Query("UPDATE users_devices SET "+query+" WHERE user_id = $1 AND id = $2 RETURNING notify_enabled;",
-		args...,
-	)
-	return rows, err
-}
-
-func MobileDeviceDelete(userID, deviceID uint64) error {
-	_, err := FrontendWriterDB.Exec("DELETE FROM users_devices WHERE user_id = $1 AND id = $2 AND id != 2;", userID, deviceID)
-	return err
-}
-
 func addParamToQuery(query, param string) string {
 	var result = query
 	if result != "" {
@@ -69,13 +35,6 @@ func addParamToQuery(query, param string) string {
 	}
 	result += param
 	return result
-}
-
-func MobileDeviceSettingsSelect(userID, deviceID uint64) (*sql.Rows, error) {
-	rows, err := FrontendWriterDB.Query("SELECT notify_enabled FROM users_devices WHERE user_id = $1 AND id = $2;",
-		userID, deviceID,
-	)
-	return rows, err
 }
 
 func NewTransaction() (*sql.Tx, error) {
@@ -154,39 +113,6 @@ func GetUserAPIKeyStatistics(apikey *string) (*types.ApiStatistics, error) {
 	}
 
 	return stats, nil
-}
-
-func GetSubsForEventFilter(eventName types.EventName) ([][]byte, map[string][]types.Subscription, error) {
-	var subs []types.Subscription
-	subQuery := `
-		SELECT id, user_id, event_filter, last_sent_epoch, created_epoch, event_threshold, ENCODE(unsubscribe_hash, 'hex') as unsubscribe_hash, internal_state from users_subscriptions where event_name = $1
-		`
-
-	subMap := make(map[string][]types.Subscription, 0)
-	err := FrontendWriterDB.Select(&subs, subQuery, utils.GetNetwork()+":"+string(eventName))
-	if err != nil {
-		return nil, nil, err
-	}
-
-	filtersEncode := make([][]byte, 0, len(subs))
-	for _, sub := range subs {
-		if _, ok := subMap[sub.EventFilter]; !ok {
-			subMap[sub.EventFilter] = make([]types.Subscription, 0)
-		}
-		subMap[sub.EventFilter] = append(subMap[sub.EventFilter], types.Subscription{
-			UserID:         sub.UserID,
-			ID:             sub.ID,
-			LastEpoch:      sub.LastEpoch,
-			EventFilter:    sub.EventFilter,
-			CreatedEpoch:   sub.CreatedEpoch,
-			EventThreshold: sub.EventThreshold,
-			State:          sub.State,
-		})
-
-		b, _ := hex.DecodeString(sub.EventFilter)
-		filtersEncode = append(filtersEncode, b)
-	}
-	return filtersEncode, subMap, nil
 }
 
 // SaveDataTableState saves the state of the current datatable state update

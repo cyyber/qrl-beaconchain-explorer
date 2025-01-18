@@ -121,8 +121,8 @@ type Block struct {
 	Attestations                     []*Attestation
 	Deposits                         []*Deposit
 	VoluntaryExits                   []*VoluntaryExit
-	SyncAggregate                    *SyncAggregate    // warning: sync aggregate may be nil, for phase0 blocks
-	ExecutionPayload                 *ExecutionPayload // warning: payload may be nil, for phase0/altair blocks
+	SyncAggregate                    *SyncAggregate
+	ExecutionPayload                 *ExecutionPayload
 	SignedDilithiumToExecutionChange []*SignedDilithiumToExecutionChange
 	AttestationDuties                map[ValidatorIndex][]Slot
 	SyncDuties                       map[ValidatorIndex]bool
@@ -131,8 +131,8 @@ type Block struct {
 	Validators                       []*Validator
 }
 
-type SignedDilithiumChangeToExecutionChange struct {
-	Message   DilithiumChangeToExecutionChange
+type SignedDilithiumToExecutionChange struct {
+	Message   DilithiumToExecutionChange
 	Signature []byte
 }
 

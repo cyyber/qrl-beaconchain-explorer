@@ -12,11 +12,9 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/attestantio/go-eth2-client/spec/capella"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
-	ethutil "github.com/wealdtech/go-eth2-util"
 )
 
 func GetNodeJob(id string) (*types.NodeJob, error) {
@@ -35,13 +33,14 @@ func GetNodeJob(id string) (*types.NodeJob, error) {
 func GetNodeJobValidatorInfos(job *types.NodeJob) ([]types.NodeJobValidatorInfo, error) {
 	indicesArr := []uint64{}
 	if job.Type == types.DilithiumToExecutionChangesNodeJobType {
-		jobData, ok := job.GetDilithiumToExecutionChangesNodeJobData()
-		if !ok {
-			return nil, fmt.Errorf("invalid dilithium to execution job-data")
-		}
-		for _, op := range jobData {
-			indicesArr = append(indicesArr, uint64(op.Message.ValidatorIndex))
-		}
+		// TODO(rgeraldes24)
+		// jobData, ok := job.GetDilithiumToExecutionChangesNodeJobData()
+		// if !ok {
+		// 	return nil, fmt.Errorf("invalid dilithium to execution job-data")
+		// }
+		// for _, op := range jobData {
+		// 	indicesArr = append(indicesArr, uint64(op.Message.ValidatorIndex))
+		// }
 	} else if job.Type == types.VoluntaryExitsNodeJobType {
 		jobData, ok := job.GetVoluntaryExitsNodeJobData()
 		if !ok {
@@ -125,27 +124,29 @@ func CreateDilithiumToExecutionChangesNodeJob(nj *types.NodeJob) (*types.NodeJob
 	nj.ID = uuid.New().String()
 	nj.Status = types.PendingNodeJobStatus
 
-	opsByIndex := map[uint64]*capella.SignedDilithiumToExecutionChange{}
+	// opsByIndex := map[uint64]*capella.SignedDilithiumToExecutionChange{}
 	opsToCheck := map[uint64]bool{}
 	indicesArr := []uint64{}
-	d, ok := nj.GetDilithiumToExecutionChangesNodeJobData()
-	if !ok {
-		return nil, types.CreateNodeJobUserError{Message: "invalid data"}
-	}
+	// d, ok := nj.GetDilithiumToExecutionChangesNodeJobData()
+	// if !ok {
+	// 	return nil, types.CreateNodeJobUserError{Message: "invalid data"}
+	// }
 
-	for _, op := range d {
-		err := utils.VerifyDilithiumToExecutionChangeSignature(op)
-		if err != nil {
-			return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("can not verify signature: %v", err)}
-		}
-		_, exists := opsByIndex[uint64(op.Message.ValidatorIndex)]
-		if exists {
-			return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("multiple entries for the same validator: %v", uint64(op.Message.ValidatorIndex))}
-		}
-		indicesArr = append(indicesArr, uint64(op.Message.ValidatorIndex))
-		opsByIndex[uint64(op.Message.ValidatorIndex)] = op
-		opsToCheck[uint64(op.Message.ValidatorIndex)] = true
-	}
+	// for _, op := range d {
+	// 	err := utils.VerifyDilithiumToExecutionChangeSignature(op)
+	// 	if err != nil {
+	// 		return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("can not verify signature: %v", err)}
+	// 	}
+	// 	// _, exists := opsByIndex[uint64(op.Message.ValidatorIndex)]
+	// 	exists := false
+	// 	if exists {
+	// 		return nil, nil
+	// 		// return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("multiple entries for the same validator: %v", uint64(op.Message.ValidatorIndex))}
+	// 	}
+	// 	// indicesArr = append(indicesArr, uint64(op.Message.ValidatorIndex))
+	// 	// opsByIndex[uint64(op.Message.ValidatorIndex)] = op
+	// 	// opsToCheck[uint64(op.Message.ValidatorIndex)] = true
+	// }
 
 	dbValis := []struct {
 		Index                 uint64 `db:"validatorindex"`
@@ -158,15 +159,15 @@ func CreateDilithiumToExecutionChangesNodeJob(nj *types.NodeJob) (*types.NodeJob
 	}
 
 	for _, v := range dbValis {
-		op := opsByIndex[v.Index]
-		withdrawalCredentials := ethutil.SHA256(op.Message.FromBLSPubkey[:])
-		withdrawalCredentials[0] = byte(0) // DILITHIUM_WITHDRAWAL_PREFIX
-		if !bytes.Equal(withdrawalCredentials, v.WithdrawalCredentials) {
-			return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("fromBLSPubkey do not match withdrawalCredentials for validator with index %v", v.Index)}
-		}
-		if v.WithdrawalCredentials[0] != 0 {
-			return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("withdrawalCredentials[0] != 0 for validator with index %v", v.Index)}
-		}
+		// op := opsByIndex[v.Index]
+		// withdrawalCredentials := ethutil.SHA256(op.Message.FromDilithiumPubkey[:])
+		// withdrawalCredentials[0] = byte(0) // DILITHIUM_WITHDRAWAL_PREFIX
+		// if !bytes.Equal(withdrawalCredentials, v.WithdrawalCredentials) {
+		// 	return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("fromDilithiumPubkey do not match withdrawalCredentials for validator with index %v", v.Index)}
+		// }
+		// if v.WithdrawalCredentials[0] != 0 {
+		// 	return nil, types.CreateNodeJobUserError{Message: fmt.Sprintf("withdrawalCredentials[0] != 0 for validator with index %v", v.Index)}
+		// }
 		delete(opsToCheck, v.Index)
 	}
 	if len(opsToCheck) > 0 {
@@ -222,7 +223,7 @@ func CreateDilithiumToExecutionChangesNodeJob(nj *types.NodeJob) (*types.NodeJob
 	return nj, nil
 }
 
-func UpdateBLSToExecutionChangesNodeJobs() error {
+func UpdateDilithiumToExecutionChangesNodeJobs() error {
 	jobs := []*types.NodeJob{}
 	err := WriterDb.Select(&jobs, `select id, type, status, created_time, submitted_to_node_time, completed_time, data from node_jobs where type = $1 and status = $2`, types.DilithiumToExecutionChangesNodeJobType, types.SubmittedToNodeNodeJobStatus)
 	if err != nil {
@@ -242,16 +243,16 @@ func UpdateBLSToExecutionChangesNodeJobs() error {
 }
 
 func UpdateDilithiumToExecutionChangesNodeJob(job *types.NodeJob) error {
-	jobData, ok := job.GetDilithiumToExecutionChangesNodeJobData()
-	if !ok {
-		return fmt.Errorf("invalid job-data")
-	}
+	// jobData, ok := job.GetDilithiumToExecutionChangesNodeJobData()
+	// if !ok {
+	// 	return fmt.Errorf("invalid job-data")
+	// }
 	toCheck := map[uint64]bool{}
 	indicesArr := []uint64{}
-	for _, op := range jobData {
-		indicesArr = append(indicesArr, uint64(op.Message.ValidatorIndex))
-		toCheck[uint64(op.Message.ValidatorIndex)] = true
-	}
+	// for _, op := range jobData {
+	// 	indicesArr = append(indicesArr, uint64(op.Message.ValidatorIndex))
+	// 	toCheck[uint64(op.Message.ValidatorIndex)] = true
+	// }
 	dbValis := []struct {
 		Index                 uint64 `db:"validatorindex"`
 		WithdrawalCredentials []byte `db:"withdrawalcredentials"`
@@ -359,16 +360,20 @@ func CreateVoluntaryExitNodeJob(nj *types.NodeJob) (*types.NodeJob, error) {
 	default:
 	}
 
-	forkVersion := utils.MustParseHex(utils.Config.Chain.ClConfig.CappellaForkVersion)
-	err = utils.VerifyVoluntaryExitSignature(njd, forkVersion, vali.Pubkey)
-	if err != nil {
-		return nil, err
-	}
-	_, err = WriterDb.Exec(`insert into node_jobs (id, type, status, data, created_time) values ($1, $2, $3, $4, now())`, nj.ID, nj.Type, nj.Status, nj.RawData)
-	if err != nil {
-		return nil, err
-	}
-	logrus.WithFields(logrus.Fields{"id": nj.ID, "type": nj.Type}).Infof("created node_job")
+	// TODO(rgeraldes24)
+	/*
+		forkVersion := utils.MustParseHex(utils.Config.Chain.ClConfig.GenesisForkVersion)
+		err = utils.VerifyVoluntaryExitSignature(njd, forkVersion, vali.Pubkey)
+		if err != nil {
+			return nil, err
+		}
+		_, err = WriterDb.Exec(`insert into node_jobs (id, type, status, data, created_time) values ($1, $2, $3, $4, now())`, nj.ID, nj.Type, nj.Status, nj.RawData)
+		if err != nil {
+			return nil, err
+		}
+		logrus.WithFields(logrus.Fields{"id": nj.ID, "type": nj.Type}).Infof("created node_job")
+	*/
+
 	return nj, nil
 }
 

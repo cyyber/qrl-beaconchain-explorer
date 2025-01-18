@@ -27,14 +27,14 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
 	address := template.HTMLEscapeString(vars["address"])
-	ensData, err := GetEnsDomain(address)
-	if err != nil && utils.IsValidEnsDomain(address) {
-		handleNotFoundHtml(w, r)
-		return
-	}
-	if len(ensData.Address) > 0 {
-		address = ensData.Address
-	}
+	// ensData, err := GetEnsDomain(address)
+	// if err != nil && utils.IsValidEnsDomain(address) {
+	// 	handleNotFoundHtml(w, r)
+	// 	return
+	// }
+	// if len(ensData.Address) > 0 {
+	// 	address = ensData.Address
+	// }
 
 	isValid := utils.IsEth1Address(address)
 	if !isValid {
@@ -209,8 +209,8 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.Data = types.Eth1AddressPageData{
-		Address:            address,
-		EnsName:            ensData.Domain,
+		Address: address,
+		// EnsName:            ensData.Domain,
 		IsContract:         isContract,
 		QRCode:             pngStr,
 		QRCodeInverse:      pngStrInverse,
@@ -301,7 +301,11 @@ func Eth1AddressWithdrawals(w http.ResponseWriter, r *http.Request) {
 	errFields := map[string]interface{}{
 		"route": r.URL.String()}
 
-	data, err := db.GetAddressWithdrawalTableData(common.HexToAddress(address).Bytes(), q.Get("pageToken"), currency)
+	addr, err := common.NewAddressFromString(address)
+	if err != nil {
+		return
+	}
+	data, err := db.GetAddressWithdrawalTableData(addr.Bytes(), q.Get("pageToken"), currency)
 	if err != nil {
 		utils.LogError(err, "error getting address withdrawals data", 0, errFields)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -428,16 +432,16 @@ func Eth1AddressErc1155Transactions(w http.ResponseWriter, r *http.Request) {
 func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, error) {
 	vars := mux.Vars(r)
 	address := vars["address"]
-	if utils.IsValidEnsDomain(address) {
-		ensData, err := GetEnsDomain(address)
-		if err != nil {
-			handleNotFoundJson(address, w, r, err)
-			return "", err
-		}
-		if len(ensData.Address) > 0 {
-			address = ensData.Address
-		}
-	}
+	// if utils.IsValidEnsDomain(address) {
+	// 	ensData, err := GetEnsDomain(address)
+	// 	if err != nil {
+	// 		handleNotFoundJson(address, w, r, err)
+	// 		return "", err
+	// 	}
+	// 	if len(ensData.Address) > 0 {
+	// 		address = ensData.Address
+	// 	}
+	// }
 	return strings.ToLower(strings.Replace(address, "0x", "", -1)), nil
 }
 

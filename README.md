@@ -36,10 +36,6 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
   - Leaderboards about [validators](https://beaconcha.in/validators/leaderboard) and [deposits](https://beaconcha.in/validators/deposit-leaderboard)
   - [Charts](https://beaconcha.in/charts) about various stats
 
-- Monitoring
-  - The monitoring feature analyzes blockchain data and (optionally) data provided by a user's staking setup
-  - Highly configurable [notifications and notification channels](https://beaconcha.in/user/notifications) (mobile push, email, webhooks)
-
 - Tools
   - [APIs](https://beaconcha.in/api/v1/docs/index.html) for Execution Layer and Consensus Layer
   - [Ethereum Staking Pool benchmark and overview](https://beaconcha.in/pools)
@@ -47,15 +43,6 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
   - [Profit Calculator](https://beaconcha.in/calculator)
   - Block Visualizer [[1](https://beaconcha.in/vis)] [[2](https://beaconcha.in/charts/slotviz)]
   - [Unit Converter](https://beaconcha.in/tools/unitConverter)
-
-- [Beaconcha.in Mobile App](https://beaconcha.in/mobile)
-  - Open Source (GNU General Public License v3.0)
-  - Dashboard with similar info as the website
-
-  - Advanced Rocket Pool features
-  - Machine stats with charts
-  - Widgets
-  - Themes
 
 ## ToDo
 

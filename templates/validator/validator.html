@@ -270,10 +270,6 @@
 
       <!-- Edit Validator Modals -->
       {{ template "validatorEditModal"  . }}
-      <!-- Add Validator to Watchlist Modal -->
-      {{ if .User.Authenticated }}
-        {{ template "AddValidatorWatchlistModal" .AddValidatorWatchlistModal }}
-      {{ end }}
 
 
       <div id="r-banner" info="{{ $.Meta.Templates }}"></div>

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ethereum/go-ethereum"
+	"github.com/theQRL/go-zond"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/eth1data"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
@@ -68,7 +68,7 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 
 				data.Data = mempoolPageData
 			} else {
-				if !errors.Is(err, ethereum.NotFound) && !errors.Is(err, eth1data.ErrTxIsPending) {
+				if !errors.Is(err, zond.NotFound) && !errors.Is(err, eth1data.ErrTxIsPending) {
 					utils.LogError(err, "error getting eth1 transaction data", 0, errFields)
 				}
 				data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)

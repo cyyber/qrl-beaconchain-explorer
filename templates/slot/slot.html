@@ -262,7 +262,7 @@
 
         $("#block_withdrawals").DataTable(withdrawalOpts)
 
-        let blsChangeOpts = {
+        let dilithiumChangeOpts = {
           searchDelay: 0,
           processing: true,
           serverSide: true,
@@ -270,24 +270,24 @@
           info: false,
           // stateSave: true,
           searching: false,
-          ajax: dataTableLoader("/slot/" + slotNumber + "/blsChange"),
+          ajax: dataTableLoader("/slot/" + slotNumber + "/dilithiumChange"),
           paging: false,
           // deferLoading: true,
           pageLength: 10,
           preDrawCallback: function () {
             try {
-              $("#block_blsChange").find('[data-toggle="tooltip"]').tooltip("dispose")
+              $("#block_dilithiumChange").find('[data-toggle="tooltip"]').tooltip("dispose")
             } catch (e) {
               console.error(e)
             }
           },
           drawCallback: function (settings) {
             formatTimestamps()
-            $("#block_blsChange").find('[data-toggle="tooltip"]').tooltip()
+            $("#block_dilithiumChange").find('[data-toggle="tooltip"]').tooltip()
           }
         }
 
-        $("#block_blsChange").DataTable(blsChangeOpts)
+        $("#block_dilithiumChange").DataTable(dilithiumChangeOpts)
     })
 
     {
@@ -416,9 +416,9 @@
             <a class="nav-link" id="withdrawal-tab" data-toggle="tab" href="#withdrawals" role="tab" aria-controls="withdrawal" aria-selected="false">Withdrawals <span class="badge bg-secondary text-white">{{ .WithdrawalCount }}</span></a>
           </li>
         {{ end }}
-        {{ if gt .BLSChangeCount 0 }}
+        {{ if gt .DilithiumChangeCount 0 }}
           <li class="nav-item">
-            <a class="nav-link" id="blsChange-tab" data-toggle="tab" href="#blsChange" role="tab" aria-controls="blsChange" aria-selected="false">BLS Change <span class="badge bg-secondary text-white">{{ .BLSChangeCount }}</span></a>
+            <a class="nav-link" id="dilithiumChange-tab" data-toggle="tab" href="#dilithiumChange" role="tab" aria-controls="dilithiumChange" aria-selected="false">Dilithium Change <span class="badge bg-secondary text-white">{{ .DilithiumChangeCount }}</span></a>
           </li>
         {{ end }}
       </ul>
@@ -465,10 +465,10 @@
             </div>
           </div>
         {{ end }}
-        {{ if gt .BLSChangeCount 0 }}
-          <div class="tab-pane fade" id="blsChangeTabPanel" role="tabpanel" aria-labelledby="blsChange-tab">
+        {{ if gt .DilithiumChangeCount 0 }}
+          <div class="tab-pane fade" id="dilithiumChangeTabPanel" role="tabpanel" aria-labelledby="dilithiumChange-tab">
             <div class="card block-card py-1">
-              {{ template "block_blsChange" . }}
+              {{ template "block_dilithiumChange" . }}
             </div>
           </div>
         {{ end }}

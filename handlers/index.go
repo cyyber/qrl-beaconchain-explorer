@@ -16,7 +16,6 @@ import (
 func Index(w http.ResponseWriter, r *http.Request) {
 	var indexTemplateFiles = append(layoutTemplateFiles,
 		"index/index.html",
-		"index/depositProgress.html",
 		"index/depositChart.html",
 		"index/genesis.html",
 		"index/hero.html",

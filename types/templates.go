@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"html/template"
 	"math/big"
-	"net/http"
 	"strconv"
 	"time"
 
@@ -387,7 +386,6 @@ type ValidatorPageData struct {
 	Deposits                        *ValidatorDeposits
 	Eth1DepositAddress              []byte
 	FlashMessage                    string
-	Watchlist                       []*TaggedValidators
 	SubscriptionFlash               []interface{}
 	// User                                     *User
 	AttestationInclusionEffectiveness        float64
@@ -404,8 +402,8 @@ type ValidatorPageData struct {
 	DilithiumChange                          *DilithiumChange
 	IsWithdrawableAddress                    bool
 	EstimatedNextWithdrawal                  template.HTML
-	AddValidatorWatchlistModal               *AddValidatorWatchlistModal
-	NextWithdrawalRow                        [][]interface{}
+	// AddValidatorWatchlistModal               *AddValidatorWatchlistModal
+	NextWithdrawalRow [][]interface{}
 	ValidatorProposalData
 }
 
@@ -1119,12 +1117,6 @@ type FilterSubscription struct {
 	PriceIds []string
 }
 
-type AdvertiseWithUsPageData struct {
-	FlashMessage string
-	CsrfField    template.HTML
-	RecaptchaKey string
-}
-
 type PasswordResetNotAllowedError struct{}
 
 func (e *PasswordResetNotAllowedError) Error() string {
@@ -1171,98 +1163,11 @@ type ApiStatistics struct {
 	MaxMonthly *int
 }
 
-type UserWebhookRow struct {
-	ID           uint64 `db:"id" json:"id"`
-	UrlFull      string
-	Url          template.HTML `db:"url" json:"url"`
-	Retries      template.HTML `db:"retries" json:"retries"`
-	LastSent     template.HTML `db:"last_retry" json:"lastSent"`
-	Destination  template.HTML `db:"destination" json:"destination"`
-	WebhookError UserWebhookRowError
-	Response     *http.Response          `db:"response" json:"response"`
-	Request      *map[string]interface{} `db:"request" json:"request"`
-	Events       []EventNameCheckbox     `db:"event_names" json:"-"`
-	Discord      bool
-	CsrfField    template.HTML
-}
-
 type AdConfigurationPageData struct {
 	Configurations []*AdConfig
 	CsrfField      template.HTML
 	New            AdConfig
 	TemplateNames  []string
-}
-
-type ExplorerConfigurationPageData struct {
-	Configurations ExplorerConfigurationMap
-	CsrfField      template.HTML
-}
-
-type UserWebhookRowError struct {
-	SummaryRequest  template.HTML
-	SummaryResponse template.HTML
-	ContentRequest  template.HTML
-	ContentResponse template.HTML
-}
-
-type WebhookPageData struct {
-	WebhookRows  []UserWebhookRow
-	Webhooks     []UserWebhook
-	Events       []EventNameCheckbox
-	CsrfField    template.HTML
-	Allowed      uint64
-	WebhookCount uint64
-	Flashes      []interface{}
-}
-
-type EventNameCheckbox struct {
-	EventLabel string
-	EventName
-	Active  bool
-	Warning template.HTML
-	Info    template.HTML
-}
-
-type PoolsResp struct {
-	PoolsDistribution       ChartsPageDataChart
-	HistoricPoolPerformance ChartsPageDataChart
-	PoolInfos               []*PoolInfo
-}
-
-type PoolsData struct {
-	*PoolsResp
-	Disclaimer string
-}
-
-type PoolInfo struct {
-	Name                  string  `db:"name"`
-	Count                 int64   `db:"count"`
-	AvgPerformance31d     float64 `db:"avg_performance_31d"`
-	AvgPerformance7d      float64 `db:"avg_performance_7d"`
-	AvgPerformance1d      float64 `db:"avg_performance_1d"`
-	EthstoreComparison1d  float64
-	EthstoreComparison7d  float64
-	EthstoreComparison31d float64
-}
-
-type AddValidatorWatchlistModal struct {
-	CsrfField       template.HTML
-	ValidatorIndex  uint64
-	ValidatorPubkey string
-	Events          []EventNameCheckbox
-}
-type ManageNotificationModal struct {
-	CsrfField       template.HTML
-	ValidatorIndex  int64
-	ValidatorPubkey string
-	Events          []EventNameCheckbox
-}
-
-type NetworkEventModal struct {
-	CsrfField       template.HTML
-	ValidatorIndex  int64
-	ValidatorPubkey string
-	Events          []EventNameCheckbox
 }
 
 type DataTableSaveState struct {
@@ -1614,52 +1519,6 @@ type SlotVizEpochs struct {
 	Slots          []*SlotVizSlots `json:"slots"`
 }
 
-type RelaysResp struct {
-	RelaysInfoContainers [3]RelayInfoContainer
-	RecentBlocks         []*RelaysRespBlock
-	TopBlocks            []*RelaysRespBlock
-	LastUpdated          time.Time
-	TopBuilders          []*struct {
-		Tags       TagMetadataSlice `db:"tags"`
-		Builder    []byte           `db:"builder_pubkey"`
-		BlockCount uint64           `db:"c"`
-		LatestSlot uint64           `db:"latest_slot"`
-		BlockPerc  float64
-	}
-}
-
-type RelaysRespBlock struct {
-	Tags                 TagMetadataSlice `db:"tags"`
-	Value                WeiString        `db:"value"`
-	Slot                 uint64           `db:"slot"`
-	Builder              []byte           `db:"builder_pubkey"`
-	ProposerFeeRecipient []byte           `db:"proposer_fee_recipient"`
-	Proposer             uint64           `db:"proposer"`
-	BlockExtraData       string           `db:"block_extra_data"`
-}
-
-type RelayInfoContainer struct {
-	Days                 uint64
-	IsFirst              bool
-	RelaysInfo           []*RelayInfo
-	NetworkParticipation float64 `db:"network_participation"`
-}
-
-type RelayInfo struct {
-	RelayID        string         `db:"relay_id"`
-	Name           sql.NullString `db:"name"`
-	Link           sql.NullString `db:"link"`
-	Censors        sql.NullBool   `db:"censors"`
-	Ethical        sql.NullBool   `db:"ethical"`
-	BlockCount     uint64         `db:"block_count"`
-	UniqueBuilders uint64         `db:"unique_builders"`
-	NetworkUsage   float64        `db:"network_usage"`
-	TotalValue     WeiString      `db:"total_value"`
-	AverageValue   WeiString      `db:"avg_value"`
-	MaxValue       WeiString      `db:"max_value"`
-	MaxValueSlot   uint64         `db:"max_value_slot"`
-}
-
 type BurnPageDataBlock struct {
 	Number        int64     `json:"number"`
 	Hash          string    `json:"hash"`
@@ -1788,10 +1647,10 @@ type WithdrawalsPageData struct {
 }
 
 type WithdrawalStats struct {
-	WithdrawalsCount             uint64
-	WithdrawalsTotal             uint64
-	BLSChangeCount               uint64
-	ValidatorsWithBLSCredentials uint64
+	WithdrawalsCount                   uint64
+	WithdrawalsTotal                   uint64
+	DilithiumChangeCount               uint64
+	ValidatorsWithDilithiumCredentials uint64
 }
 
 type ChangeWithdrawalCredentialsPageData struct {

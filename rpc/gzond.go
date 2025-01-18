@@ -8,11 +8,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common/hexutil"
 	"github.com/theQRL/go-zond/zondclient"
 	"github.com/theQRL/zond-beaconchain-explorer/erc20"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
@@ -62,6 +64,27 @@ type ParityTraceResult struct {
 	TransactionHash     string  `json:"transactionHash"`
 	TransactionPosition int     `json:"transactionPosition"`
 	Type                string  `json:"type"`
+}
+
+func (trace *ParityTraceResult) ConvertFields() ([]byte, []byte, []byte, string) {
+	var from, to, value []byte
+	tx_type := trace.Type
+
+	switch trace.Type {
+	case "create":
+		from = common.FromHex(trace.Action.From)
+		to = common.FromHex(trace.Result.Address)
+		value = common.FromHex(trace.Action.Value)
+	case "call":
+		from = common.FromHex(trace.Action.From)
+		to = common.FromHex(trace.Action.To)
+		value = common.FromHex(trace.Action.Value)
+		tx_type = trace.Action.CallType
+	default:
+		spew.Dump(trace)
+		utils.LogFatal(nil, "unknown trace type", 0, map[string]interface{}{"trace type": trace.Type, "tx hash": trace.TransactionHash})
+	}
+	return from, to, value, tx_type
 }
 
 var CurrentGzondClient *GzondClient

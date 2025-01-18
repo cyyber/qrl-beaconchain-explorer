@@ -43,8 +43,6 @@ var ChartHandlers = map[string]chartHandler{
 	"deposits":                       {13, depositsChartData},
 	"withdrawals":                    {17, withdrawalsChartData},
 	"graffiti_wordcloud":             {14, graffitiCloudChartData},
-	"pools_distribution":             {15, poolsDistributionChartData},
-	// "historic_pool_performance":      {16, historicPoolPerformanceData},
 
 	// execution charts start with 20+
 
@@ -773,65 +771,6 @@ func withdrawalsChartData() (*types.GenericChartData, error) {
 		Series: []*types.GenericChartDataSeries{
 			{
 				Name: "Withdrawals",
-				Data: seriesData,
-			},
-		},
-	}
-
-	return chartData, nil
-}
-
-func poolsDistributionChartData() (*types.GenericChartData, error) {
-
-	type seriesDataItem struct {
-		Name      string `json:"name"`
-		Address   string `json:"address"`
-		Y         int64  `json:"y"`
-		Drilldown string `json:"drilldown"`
-	}
-
-	poolsPageData := LatestPoolsPageData()
-	poolData := []*types.PoolInfo{}
-	if poolsPageData == nil {
-		utils.LogError(nil, "got nil for LatestPoolsPageData", 0)
-	} else {
-		poolData = poolsPageData.PoolInfos
-	}
-	if len(poolData) > 1 {
-		poolData = poolData[1:]
-	}
-
-	seriesData := make([]seriesDataItem, 0, len(poolData))
-
-	for _, row := range poolData {
-		seriesData = append(seriesData, seriesDataItem{
-			Name: row.Name,
-			Y:    row.Count,
-		})
-	}
-
-	chartData := &types.GenericChartData{
-		IsNormalChart:    true,
-		Type:             "pie",
-		Title:            "Pool Distribution",
-		Subtitle:         "Validator distribution by staking pool.",
-		TooltipFormatter: `function(){ return '<b>'+this.point.name+'</b><br\>Percentage: '+this.point.percentage.toFixed(2)+'%<br\>Validators: '+this.point.y }`,
-		PlotOptionsPie: `{
-			borderWidth: 1,
-			borderColor: null, 
-			dataLabels: { 
-				enabled:true, 
-				formatter: function() { 
-					var name = this.point.name.length > 20 ? this.point.name.substring(0,20)+'...' : this.point.name;
-					return '<span style="stroke:none; fill: var(--font-color)"><b style="stroke:none; fill: var(--font-color)">'+name+'</b></span>' 
-				} 
-			} 
-		}`,
-		PlotOptionsSeriesCursor: "pointer",
-		Series: []*types.GenericChartDataSeries{
-			{
-				Name: "Pool Distribution",
-				Type: "pie",
 				Data: seriesData,
 			},
 		},

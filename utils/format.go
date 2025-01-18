@@ -19,9 +19,9 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 
-	"github.com/prysmaticlabs/go-bitfield"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-bitfield"
 
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
@@ -1224,14 +1224,6 @@ func FormatFloat(num float64, precision int) string {
 	s := strings.TrimRight(strings.TrimRight(p.Sprintf(f, num), "0"), ".")
 	r := []rune(p.Sprintf(s, num))
 	return string(r)
-}
-
-func FormatNotificationChannel(ch types.NotificationChannel) template.HTML {
-	label, ok := types.NotificationChannelLabels[ch]
-	if !ok {
-		return ""
-	}
-	return label
 }
 
 func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {

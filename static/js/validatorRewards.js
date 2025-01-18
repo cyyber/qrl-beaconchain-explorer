@@ -284,24 +284,6 @@ function showTable(data) {
   })
 }
 
-function unSubUser(filter) {
-  // console.log(filter)
-  showSpinner()
-  fetch(`/user/rewards/unsubscribe?${filter}`, {
-    method: "POST",
-    headers: { "X-CSRF-Token": csrfToken },
-    credentials: "include",
-    body: "",
-  }).then((res) => {
-    if (res.status == 200) {
-      res.json().then((data) => {
-        console.log(data.msg)
-        fetchSubscriptions()
-      })
-    }
-  })
-}
-
 function updateSubscriptionTable(data, container) {
   if (data.data.length === 0) {
     $("#subscriptions-div").addClass("d-none")
@@ -401,28 +383,6 @@ function updateSubscriptionTable(data, container) {
 
 function loadValInForm(val) {
   $("#validator-index-view").val(val.replace(/([a-zA-Z ])/g, ""))
-}
-
-function fetchSubscriptions() {
-  fetch(`/user/rewards/subscriptions/data`, {
-    method: "POST",
-    headers: { "X-CSRF-Token": csrfToken },
-    credentials: "include",
-    body: "",
-  })
-    .then((res) => {
-      if (res.status == 200) {
-        res.json().then((data) => {
-          // console.log(data.msg)
-          updateSubscriptionTable(data, "subscriptions-table")
-        })
-      } else {
-        console.error("error getting subscriptions", res)
-      }
-    })
-    .catch((err) => {
-      console.error("error getting subscriptions", err)
-    })
 }
 
 $(document).ready(function () {

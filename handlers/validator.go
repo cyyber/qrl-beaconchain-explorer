@@ -20,13 +20,11 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/lib/pq"
 	protomath "github.com/protolambda/zrnt/eth2/util/math"
 	"github.com/theQRL/go-zond/accounts"
 	"github.com/theQRL/go-zond/crypto"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/juliangruber/go-intersect"
 
@@ -123,7 +121,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 
 	data := InitPageData(w, r, "validators", "/validators", "", validatorTemplateFiles)
 	validatorPageData.NetworkStats = services.LatestIndexPageData()
-	validatorPageData.User = data.User
 
 	validatorPageData.FlashMessage, err = utils.GetFlash(w, r, validatorEditFlash)
 	if err != nil {
@@ -216,41 +213,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			filter := db.WatchlistFilter{
-				UserId:         data.User.UserID,
-				Validators:     &pq.ByteaArray{validatorPageData.PublicKey},
-				Tag:            types.ValidatorTagsWatchlist,
-				JoinValidators: false,
-				Network:        utils.GetNetwork(),
-			}
-			watchlist, err := db.GetTaggedValidators(filter)
-			if err != nil {
-				errFields["userID"] = data.User.UserID
-				utils.LogError(err, "error getting tagged validators from db", 0, errFields)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-
-			validatorPageData.Watchlist = watchlist
-
-			if data.User.Authenticated {
-				events := make([]types.EventNameCheckbox, 0)
-				for _, ev := range types.AddWatchlistEvents {
-					events = append(events, types.EventNameCheckbox{
-						EventLabel: ev.Desc,
-						EventName:  ev.Event,
-						Active:     false,
-						Warning:    ev.Warning,
-						Info:       ev.Info,
-					})
-				}
-				validatorPageData.AddValidatorWatchlistModal = &types.AddValidatorWatchlistModal{
-					Events:         events,
-					ValidatorIndex: validatorPageData.Index,
-					CsrfField:      csrf.TemplateField(r),
-				}
-			}
-
 			data.Data = validatorPageData
 			if utils.IsApiRequest(r) {
 				w.Header().Set("Content-Type", "application/json")
@@ -340,24 +302,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 
 	validatorPageData.Epoch = latestEpoch
 	validatorPageData.Index = index
-
-	if data.User.Authenticated {
-		events := make([]types.EventNameCheckbox, 0)
-		for _, ev := range types.AddWatchlistEvents {
-			events = append(events, types.EventNameCheckbox{
-				EventLabel: ev.Desc,
-				EventName:  ev.Event,
-				Active:     false,
-				Warning:    ev.Warning,
-				Info:       ev.Info,
-			})
-		}
-		validatorPageData.AddValidatorWatchlistModal = &types.AddValidatorWatchlistModal{
-			Events:         events,
-			ValidatorIndex: validatorPageData.Index,
-			CsrfField:      csrf.TemplateField(r),
-		}
-	}
 
 	validatorPageData.ActivationEligibilityTs = utils.EpochToTime(validatorPageData.ActivationEligibilityEpoch)
 	validatorPageData.ActivationTs = utils.EpochToTime(validatorPageData.ActivationEpoch)
@@ -453,14 +397,14 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		}
 		lastWithdrawalsEpoch := lastWithdrawalsEpochs[index]
 
-		blsChange, err := db.GetValidatorDilithiumChange(validatorPageData.Index)
+		dilithiumChange, err := db.GetValidatorDilithiumChange(validatorPageData.Index)
 		if err != nil {
-			return fmt.Errorf("error getting validator bls change from db: %w", err)
+			return fmt.Errorf("error getting validator dilithium change from db: %w", err)
 		}
-		validatorPageData.BLSChange = blsChange
+		validatorPageData.DilithiumChange = dilithiumChange
 
-		if bytes.Equal(validatorPageData.WithdrawCredentials[:1], []byte{0x00}) && blsChange != nil {
-			// blsChanges are only possible afters cappeala
+		if bytes.Equal(validatorPageData.WithdrawCredentials[:1], []byte{0x00}) && dilithiumChange != nil {
+			// dilithiumChanges are only possible afters cappeala
 			validatorPageData.IsWithdrawableAddress = true
 		}
 
@@ -514,24 +458,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		return nil
-	})
-
-	g.Go(func() error {
-		filter := db.WatchlistFilter{
-			UserId:         data.User.UserID,
-			Validators:     &pq.ByteaArray{validatorPageData.PublicKey},
-			Tag:            types.ValidatorTagsWatchlist,
-			JoinValidators: false,
-			Network:        utils.GetNetwork(),
-		}
-
-		watchlist, err := db.GetTaggedValidators(filter)
-		if err != nil {
-			return fmt.Errorf("error getting tagged validators from db: %w", err)
-		}
-
-		validatorPageData.Watchlist = watchlist
 		return nil
 	})
 
@@ -1406,9 +1332,10 @@ func sanitizeSignature(sig string) ([]byte, error) {
 	if len(decodedSig) != 65 {
 		return nil, fmt.Errorf("signature is less than 65 bytes (len = %v)", len(decodedSig))
 	}
-	if decodedSig[crypto.RecoveryIDOffset] == 27 || decodedSig[crypto.RecoveryIDOffset] == 28 {
-		decodedSig[crypto.RecoveryIDOffset] -= 27
-	}
+	// TODO(rgeraldes24)
+	// if decodedSig[crypto.RecoveryIDOffset] == 27 || decodedSig[crypto.RecoveryIDOffset] == 28 {
+	// 	decodedSig[crypto.RecoveryIDOffset] -= 27
+	// }
 	return []byte(decodedSig), nil
 }
 

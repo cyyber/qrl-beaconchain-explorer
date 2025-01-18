@@ -84,7 +84,6 @@ func GetTemplateFuncs() template.FuncMap {
 		"includeSvg":                              IncludeSvg,
 		"formatHTML":                              FormatMessageToHtml,
 		"formatBalance":                           FormatBalance,
-		"formatNotificationChannel":               FormatNotificationChannel,
 		"formatBalanceSql":                        FormatBalanceSql,
 		"formatCurrentBalance":                    FormatCurrentBalance,
 		"formatElCurrency":                        FormatElCurrency,
@@ -140,7 +139,6 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatYesNo":                             FormatYesNo,
 		"formatAmountFormatted":                   FormatAmountFormatted,
 		"formatAddressAsLink":                     FormatAddressAsLink,
-		"formatBuilder":                           FormatBuilder,
 		"getCurrencyLabel":                        price.GetCurrencyLabel,
 		"config":                                  func() *types.Config { return Config },
 		"epochOfSlot":                             EpochOfSlot,
@@ -223,8 +221,6 @@ func GetTemplateFuncs() template.FuncMap {
 			return nil
 		},
 		"formatBigNumberAddCommasFormated": FormatBigNumberAddCommasFormated,
-		"formatEthstoreComparison":         FormatEthstoreComparison,
-		"formatPoolPerformance":            FormatPoolPerformance,
 		"formatTokenSymbolTitle":           FormatTokenSymbolTitle,
 		"formatTokenSymbol":                FormatTokenSymbol,
 		"dict": func(values ...interface{}) (map[string]interface{}, error) {
@@ -1268,23 +1264,6 @@ func SliceContains(list []string, target string) bool {
 		}
 	}
 	return false
-}
-
-func FormatEthstoreComparison(pool string, val float64) template.HTML {
-	prefix := ""
-	textClass := "text-danger"
-	ou := "underperforms"
-	if val > 0 {
-		prefix = "+"
-		textClass = "text-success"
-		ou = "outperforms"
-	}
-
-	return template.HTML(fmt.Sprintf(`<sub title="%s %s the ETH.STORE® indicator by %s%.2f%%" data-toggle="tooltip" class="%s">(%s%.2f%%)</sub>`, pool, ou, prefix, val, textClass, prefix, val))
-}
-
-func FormatPoolPerformance(val float64) template.HTML {
-	return template.HTML(fmt.Sprintf(`<span data-toggle="tooltip" title=%f%%>%s%%</span>`, val, fmt.Sprintf("%.2f", val)))
 }
 
 func FormatTokenSymbolTitle(symbol string) string {

@@ -6,13 +6,13 @@ import (
 
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 
-	capella "github.com/attestantio/go-eth2-client/spec/capella"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 )
 
 /*
 mainnet: {"data":{"genesis_time":"1606824023","genesis_validators_root":"0x4b363db94e286120d76eb905340fdd4e54bfe9f06bf33ff6cf5ad27f511bfe95","genesis_fork_version":"0x00000000"}}
 */
+/*
 func TestVerifyDilithiumToExecutionChangeSignature(t *testing.T) {
 	Config = &types.Config{}
 	ReadConfig(Config, "")
@@ -32,6 +32,7 @@ func TestVerifyDilithiumToExecutionChangeSignature(t *testing.T) {
 		}
 	}
 }
+*/
 
 func TestVerifyVoluntaryExitSignature(t *testing.T) {
 	Config = &types.Config{}

@@ -111,12 +111,12 @@ func calculateStats() (*types.Stats, error) {
 
 	stats.WithdrawableValidatorCount = &WithdrawableValidatorCount
 
-	PendingBLSChangeValidatorCount, err := db.GetPendingBLSChangeValidatorCount()
+	PendingDilithiumChangeValidatorCount, err := db.GetPendingDilithiumChangeValidatorCount()
 	if err != nil {
 		logger.WithError(err).Error("error getting withdrawable validator count")
 	}
 
-	stats.PendingBLSChangeValidatorCount = &PendingBLSChangeValidatorCount
+	stats.PendingDilithiumChangeValidatorCount = &PendingDilithiumChangeValidatorCount
 
 	TotalAmountWithdrawn, WithdrawalCount, err := db.GetTotalAmountWithdrawn()
 	if err != nil {

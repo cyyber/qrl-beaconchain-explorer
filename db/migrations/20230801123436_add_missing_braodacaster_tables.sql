@@ -1,8 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
-SELECT 'up SQL query - add table node_jobs_bls_changes_validators';
+SELECT 'up SQL query - add table node_jobs_dilithium_changes_validators';
 CREATE TABLE IF NOT EXISTS
-    node_jobs_bls_changes_validators (
+    node_jobs_dilithium_changes_validators (
         validatorindex INT NOT NULL,
         node_job_id VARCHAR(40) NOT NULL,
         PRIMARY KEY (validatorindex)
@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query - remove table node_jobs_bls_changes_validators';
-DROP TABLE IF EXISTS node_jobs_bls_changes_validators CASCADE;
+SELECT 'down SQL query - remove table node_jobs_dilithium_changes_validators';
+DROP TABLE IF EXISTS node_jobs_dilithium_changes_validators CASCADE;
 -- +goose StatementEnd

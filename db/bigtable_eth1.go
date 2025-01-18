@@ -3,7 +3,6 @@ package db
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -32,7 +31,6 @@ import (
 
 	"github.com/coocood/freecache"
 	"github.com/go-redis/redis/v8"
-	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/math"
 	eth_types "github.com/theQRL/go-zond/core/types"
@@ -2001,15 +1999,15 @@ func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, 
 	g.SetLimit(25)
 	mux := sync.Mutex{}
 
-	if names != nil {
-		g.Go(func() error {
-			err := bigtable.GetAddressNames(*names)
-			if err != nil {
-				return err
-			}
-			return nil
-		})
-	}
+	// if names != nil {
+	// 	g.Go(func() error {
+	// 		err := bigtable.GetAddressNames(*names)
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 		return nil
+	// 	})
+	// }
 
 	if inputMetadata != nil {
 		for address := range *inputMetadata {
@@ -2424,10 +2422,10 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 		names[string(to)] = ""
 	}
 
-	err := bigtable.GetAddressNames(names)
-	if err != nil {
-		return nil, err
-	}
+	// err := bigtable.GetAddressNames(names)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	contractInteractionTypes, err := BigtableClient.GetAddressContractInteractionsAtParityTraces(parityTrace)
 	if err != nil {
@@ -2533,13 +2531,13 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	}
 	g := new(errgroup.Group)
 	g.SetLimit(25)
-	g.Go(func() error {
-		err := bigtable.GetAddressNames(names)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+	// g.Go(func() error {
+	// 	err := bigtable.GetAddressNames(names)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	return nil
+	// })
 
 	for address := range tokens {
 		address := address
@@ -3337,6 +3335,7 @@ func (bigtable *Bigtable) SaveERC20Metadata(address []byte, metadata *types.ERC2
 	return bigtable.tableMetadata.Apply(ctx, rowKey, mut)
 }
 
+/*
 func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -3380,6 +3379,7 @@ func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 	err = cache.TieredCache.SetString(cacheKey, wanted, time.Hour)
 	return wanted, err
 }
+*/
 
 /*
 func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
@@ -3655,6 +3655,7 @@ func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 	return bigtable.tableMetadata.Apply(ctx, fmt.Sprintf("%s:%x", bigtable.chainId, address), mut)
 }
 
+/*
 func (bigtable *Bigtable) GetContractMetadata(address []byte) (*types.ContractMetadata, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -3742,6 +3743,7 @@ func (bigtable *Bigtable) GetContractMetadata(address []byte) (*types.ContractMe
 	err = cache.TieredCache.Set(cacheKey, ret, utils.Day)
 	return ret, err
 }
+*/
 
 func (bigtable *Bigtable) SaveContractMetadata(address []byte, metadata *types.ContractMetadata) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))

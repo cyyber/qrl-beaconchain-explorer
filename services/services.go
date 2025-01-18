@@ -672,25 +672,6 @@ func LatestIndexPageData() *types.IndexPageData {
 	return &types.IndexPageData{}
 }
 
-// LatestPoolsPageData returns the latest pools page data
-func LatestPoolsPageData() *types.PoolsResp {
-
-	wanted := &types.PoolsResp{}
-	cacheKey := fmt.Sprintf("%d:frontend:poolsData", utils.Config.Chain.ClConfig.DepositChainID)
-
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Second*5, wanted); err == nil {
-		return wanted.(*types.PoolsResp)
-	} else {
-		logger.Errorf("error retrieving poolsData from cache: %v", err)
-	}
-
-	return &types.PoolsResp{
-		PoolsDistribution:       types.ChartsPageDataChart{},
-		HistoricPoolPerformance: types.ChartsPageDataChart{},
-		PoolInfos:               []*types.PoolInfo{},
-	}
-}
-
 func LatestGasNowData() *types.GasNowPageData {
 	wanted := &types.GasNowPageData{}
 	cacheKey := fmt.Sprintf("%d:frontend:gasNow", utils.Config.Chain.ClConfig.DepositChainID)

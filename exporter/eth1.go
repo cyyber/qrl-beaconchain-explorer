@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/ethereum/go-ethereum"
+	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -41,12 +41,16 @@ var gethRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too Lar
 // If a reorg of the eth1-chain happened within these 100 blocks it will delete
 // removed deposits.
 func eth1DepositsExporter() {
-	eth1DepositContractAddress = common.HexToAddress(utils.Config.Chain.ClConfig.DepositContractAddress)
+	var err error
+	zondDepositContractAddress, err = common.NewAddressFromString(utils.Config.Chain.ClConfig.DepositContractAddress)
+	if err != nil {
+		utils.LogFatal(err, "deposit contract address error", 0)
+	}
 	eth1DepositContractFirstBlock = utils.Config.Indexer.Eth1DepositContractFirstBlock
 
-	rpcClient, err := gzondRPC.Dial(utils.Config.Eth1GethEndpoint)
+	rpcClient, err := gzondRPC.Dial(utils.Config.Eth1GzondEndpoint)
 	if err != nil {
-		utils.LogFatal(err, "new exporter geth client error", 0)
+		utils.LogFatal(err, "new exporter gzond client error", 0)
 	}
 	eth1RPCClient = rpcClient
 	client := zondclient.NewClient(rpcClient)
@@ -164,7 +168,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	topic := common.BytesToHash(eth1DepositEventSignature[:])
-	qry := ethereum.FilterQuery{
+	qry := zond.FilterQuery{
 		Addresses: []common.Address{
 			zondDepositContractAddress,
 		},

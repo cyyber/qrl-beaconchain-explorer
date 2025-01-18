@@ -23,7 +23,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	lru "github.com/hashicorp/golang-lru"
-	"github.com/prysmaticlabs/go-bitfield"
+	"github.com/theQRL/go-bitfield"
 )
 
 // QrysmLatestHeadEpoch is used to cache the latest head epoch for participation requests
@@ -903,14 +903,14 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 			DepositCount: uint64(parsedBlock.Message.Body.Eth1Data.DepositCount),
 			BlockHash:    utils.MustParseHex(parsedBlock.Message.Body.Eth1Data.BlockHash),
 		},
-		ProposerSlashings:          make([]*types.ProposerSlashing, len(parsedBlock.Message.Body.ProposerSlashings)),
-		AttesterSlashings:          make([]*types.AttesterSlashing, len(parsedBlock.Message.Body.AttesterSlashings)),
-		Attestations:               make([]*types.Attestation, len(parsedBlock.Message.Body.Attestations)),
-		Deposits:                   make([]*types.Deposit, len(parsedBlock.Message.Body.Deposits)),
-		VoluntaryExits:             make([]*types.VoluntaryExit, len(parsedBlock.Message.Body.VoluntaryExits)),
-		SignedBLSToExecutionChange: make([]*types.SignedBLSToExecutionChange, len(parsedBlock.Message.Body.SignedDilithiumToExecutionChange)),
-		AttestationDuties:          make(map[types.ValidatorIndex][]types.Slot),
-		SyncDuties:                 make(map[types.ValidatorIndex]bool),
+		ProposerSlashings:                make([]*types.ProposerSlashing, len(parsedBlock.Message.Body.ProposerSlashings)),
+		AttesterSlashings:                make([]*types.AttesterSlashing, len(parsedBlock.Message.Body.AttesterSlashings)),
+		Attestations:                     make([]*types.Attestation, len(parsedBlock.Message.Body.Attestations)),
+		Deposits:                         make([]*types.Deposit, len(parsedBlock.Message.Body.Deposits)),
+		VoluntaryExits:                   make([]*types.VoluntaryExit, len(parsedBlock.Message.Body.VoluntaryExits)),
+		SignedDilithiumToExecutionChange: make([]*types.SignedDilithiumToExecutionChange, len(parsedBlock.Message.Body.SignedDilithiumToExecutionChange)),
+		AttestationDuties:                make(map[types.ValidatorIndex][]types.Slot),
+		SyncDuties:                       make(map[types.ValidatorIndex]bool),
 	}
 
 	epochAssignments, err := lc.GetEpochAssignments(slot / utils.Config.Chain.ClConfig.SlotsPerEpoch)
@@ -1133,14 +1133,14 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 		}
 	}
 
-	for i, blsChange := range parsedBlock.Message.Body.SignedDilithiumToExecutionChange {
-		block.SignedBLSToExecutionChange[i] = &types.SignedBLSToExecutionChange{
-			Message: types.BLSToExecutionChange{
-				Validatorindex: uint64(blsChange.Message.ValidatorIndex),
-				BlsPubkey:      blsChange.Message.FromBlsPubkey,
-				Address:        blsChange.Message.ToExecutionAddress,
+	for i, dilithiumChange := range parsedBlock.Message.Body.SignedDilithiumToExecutionChange {
+		block.SignedDilithiumToExecutionChange[i] = &types.SignedDilithiumToExecutionChange{
+			Message: types.DilithiumToExecutionChange{
+				Validatorindex:  uint64(dilithiumChange.Message.ValidatorIndex),
+				DilithiumPubkey: dilithiumChange.Message.FromDilithiumPubkey,
+				Address:         dilithiumChange.Message.ToExecutionAddress,
 			},
-			Signature: blsChange.Signature,
+			Signature: dilithiumChange.Signature,
 		}
 	}
 
@@ -1493,11 +1493,11 @@ type WithdrawalPayload struct {
 	Amount         uint64Str   `json:"amount"`
 }
 
-type SignedBLSToExecutionChange struct {
+type SignedDilithiumToExecutionChange struct {
 	Message struct {
-		ValidatorIndex     uint64Str   `json:"validator_index"`
-		FromBlsPubkey      bytesHexStr `json:"from_bls_pubkey"`
-		ToExecutionAddress bytesHexStr `json:"to_execution_address"`
+		ValidatorIndex      uint64Str   `json:"validator_index"`
+		FromDilithiumPubkey bytesHexStr `json:"from_dilithium_pubkey"`
+		ToExecutionAddress  bytesHexStr `json:"to_execution_address"`
 	} `json:"message"`
 	Signature bytesHexStr `json:"signature"`
 }
@@ -1522,7 +1522,7 @@ type AnySignedBlock struct {
 
 			ExecutionPayload *ExecutionPayload `json:"execution_payload"`
 
-			SignedDilithiumToExecutionChange []*SignedBLSToExecutionChange `json:"dilithium_to_execution_changes"`
+			SignedDilithiumToExecutionChange []*SignedDilithiumToExecutionChange `json:"dilithium_to_execution_changes"`
 		} `json:"body"`
 	} `json:"message"`
 	Signature bytesHexStr `json:"signature"`
