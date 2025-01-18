@@ -6,7 +6,7 @@ database:
   port: "<dbport>"
   password: "<dbpassword>"
 
-# Chain network configuration (example will work for the prysm testnet)
+# Chain network configuration
 chain:
   slotsPerEpoch: 32
   secondsPerSlot: 12

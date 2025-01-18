@@ -195,9 +195,9 @@ func (client *GzondClient) GetBlockByHash(hash common.Hash) (*types.Eth1Block, *
 		}
 
 		pbTx := &types.Eth1Transaction{
-			Type:                 uint32(tx.Type()),
-			Nonce:                tx.Nonce(),
-			GasPrice:             tx.GasPrice().Bytes(),
+			Type:  uint32(tx.Type()),
+			Nonce: tx.Nonce(),
+			// GasPrice:             tx.GasPrice().Bytes(),
 			MaxPriorityFeePerGas: tx.GasTipCap().Bytes(),
 			MaxFeePerGas:         tx.GasFeeCap().Bytes(),
 			Gas:                  tx.Gas(),
@@ -318,9 +318,9 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 		}
 
 		pbTx := &types.Eth1Transaction{
-			Type:                 uint32(tx.Type()),
-			Nonce:                tx.Nonce(),
-			GasPrice:             tx.GasPrice().Bytes(),
+			Type:  uint32(tx.Type()),
+			Nonce: tx.Nonce(),
+			// GasPrice:             tx.GasPrice().Bytes(),
 			MaxPriorityFeePerGas: tx.GasTipCap().Bytes(),
 			MaxFeePerGas:         tx.GasFeeCap().Bytes(),
 			Gas:                  tx.Gas(),

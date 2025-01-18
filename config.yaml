@@ -38,7 +38,7 @@ indexer:
   indexMissingEpochsOnStartup: true # Check for missing epochs and export them after startup
   node:
     host: "localhost" # Address of the backend node
-    port: "4000" # GRPC port of the Prysm node
+    port: "4000" # GRPC port of the Qrysm node
     type: "qrysm" # only qrysm supported for now
     pageSize: 100 # the amount of entries to fetch per paged rpc call, TODO set to 500
   eth1Endpoint: 'http://localhost:8545'

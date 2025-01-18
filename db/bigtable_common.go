@@ -96,8 +96,6 @@ func (bigtable *Bigtable) ClearByPrefix(table string, family, columns, prefix st
 		btTable = bigtable.tableMetadata
 	case "beaconchain":
 		btTable = bigtable.tableBeaconchain
-	case "machine_metrics":
-		btTable = bigtable.tableMachineMetrics
 	case "beaconchain_validators":
 		btTable = bigtable.tableValidators
 	case "beaconchain_validators_history":

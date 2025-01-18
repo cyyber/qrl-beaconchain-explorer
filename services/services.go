@@ -19,8 +19,8 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
 	"github.com/shopspring/decimal"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/common"

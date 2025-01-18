@@ -14,10 +14,10 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/version"
 
-	eth_rewards "github.com/gobitfly/eth-rewards"
-	"github.com/gobitfly/eth-rewards/beacon"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
+	zond_rewards "github.com/theQRL/zond-beaconchain-explorer/zond-rewards"
+	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/beacon"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -230,7 +230,7 @@ func export(epoch uint64, bt *db.Bigtable, client *beacon.Client, elClient *stri
 	start := time.Now()
 	logrus.Infof("retrieving rewards details for epoch %v", epoch)
 
-	rewards, err := eth_rewards.GetRewardsForEpoch(epoch, client, *elClient)
+	rewards, err := zond_rewards.GetRewardsForEpoch(epoch, client, *elClient)
 
 	if err != nil {
 		return fmt.Errorf("error retrieving reward details for epoch %v: %v", epoch, err)

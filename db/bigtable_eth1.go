@@ -808,24 +808,25 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 	txReward := big.NewInt(0)
 
 	for _, t := range block.GetTransactions() {
-		price := new(big.Int).SetBytes(t.GasPrice)
+		// price := new(big.Int).SetBytes(t.GasPrice)
 
-		if minGasPrice == nil {
-			minGasPrice = price
-		}
-		if maxGasPrice == nil {
-			maxGasPrice = price
-		}
+		// if minGasPrice == nil {
+		// 	minGasPrice = price
+		// }
+		// if maxGasPrice == nil {
+		// 	maxGasPrice = price
+		// }
 
-		if price.Cmp(maxGasPrice) > 0 {
-			maxGasPrice = price
-		}
+		// if price.Cmp(maxGasPrice) > 0 {
+		// 	maxGasPrice = price
+		// }
 
-		if price.Cmp(minGasPrice) < 0 {
-			minGasPrice = price
-		}
+		// if price.Cmp(minGasPrice) < 0 {
+		// 	minGasPrice = price
+		// }
 
-		txFee := new(big.Int).Mul(new(big.Int).SetBytes(t.GasPrice), big.NewInt(int64(t.GasUsed)))
+		// txFee := new(big.Int).Mul(new(big.Int).SetBytes(t.GasPrice), big.NewInt(int64(t.GasUsed)))
+		txFee := new(big.Int)
 
 		if len(block.BaseFee) > 0 {
 			effectiveGasPrice := math.BigMin(new(big.Int).Add(new(big.Int).SetBytes(t.MaxPriorityFeePerGas), new(big.Int).SetBytes(block.BaseFee)), new(big.Int).SetBytes(t.MaxFeePerGas))
@@ -908,9 +909,7 @@ func CalculateTxFeeFromTransaction(tx *types.Eth1Transaction, blockBaseFee *big.
 	// calculate tx fee depending on tx type
 	txFee := new(big.Int).SetUint64(tx.GasUsed)
 	switch tx.Type {
-	case 0, 1:
-		txFee.Mul(txFee, new(big.Int).SetBytes(tx.GasPrice))
-	case 2, 3:
+	case 2:
 		// multiply gasused with min(baseFee + maxpriorityfee, maxfee)
 		if normalGasPrice, maxGasPrice := new(big.Int).Add(blockBaseFee, new(big.Int).SetBytes(tx.MaxPriorityFeePerGas)), new(big.Int).SetBytes(tx.MaxFeePerGas); normalGasPrice.Cmp(maxGasPrice) <= 0 {
 			txFee.Mul(txFee, normalGasPrice)
@@ -952,17 +951,17 @@ func (bigtable *Bigtable) TransformTx(blk *types.Eth1Block, cache *freecache.Cac
 		}
 
 		key := fmt.Sprintf("%s:TX:%x", bigtable.chainId, tx.GetHash())
-		fee := new(big.Int).Mul(new(big.Int).SetBytes(tx.GetGasPrice()), big.NewInt(int64(tx.GetGasUsed()))).Bytes()
+		// fee := new(big.Int).Mul(new(big.Int).SetBytes(tx.GetGasPrice()), big.NewInt(int64(tx.GetGasUsed()))).Bytes()
 		indexedTx := &types.Eth1TransactionIndexed{
-			Hash:               tx.GetHash(),
-			BlockNumber:        blk.GetNumber(),
-			Time:               blk.GetTime(),
-			MethodId:           method,
-			From:               tx.GetFrom(),
-			To:                 to,
-			Value:              tx.GetValue(),
-			TxFee:              fee,
-			GasPrice:           tx.GetGasPrice(),
+			Hash:        tx.GetHash(),
+			BlockNumber: blk.GetNumber(),
+			Time:        blk.GetTime(),
+			MethodId:    method,
+			From:        tx.GetFrom(),
+			To:          to,
+			Value:       tx.GetValue(),
+			// TxFee:              fee,
+			// GasPrice:           tx.GetGasPrice(),
 			IsContractCreation: isContract,
 			ErrorMsg:           tx.GetErrorMsg(),
 		}

@@ -19,7 +19,7 @@ message Eth1Block {
     uint64 gas_used = 11;
     google.protobuf.Timestamp time = 12;
     bytes extra = 13;
-    bytes mix_digest = 14;
+    bytes random = 14;
     bytes bloom = 17;
     bytes base_fee = 18;
     repeated Eth1Transaction transactions = 21;
@@ -36,7 +36,6 @@ message Eth1Withdrawal {
 message Eth1Transaction {
     uint32 type = 1;
     uint64 nonce = 2;
-    bytes gas_price = 3;
     bytes max_priority_fee_per_gas = 4;
     bytes max_fee_per_gas = 5;
     uint64 gas = 6;

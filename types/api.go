@@ -1,12 +1,8 @@
 package types
 
 import (
-	"database/sql/driver"
-	"encoding/json"
 	"math/big"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type ApiResponse struct {
@@ -51,82 +47,8 @@ type StatsAdditionalsValidator struct {
 	ValidatorActive uint64 `mapstructure:"validator_active"`
 }
 
-type StatsAdditionalsBeaconnode struct {
-	DiskBeaconchainBytesTotal       uint64 `mapstructure:"disk_beaconchain_bytes_total"`
-	NetworkLibp2pBytesTotalReceive  uint64 `mapstructure:"network_libp2p_bytes_total_receive"`
-	NetworkLibp2pBytesTotalTransmit uint64 `mapstructure:"network_libp2p_bytes_total_transmit"`
-	NetworkPeersConnected           uint64 `mapstructure:"network_peers_connected"`
-	SyncEth1Connected               bool   `mapstructure:"sync_eth1_connected"`
-	SyncEth2Synced                  bool   `mapstructure:"sync_eth2_synced"`
-	SyncBeaconHeadSlot              uint64 `mapstructure:"sync_beacon_head_slot"`
-	SyncEth1FallbackConfigured      bool   `mapstructure:"sync_eth1_fallback_configured"`
-	SyncEth1FallbackConnected       bool   `mapstructure:"sync_eth1_fallback_connected"`
-}
-
-type StatsMeta struct {
-	Version         uint64 `mapstructure:"version"`
-	Timestamp       uint64 `mapstructure:"timestamp"`
-	Process         string `mapstructure:"process"`
-	Machine         string
-	ExporterVersion string `mapstructure:"exporter_version"`
-}
-
-type StatsDataStruct struct {
-	Validator interface{} `json:"validator"`
-	Node      interface{} `json:"node"`
-	System    interface{} `json:"system"`
-}
-
-type WidgetResponse struct {
-	Eff       any   `json:"efficiency"`
-	Validator any   `json:"validator"`
-	Epoch     int64 `json:"epoch"`
-}
-
 type DashboardRequest struct {
 	IndicesOrPubKey string `json:"indicesOrPubkey"`
-}
-
-type DiscordEmbed struct {
-	Color       string              `json:"color,omitempty"`
-	Description string              `json:"description,omitempty"`
-	Fields      []DiscordEmbedField `json:"fields,omitempty"`
-	Title       string              `json:"title,omitempty"`
-	Type        string              `json:"type,omitempty"`
-}
-
-type DiscordEmbedField struct {
-	Inline bool   `json:"inline"`
-	Name   string `json:"name"`
-	Value  string `json:"value"`
-}
-
-type DiscordComponent struct {
-	Type       uint64                   `json:"type"`
-	Components []DiscordComponentButton `json:"components"`
-}
-
-type DiscordComponentButton struct {
-	Style    uint64 `json:"style"`
-	CustomID string `json:"custom_id"`
-	Label    string `json:"label"`
-	URL      string `json:"url"`
-	Disabled bool   `json:"disabled"`
-	Type     uint64 `json:"type"`
-}
-
-type DiscordReq struct {
-	Content         string             `json:"content,omitempty"`
-	Username        string             `json:"username,omitempty"`
-	Avatar_url      string             `json:"avatar_url,omitempty"`
-	Tts             bool               `json:"tts,omitempty"`
-	Embeds          []DiscordEmbed     `json:"embeds,omitempty"`
-	AllowedMentions []interface{}      `json:"allowedMentions,omitempty"`
-	Components      []DiscordComponent `json:"components,omitempty"`
-	Files           interface{}        `json:"files,omitempty"`
-	Payload         string             `json:"payload,omitempty"`
-	Attachments     interface{}        `json:"attachments,omitempty"`
-	Flags           int                `json:"flags,omitempty"`
 }
 
 type ExecutionPerformanceResponse struct {
@@ -171,19 +93,6 @@ type ExecBlockProposer struct {
 	Slot      uint64 `db:"slot" json:"slot"`
 	Epoch     uint64 `db:"epoch" json:"epoch"`
 	Finalized bool   `json:"finalized"`
-}
-
-func (e *DiscordReq) Scan(value interface{}) error {
-	b, ok := value.([]byte)
-	if !ok {
-		return errors.New("type assertion to []byte failed")
-	}
-
-	return json.Unmarshal(b, &e)
-}
-
-func (a DiscordReq) Value() (driver.Value, error) {
-	return json.Marshal(a)
 }
 
 type ApiEth1AddressERC20TokenResponse struct {

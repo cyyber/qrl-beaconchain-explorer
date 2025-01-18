@@ -158,7 +158,7 @@ func getRepoTime(date string, dTime string) (time.Time, error) {
 	return time.Date(int(year), time.Month(int(month)), int(day), int(hour), int(min), 0, 0, time.UTC), nil
 }
 
-func prepareEthClientData(repo string, name string, curTime time.Time) (string, template.HTML) {
+func prepareZondClientData(repo string, name string, curTime time.Time) (string, template.HTML) {
 	client := fetchClientData(repo)
 	time.Sleep(time.Millisecond * 250) // consider github rate limit
 
@@ -219,10 +219,9 @@ func updateZondClient() {
 	defer bannerClientsMux.Unlock()
 	bannerClients = []clientUpdateInfo{}
 	updateZondClientNetShare()
-	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareEthClientData("/theQRL/go-zond", "Geth", curTime)
+	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareZondClientData("/theQRL/go-zond", "Gzond", curTime)
 
-	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareEthClientData("/theQRL/qrysm", "Prysm", curTime)
-	// ethClients.Lighthouse.ClientReleaseVersion, ethClients.Lighthouse.ClientReleaseDate = prepareEthClientData("/sigp/lighthouse", "Lighthouse", curTime)
+	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareZondClientData("/theQRL/qrysm", "Qrysm", curTime)
 
 	zondClients.LastUpdate = curTime
 }

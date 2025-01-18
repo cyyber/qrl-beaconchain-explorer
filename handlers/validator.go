@@ -28,7 +28,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/juliangruber/go-intersect"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
 var validatorEditFlash = "edit_validator_flash"

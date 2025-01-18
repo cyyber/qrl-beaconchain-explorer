@@ -21,9 +21,9 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"github.com/pressly/goose/v3"
-	prysm_deposit "github.com/prysmaticlabs/prysm/v3/contracts/deposit"
-	ethpb "github.com/prysmaticlabs/prysm/v3/proto/prysm/v1alpha1"
 	"github.com/sirupsen/logrus"
+	qrysm_deposit "github.com/theQRL/qrysm/contracts/deposit"
+	ethpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
 
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
 
@@ -1440,7 +1440,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 
 			for i, d := range b.Deposits {
 
-				err := prysm_deposit.VerifyDepositSignature(&ethpb.Deposit_Data{
+				err := qrysm_deposit.VerifyDepositSignature(&ethpb.Deposit_Data{
 					PublicKey:             d.PublicKey,
 					WithdrawalCredentials: d.WithdrawalCredentials,
 					Amount:                d.Amount,

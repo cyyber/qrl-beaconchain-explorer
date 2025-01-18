@@ -2,7 +2,7 @@ p1_title: "Beacon Chain Фаза 0"
 p1_text: 'В настоящее время Ethereum Beacon Chain находится в стадии genesis. 
   Пожалуйста, подготовьте Ваши валидаторы и отправьте свои депозиты в депозит контракт. 
   Чтобы присоединиться к Ethereum 2.0, запустите одну из beacon chain валидаторов. 
-  Основная сеть будет поддерживать <a href="https://github.com/prysmaticlabs/prysm">Prysm</a>,
+  Основная сеть будет поддерживать <a href="https://github.com/prysmaticlabs/prysm">Qrysm</a>,
   <a href="https://github.com/sigp/lighthouse">Lighthouse</a>,
   <a href="https://github.com/PegaSysEng/teku">Teku</a>,
   <a href="https://github.com/status-im/nim-beacon-chain">Nimbus</a>.

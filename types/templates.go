@@ -10,13 +10,13 @@ import (
 	"strconv"
 	"time"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/common"
 	geth_types "github.com/theQRL/go-zond/core/types"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
 // PageData is a struct to hold web page data

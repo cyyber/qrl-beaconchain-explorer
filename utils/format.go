@@ -28,7 +28,7 @@ import (
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
 const CalculatingHint = `Calculating…`
@@ -968,13 +968,6 @@ func FormatPublicKey(validator []byte) template.HTML {
 	copyBtn := CopyButton(hex.EncodeToString(validator))
 	// return template.HTML(fmt.Sprintf("<i class=\"fas fa-male\"></i> <a href=\"/validator/0x%x\">%v</a>", validator, FormatHash(validator)))
 	return template.HTML(fmt.Sprintf(`<i class="fas fa-male mr-2"></i><a style="font-family: 'Roboto Mono'" href="/validator/0x%x">0x%v…</a>%v`, validator, hex.EncodeToString(validator)[:6], copyBtn))
-}
-
-func FormatMachineName(machineName string) template.HTML {
-	if machineName == "" {
-		machineName = "Default"
-	}
-	return template.HTML(fmt.Sprintf("<i class=\"fas fa-hdd\"></i> %v", machineName))
 }
 
 // FormatTimestamp will return a timestamp formated as html. This is supposed to be used together with client-side js

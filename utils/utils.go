@@ -46,14 +46,14 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lib/pq"
 	"github.com/mvdan/xurls"
-	"github.com/prysmaticlabs/prysm/v3/beacon-chain/core/signing"
-	prysm_params "github.com/prysmaticlabs/prysm/v3/config/params"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	confusables "github.com/skygeario/go-confusable-homoglyphs"
 	"github.com/theQRL/go-zond/common/hexutil"
 	"github.com/theQRL/go-zond/params"
+	"github.com/theQRL/qrysm/beacon-chain/core/signing"
+	qrysm_params "github.com/theQRL/qrysm/config/params"
 )
 
 // Config is the globally accessible configuration
@@ -427,7 +427,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 	}
 
 	if cfg.Chain.ClConfigPath == "" {
-		// var prysmParamsConfig *prysmParams.BeaconChainConfig
+		// var qrysmParamsConfig *qrysmParams.BeaconChainConfig
 		switch cfg.Chain.Name {
 		case "mainnet":
 			err = yaml.Unmarshal([]byte(config.MainnetChainYml), &cfg.Chain.ClConfig)
@@ -437,9 +437,9 @@ func ReadConfig(cfg *types.Config, path string) error {
 		if err != nil {
 			return err
 		}
-		// err = prysmParams.SetActive(prysmParamsConfig)
+		// err = qrysmParams.SetActive(qrysmParamsConfig)
 		// if err != nil {
-		// 	return fmt.Errorf("error setting chainConfig (%v) for prysmParams: %w", cfg.Chain.Name, err)
+		// 	return fmt.Errorf("error setting chainConfig (%v) for qrysmParams: %w", cfg.Chain.Name, err)
 		// }
 	} else if cfg.Chain.ClConfigPath == "node" {
 		nodeEndpoint := fmt.Sprintf("http://%s:%s", cfg.Indexer.Node.Host, cfg.Indexer.Node.Port)
@@ -1407,7 +1407,7 @@ func logErrorInfo(err error, callerSkip int, additionalInfos ...map[string]inter
 }
 
 func GetSigningDomain() ([]byte, error) {
-	beaconConfig := prysm_params.BeaconConfig()
+	beaconConfig := qrysm_params.BeaconConfig()
 	genForkVersion, err := hex.DecodeString(strings.Replace(Config.Chain.ClConfig.GenesisForkVersion, "0x", "", -1))
 	if err != nil {
 		return nil, err

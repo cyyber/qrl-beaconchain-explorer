@@ -1523,7 +1523,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 			maxFee := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.MaxFeePerGas), 0)
 			prioFee := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.MaxPriorityFeePerGas), 0)
 			gasUsed := decimal.NewFromBigInt(new(big.Int).SetUint64(tx.GasUsed), 0)
-			gasPrice := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.GasPrice), 0)
 
 			var tipFee decimal.Decimal
 			var txFees decimal.Decimal
@@ -1552,11 +1551,7 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 			}
 			totalGasUsed = totalGasUsed.Add(gasUsed)
 			totalBurned = totalBurned.Add(baseFee.Mul(gasUsed))
-			if blk.Number < 12244000 {
-				totalTips = totalTips.Add(gasUsed.Mul(gasPrice))
-			} else {
-				totalTips = totalTips.Add(gasUsed.Mul(tipFee))
-			}
+			totalTips = totalTips.Add(gasUsed.Mul(tipFee))
 		}
 		prevBlock = blk
 	}
