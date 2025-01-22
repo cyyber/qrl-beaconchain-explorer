@@ -49,6 +49,7 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 		CurrentSlot:           services.LatestSlot(),
 		FinalizationDelay:     services.FinalizationDelay(),
 		// Rates:                 services.GetRates(GetCurrency(r)),
+		Rates:               &types.Rates{},
 		Mainnet:             utils.Config.Chain.ClConfig.ConfigName == "mainnet" || utils.Config.Chain.ClConfig.ConfigName == "gnosis",
 		DepositContract:     utils.Config.Chain.ClConfig.DepositContractAddress,
 		ChainConfig:         utils.Config.Chain.ClConfig,

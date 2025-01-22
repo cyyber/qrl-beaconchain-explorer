@@ -11,8 +11,5 @@ p3_text: '
   <a href="/blocks">slots</a> and see <a href="/charts">statistics</a>.
   Further, you can monitor your validators performance using our 
   <a href="/dashboard">dashboard</a> feature.
-  <a href="/register">Sign up</a> and add alerts on the 
-  <a href="/user/notifications">accounts page</a>. 
-  Get notified if your validators go offline. 
   For more information about the beacon chain view our 
-  <a href="https://kb.beaconcha.in/">knowledge base.</a>'
+  <a href="https://kb.zond.theqrl.org/">knowledge base.</a>'

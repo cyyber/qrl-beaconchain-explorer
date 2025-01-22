@@ -498,43 +498,10 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    users_validators_tags (
-        user_id INT NOT NULL,
-        validator_publickey bytea NOT NULL,
-        tag CHARACTER VARYING(100) NOT NULL,
-        PRIMARY KEY (user_id, validator_publickey, tag)
-    );
-
-CREATE TABLE IF NOT EXISTS
     validator_tags (
         publickey bytea NOT NULL,
         tag CHARACTER VARYING(100) NOT NULL,
         PRIMARY KEY (publickey, tag)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_webhooks (
-        id serial NOT NULL,
-        user_id INT NOT NULL,
-        -- label             varchar(200)            not null,
-        url CHARACTER VARYING(1024) NOT NULL,
-        retries INT NOT NULL DEFAULT 0,
-        -- a backoff parameter that indicates if the requests was successful and when to retry it again
-        request jsonb,
-        response jsonb,
-        last_sent TIMESTAMP WITHOUT TIME ZONE,
-        event_names TEXT[] NOT NULL,
-        destination CHARACTER VARYING(200),
-        -- discord for example could be a destination and the request would be adapted
-        PRIMARY KEY (user_id, id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    mails_sent (
-        email CHARACTER VARYING(100) NOT NULL,
-        ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        cnt INT NOT NULL,
-        PRIMARY KEY (email, ts)
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -557,16 +524,6 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    stake_pools_stats (
-        id serial NOT NULL,
-        address TEXT NOT NULL,
-        deposit INT,
-        NAME TEXT NOT NULL,
-        category TEXT,
-        PRIMARY KEY (id, address, deposit, NAME)
-    );
-
-CREATE TABLE IF NOT EXISTS
     price (
         ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
         eur NUMERIC(20, 10) NOT NULL,
@@ -578,15 +535,6 @@ CREATE TABLE IF NOT EXISTS
         gbp NUMERIC(20, 10) NOT NULL,
         aud NUMERIC(20, 10) NOT NULL,
         PRIMARY KEY (ts)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    stats_sharing (
-        id bigserial PRIMARY KEY,
-        ts TIMESTAMP NOT NULL,
-        SHARE bool NOT NULL,
-        user_id BIGINT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users (id)
     );
 
 CREATE TABLE IF NOT EXISTS

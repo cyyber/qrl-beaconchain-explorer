@@ -1,4 +1,3 @@
-// TODO(rgeraldes24)
 -- +goose Up
 -- +goose StatementBegin
 DROP TABLE IF EXISTS blocks_transactions;

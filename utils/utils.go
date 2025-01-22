@@ -423,7 +423,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 	}
 
 	if cfg.Frontend.SiteBrand == "" {
-		cfg.Frontend.SiteBrand = "explorer.zond.theqrl.org"
+		cfg.Frontend.SiteBrand = "Zond Explorer"
 	}
 
 	if cfg.Chain.ClConfigPath == "" {
@@ -447,7 +447,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 		jr := &types.ConfigJsonResponse{}
 
 		err := requests.
-			URL(nodeEndpoint + "/eth/v1/config/spec").
+			URL(nodeEndpoint + "/zond/v1/config/spec").
 			ToJSON(jr).
 			Fetch(context.Background())
 
@@ -541,7 +541,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 		gtr := &GenesisResponse{}
 
 		err = requests.
-			URL(nodeEndpoint + "/eth/v1/beacon/genesis").
+			URL(nodeEndpoint + "/zond/v1/beacon/genesis").
 			ToJSON(gtr).
 			Fetch(context.Background())
 
@@ -568,27 +568,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 		cfg.Chain.ClConfig = *chainConfig
 	}
 
-	type MinimalELConfig struct {
-		ByzantiumBlock      *big.Int `yaml:"BYZANTIUM_FORK_BLOCK,omitempty"`      // Byzantium switch block (nil = no fork, 0 = already on byzantium)
-		ConstantinopleBlock *big.Int `yaml:"CONSTANTINOPLE_FORK_BLOCK,omitempty"` // Constantinople switch block (nil = no fork, 0 = already activated)
-	}
 	if cfg.Chain.ElConfigPath == "" {
-		minimalCfg := MinimalELConfig{}
-		switch cfg.Chain.Name {
-		case "mainnet":
-			err = yaml.Unmarshal([]byte(config.MainnetChainYml), &minimalCfg)
-		default:
-			return fmt.Errorf("tried to set known chain-config, but unknown chain-name: %v (path: %v)", cfg.Chain.Name, cfg.Chain.ElConfigPath)
-		}
-		if err != nil {
-			return err
-		}
-		if minimalCfg.ByzantiumBlock == nil {
-			minimalCfg.ByzantiumBlock = big.NewInt(0)
-		}
-		if minimalCfg.ConstantinopleBlock == nil {
-			minimalCfg.ConstantinopleBlock = big.NewInt(0)
-		}
 		cfg.Chain.ElConfig = &params.ChainConfig{
 			ChainID: big.NewInt(int64(cfg.Chain.Id)),
 		}

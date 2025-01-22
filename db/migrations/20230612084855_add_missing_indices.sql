@@ -49,9 +49,6 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_status_epoch_exec_block_numbe
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_status_slot_epoch ON public.blocks USING btree (status, slot, epoch);
 -- +goose StatementEnd
 -- +goose StatementBegin
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_rocketpool_minipools_address ON public.rocketpool_minipools USING btree (address);
--- +goose StatementEnd
--- +goose StatementBegin
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_status_blockroot_epoch ON public.blocks USING btree (status, blockroot, epoch);
 -- +goose StatementEnd
 
@@ -134,9 +131,6 @@ DROP INDEX CONCURRENTLY idx_blocks_status_epoch_exec_block_number;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_blocks_status_slot_epoch;
--- +goose StatementEnd
--- +goose StatementBegin
-DROP INDEX CONCURRENTLY idx_rocketpool_minipools_address;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_blocks_status_blockroot_epoch;

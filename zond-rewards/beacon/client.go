@@ -29,7 +29,7 @@ func NewClient(endpoint string, timeout time.Duration) *Client {
 
 func (c *Client) Balance(slot uint64, validator uint64) (uint64, error) {
 
-	url := fmt.Sprintf("%s/eth/v1/beacon/states/%d/validator_balances?id=%d", c.endpoint, slot, validator)
+	url := fmt.Sprintf("%s/zond/v1/beacon/states/%d/validator_balances?id=%d", c.endpoint, slot, validator)
 
 	resp, err := c.httpClient.Get(url)
 
@@ -54,7 +54,7 @@ func (c *Client) Balance(slot uint64, validator uint64) (uint64, error) {
 }
 
 func (c *Client) AttestationRewards(epoch uint64) (*types.AttestationRewardsApiResponse, error) {
-	url := fmt.Sprintf("%s/eth/v1/beacon/rewards/attestations/%d", c.endpoint, epoch)
+	url := fmt.Sprintf("%s/zond/v1/beacon/rewards/attestations/%d", c.endpoint, epoch)
 	data := []byte("[]") //request data for all validators
 
 	resp, err := c.httpClient.Post(url, "application/json", bytes.NewReader(data))
@@ -79,7 +79,7 @@ func (c *Client) AttestationRewards(epoch uint64) (*types.AttestationRewardsApiR
 }
 
 func (c *Client) SyncCommitteeRewards(slot uint64) (*types.SyncCommitteeRewardsApiResponse, error) {
-	url := fmt.Sprintf("%s/eth/v1/beacon/rewards/sync_committee/%d", c.endpoint, slot)
+	url := fmt.Sprintf("%s/zond/v1/beacon/rewards/sync_committee/%d", c.endpoint, slot)
 	data := []byte("[]") //request data for all validators
 
 	resp, err := c.httpClient.Post(url, "application/json", bytes.NewReader(data))
@@ -110,7 +110,7 @@ func (c *Client) SyncCommitteeRewards(slot uint64) (*types.SyncCommitteeRewardsA
 }
 
 func (c *Client) BlockRewards(slot uint64) (*types.BlockRewardsApiResponse, error) {
-	url := fmt.Sprintf("%s/eth/v1/beacon/rewards/blocks/%d", c.endpoint, slot)
+	url := fmt.Sprintf("%s/zond/v1/beacon/rewards/blocks/%d", c.endpoint, slot)
 
 	resp, err := c.httpClient.Get(url)
 
@@ -137,7 +137,7 @@ func (c *Client) BlockRewards(slot uint64) (*types.BlockRewardsApiResponse, erro
 }
 
 func (c *Client) ProposerAssignments(epoch uint64) (*types.EpochProposerAssignmentsApiResponse, error) {
-	url := fmt.Sprintf("%s/eth/v1/validator/duties/proposer/%d", c.endpoint, epoch)
+	url := fmt.Sprintf("%s/zond/v1/validator/duties/proposer/%d", c.endpoint, epoch)
 
 	resp, err := c.httpClient.Get(url)
 
@@ -161,7 +161,7 @@ func (c *Client) ProposerAssignments(epoch uint64) (*types.EpochProposerAssignme
 }
 
 func (c *Client) ExecutionBlockNumber(slot uint64) (uint64, error) {
-	url := fmt.Sprintf("%s/eth/v1/beacon/blocks/%d", c.endpoint, slot)
+	url := fmt.Sprintf("%s/zond/v1/beacon/blocks/%d", c.endpoint, slot)
 
 	resp, err := c.httpClient.Get(url)
 

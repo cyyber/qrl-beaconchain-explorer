@@ -1,8 +1,7 @@
 version: '3'
 x-service: &default-service
-  image: golang:1.20
+  image: golang:1.22
   working_dir: /app
-  network_mode: "host"
   volumes:
     - ../.:/app
     - /tmp/go-cache:/go
@@ -13,40 +12,82 @@ services:
     profiles:
       - build-once
     command: /bin/bash -c "trap stopit SIGINT; stopit() { echo 'trapped SIGINT'; exit; }; git config --global --add safe.directory '*' && make -B all"
+  
   indexer:
     <<: *default-service
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
     environment:
       - INDEXER_ENABLED=true
+  
   eth1indexer:
     <<: *default-service
     command: go run ./cmd/eth1indexer -config /app/local-deployment/config.yml -blocks.concurrency 1 -blocks.tracemode 'geth' -data.concurrency 1 --balances.enabled
+  
   rewards-exporter:
     <<: *default-service
     command: go run ./cmd/rewards-exporter -config /app/local-deployment/config.yml
+  
   statistics:
     <<: *default-service
     command: go run ./cmd/statistics -config /app/local-deployment/config.yml --charts.enabled --graffiti.enabled -validators.enabled
+  
   frontend-data-updater:
     <<: *default-service
     command: go run ./cmd/frontend-data-updater -config /app/local-deployment/config.yml
+  
   frontend:
     <<: *default-service
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
     environment:
       - FRONTEND_ENABLED=true
-  ratelimits-updater:
-    <<: *default-service
-    command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=update-ratelimits
+    ports:
+      - "8070:8070"
+  
+  # ratelimits-updater:
+  #   <<: *default-service
+  #   command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=update-ratelimits
+  
   misc:
     <<: *default-service
     command: /bin/bash -c "trap stopit SIGINT; stopit() { echo 'trapped SIGINT'; exit; }; while true; do date; sleep 1; done"
+  
   redis-sessions:
     image: redis:7
     volumes:
       - redis-sessions:/data
     ports:
-      - "$REDIS_SESSIONS_PORT:6379"
+      - 6379:6379
+  
+  littlebigtable:
+    image: gobitfly/little_bigtable:latest
+    volumes:
+      - littlebigtable:/data_lbt
+    ports:
+      - 9000:9000
+
+  littlebigtable-migration:
+    <<: *default-service
+    command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=initBigtableSchema
+    depends_on:
+      - littlebigtable
+
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db
+
+  postgres-migration:
+    <<: *default-service
+    command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=applyDbSchema
+    depends_on:
+      - postgres
 
 volumes:
   redis-sessions:
+  littlebigtable:

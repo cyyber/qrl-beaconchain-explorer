@@ -351,17 +351,8 @@
 {{ define "content" }}
   <div class="container mt-2">
     <div id="app" v-cloak>
-      {{ with .Data }}
-        {{ template "hero" . }}
-      {{ end }}
       <div id="r-banner" info="{{ .Meta.Templates }}"></div>
-      {{ if and (not .Data.Genesis) (not .Data.GenesisPeriod) }}
-        {{ template "preGenesis" $ }}
-      {{ else if .Data.GenesisPeriod }}
-        {{ template "genesis" . }}
-      {{ else }}
-        {{ template "postGenesis" .Data }}
-      {{ end }}
+      {{ template "postGenesis" .Data }}
     </div>
   </div>
   {{ if .Data.SlotVizData }}{{ template "SlotViz" . }}{{ end }}

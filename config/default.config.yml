@@ -22,10 +22,6 @@ frontend:
   enabled: true # Enable or disable to web frontend
   siteName: "Ethereum Block Chain Explorer" # Name of the site, displayed in the title tag
   siteSubtitle: "Showing the <a href='https://prylabs.net'>💎 Zond Testnet</a>" # Subtitle shown on the main page
-  csrfAuthKey: '0123456789abcdef000000000000000000000000000000000000000000000000'
-  jwtSigningSecret: "0123456789abcdef000000000000000000000000000000000000000000000000"
-  jwtIssuer: "beaconcha.in"
-  jwtValidityInMinutes: 30
   server:
     host: "localhost" # Address to listen on
     port: "3333" # Port to listen on
@@ -42,7 +38,6 @@ frontend:
     port: "<dbport>"
     password: "<dbpassword>"
   sessionSecret: "<sessionSecret>"
-  flashSecret: "" # Encryption secret for flash cookies
 
 # Indexer config
 indexer:

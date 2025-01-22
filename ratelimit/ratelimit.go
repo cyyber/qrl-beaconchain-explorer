@@ -61,8 +61,8 @@ const (
 
 var updateInterval = time.Second * 60 // how often to update ratelimits, weights and stats
 
-var apiProducts = map[string]*ApiProduct{} // key: <bucket>:<product_name>
-var apiProductsMu = &sync.RWMutex{}
+// var apiProducts = map[string]*ApiProduct{} // key: <bucket>:<product_name>
+// var apiProductsMu = &sync.RWMutex{}
 
 var redisClient *redis.Client
 var redisIsHealthy atomic.Bool
@@ -138,16 +138,6 @@ type RedisKey struct {
 	ExpireAt time.Time
 }
 
-type ApiProduct struct {
-	Name          string    `db:"name"`
-	Bucket        string    `db:"bucket"`
-	StripePriceID string    `db:"stripe_price_id"`
-	Second        int64     `db:"second"`
-	Hour          int64     `db:"hour"`
-	Month         int64     `db:"month"`
-	ValidFrom     time.Time `db:"valid_from"`
-}
-
 type responseWriterDelegator struct {
 	http.ResponseWriter
 	written     int64
@@ -219,40 +209,46 @@ func Init() {
 		updateInterval = time.Second * 60
 	}
 
-	initializedWg.Add(3)
+	// initializedWg.Add(3)
+	initializedWg.Add(1)
 
-	go func() {
-		firstRun := true
-		for {
-			err := updateWeights(firstRun)
-			if err != nil {
-				logger.WithError(err).Errorf("error updating weights")
-				time.Sleep(time.Second * 2)
-				continue
+	/*
+		go func() {
+			firstRun := true
+			for {
+				err := updateWeights(firstRun)
+				if err != nil {
+					logger.WithError(err).Errorf("error updating weights")
+					time.Sleep(time.Second * 2)
+					continue
+				}
+				if firstRun {
+					initializedWg.Done()
+					firstRun = false
+				}
+				time.Sleep(updateInterval)
 			}
-			if firstRun {
-				initializedWg.Done()
-				firstRun = false
+		}()
+	*/
+	// TODO(rgeraldes24)
+	/*
+		go func() {
+			firstRun := true
+			for {
+				err := updateRateLimits()
+				if err != nil {
+					logger.WithError(err).Errorf("error updating ratelimits")
+					time.Sleep(time.Second * 2)
+					continue
+				}
+				if firstRun {
+					initializedWg.Done()
+					firstRun = false
+				}
+				time.Sleep(updateInterval)
 			}
-			time.Sleep(updateInterval)
-		}
-	}()
-	go func() {
-		firstRun := true
-		for {
-			err := updateRateLimits()
-			if err != nil {
-				logger.WithError(err).Errorf("error updating ratelimits")
-				time.Sleep(time.Second * 2)
-				continue
-			}
-			if firstRun {
-				initializedWg.Done()
-				firstRun = false
-			}
-			time.Sleep(updateInterval)
-		}
-	}()
+		}()
+	*/
 	go func() {
 		firstRun := true
 		for {
@@ -623,15 +619,15 @@ func updateRateLimits() error {
 		return err
 	}
 
-	dbApiProducts, err := DBGetCurrentApiProducts()
-	if err != nil {
-		return err
-	}
-	apiProductsMu.Lock()
-	for _, dbApiProduct := range dbApiProducts {
-		apiProducts[fmt.Sprintf("%s:%s", dbApiProduct.Bucket, dbApiProduct.Name)] = dbApiProduct
-	}
-	apiProductsMu.Unlock()
+	// dbApiProducts, err := DBGetCurrentApiProducts()
+	// if err != nil {
+	// 	return err
+	// }
+	// apiProductsMu.Lock()
+	// for _, dbApiProduct := range dbApiProducts {
+	// 	apiProducts[fmt.Sprintf("%s:%s", dbApiProduct.Bucket, dbApiProduct.Name)] = dbApiProduct
+	// }
+	// apiProductsMu.Unlock()
 
 	rateLimitsMu.Lock()
 	now := time.Now()
@@ -882,20 +878,20 @@ func getDefaultRatelimit(bucket string) (freeRatelimit, nokeyRatelimit *RateLimi
 		Month:  DefaultRateLimitMonth,
 	}
 
-	apiProductsMu.RLock()
-	apiProduct, ok := apiProducts[fmt.Sprintf("%s:%s", bucket, "nokey")]
-	if ok {
-		nokeyRatelimit.Second = apiProduct.Second
-		nokeyRatelimit.Hour = apiProduct.Hour
-		nokeyRatelimit.Month = apiProduct.Month
-	}
-	apiProduct, ok = apiProducts[fmt.Sprintf("%s:%s", bucket, "free")]
-	if ok {
-		freeRatelimit.Second = apiProduct.Second
-		freeRatelimit.Hour = apiProduct.Hour
-		freeRatelimit.Month = apiProduct.Month
-	}
-	apiProductsMu.RUnlock()
+	// apiProductsMu.RLock()
+	// apiProduct, ok := apiProducts[fmt.Sprintf("%s:%s", bucket, "nokey")]
+	// if ok {
+	// 	nokeyRatelimit.Second = apiProduct.Second
+	// 	nokeyRatelimit.Hour = apiProduct.Hour
+	// 	nokeyRatelimit.Month = apiProduct.Month
+	// }
+	// apiProduct, ok = apiProducts[fmt.Sprintf("%s:%s", bucket, "free")]
+	// if ok {
+	// 	freeRatelimit.Second = apiProduct.Second
+	// 	freeRatelimit.Hour = apiProduct.Hour
+	// 	freeRatelimit.Month = apiProduct.Month
+	// }
+	// apiProductsMu.RUnlock()
 
 	return freeRatelimit, nokeyRatelimit
 }
@@ -1044,16 +1040,6 @@ func DBGetUserApiRateLimit(userId int64) (*RateLimit, error) {
 		return freeRatelimit, nil
 	}
 	return rl, err
-}
-
-func DBGetCurrentApiProducts() ([]*ApiProduct, error) {
-	apiProducts := []*ApiProduct{}
-	err := db.FrontendWriterDB.Select(&apiProducts, `
-        select distinct on (name, bucket) name, bucket, stripe_price_id, second, hour, month, valid_from 
-        from api_products 
-        where valid_from <= now()
-        order by name, bucket, valid_from desc`)
-	return apiProducts, err
 }
 
 func DBUpdater() {

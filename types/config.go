@@ -49,7 +49,7 @@ type Config struct {
 		ClConfig                         ClChainConfig
 		ElConfig                         *params.ChainConfig
 	} `yaml:"chain"`
-	Eth1GzondEndpoint string `yaml:"eth1GethEndpoint" envconfig:"ETH1_GETH_ENDPOINT"`
+	Eth1GzondEndpoint string `yaml:"eth1GzondEndpoint" envconfig:"ETH1_GZOND_ENDPOINT"`
 	// EtherscanAPIKey           string `yaml:"etherscanApiKey" envconfig:"ETHERSCAN_API_KEY"`
 	// EtherscanAPIBaseURL       string `yaml:"etherscanApiBaseUrl" envconfig:"ETHERSCAN_API_BASEURL"`
 	RedisCacheEndpoint        string `yaml:"redisCacheEndpoint" envconfig:"REDIS_CACHE_ENDPOINT"`
@@ -76,8 +76,6 @@ type Config struct {
 		Debug              bool   `yaml:"debug" envconfig:"FRONTEND_DEBUG"`
 		Kong               string `yaml:"kong" envconfig:"FRONTEND_KONG"`
 		OnlyAPI            bool   `yaml:"onlyAPI" envconfig:"FRONTEND_ONLY_API"`
-		CsrfAuthKey        string `yaml:"csrfAuthKey" envconfig:"FRONTEND_CSRF_AUTHKEY"`
-		CsrfInsecure       bool   `yaml:"csrfInsecure" envconfig:"FRONTEND_CSRF_INSECURE"`
 		DisableCharts      bool   `yaml:"disableCharts" envconfig:"disableCharts"`
 		RecaptchaSiteKey   string `yaml:"recaptchaSiteKey" envconfig:"FRONTEND_RECAPTCHA_SITEKEY"`
 		RecaptchaSecretKey string `yaml:"recaptchaSecretKey" envconfig:"FRONTEND_RECAPTCHA_SECRETKEY"`
@@ -124,9 +122,6 @@ type Config struct {
 		SessionSecret                        string        `yaml:"sessionSecret" envconfig:"FRONTEND_SESSION_SECRET"`
 		SessionCookieDomain                  string        `yaml:"sessionCookieDomain" envconfig:"FRONTEND_SESSION_COOKIE_DOMAIN"`
 		SessionCookieDeriveDomainFromRequest bool          `yaml:"sessionCookieDeriveDomainFromRequest" envconfig:"FRONTEND_SESSION_COOKIE_DERIVE_DOMAIN_FROM_REQUEST"`
-		JwtSigningSecret                     string        `yaml:"jwtSigningSecret" envconfig:"FRONTEND_JWT_SECRET"`
-		JwtIssuer                            string        `yaml:"jwtIssuer" envconfig:"FRONTEND_JWT_ISSUER"`
-		JwtValidityInMinutes                 int           `yaml:"jwtValidityInMinutes" envconfig:"FRONTEND_JWT_VALIDITY_INMINUTES"`
 		GATag                                string        `yaml:"gatag" envconfig:"GATAG"`
 		DisableStatsInserts                  bool          `yaml:"disableStatsInserts" envconfig:"FRONTEND_DISABLE_STATS_INSERTS"`
 		Countdown                            struct {

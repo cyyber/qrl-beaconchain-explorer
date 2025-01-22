@@ -70,7 +70,8 @@ var httpClient = &http.Client{Timeout: time.Second * 10}
 
 // Init starts a go routine to update the Zond Clients Info
 func Init() {
-	go update()
+	// TODO(rgeraldes24)
+	// go update()
 }
 
 func fetchClientData(repo string) *gitAPIResponse {

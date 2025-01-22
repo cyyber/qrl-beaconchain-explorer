@@ -15,7 +15,7 @@ import (
 	"github.com/shopspring/decimal"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/common"
-	geth_types "github.com/theQRL/go-zond/core/types"
+	gzond_types "github.com/theQRL/go-zond/core/types"
 	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
@@ -1046,7 +1046,7 @@ type StakingCalculatorPageData struct {
 	BestValidatorBalanceHistory *[]ValidatorBalanceHistory
 	WatchlistBalanceHistory     [][]interface{}
 	TotalStaked                 uint64
-	// EtherscanApiBaseUrl         string
+	EtherscanApiBaseUrl         string
 }
 
 type DepositsPageData struct {
@@ -1367,7 +1367,7 @@ type Eth1TxData struct {
 	TxnPosition                 uint
 	Hash                        common.Hash
 	Value                       []byte
-	Receipt                     *geth_types.Receipt
+	Receipt                     *gzond_types.Receipt
 	ErrorMsg                    string
 	BlockNumber                 int64
 	Timestamp                   time.Time

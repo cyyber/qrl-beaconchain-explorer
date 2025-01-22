@@ -23,6 +23,7 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/version"
 	zondclients "github.com/theQRL/zond-beaconchain-explorer/zondClients"
+	"github.com/zesik/proxyaddr"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 
@@ -36,7 +37,6 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/phyber/negroni-gzip/gzip"
 	"github.com/urfave/negroni"
-	"github.com/zesik/proxyaddr"
 )
 
 func init() {
@@ -132,7 +132,7 @@ func main() {
 
 		rpc.CurrentGzondClient, err = rpc.NewGzondClient(utils.Config.Eth1GzondEndpoint)
 		if err != nil {
-			logrus.Fatalf("error initializing geth client: %v", err)
+			logrus.Fatalf("error initializing gzond client: %v", err)
 		}
 	}()
 
@@ -204,12 +204,11 @@ func main() {
 			logrus.Fatalf("invalid note type %v specified. supported node types are: qrysm", utils.Config.Indexer.Node.Type)
 		}
 
-		go services.StartHistoricPriceService()
+		// go services.StartHistoricPriceService()
 		go exporter.Start(rpcClient)
 	}
 
 	if cfg.Frontend.Enabled {
-
 		if cfg.Frontend.OnlyAPI {
 			services.ReportStatus("api", "Running", nil)
 		} else {
@@ -441,23 +440,20 @@ func main() {
 			router.PathPrefix("/").Handler(handlers.CustomFileServer(http.FileServer(fileSys), fileSys, handlers.NotFound))
 
 		}
-
 		if utils.Config.Metrics.Enabled {
 			router.Use(metrics.HttpMiddleware)
 		}
 
 		ratelimit.Init()
-		router.Use(ratelimit.HttpMiddleware)
+		// router.Use(ratelimit.HttpMiddleware)
 
 		n := negroni.New(negroni.NewRecovery())
 		n.Use(gzip.Gzip(gzip.DefaultCompression))
-
 		pa := &proxyaddr.ProxyAddr{}
 		pa.Init(proxyaddr.CIDRLoopback)
 		n.Use(pa)
 
 		n.UseHandler(utils.SessionStore.SCS.LoadAndSave(router))
-
 		if utils.Config.Frontend.HttpWriteTimeout == 0 {
 			utils.Config.Frontend.HttpWriteTimeout = time.Second * 15
 		}

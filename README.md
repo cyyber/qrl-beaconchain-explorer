@@ -1,9 +1,9 @@
-# Ethereum Beacon Chain Explorer
+# Zond Beacon Chain Explorer
 
-The explorer provides a comprehensive and easy to use interface for the upcoming Ethereum beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
+The explorer provides a comprehensive and easy to use interface for the upcoming Zond beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
 
-[![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://dsc.gg/beaconchain)
-[![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=Twitter&logoColor=white)](https://twitter.com/beaconcha_in)
+[![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://theqrl.org/discord)
+[![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=Twitter&logoColor=white)](https://x.com/QRLedger)
 
 [![Badge](https://github.com/theQRL/zond-beaconchain-explorer/workflows/Build/badge.svg)](https://github.com/theQRL/zond-beaconchain-explorer/actions?query=workflow%3A%22Build+%26+Publish+Docker+images%22)
 [![Go Report Card](https://goreportcard.com/badge/github.com/theQRL/zond-beaconchain-explorer)](https://goreportcard.com/report/github.com/theQRL/zond-beaconchain-explorer)

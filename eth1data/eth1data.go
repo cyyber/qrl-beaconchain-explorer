@@ -21,7 +21,7 @@ import (
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/core"
-	geth_types "github.com/theQRL/go-zond/core/types"
+	gzond_types "github.com/theQRL/go-zond/core/types"
 )
 
 var logger = logrus.New().WithField("module", "eth1data")
@@ -90,7 +90,7 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 	txPageData.BlockNumber = header.Number.Int64()
 	txPageData.Timestamp = time.Unix(int64(header.Time), 0)
 
-	msg, err := core.TransactionToMessage(tx, geth_types.NewShanghaiSigner(tx.ChainId()), header.BaseFee)
+	msg, err := core.TransactionToMessage(tx, gzond_types.NewShanghaiSigner(tx.ChainId()), header.BaseFee)
 	if err != nil {
 		return nil, fmt.Errorf("error getting sender of tx: %w", err)
 	}
@@ -309,7 +309,7 @@ func IsContract(ctx context.Context, address common.Address) (bool, error) {
 	return isContract, nil
 }
 
-func getBlockHeaderByHash(ctx context.Context, hash common.Hash) (*geth_types.Header, error) {
+func getBlockHeaderByHash(ctx context.Context, hash common.Hash) (*gzond_types.Header, error) {
 	header, err := rpc.CurrentGzondClient.GetNativeClient().HeaderByHash(ctx, hash)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving block header data for tx: %w", err)
@@ -318,12 +318,12 @@ func getBlockHeaderByHash(ctx context.Context, hash common.Hash) (*geth_types.He
 	return header, nil
 }
 
-func getTransactionReceipt(ctx context.Context, hash common.Hash) (*geth_types.Receipt, error) {
+func getTransactionReceipt(ctx context.Context, hash common.Hash) (*gzond_types.Receipt, error) {
 	cacheKey := fmt.Sprintf("%d:r:%s", utils.Config.Chain.ClConfig.DepositChainID, hash.String())
 
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour, new(geth_types.Receipt)); err == nil {
+	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour, new(gzond_types.Receipt)); err == nil {
 		logger.Infof("retrieved receipt data for tx %v from cache", hash)
-		return wanted.(*geth_types.Receipt), nil
+		return wanted.(*gzond_types.Receipt), nil
 	}
 
 	receipt, err := rpc.CurrentGzondClient.GetNativeClient().TransactionReceipt(ctx, hash)

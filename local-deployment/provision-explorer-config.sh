@@ -58,8 +58,7 @@ bigtable:
   instance: explorer
   emulator: true
   emulatorPort: $LBT_PORT
-eth1ErigonEndpoint: 'http://127.0.0.1:$EL_PORT'
-eth1GethEndpoint: 'http://127.0.0.1:$EL_PORT'
+eth1GzondEndpoint: 'http://127.0.0.1:$EL_PORT'
 redisCacheEndpoint: '127.0.0.1:$REDIS_PORT'
 redisSessionStoreEndpoint: '127.0.0.1:$REDIS_SESSIONS_PORT'
 tieredCacheProvider: 'redis'
@@ -83,24 +82,10 @@ frontend:
     user: postgres
     password: "pass"
   sessionSecret: "11111111111111111111111111111111"
-  jwtSigningSecret: "1111111111111111111111111111111111111111111111111111111111111111"
-  jwtIssuer: "localhost"
-  jwtValidityInMinutes: 30
-  maxMailsPerEmailPerDay: 10
-  mail:
-    mailgun:
-      sender: no-reply@localhost
-      domain: mg.localhost
-      privateKey: "key-11111111111111111111111111111111"
-  csrfAuthKey: '1111111111111111111111111111111111111111111111111111111111111111'
   legal:
     termsOfServiceUrl: "tos.pdf"
     privacyPolicyUrl: "privacy.pdf"
     imprintTemplate: '{{ define "js" }}{{ end }}{{ define "css" }}{{ end }}{{ define "content" }}Imprint{{ end }}'
-  stripe:
-    sapphire: price_sapphire
-    emerald: price_emerald
-    diamond: price_diamond
   ratelimitUpdateInterval: 1s
 
 indexer:

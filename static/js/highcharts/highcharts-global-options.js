@@ -3,14 +3,14 @@ Highcharts.setOptions({
   time: {
     useUTC: false,
   },
-  credits: {
-    enabled: true,
-    href: "https://beaconcha.in",
-    text: "beaconcha.in",
-    style: {
-      color: "var(--body-color)",
-    },
-  },
+  // credits: {
+  //   enabled: false,
+  //   href: "https://beaconcha.in",
+  //   text: "beaconcha.in",
+  //   style: {
+  //     color: "var(--body-color)",
+  //   },
+  // },
   exporting: {
     scale: 1,
     enabled: false,
