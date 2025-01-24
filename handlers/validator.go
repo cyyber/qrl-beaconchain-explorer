@@ -129,7 +129,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if strings.Contains(vars["index"], "0x") || len(vars["index"]) == 96 {
+	if strings.Contains(vars["index"], "0x") || len(vars["index"]) == 5184 {
 		// Request came with a hash
 		pubKey, err := hex.DecodeString(strings.Replace(vars["index"], "0x", "", -1))
 		if err != nil {

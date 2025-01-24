@@ -30,9 +30,14 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE INDEX IF NOT EXISTS idx_validators_pubkey ON validators (pubkey);
 
+
+/*
+// TODO(rgeraldes24)
+2025-01-24 12:09:20 time="2025-01-24T08:09:20Z" level=error msg="error saving new validator 2: ERROR: current transaction is aborted, commands ignored until end of transaction block (SQLSTATE 25P02)" module=db
 CREATE INDEX IF NOT EXISTS idx_validators_pubkeyhex ON validators (pubkeyhex);
 
 CREATE INDEX IF NOT EXISTS idx_validators_pubkeyhex_pattern_pos ON validators (pubkeyhex varchar_pattern_ops);
+*/
 
 CREATE INDEX IF NOT EXISTS idx_validators_status ON validators (status);
 

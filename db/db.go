@@ -1820,10 +1820,11 @@ func GetSlotVizData(latestEpoch uint64) ([]*types.SlotVizEpochs, error) {
 		_, exists := epochMap[b.Epoch]
 		if !exists {
 			r := types.SlotVizEpochs{
-				Epoch:          b.Epoch,
-				Finalized:      b.Finalized,
-				Particicpation: b.Globalparticipationrate,
-				Slots:          []*types.SlotVizSlots{},
+				Epoch:     b.Epoch,
+				Finalized: b.Finalized,
+				// TODO: NaN
+				// Particicpation: b.Globalparticipationrate,
+				Slots: []*types.SlotVizSlots{},
 			}
 			r.Slots = make([]*types.SlotVizSlots, utils.Config.Chain.ClConfig.SlotsPerEpoch)
 			epochMap[b.Epoch] = &r

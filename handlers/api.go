@@ -2866,7 +2866,7 @@ func parseApiValidatorParamToIndices(origParam string, limit int) (indices []uin
 		return nil, fmt.Errorf("only a maximum of %d query parameters are allowed", limit)
 	}
 	for _, param := range params {
-		if strings.Contains(param, "0x") || len(param) == 96 {
+		if strings.Contains(param, "0x") || len(param) == 5184 {
 			pubkey, err := hex.DecodeString(strings.Replace(param, "0x", "", -1))
 			if err != nil {
 				return nil, fmt.Errorf("invalid validator-parameter")
@@ -2918,7 +2918,7 @@ func parseApiValidatorParamToPubkeys(origParam string, limit int) (pubkeys pq.By
 		return nil, fmt.Errorf("only a maximum of 100 query parameters are allowed")
 	}
 	for _, param := range params {
-		if strings.Contains(param, "0x") || len(param) == 96 {
+		if strings.Contains(param, "0x") || len(param) == 5184 {
 			pubkey, err := hex.DecodeString(strings.Replace(param, "0x", "", -1))
 			if err != nil {
 				return nil, fmt.Errorf("invalid validator-parameter")

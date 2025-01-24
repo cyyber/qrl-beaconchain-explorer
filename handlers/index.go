@@ -17,12 +17,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	var indexTemplateFiles = append(layoutTemplateFiles,
 		"index/index.html",
 		"index/depositChart.html",
-		"index/hero.html",
 		"index/networkStats.html",
 		"index/postGenesis.html",
 		"index/recentBlocks.html",
 		"index/recentEpochs.html",
-		"index/genesisCountdown.html",
 		"index/depositDistribution.html",
 		"svg/bricks.html",
 		"svg/professor.html",
@@ -38,7 +36,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	pageData := services.LatestIndexPageData()
 
 	// data.Data.(*types.IndexPageData).ShowSyncingMessage = data.ShowSyncingMessage
-	pageData.Countdown = utils.Config.Frontend.Countdown
 
 	pageData.SlotVizData = getSlotVizData(data.CurrentEpoch)
 

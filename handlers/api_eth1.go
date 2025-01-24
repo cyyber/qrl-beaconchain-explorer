@@ -736,12 +736,12 @@ func parseFromAddressIndexOrPubkey(search string) (types.AddressIndexOrPubkey, e
 		return types.AddressIndexOrPubkey{
 			Address: address,
 		}, nil
-	} else if strings.Contains(search, "0x") || len(search) == 96 {
+	} else if strings.Contains(search, "0x") || len(search) == 5184 {
 		if len(search) < 94 {
 			return types.AddressIndexOrPubkey{}, fmt.Errorf("invalid pubkey")
 		}
 		start := 2
-		if len(search) == 96 {
+		if len(search) == 5184 {
 			start = 0
 		}
 		pubkey, err := hex.DecodeString(search[start:])

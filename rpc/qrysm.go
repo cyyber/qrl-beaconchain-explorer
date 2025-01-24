@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/theQRL/go-bitfield"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
@@ -23,7 +24,6 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	lru "github.com/hashicorp/golang-lru"
-	"github.com/theQRL/go-bitfield"
 )
 
 // QrysmLatestHeadEpoch is used to cache the latest head epoch for participation requests
@@ -113,12 +113,14 @@ func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
 		return nil, fmt.Errorf("error parsing chain head: %w", err)
 	}
 
-	time.Sleep(5 * time.Second)
-
 	id := parsedHead.Data.Header.Message.StateRoot
 	if parsedHead.Data.Header.Message.Slot == 0 {
 		id = "genesis"
 	}
+
+	// TODO(rgeraldes24)
+	time.Sleep(15 * time.Second)
+
 	finalityResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/finality_checkpoints", lc.endpoint, id))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving finality checkpoints of head: %w", err)
@@ -203,17 +205,22 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 		return nil, fmt.Errorf("error parsing proposer duties: %w", err)
 	}
 
-	// fetch the block root that the proposer data is dependent on
-	headerResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%s", lc.endpoint, parsedProposerResponse.DependentRoot))
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving chain header: %w", err)
+	var depStateRoot string
+	if epoch == 0 {
+		depStateRoot = "genesis"
+	} else {
+		// fetch the block root that the proposer data is dependent on
+		headerResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%s", lc.endpoint, parsedProposerResponse.DependentRoot))
+		if err != nil {
+			return nil, fmt.Errorf("error retrieving chain header: %w", err)
+		}
+		var parsedHeader StandardBeaconHeaderResponse
+		err = json.Unmarshal(headerResp, &parsedHeader)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing chain header: %w", err)
+		}
+		depStateRoot = parsedHeader.Data.Header.Message.StateRoot
 	}
-	var parsedHeader StandardBeaconHeaderResponse
-	err = json.Unmarshal(headerResp, &parsedHeader)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing chain header: %w", err)
-	}
-	depStateRoot := parsedHeader.Data.Header.Message.StateRoot
 
 	// Now use the state root to make a consistent committee query
 	committeesResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/committees?epoch=%d", lc.endpoint, depStateRoot, epoch))
@@ -249,10 +256,9 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 	}
 
 	syncCommitteeState := depStateRoot
-	// TODO(rgeraldes24)
-	// if epoch == utils.Config.Chain.ClConfig.AltairForkEpoch {
-	// 	syncCommitteeState = fmt.Sprintf("%d", utils.Config.Chain.ClConfig.AltairForkEpoch*utils.Config.Chain.ClConfig.SlotsPerEpoch)
-	// }
+	if epoch == 0 {
+		syncCommitteeState = "0"
+	}
 	parsedSyncCommittees, err := lc.GetSyncCommittee(syncCommitteeState, epoch)
 	if err != nil {
 		return nil, err
@@ -631,7 +637,7 @@ func (lc *QrysmClient) GetBlockByBlockroot(blockroot []byte) (*types.Block, erro
 
 	slot := uint64(parsedHeaders.Data.Header.Message.Slot)
 
-	resp, err := lc.get(fmt.Sprintf("%s/eth/v2/beacon/blocks/%s", lc.endpoint, parsedHeaders.Data.Root))
+	resp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/blocks/%s", lc.endpoint, parsedHeaders.Data.Root))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving block data at slot %v: %w", slot, err)
 	}
@@ -698,8 +704,11 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 
 	resHeaders, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%d", lc.endpoint, slot))
 	if err != nil && slot == 0 {
+		fmt.Println(1)
 		headResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers", lc.endpoint))
 		if err != nil {
+			fmt.Println(2)
+			fmt.Println(err)
 			return nil, fmt.Errorf("error retrieving chain head for slot %v: %w", slot, err)
 		}
 
@@ -820,7 +829,7 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 	}
 	lc.slotsCacheMux.Unlock()
 
-	resp, err := lc.get(fmt.Sprintf("%s/eth/v2/beacon/blocks/%s", lc.endpoint, parsedHeaders.Data.Root))
+	resp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/blocks/%s", lc.endpoint, parsedHeaders.Data.Root))
 	if err != nil && slot == 0 {
 		return nil, fmt.Errorf("error retrieving block data at slot %v: %w", slot, err)
 	}
@@ -1184,7 +1193,7 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 
 	logger.Infof("requesting validator inclusion data for epoch %v", request_epoch)
 
-	resp, err := lc.get(fmt.Sprintf("%s/qrysm/validator_inclusion/%d/global", lc.endpoint, request_epoch))
+	resp, err := lc.get(fmt.Sprintf("%s/zond/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving validator participation data for epoch %v: %w", request_epoch, err)
 	}
@@ -1202,7 +1211,7 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 		prevEpochActiveGwei := parsedResponse.Data.PreviousEpochActiveGwei
 		if prevEpochActiveGwei == 0 {
 			// lh@5.2.0+ has no previous_epoch_active_gwei field anymore, see https://github.com/sigp/lighthouse/pull/5279
-			prevResp, err := lc.get(fmt.Sprintf("%s/qrysm/validator_inclusion/%d/global", lc.endpoint, request_epoch-1))
+			prevResp, err := lc.get(fmt.Sprintf("%s/zond/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch-1))
 			if err != nil {
 				return nil, fmt.Errorf("error retrieving validator participation data for prevEpoch %v: %w", request_epoch-1, err)
 			}
@@ -1353,12 +1362,12 @@ type StandardSyncCommitteesResponse struct {
 
 type QrysmValidatorParticipationResponse struct {
 	Data struct {
-		CurrentEpochActiveGwei           uint64Str `json:"current_epoch_active_gwei"`
-		PreviousEpochActiveGwei          uint64Str `json:"previous_epoch_active_gwei"`
-		CurrentEpochTargetAttestingGwei  uint64Str `json:"current_epoch_target_attesting_gwei"`
-		PreviousEpochTargetAttestingGwei uint64Str `json:"previous_epoch_target_attesting_gwei"`
-		PreviousEpochHeadAttestingGwei   uint64Str `json:"previous_epoch_head_attesting_gwei"`
-	} `json:"data"`
+		CurrentEpochActiveGwei           uint64Str `json:"currentEpochActiveGwei"`
+		PreviousEpochActiveGwei          uint64Str `json:"previousEpochActiveGwei"`
+		CurrentEpochTargetAttestingGwei  uint64Str `json:"currentEpochTargetAttestingGwei"`
+		PreviousEpochTargetAttestingGwei uint64Str `json:"previousEpochTargetAttestingGwei"`
+		PreviousEpochHeadAttestingGwei   uint64Str `json:"previousEpochHeadAttestingGwei"`
+	} `json:"participation"`
 }
 
 type ProposerSlashing struct {

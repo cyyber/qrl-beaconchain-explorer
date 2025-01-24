@@ -184,12 +184,9 @@ type IndexPageData struct {
 	ActiveValidatorsChartData [][]float64            `json:"active_validators_chart_data"`
 	Title                     template.HTML          `json:"title"`
 	Subtitle                  template.HTML          `json:"subtitle"`
-	Genesis                   bool                   `json:"genesis"`
-	GenesisPeriod             bool                   `json:"genesis_period"`
 	Mainnet                   bool                   `json:"mainnet"`
 	DepositChart              *ChartsPageDataChart
 	DepositDistribution       *ChartsPageDataChart
-	Countdown                 interface{}
 	SlotVizData               *SlotVizPageData `json:"slotVizData"`
 	ClCurrency                string
 	ElCurrency                string

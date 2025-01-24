@@ -47,7 +47,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
 	} else if utils.IsValidEth1Tx(search) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)
-	} else if len(search) == 96 {
+	} else if len(search) == 5184 {
 		http.Redirect(w, r, "/validator/"+search, http.StatusMovedPermanently)
 	} else if utils.IsValidEth1Address(search) {
 		http.Redirect(w, r, "/address/"+search, http.StatusMovedPermanently)

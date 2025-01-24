@@ -214,16 +214,8 @@
                   <div class="col-md-10 text-monospace text-break">{{ formatAmount .BaseFeePerGas "GWei" 5 }}</div>
                 </div>
 
-                {{ if ge $.Data.Epoch config.Chain.ClConfig.DenebForkEpoch }}
-                  <div class="row p-1">
-                    <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Burned tx fees">Burned tx fees:</span></div>
-                    <div class="col-md-10 text-monospace text-break">{{ formatAmount .BurnedTxFees config.Frontend.ElCurrency 5 }}</div>
-                  </div>
-                {{ end }}
-
-
                 <div class="row p-1">
-                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Burned fees">Burned fees{{ if ge $.Data.Epoch config.Chain.ClConfig.DenebForkEpoch }}(total){{ end }}:</span></div>
+                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Burned fees">Burned fees:</span></div>
                   <div class="col-md-10 text-monospace text-break">{{ formatAmount .BurnedFees config.Frontend.ElCurrency 5 }}</div>
                 </div>
 

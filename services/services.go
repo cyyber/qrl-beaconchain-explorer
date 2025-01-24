@@ -70,8 +70,8 @@ func Init() {
 	ready.Add(1)
 	go gasNowUpdater(ready)
 
-	ready.Add(1)
-	go startMonitoringService(ready)
+	// ready.Add(1)
+	// go startMonitoringService(ready)
 
 	ready.Add(1)
 	go latestExportedStatisticDayUpdater(ready)
@@ -216,7 +216,7 @@ func indexPageDataUpdater(wg *sync.WaitGroup) {
 			time.Sleep(time.Second * 10)
 			continue
 		}
-		logger.WithFields(logrus.Fields{"genesis": data.Genesis, "currentEpoch": data.CurrentEpoch, "networkName": data.NetworkName, "networkStartTs": data.NetworkStartTs}).Infof("index page data update completed in %v", time.Since(start))
+		logger.WithFields(logrus.Fields{"currentEpoch": data.CurrentEpoch, "networkName": data.NetworkName, "networkStartTs": data.NetworkStartTs}).Infof("index page data update completed in %v", time.Since(start))
 
 		cacheKey := fmt.Sprintf("%d:frontend:indexPageData", utils.Config.Chain.ClConfig.DepositChainID)
 		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
@@ -379,23 +379,6 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		}
 	}
 
-	// has genesis occurred
-	if now.After(startSlotTime) {
-		data.Genesis = true
-	} else {
-		data.Genesis = false
-	}
-	// show the transition view one hour before the first slot and until epoch 30 is reached
-	if now.Add(utils.Day).After(startSlotTime) && now.Before(genesisTransition) {
-		data.GenesisPeriod = true
-	} else {
-		data.GenesisPeriod = false
-	}
-
-	if startSlotTime == time.Unix(0, 0) {
-		data.Genesis = false
-	}
-
 	var scheduledCount uint8
 	err = db.WriterDb.Get(&scheduledCount, `
 		select count(*) from blocks where status = '0' and epoch = $1;
@@ -497,13 +480,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		data.Epochs = data.Epochs[:15]
 	}
 
-	if data.GenesisPeriod {
-		for _, blk := range blocks {
-			if blk.Status != 0 {
-				data.CurrentSlot = blk.Slot
-			}
-		}
-	} else if len(blocks) > 0 {
+	if len(blocks) > 0 {
 		data.CurrentSlot = blocks[0].Slot
 	}
 
