@@ -298,7 +298,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				FROM eth1_deposits
 				WHERE valid_signature = true
 				GROUP BY publickey
-				HAVING SUM(amount) >= 32e9
+				HAVING SUM(amount) >= 40000e9
 			) a`)
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving eth1 deposits: %v", err)
@@ -1057,16 +1057,16 @@ func mempoolUpdater(wg *sync.WaitGroup) {
 				tx.Input = nil // nil inputs to save space
 			}
 		}
-		for _, txs := range mempoolTx.BaseFee {
-			for _, tx := range txs {
-				mempoolTx.TxsByHash[tx.Hash] = tx
+		// for _, txs := range mempoolTx.BaseFee {
+		// 	for _, tx := range txs {
+		// 		mempoolTx.TxsByHash[tx.Hash] = tx
 
-				if tx.GasPrice == nil {
-					tx.GasPrice = tx.GasFeeCap
-				}
-				tx.Input = nil // nil inputs to save space
-			}
-		}
+		// 		if tx.GasPrice == nil {
+		// 			tx.GasPrice = tx.GasFeeCap
+		// 		}
+		// 		tx.Input = nil // nil inputs to save space
+		// 	}
+		// }
 
 		cacheKey := fmt.Sprintf("%d:frontend:mempool", utils.Config.Chain.ClConfig.DepositChainID)
 		err = cache.TieredCache.Set(cacheKey, mempoolTx, utils.Day)

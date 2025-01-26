@@ -114,6 +114,10 @@ func FormatBytes(b []byte, addCopyToClipboard bool, link string) template.HTML {
 	return template.HTML(ret)
 }
 
+func FormatTxHashWithLimits(hash []byte, name string, isContract bool, link string, digitsLimit int, nameLimit int, addCopyToClipboard bool) template.HTML {
+	return formatTxHash(hash, nil, name, isContract, link, digitsLimit, nameLimit, addCopyToClipboard)
+}
+
 func FormatAddressWithLimits(address []byte, name string, isContract bool, link string, digitsLimit int, nameLimit int, addCopyToClipboard bool) template.HTML {
 	return formatAddress(address, nil, name, isContract, link, digitsLimit, nameLimit, addCopyToClipboard)
 }
@@ -148,9 +152,8 @@ func formatAddress(address []byte, token []byte, name string, isContract bool, l
 
 	// setting tooltip & limit name/address if necessary
 
-	addressString := fmt.Sprintf("0x%x", address)
-	// TODO(rgeraldes24)
-	if IsEth1Address(addressString) {
+	addressString := fmt.Sprintf("Z%x", address)
+	if IsAddress(addressString) {
 		addressString = FixAddressCasing(addressString)
 	}
 	tooltip := ""
@@ -188,10 +191,76 @@ func formatAddress(address []byte, token []byte, name string, isContract bool, l
 	} else {
 		if token != nil {
 			// link & token
-			ret += fmt.Sprintf(`<a href="/%s/0x%x#erc20Txns" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
+			ret += fmt.Sprintf(`<a href="/%s/Z%x#erc20Txns" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
 		} else {
 			// just link
-			ret += fmt.Sprintf(`<a href="/%s/0x%x" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
+			ret += fmt.Sprintf(`<a href="/%s/Z%x" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
+		}
+	}
+
+	// copy to clipboard
+	if addCopyToClipboard {
+		ret += ` <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="` + addressString + `"></i>`
+	}
+
+	return template.HTML(ret)
+}
+
+// digitsLimit will limit the address output to that amount of total digits (including 0x & …)
+// nameLimit will limit the name, if existing to giving amount of letters, a limit of 0 will display the full name
+func formatTxHash(address []byte, token []byte, name string, isContract bool, link string, digitsLimit int, nameLimit int, addCopyToClipboard bool) template.HTML {
+	name = template.HTMLEscapeString(name)
+
+	// we need at least 5 digits for 0x & …
+	if digitsLimit < 5 {
+		digitsLimit = 5
+	}
+
+	// setting tooltip & limit name/address if necessary
+
+	addressString := fmt.Sprintf("%x", address)
+	if IsAddress(addressString) {
+		addressString = FixAddressCasing(addressString)
+	}
+	tooltip := ""
+	if len(name) == 0 { // no name set
+		tooltip = addressString
+
+		l := len(address) * 2 // len will be twice address size, as 1 byte hex is 2 digits
+		if l <= digitsLimit { // len inside digitsLimits, not much to do
+			name = addressString
+		} else { // reduce to digits limit
+			digitsLimit -= 5     // we will need 5 digits for 0x & …
+			name = addressString // get hex bytes as string
+			f := digitsLimit / 2 // as this int devision will always cut, we at an odd limit, we will have more digits at the end
+			name = fmt.Sprintf("%s…%s", name[:(f+2)], name[(l-(digitsLimit-f)+2):])
+		}
+		name = fmt.Sprintf(`<span class="text-monospace">%s</span>`, name)
+	} else { // name set
+		addCopyToClipboard = true
+		tooltip = fmt.Sprintf("%s\n%s", name, addressString) // set tool tip first, as we will change name
+		// limit name if necessary
+		if nameLimit > 0 && len(name) > nameLimit {
+			name = name[:nameLimit-3] + "…"
+		}
+	}
+
+	// contract
+	ret := ""
+	if isContract {
+		ret = "<i class=\"fas fa-file-contract mr-1\"></i>" + ret
+	}
+
+	if len(link) == 0 {
+		// not a link
+		ret += fmt.Sprintf(`<span data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s" data-container="body">%s</span>`, tooltip, name)
+	} else {
+		if token != nil {
+			// link & token
+			ret += fmt.Sprintf(`<a href="/%s/%x#erc20Txns" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">0x%s</a>`, link, address, tooltip, name)
+		} else {
+			// just link
+			ret += fmt.Sprintf(`<a href="/%s/%x" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">0x%s</a>`, link, address, tooltip, name)
 		}
 	}
 
@@ -206,12 +275,12 @@ func formatAddress(address []byte, token []byte, name string, isContract bool, l
 func FormatAddressAsLink(address []byte, name string, isContract bool) template.HTML {
 	ret := ""
 	name = template.HTMLEscapeString(name)
-	addressString := FixAddressCasing(fmt.Sprintf("%x", address))
+	addressString := FixAddressCasing(fmt.Sprintf("Z%x", address))
 
 	if len(name) > 0 {
-		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/%s\">%s</a> %v", addressString, name, CopyButton(addressString))
+		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/Z%s\">%s</a> %v", addressString, name, CopyButton(addressString))
 	} else {
-		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/%s\">%s…%s</a> %v", addressString, addressString[:8], addressString[len(addressString)-6:], CopyButton(addressString))
+		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/Z%s\">%s…%s</a> %v", addressString, addressString[:8], addressString[len(addressString)-6:], CopyButton(addressString))
 	}
 
 	if isContract {
@@ -223,7 +292,7 @@ func FormatAddressAsLink(address []byte, name string, isContract bool) template.
 func FormatAddressAsTokenLink(token, address []byte, name string, verified bool, isContract bool) template.HTML {
 	ret := ""
 	name = template.HTMLEscapeString(name)
-	addressString := FixAddressCasing(fmt.Sprintf("%x", address))
+	addressString := FixAddressCasing(fmt.Sprintf("Z%x", address))
 
 	if len(name) > 0 {
 		if verified {
@@ -258,15 +327,15 @@ func FormatHashLong(hash common.Hash) template.HTML {
 }
 
 func FormatAddressLong(address string) template.HTML {
-	if IsValidEnsDomain(address) {
-		return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.eth`, strings.TrimSuffix(address, ".eth")))
-	}
-	address = FixAddressCasing(address)
+	// if IsValidEnsDomain(address) {
+	// 	return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.eth`, strings.TrimSuffix(address, ".eth")))
+	// }
+	address = FixAddressCasing(fmt.Sprintf("Z%s", address))
 	if len(address) > 4 {
 		htmlFormat := `
 		<span class="text-monospace mw-100">%s<span class="text-primary">%s</span>%s<span class="text-primary">%s</span></span>`
 
-		return template.HTML(fmt.Sprintf(htmlFormat, address[:2], address[2:6], address[6:len(address)-4], address[len(address)-4:]))
+		return template.HTML(fmt.Sprintf(htmlFormat, address[:1], address[1:5], address[5:len(address)-4], address[len(address)-4:]))
 	}
 
 	return template.HTML(address)

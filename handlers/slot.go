@@ -165,7 +165,7 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 			block_index,
 			aggregationbits,
 			validators,
-			signature,
+			signatures,
 			slot,
 			committeeindex,
 			beaconblockroot,
@@ -190,7 +190,7 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 			&attestation.BlockIndex,
 			&attestation.AggregationBits,
 			&attestation.Validators,
-			&attestation.Signature,
+			&attestation.Signatures,
 			&attestation.Slot,
 			&attestation.CommitteeIndex,
 			&attestation.BeaconBlockRoot,
@@ -228,7 +228,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			blocks.eth1data_depositcount,
 			blocks.eth1data_blockhash,
 			blocks.syncaggregate_bits,
-			blocks.syncaggregate_signature,
+			blocks.syncaggregate_signatures,
 			blocks.syncaggregate_participation,
 			blocks.proposerslashingscount,
 			blocks.attesterslashingscount,
@@ -319,7 +319,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			block_slot,
 			block_index,
 			attestation1_indices,
-			attestation1_signature,
+			attestation1_signatures,
 			attestation1_slot,
 			attestation1_index,
 			attestation1_beaconblockroot,
@@ -328,7 +328,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			attestation1_target_epoch,
 			attestation1_target_root,
 			attestation2_indices,
-			attestation2_signature,
+			attestation2_signatures,
 			attestation2_slot,
 			attestation2_index,
 			attestation2_beaconblockroot,
@@ -703,7 +703,7 @@ type attestationsData struct {
 	SourceRoot      string        `json:"SourceRoot"`
 	TargetEpoch     uint64        `json:"TargetEpoch"`
 	TargetRoot      string        `json:"TargetRoot"`
-	Signature       string        `json:"Signature"`
+	Signatures      []string      `json:"Signatures"`
 }
 
 // SlotAttestationsData returns the attestations for a specific slot
@@ -742,7 +742,10 @@ func SlotAttestationsData(w http.ResponseWriter, r *http.Request) {
 			SourceRoot:      fmt.Sprintf("%x", v.SourceRoot),
 			TargetEpoch:     v.TargetEpoch,
 			TargetRoot:      fmt.Sprintf("%x", v.TargetRoot),
-			Signature:       fmt.Sprintf("%x", v.Signature),
+			Signatures:      make([]string, len(v.Signatures)),
+		}
+		for j, sig := range v.Signatures {
+			data[i].Signatures[j] = fmt.Sprintf("%x", sig)
 		}
 	}
 

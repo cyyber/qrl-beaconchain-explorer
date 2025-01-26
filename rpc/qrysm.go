@@ -206,8 +206,10 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 	}
 
 	var depStateRoot string
+	var url string
 	if epoch == 0 {
 		depStateRoot = "genesis"
+		url = fmt.Sprintf("%s/zond/v1/beacon/states/%s/committees", lc.endpoint, depStateRoot)
 	} else {
 		// fetch the block root that the proposer data is dependent on
 		headerResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%s", lc.endpoint, parsedProposerResponse.DependentRoot))
@@ -220,10 +222,11 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 			return nil, fmt.Errorf("error parsing chain header: %w", err)
 		}
 		depStateRoot = parsedHeader.Data.Header.Message.StateRoot
+		url = fmt.Sprintf("%s/zond/v1/beacon/states/%s/committees?epoch=%d", lc.endpoint, depStateRoot, epoch)
 	}
 
 	// Now use the state root to make a consistent committee query
-	committeesResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/committees?epoch=%d", lc.endpoint, depStateRoot, epoch))
+	committeesResp, err := lc.get(url)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving committees data: %w", err)
 	}
@@ -704,7 +707,6 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 
 	resHeaders, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%d", lc.endpoint, slot))
 	if err != nil && slot == 0 {
-		fmt.Println(1)
 		headResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers", lc.endpoint))
 		if err != nil {
 			fmt.Println(2)
@@ -940,7 +942,10 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 			SyncCommitteeValidators:    epochAssignments.SyncAssignments,
 			SyncCommitteeBits:          bits,
 			SyncAggregateParticipation: syncCommitteeParticipation(bits),
-			SyncCommitteeSignature:     utils.MustParseHex(agg.SyncCommitteeSignature),
+			SyncCommitteeSignatures:    make([][]byte, len(agg.SyncCommitteeSignatures)),
+		}
+		for i, sig := range agg.SyncCommitteeSignatures {
+			block.SyncAggregate.SyncCommitteeSignatures[i] = utils.MustParseHex(sig)
 		}
 
 		// fill out performed sync duties
@@ -1055,7 +1060,7 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 						Root:  utils.MustParseHex(attesterSlashing.Attestation1.Data.Target.Root),
 					},
 				},
-				Signature:        utils.MustParseHex(attesterSlashing.Attestation1.Signature),
+				Signatures:       make([][]byte, len(attesterSlashing.Attestation1.Signatures)),
 				AttestingIndices: uint64List(attesterSlashing.Attestation1.AttestingIndices),
 			},
 			Attestation2: &types.IndexedAttestation{
@@ -1072,9 +1077,15 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 						Root:  utils.MustParseHex(attesterSlashing.Attestation2.Data.Target.Root),
 					},
 				},
-				Signature:        utils.MustParseHex(attesterSlashing.Attestation2.Signature),
+				Signatures:       make([][]byte, len(attesterSlashing.Attestation2.Signatures)),
 				AttestingIndices: uint64List(attesterSlashing.Attestation2.AttestingIndices),
 			},
+		}
+		for j, sig := range attesterSlashing.Attestation1.Signatures {
+			block.AttesterSlashings[i].Attestation1.Signatures[j] = utils.MustParseHex(sig)
+		}
+		for j, sig := range attesterSlashing.Attestation2.Signatures {
+			block.AttesterSlashings[i].Attestation2.Signatures[j] = utils.MustParseHex(sig)
 		}
 	}
 
@@ -1095,7 +1106,10 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 					Root:  utils.MustParseHex(attestation.Data.Target.Root),
 				},
 			},
-			Signature: utils.MustParseHex(attestation.Signature),
+			Signatures: make([][]byte, len(attestation.Signatures)),
+		}
+		for i, sig := range attestation.Signatures {
+			a.Signatures[i] = utils.MustParseHex(sig)
 		}
 
 		aggregationBits := bitfield.Bitlist(a.AggregationBits)
@@ -1396,7 +1410,7 @@ type ProposerSlashing struct {
 type AttesterSlashing struct {
 	Attestation1 struct {
 		AttestingIndices []uint64Str `json:"attesting_indices"`
-		Signature        string      `json:"signature"`
+		Signatures       []string    `json:"signatures"`
 		Data             struct {
 			Slot            uint64Str `json:"slot"`
 			Index           uint64Str `json:"index"`
@@ -1413,7 +1427,7 @@ type AttesterSlashing struct {
 	} `json:"attestation_1"`
 	Attestation2 struct {
 		AttestingIndices []uint64Str `json:"attesting_indices"`
-		Signature        string      `json:"signature"`
+		Signatures       []string    `json:"signatures"`
 		Data             struct {
 			Slot            uint64Str `json:"slot"`
 			Index           uint64Str `json:"index"`
@@ -1431,8 +1445,8 @@ type AttesterSlashing struct {
 }
 
 type Attestation struct {
-	AggregationBits string `json:"aggregation_bits"`
-	Signature       string `json:"signature"`
+	AggregationBits string   `json:"aggregation_bits"`
+	Signatures      []string `json:"signatures"`
 	Data            struct {
 		Slot            uint64Str `json:"slot"`
 		Index           uint64Str `json:"index"`
@@ -1473,8 +1487,8 @@ type Eth1Data struct {
 }
 
 type SyncAggregate struct {
-	SyncCommitteeBits      string `json:"sync_committee_bits"`
-	SyncCommitteeSignature string `json:"sync_committee_signature"`
+	SyncCommitteeBits       string   `json:"sync_committee_bits"`
+	SyncCommitteeSignatures []string `json:"sync_committee_signatures"`
 }
 
 // https://ethereum.github.io/beacon-APIs/#/Beacon/getBlockV2

@@ -63,31 +63,37 @@ func IndexPageData(w http.ResponseWriter, r *http.Request) {
 }
 
 func getSlotVizData(currentEpoch uint64) *types.SlotVizPageData {
-	var visiblFrom uint64
-	var visibleTo uint64
+	// var visiblFrom uint64
+	// var visibleTo uint64
 	configuration, err := services.GetExplorerConfigurationsWithDefaults()
 	if err != nil {
 		utils.LogError(err, "Could not load SlotViz configuration for index page", 0)
 		return nil
 	}
-	visiblFrom, err = configuration.GetUInt64Value(services.ConfigurationCategorySlotViz, services.ConfigurationKeyVisibleFromEpoch)
-	if err != nil {
-		utils.LogError(err, "Could not get visbleFrom for SlotViz on index page", 0)
-		return nil
-	}
-	visibleTo, err = configuration.GetUInt64Value(services.ConfigurationCategorySlotViz, services.ConfigurationKeyVisibleToEpoch)
-	if err != nil {
-		utils.LogError(err, "Could not get visibleTo for SlotViz on index page", 0)
-		return nil
-	}
-	if visiblFrom <= currentEpoch && visibleTo >= currentEpoch {
-		return &types.SlotVizPageData{
-			Epochs:   services.LatestSlotVizMetrics(),
-			Selector: "slotsViz",
-			Config:   configuration[services.ConfigurationCategorySlotViz]}
+	// visiblFrom, err = configuration.GetUInt64Value(services.ConfigurationCategorySlotViz, services.ConfigurationKeyVisibleFromEpoch)
+	// if err != nil {
+	// 	utils.LogError(err, "Could not get visbleFrom for SlotViz on index page", 0)
+	// 	return nil
+	// }
+	// visibleTo, err = configuration.GetUInt64Value(services.ConfigurationCategorySlotViz, services.ConfigurationKeyVisibleToEpoch)
+	// if err != nil {
+	// 	utils.LogError(err, "Could not get visibleTo for SlotViz on index page", 0)
+	// 	return nil
+	// }
+	return &types.SlotVizPageData{
+		Epochs:   services.LatestSlotVizMetrics(),
+		Selector: "slotsViz",
+		Config:   configuration[services.ConfigurationCategorySlotViz]}
+	/*
+		if visiblFrom <= currentEpoch && visibleTo >= currentEpoch {
+			return &types.SlotVizPageData{
+				Epochs:   services.LatestSlotVizMetrics(),
+				Selector: "slotsViz",
+				Config:   configuration[services.ConfigurationCategorySlotViz]}
 
-	}
-	return nil
+		}
+		return nil
+	*/
 }
 
 func calculateChurn(page *types.IndexPageData) {

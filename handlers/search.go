@@ -45,11 +45,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/address/"+ensData.Domain, http.StatusMovedPermanently)
 	} else if utils.IsValidWithdrawalCredentials(search) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
-	} else if utils.IsValidEth1Tx(search) {
+	} else if utils.IsValidTxHash(search) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)
 	} else if len(search) == 5184 {
 		http.Redirect(w, r, "/validator/"+search, http.StatusMovedPermanently)
-	} else if utils.IsValidEth1Address(search) {
+	} else if utils.IsValidAddress(search) {
 		http.Redirect(w, r, "/address/"+search, http.StatusMovedPermanently)
 	} else {
 		w.Header().Set("Content-Type", "text/html")
@@ -236,7 +236,7 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_eth1_addresses":
 		// search = ReplaceEnsNameWithAddress(search)
-		if !utils.IsEth1Address(search) {
+		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
@@ -398,7 +398,7 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
 	// search = strings.ToLower(strings.Replace(ReplaceEnsNameWithAddress(search), "0x", "", -1))
 	search = strings.ToLower(search)
-	if !utils.IsValidEth1Address(search) {
+	if !utils.IsValidAddress(search) {
 		return nil, fmt.Errorf("not a valid Zond address: %v", search)
 	}
 	// find validators per eth1-address (limit result by N addresses and M validators per address)

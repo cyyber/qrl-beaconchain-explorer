@@ -61,7 +61,7 @@ services:
   littlebigtable:
     image: gobitfly/little_bigtable:latest
     volumes:
-      - littlebigtable:/data_lbt
+      - littlebigtable:/app/data
     ports:
       - 9000:9000
 
@@ -87,7 +87,7 @@ services:
     ports:
       - "8888:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_EMAIL: test@test.com
       PGADMIN_DEFAULT_PASSWORD: pass
     volumes:
       - pgadmin-data:/var/lib/pgadmin

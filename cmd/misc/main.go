@@ -1096,7 +1096,7 @@ func updateAggreationBits(rpcClient *rpc.QrysmClient, startEpoch uint64, endEpoc
 								block_index=$2
 						`, block.Slot, index)
 						if err != nil {
-							return fmt.Errorf("error getting aggregationbits on Slot [%v] Index [%v] with Sig [%v]: %v", block.Slot, index, att.Signature, err)
+							return fmt.Errorf("error getting aggregationbits on Slot [%v] Index [%v] with Signatures [%v]: %v", block.Slot, index, att.Signatures, err)
 						}
 
 						if !bytes.Equal(*aggregationbits, att.AggregationBits) {

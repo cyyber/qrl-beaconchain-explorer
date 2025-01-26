@@ -47,11 +47,12 @@ func formatToTable(content *types.RawMempoolResponse) *types.DataTableResponse {
 			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
 		}
 	}
-	for _, txs := range content.BaseFee {
-		for _, tx := range txs {
-			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
-		}
-	}
+	// TODO(rgeraldes24): not available
+	// for _, txs := range content.BaseFee {
+	// 	for _, tx := range txs {
+	// 		dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
+	// 	}
+	// }
 	for _, txs := range content.Queued {
 		for _, tx := range txs {
 			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
@@ -62,7 +63,7 @@ func formatToTable(content *types.RawMempoolResponse) *types.DataTableResponse {
 
 func toTableDataRow(tx *types.RawMempoolTransaction) []interface{} {
 	return []any{
-		utils.FormatAddressWithLimits(tx.Hash.Bytes(), "", false, "tx", 15, 18, true),
+		utils.FormatTxHashWithLimits(tx.Hash.Bytes(), "", false, "tx", 15, 18, true),
 		utils.FormatAddressAll(tx.From.Bytes(), "", false, "address", int(12), int(12), true),
 		_isContractCreation(tx.To),
 		utils.FormatAmount((*big.Int)(tx.Value), utils.Config.Frontend.ElCurrency, 5),

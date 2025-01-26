@@ -47,11 +47,10 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 	var err error
 	if len(numberString) == 64 {
 		// TODO(rgeraldes24)
-		// rpc.CurrentGzondClient.GetBlockNumberByHash(numberString)
+		// number, err := rpc.CurrentGzondClient.GetBlockNumberByHash(numberString)
 	} else {
 		number, err = strconv.ParseUint(numberString, 10, 64)
 	}
-
 	if err != nil {
 		data := InitPageData(w, r, "blockchain", "/block", fmt.Sprintf("Block %d", 0), notFountTemplateFiles)
 		data.Data = "block"
@@ -74,7 +73,8 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 
 	data := InitPageData(w, r, "blockchain", "/block", fmt.Sprintf("Block %d", number), blockTemplateFiles)
 
-	blockSlot := uint64(0)
+	// blockSlot := uint64(0)
+	blockSlot := utils.TimeToSlot(uint64(eth1BlockPageData.Ts.Unix()))
 
 	// retrieve consensus data
 	blockPageData, err := GetSlotPageData(blockSlot)

@@ -99,7 +99,7 @@ type ValidatorQueue struct {
 type SyncAggregate struct {
 	SyncCommitteeValidators    []uint64
 	SyncCommitteeBits          []byte
-	SyncCommitteeSignature     []byte
+	SyncCommitteeSignatures    [][]byte
 	SyncAggregateParticipation float64
 }
 
@@ -226,7 +226,7 @@ type AttesterSlashing struct {
 type IndexedAttestation struct {
 	Data             *AttestationData
 	AttestingIndices []uint64
-	Signature        []byte
+	Signatures       [][]byte
 }
 
 // Attestation is a struct to hold attestation header data
@@ -234,7 +234,7 @@ type Attestation struct {
 	AggregationBits []byte
 	Attesters       []uint64
 	Data            *AttestationData
-	Signature       []byte
+	Signatures      [][]byte
 }
 
 // AttestationData to hold attestation detail data

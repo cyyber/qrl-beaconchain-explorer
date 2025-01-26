@@ -137,7 +137,7 @@
               </div>
             </div>
           </div>
-          {{ if .SyncAggregateSignature }}
+          {{ if .SyncAggregateSignatures }}
             <div class="row border-bottom p-3 mx-0">
               <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Aggregate (Altair Light-Client support)">Sync Aggregate:</span></div>
               <div class="col-md-10">
@@ -152,9 +152,11 @@
                   <div class="col-md-10 text-monospace text-break">{{ formatBitvectorValidators .SyncAggregateBits .SyncCommittee }}</div>
                 </div>
                 <div class="row p-1">
-                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Committee Signature">Signature:</span></div>
+                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Committee Signatures">Signatures:</span></div>
                   <div class="col-md-10 text-monospace text-break">
-                    <span>0x{{ printf "%x" .SyncAggregateSignature }}</span>
+                    {{ range $sig := .SyncAggregateSignatures }}
+                    <span>0x{{ printf "%x" $sig }}</span>
+                    {{ end }}
                   </div>
                 </div>
               </div>

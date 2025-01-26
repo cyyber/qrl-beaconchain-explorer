@@ -507,7 +507,7 @@ func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*ty
 	return ret, nil
 }
 
-func (client *GzondClient) GetBalancesForAddresse(address string, tokenStr []string) ([]*types.Eth1AddressBalance, error) {
+func (client *GzondClient) GetBalancesForAddresses(address string, tokenStr []string) ([]*types.Eth1AddressBalance, error) {
 	opts := &bind.CallOpts{
 		BlockNumber: nil,
 	}

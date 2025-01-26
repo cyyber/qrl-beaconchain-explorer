@@ -744,36 +744,37 @@ func IsApiRequest(r *http.Request) bool {
 	return ok && len(query) > 0 && query[0] == "json"
 }
 
-var eth1AddressRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{40}$")
+var zondAddressRE = regexp.MustCompile("^Z[0-9a-fA-F]{40}$")
 var withdrawalCredentialsRE = regexp.MustCompile("^(0x)?00[0-9a-fA-F]{62}$")
 var withdrawalCredentialsAddressRE = regexp.MustCompile("^(0x)?" + BeginningOfSetWithdrawalCredentials + "[0-9a-fA-F]{40}$")
-var eth1TxRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{64}$")
+var txHashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{64}$")
 var zeroHashRE = regexp.MustCompile("^(0x)?0+$")
 var hashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{96}$")
 
-// IsValidEth1Address verifies whether a string represents a valid eth1-address.
-func IsValidEth1Address(s string) bool {
-	return !zeroHashRE.MatchString(s) && eth1AddressRE.MatchString(s)
+// IsValidAddress verifies whether a string represents a valid zond address.
+func IsValidAddress(s string) bool {
+	return zondAddressRE.MatchString(s)
 }
 
-// IsEth1Address verifies whether a string represents an eth1-address.
-// In contrast to IsValidEth1Address, this also returns true for the 0x0 address
-func IsEth1Address(s string) bool {
-	return eth1AddressRE.MatchString(s)
+// TODO(rgeraldes24)
+// IsAddress verifies whether a string represents a zond address.
+// In contrast to IsValidAddress, this also returns true for the 0x0 address
+func IsAddress(s string) bool {
+	return zondAddressRE.MatchString(s)
 }
 
-// IsValidEth1Tx verifies whether a string represents a valid eth1-tx-hash.
-func IsValidEth1Tx(s string) bool {
-	return !zeroHashRE.MatchString(s) && eth1TxRE.MatchString(s)
+// IsValidTxHash verifies whether a string represents a valid zond tx-hash.
+func IsValidTxHash(s string) bool {
+	return !zeroHashRE.MatchString(s) && txHashRE.MatchString(s)
 }
 
-// IsEth1Tx verifies whether a string represents an eth1-tx-hash.
-// In contrast to IsValidEth1Tx, this also returns true for the 0x0 address
-func IsEth1Tx(s string) bool {
-	return eth1TxRE.MatchString(s)
+// IsTxHash verifies whether a string represents a zond tx-hash.
+// In contrast to IsValidTxHash, this also returns true for the 0x0 address
+func IsTxHash(s string) bool {
+	return txHashRE.MatchString(s)
 }
 
-// IsHash verifies whether a string represents an eth1-hash.
+// IsHash verifies whether a string represents a zond hash.
 func IsHash(s string) bool {
 	return hashRE.MatchString(s)
 }
@@ -1213,7 +1214,7 @@ func FormatThousandsEnglish(number string) string {
 // returns two transparent base64 encoded img strings for dark and light theme
 // the first has a black QR code the second a white QR code
 func GenerateQRCodeForAddress(address []byte) (string, string, error) {
-	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("%x", address)), qrcode.Medium)
+	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("Z%x", address)), qrcode.Medium)
 	if err != nil {
 		return "", "", err
 	}

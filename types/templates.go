@@ -22,7 +22,6 @@ import (
 // PageData is a struct to hold web page data
 type PageData struct {
 	Active             string
-	AdConfigurations   []*AdConfig
 	Meta               *Meta
 	ShowSyncingMessage bool
 	// User                  *User
@@ -563,38 +562,38 @@ type VotesVisChartData struct {
 
 // BlockPageData is a struct block data used in the block/slot page
 type BlockPageData struct {
-	Epoch                  uint64  `db:"epoch"`
-	EpochFinalized         bool    `db:"epoch_finalized"`
-	PrevEpochFinalized     bool    `db:"prev_epoch_finalized"`
-	EpochParticipationRate float64 `db:"epoch_participation_rate"`
-	Ts                     time.Time
-	NextSlot               uint64
-	PreviousSlot           uint64
-	Proposer               uint64  `db:"proposer"`
-	BlockRoot              []byte  `db:"blockroot"`
-	ParentRoot             []byte  `db:"parentroot"`
-	StateRoot              []byte  `db:"stateroot"`
-	Signature              []byte  `db:"signature"`
-	RandaoReveal           []byte  `db:"randaoreveal"`
-	Graffiti               []byte  `db:"graffiti"`
-	ProposerName           string  `db:"name"`
-	Eth1dataDepositroot    []byte  `db:"eth1data_depositroot"`
-	Eth1dataDepositcount   uint64  `db:"eth1data_depositcount"`
-	Eth1dataBlockhash      []byte  `db:"eth1data_blockhash"`
-	SyncAggregateBits      []byte  `db:"syncaggregate_bits"`
-	SyncAggregateSignature []byte  `db:"syncaggregate_signature"`
-	SyncAggParticipation   float64 `db:"syncaggregate_participation"`
-	ProposerSlashingsCount uint64  `db:"proposerslashingscount"`
-	AttesterSlashingsCount uint64  `db:"attesterslashingscount"`
-	AttestationsCount      uint64  `db:"attestationscount"`
-	DepositsCount          uint64  `db:"depositscount"`
-	WithdrawalCount        uint64  `db:"withdrawalcount"`
-	DilithiumChangeCount   uint64  `db:"dilithium_change_count"`
-	VoluntaryExitscount    uint64  `db:"voluntaryexitscount"`
-	SlashingsCount         uint64
-	VotesCount             uint64
-	VotingValidatorsCount  uint64
-	Mainnet                bool
+	Epoch                   uint64  `db:"epoch"`
+	EpochFinalized          bool    `db:"epoch_finalized"`
+	PrevEpochFinalized      bool    `db:"prev_epoch_finalized"`
+	EpochParticipationRate  float64 `db:"epoch_participation_rate"`
+	Ts                      time.Time
+	NextSlot                uint64
+	PreviousSlot            uint64
+	Proposer                uint64        `db:"proposer"`
+	BlockRoot               []byte        `db:"blockroot"`
+	ParentRoot              []byte        `db:"parentroot"`
+	StateRoot               []byte        `db:"stateroot"`
+	Signature               []byte        `db:"signature"`
+	RandaoReveal            []byte        `db:"randaoreveal"`
+	Graffiti                []byte        `db:"graffiti"`
+	ProposerName            string        `db:"name"`
+	Eth1dataDepositroot     []byte        `db:"eth1data_depositroot"`
+	Eth1dataDepositcount    uint64        `db:"eth1data_depositcount"`
+	Eth1dataBlockhash       []byte        `db:"eth1data_blockhash"`
+	SyncAggregateBits       []byte        `db:"syncaggregate_bits"`
+	SyncAggregateSignatures pq.ByteaArray `db:"syncaggregate_signatures"`
+	SyncAggParticipation    float64       `db:"syncaggregate_participation"`
+	ProposerSlashingsCount  uint64        `db:"proposerslashingscount"`
+	AttesterSlashingsCount  uint64        `db:"attesterslashingscount"`
+	AttestationsCount       uint64        `db:"attestationscount"`
+	DepositsCount           uint64        `db:"depositscount"`
+	WithdrawalCount         uint64        `db:"withdrawalcount"`
+	DilithiumChangeCount    uint64        `db:"dilithium_change_count"`
+	VoluntaryExitscount     uint64        `db:"voluntaryexitscount"`
+	SlashingsCount          uint64
+	VotesCount              uint64
+	VotingValidatorsCount   uint64
+	Mainnet                 bool
 
 	ExecParentHash        []byte        `db:"exec_parent_hash"`
 	ExecFeeRecipient      []byte        `db:"exec_fee_recipient"`
@@ -683,7 +682,7 @@ type BlockPageAttestation struct {
 	BlockIndex      uint64        `db:"block_index"`
 	AggregationBits []byte        `db:"aggregationbits"`
 	Validators      pq.Int64Array `db:"validators"`
-	Signature       []byte        `db:"signature"`
+	Signatures      pq.ByteaArray `db:"signatures"`
 	Slot            uint64        `db:"slot"`
 	CommitteeIndex  uint64        `db:"committeeindex"`
 	BeaconBlockRoot []byte        `db:"beaconblockroot"`
@@ -712,7 +711,7 @@ type BlockPageAttesterSlashing struct {
 	BlockSlot                   uint64        `db:"block_slot"`
 	BlockIndex                  uint64        `db:"block_index"`
 	Attestation1Indices         pq.Int64Array `db:"attestation1_indices"`
-	Attestation1Signature       []byte        `db:"attestation1_signature"`
+	Attestation1Signatures      pq.ByteaArray `db:"attestation1_signatures"`
 	Attestation1Slot            uint64        `db:"attestation1_slot"`
 	Attestation1Index           uint64        `db:"attestation1_index"`
 	Attestation1BeaconBlockRoot []byte        `db:"attestation1_beaconblockroot"`
@@ -721,7 +720,7 @@ type BlockPageAttesterSlashing struct {
 	Attestation1TargetEpoch     uint64        `db:"attestation1_target_epoch"`
 	Attestation1TargetRoot      []byte        `db:"attestation1_target_root"`
 	Attestation2Indices         pq.Int64Array `db:"attestation2_indices"`
-	Attestation2Signature       []byte        `db:"attestation2_signature"`
+	Attestation2Signatures      pq.ByteaArray `db:"attestation2_signatures"`
 	Attestation2Slot            uint64        `db:"attestation2_slot"`
 	Attestation2Index           uint64        `db:"attestation2_index"`
 	Attestation2BeaconBlockRoot []byte        `db:"attestation2_beaconblockroot"`
@@ -1160,13 +1159,6 @@ type ApiStatistics struct {
 	MaxMonthly *int
 }
 
-type AdConfigurationPageData struct {
-	Configurations []*AdConfig
-	CsrfField      template.HTML
-	New            AdConfig
-	TemplateNames  []string
-}
-
 type DataTableSaveState struct {
 	Key     string                      `json:"key"`
 	Time    uint64                      `json:"time"`   // Time stamp of when the object was created
@@ -1580,19 +1572,6 @@ type ValidatorsDilithiumChange struct {
 	Address                  []byte `db:"address" json:"address,omitempty"`
 	Signature                []byte `db:"signature" json:"signature,omitempty"`
 	WithdrawalCredentialsOld []byte `db:"withdrawalcredentials" json:"withdrawalcredentials,omitempty"`
-}
-
-// AdConfig is a struct to hold the configuration for one specific ad banner placement
-type AdConfig struct {
-	Id              string `db:"id"`
-	TemplateId      string `db:"template_id"`
-	JQuerySelector  string `db:"jquery_selector"`
-	InsertMode      string `db:"insert_mode"`
-	RefreshInterval uint64 `db:"refresh_interval"`
-	Enabled         bool   `db:"enabled"`
-	ForAllUsers     bool   `db:"for_all_users"`
-	BannerId        uint64 `db:"banner_id"`
-	HtmlContent     string `db:"html_content"`
 }
 
 type ExplorerConfigurationCategory string

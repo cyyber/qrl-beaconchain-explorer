@@ -36,19 +36,20 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	// 	address = ensData.Address
 	// }
 
-	isValid := utils.IsEth1Address(address)
+	isValid := utils.IsAddress(address)
 	if !isValid {
 		handleNotFoundHtml(w, r)
 		return
 	}
 
-	address = strings.Replace(address, "0x", "", -1)
+	address = strings.Replace(address, "Z", "", -1)
+	fmt.Println(address)
 	address = strings.ToLower(address)
 
 	currency := GetCurrency(r)
 
 	addressBytes := common.FromHex(address)
-	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address 0x%x", addressBytes), templateFiles)
+	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address Z%x", addressBytes), templateFiles)
 
 	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.ECR20TokensPerAddressLimit)
 	if err != nil {
@@ -226,6 +227,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		EtherValue:         utils.FormatPricedValue(utils.WeiBytesToEther(metadata.EthBalance.Balance), utils.Config.Frontend.ElCurrency, currency),
 		Tabs:               tabs,
 	}
+	fmt.Println(data.Data)
 
 	if handleTemplateError(w, r, "eth1Account.go", "Eth1Address", "Done", eth1AddressTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
@@ -442,7 +444,7 @@ func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, er
 	// 		address = ensData.Address
 	// 	}
 	// }
-	return strings.ToLower(strings.Replace(address, "0x", "", -1)), nil
+	return strings.ToLower(strings.Replace(address, "Z", "", -1)), nil
 }
 
 func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {

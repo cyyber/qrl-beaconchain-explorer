@@ -568,7 +568,7 @@ func FormatEth1AddressStringLowerCase(addr []byte) template.HTML {
 
 // FormatEth1Address will return the eth1-address formated as html
 func FormatEth1Address(addr []byte) template.HTML {
-	eth1Addr := FixAddressCasing(fmt.Sprintf("%x", addr))
+	eth1Addr := FixAddressCasing(fmt.Sprintf("Z%x", addr))
 	copyBtn := CopyButton(eth1Addr)
 	return template.HTML(fmt.Sprintf("<a href=\"/address/%s\" class=\"text-monospace\">%s…</a>%s", eth1Addr, eth1Addr[:8], copyBtn))
 }
@@ -693,13 +693,13 @@ func WithdrawalCredentialsToAddress(credentials []byte) ([]byte, error) {
 
 // AddressToWithdrawalCredentials converts a valid address to withdrawalCredentials
 func AddressToWithdrawalCredentials(address []byte) ([]byte, error) {
-	if IsValidEth1Address(fmt.Sprintf("%#x", address)) {
+	if IsValidAddress(fmt.Sprintf("%#x", address)) {
 		credentials := make([]byte, 12, 32)
 		credentials[0] = 0x01
 		credentials = append(credentials, address...)
 		return credentials, nil
 	}
-	return nil, fmt.Errorf("invalid eth1 address")
+	return nil, fmt.Errorf("invalid zond address")
 }
 
 func FormatHashWithCopy(hash []byte) template.HTML {

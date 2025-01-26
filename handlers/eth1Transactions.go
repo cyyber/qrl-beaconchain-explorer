@@ -99,7 +99,7 @@ func getTransactionDataStartingWithPageToken(pageToken string) *types.DataTableR
 					contractInteraction = contractInteractionTypes[i]
 				}
 				tableData = append(tableData, []interface{}{
-					utils.FormatAddressWithLimits(v.GetHash(), "", false, "tx", visibleDigitsForHash+5, 18, true),
+					utils.FormatTxHashWithLimits(v.GetHash(), "", false, "tx", visibleDigitsForHash+5, 18, true),
 					utils.FormatMethod(db.BigtableClient.GetMethodLabel(v.GetData(), contractInteraction)),
 					template.HTML(fmt.Sprintf(`<A href="block/%d">%v</A>`, b.GetNumber(), utils.FormatAddCommas(b.GetNumber()))),
 					utils.FormatTimestamp(b.GetTime().AsTime().Unix()),

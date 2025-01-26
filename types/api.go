@@ -191,59 +191,59 @@ type APIEpochResponse struct {
 }
 
 type APISlotResponse struct {
-	Attestationscount          uint64  `json:"attestationscount"`
-	Attesterslashingscount     uint64  `json:"attesterslashingscount"`
-	Blockroot                  string  `json:"blockroot"`
-	Depositscount              uint64  `json:"depositscount"`
-	Epoch                      uint64  `json:"epoch"`
-	Eth1dataBlockhash          string  `json:"eth1data_blockhash"`
-	Eth1dataDepositcount       uint64  `json:"eth1data_depositcount"`
-	Eth1dataDepositroot        string  `json:"eth1data_depositroot"`
-	ExecBaseFeePerGas          uint64  `json:"exec_base_fee_per_gas" extensions:"x-nullable"`
-	ExecBlockHash              string  `json:"exec_block_hash" extensions:"x-nullable"`
-	ExecBlockNumber            uint64  `json:"exec_block_number" extensions:"x-nullable"`
-	ExecExtraData              string  `json:"exec_extra_data" extensions:"x-nullable"`
-	ExecFeeRecipient           string  `json:"exec_fee_recipient" extensions:"x-nullable"`
-	ExecGasLimit               uint64  `json:"exec_gas_limit" extensions:"x-nullable"`
-	ExecGasUsed                uint64  `json:"exec_gas_used" extensions:"x-nullable"`
-	ExecLogsBloom              string  `json:"exec_logs_bloom" extensions:"x-nullable"`
-	ExecParentHash             string  `json:"exec_parent_hash" extensions:"x-nullable"`
-	ExecRandom                 string  `json:"exec_random" extensions:"x-nullable"`
-	ExecReceiptsRoot           string  `json:"exec_receipts_root" extensions:"x-nullable"`
-	ExecStateRoot              string  `json:"exec_state_root" extensions:"x-nullable"`
-	ExecTimestamp              uint64  `json:"exec_timestamp" extensions:"x-nullable"`
-	ExecTransactionsCount      uint64  `json:"exec_transactions_count" extensions:"x-nullable"`
-	Graffiti                   string  `json:"graffiti"`
-	GraffitiText               string  `json:"graffiti_text"`
-	Parentroot                 string  `json:"parentroot"`
-	Proposer                   uint64  `json:"proposer"`
-	Proposerslashingscount     uint64  `json:"proposerslashingscount"`
-	Randaoreveal               string  `json:"randaoreveal"`
-	Signature                  string  `json:"signature"`
-	Slot                       uint64  `json:"slot"`
-	Stateroot                  string  `json:"stateroot"`
-	Status                     string  `json:"status"`
-	SyncaggregateBits          string  `json:"syncaggregate_bits"`
-	SyncaggregateParticipation float64 `json:"syncaggregate_participation"`
-	SyncaggregateSignature     string  `json:"syncaggregate_signature"`
-	Voluntaryexitscount        uint64  `json:"voluntaryexitscount"`
-	WithdrawalCount            uint64  `json:"withdrawalcount"`
+	Attestationscount          uint64   `json:"attestationscount"`
+	Attesterslashingscount     uint64   `json:"attesterslashingscount"`
+	Blockroot                  string   `json:"blockroot"`
+	Depositscount              uint64   `json:"depositscount"`
+	Epoch                      uint64   `json:"epoch"`
+	Eth1dataBlockhash          string   `json:"eth1data_blockhash"`
+	Eth1dataDepositcount       uint64   `json:"eth1data_depositcount"`
+	Eth1dataDepositroot        string   `json:"eth1data_depositroot"`
+	ExecBaseFeePerGas          uint64   `json:"exec_base_fee_per_gas" extensions:"x-nullable"`
+	ExecBlockHash              string   `json:"exec_block_hash" extensions:"x-nullable"`
+	ExecBlockNumber            uint64   `json:"exec_block_number" extensions:"x-nullable"`
+	ExecExtraData              string   `json:"exec_extra_data" extensions:"x-nullable"`
+	ExecFeeRecipient           string   `json:"exec_fee_recipient" extensions:"x-nullable"`
+	ExecGasLimit               uint64   `json:"exec_gas_limit" extensions:"x-nullable"`
+	ExecGasUsed                uint64   `json:"exec_gas_used" extensions:"x-nullable"`
+	ExecLogsBloom              string   `json:"exec_logs_bloom" extensions:"x-nullable"`
+	ExecParentHash             string   `json:"exec_parent_hash" extensions:"x-nullable"`
+	ExecRandom                 string   `json:"exec_random" extensions:"x-nullable"`
+	ExecReceiptsRoot           string   `json:"exec_receipts_root" extensions:"x-nullable"`
+	ExecStateRoot              string   `json:"exec_state_root" extensions:"x-nullable"`
+	ExecTimestamp              uint64   `json:"exec_timestamp" extensions:"x-nullable"`
+	ExecTransactionsCount      uint64   `json:"exec_transactions_count" extensions:"x-nullable"`
+	Graffiti                   string   `json:"graffiti"`
+	GraffitiText               string   `json:"graffiti_text"`
+	Parentroot                 string   `json:"parentroot"`
+	Proposer                   uint64   `json:"proposer"`
+	Proposerslashingscount     uint64   `json:"proposerslashingscount"`
+	Randaoreveal               string   `json:"randaoreveal"`
+	Signature                  string   `json:"signature"`
+	Slot                       uint64   `json:"slot"`
+	Stateroot                  string   `json:"stateroot"`
+	Status                     string   `json:"status"`
+	SyncaggregateBits          string   `json:"syncaggregate_bits"`
+	SyncaggregateParticipation float64  `json:"syncaggregate_participation"`
+	SyncaggregateSignatures    []string `json:"syncaggregate_signatures"`
+	Voluntaryexitscount        uint64   `json:"voluntaryexitscount"`
+	WithdrawalCount            uint64   `json:"withdrawalcount"`
 }
 
 type APIAttestationResponse struct {
-	Aggregationbits string  `json:"aggregationbits"`
-	Beaconblockroot string  `json:"beaconblockroot"`
-	BlockIndex      int64   `json:"block_index"`
-	BlockRoot       string  `json:"block_root"`
-	BlockSlot       int64   `json:"block_slot"`
-	Committeeindex  int64   `json:"committeeindex"`
-	Signature       string  `json:"signature"`
-	Slot            int64   `json:"slot"`
-	SourceEpoch     int64   `json:"source_epoch"`
-	SourceRoot      string  `json:"source_root"`
-	TargetEpoch     int64   `json:"target_epoch"`
-	TargetRoot      string  `json:"target_root"`
-	Validators      []int64 `json:"validators"`
+	Aggregationbits string   `json:"aggregationbits"`
+	Beaconblockroot string   `json:"beaconblockroot"`
+	BlockIndex      int64    `json:"block_index"`
+	BlockRoot       string   `json:"block_root"`
+	BlockSlot       int64    `json:"block_slot"`
+	Committeeindex  int64    `json:"committeeindex"`
+	Signatures      []string `json:"signatures"`
+	Slot            int64    `json:"slot"`
+	SourceEpoch     int64    `json:"source_epoch"`
+	SourceRoot      string   `json:"source_root"`
+	TargetEpoch     int64    `json:"target_epoch"`
+	TargetRoot      string   `json:"target_root"`
+	Validators      []int64  `json:"validators"`
 }
 
 type APIDepositResponse struct {
@@ -261,7 +261,7 @@ type APIAttesterSlashingResponse struct {
 	Attestation1_beaconblockroot string   `json:"attestation1_beaconblockroot"`
 	Attestation1_index           uint64   `json:"attestation1_index"`
 	Attestation1_indices         []uint64 `json:"attestation1_indices"`
-	Attestation1_signature       string   `json:"attestation1_signature"`
+	Attestation1_signatures      []string `json:"attestation1_signatures"`
 	Attestation1_slot            uint64   `json:"attestation1_slot"`
 	Attestation1_source_epoch    uint64   `json:"attestation1_source_epoch"`
 	Attestation1_source_root     string   `json:"attestation1_source_root"`
@@ -270,7 +270,7 @@ type APIAttesterSlashingResponse struct {
 	Attestation2_beaconblockroot string   `json:"attestation2_beaconblockroot"`
 	Attestation2_index           uint64   `json:"attestation2_index"`
 	Attestation2_indices         []uint64 `json:"attestation2_indices"`
-	Attestation2_signature       string   `json:"attestation2_signature"`
+	Attestation2_signatures      []string `json:"attestation2_signatures"`
 	Attestation2_slot            uint64   `json:"attestation2_slot"`
 	Attestation2_source_epoch    uint64   `json:"attestation2_source_epoch"`
 	Attestation2_source_root     string   `json:"attestation2_source_root"`
@@ -477,42 +477,42 @@ type ApiValidatorAttestationsResponse struct {
 
 // convert this json object to a golang struct called ApiValidatorProposalsResponse
 type ApiValidatorProposalsResponse struct {
-	Attestationscount          uint64  `db:"attestationscount" json:"attestationscount"`
-	Attesterslashingscount     uint64  `db:"attesterslashingscount" json:"attesterslashingscount"`
-	Blockroot                  string  `db:"blockroot" json:"blockroot"`
-	Depositscount              uint64  `db:"depositscount" json:"depositscount"`
-	Epoch                      uint64  `db:"epoch" json:"epoch"`
-	Eth1dataBlockhash          string  `db:"eth1data_blockhash" json:"eth1data_blockhash"`
-	Eth1dataDepositcount       uint64  `db:"eth1data_depositcount" json:"eth1data_depositcount"`
-	Eth1dataDepositroot        string  `db:"eth1data_depositroot" json:"eth1data_depositroot"`
-	ExecBaseFeePerGas          *uint64 `db:"exec_base_fee_per_gas" json:"exec_base_fee_per_gas,omitempty"`
-	ExecBlockHash              *string `db:"exec_block_hash" json:"exec_block_hash,omitempty"`
-	ExecBlockNumber            *uint64 `db:"exec_block_number" json:"exec_block_number,omitempty"`
-	ExecExtra_data             *string `db:"exec_extra_data" json:"exec_extra_data,omitempty"`
-	ExecFeeRecipient           *string `db:"exec_fee_recipient" json:"exec_fee_recipient,omitempty"`
-	ExecGasLimit               *uint64 `db:"exec_gas_limit" json:"exec_gas_limit,omitempty"`
-	ExecGasUsed                *uint64 `db:"exec_gas_used" json:"exec_gas_used,omitempty"`
-	ExecLogsBloom              *string `db:"exec_logs_bloom" json:"exec_logs_bloom,omitempty"`
-	ExecParentHash             *string `db:"exec_parent_hash" json:"exec_parent_hash,omitempty"`
-	ExecRandom                 *string `db:"exec_random" json:"exec_random,omitempty"`
-	ExecReceiptsRoot           *string `db:"exec_receipts_root" json:"exec_receipts_root,omitempty"`
-	ExecStateRoot              *string `db:"exec_state_root" json:"exec_state_root,omitempty"`
-	ExecTimestamp              *uint64 `db:"exec_timestamp" json:"exec_timestamp,omitempty"`
-	ExecTransactionsCount      *uint64 `db:"exec_transactions_count" json:"exec_transactions_count,omitempty"`
-	Graffiti                   string  `db:"graffiti" json:"graffiti"`
-	GraffitiText               string  `db:"graffiti_text" json:"graffiti_text"`
-	Parentroot                 string  `db:"parentroot" json:"parentroot"`
-	Proposer                   uint64  `db:"proposer" json:"proposer"`
-	Proposerslashingscount     uint64  `db:"proposerslashingscount" json:"proposerslashingscount"`
-	Randaoreveal               string  `db:"randaoreveal" json:"randaoreveal"`
-	Signature                  string  `db:"signature" json:"signature"`
-	Slot                       uint64  `db:"slot" json:"slot"`
-	Stateroot                  string  `db:"stateroot" json:"stateroot"`
-	Status                     string  `db:"status" json:"status"`
-	SyncaggregateBits          string  `db:"syncaggregate_bits" json:"syncaggregate_bits"`
-	SyncaggregateParticipation float64 `db:"syncaggregate_participation" json:"syncaggregate_participation"`
-	SyncaggregateSignature     string  `db:"syncaggregate_signature" json:"syncaggregate_signature"`
-	Voluntaryexitscount        uint64  `db:"voluntaryexitscount" json:"voluntaryexitscount"`
+	Attestationscount          uint64   `db:"attestationscount" json:"attestationscount"`
+	Attesterslashingscount     uint64   `db:"attesterslashingscount" json:"attesterslashingscount"`
+	Blockroot                  string   `db:"blockroot" json:"blockroot"`
+	Depositscount              uint64   `db:"depositscount" json:"depositscount"`
+	Epoch                      uint64   `db:"epoch" json:"epoch"`
+	Eth1dataBlockhash          string   `db:"eth1data_blockhash" json:"eth1data_blockhash"`
+	Eth1dataDepositcount       uint64   `db:"eth1data_depositcount" json:"eth1data_depositcount"`
+	Eth1dataDepositroot        string   `db:"eth1data_depositroot" json:"eth1data_depositroot"`
+	ExecBaseFeePerGas          *uint64  `db:"exec_base_fee_per_gas" json:"exec_base_fee_per_gas,omitempty"`
+	ExecBlockHash              *string  `db:"exec_block_hash" json:"exec_block_hash,omitempty"`
+	ExecBlockNumber            *uint64  `db:"exec_block_number" json:"exec_block_number,omitempty"`
+	ExecExtra_data             *string  `db:"exec_extra_data" json:"exec_extra_data,omitempty"`
+	ExecFeeRecipient           *string  `db:"exec_fee_recipient" json:"exec_fee_recipient,omitempty"`
+	ExecGasLimit               *uint64  `db:"exec_gas_limit" json:"exec_gas_limit,omitempty"`
+	ExecGasUsed                *uint64  `db:"exec_gas_used" json:"exec_gas_used,omitempty"`
+	ExecLogsBloom              *string  `db:"exec_logs_bloom" json:"exec_logs_bloom,omitempty"`
+	ExecParentHash             *string  `db:"exec_parent_hash" json:"exec_parent_hash,omitempty"`
+	ExecRandom                 *string  `db:"exec_random" json:"exec_random,omitempty"`
+	ExecReceiptsRoot           *string  `db:"exec_receipts_root" json:"exec_receipts_root,omitempty"`
+	ExecStateRoot              *string  `db:"exec_state_root" json:"exec_state_root,omitempty"`
+	ExecTimestamp              *uint64  `db:"exec_timestamp" json:"exec_timestamp,omitempty"`
+	ExecTransactionsCount      *uint64  `db:"exec_transactions_count" json:"exec_transactions_count,omitempty"`
+	Graffiti                   string   `db:"graffiti" json:"graffiti"`
+	GraffitiText               string   `db:"graffiti_text" json:"graffiti_text"`
+	Parentroot                 string   `db:"parentroot" json:"parentroot"`
+	Proposer                   uint64   `db:"proposer" json:"proposer"`
+	Proposerslashingscount     uint64   `db:"proposerslashingscount" json:"proposerslashingscount"`
+	Randaoreveal               string   `db:"randaoreveal" json:"randaoreveal"`
+	Signature                  string   `db:"signature" json:"signature"`
+	Slot                       uint64   `db:"slot" json:"slot"`
+	Stateroot                  string   `db:"stateroot" json:"stateroot"`
+	Status                     string   `db:"status" json:"status"`
+	SyncaggregateBits          string   `db:"syncaggregate_bits" json:"syncaggregate_bits"`
+	SyncaggregateParticipation float64  `db:"syncaggregate_participation" json:"syncaggregate_participation"`
+	SyncaggregateSignatures    []string `db:"syncaggregate_signatures" json:"syncaggregate_signatures"`
+	Voluntaryexitscount        uint64   `db:"voluntaryexitscount" json:"voluntaryexitscount"`
 }
 
 type EnsDomainResponse struct {

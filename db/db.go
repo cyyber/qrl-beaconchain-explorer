@@ -262,7 +262,7 @@ func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy
 	param = hash
 	if utils.IsHash(trimmedQuery) {
 		searchQuery = `WHERE eth1.publickey = $3`
-	} else if utils.IsEth1Tx(trimmedQuery) {
+	} else if utils.IsTxHash(trimmedQuery) {
 		// Withdrawal credentials have the same length as a tx hash
 		if utils.IsValidWithdrawalCredentials(trimmedQuery) {
 			searchQuery = `
@@ -272,7 +272,7 @@ func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy
 		} else {
 			searchQuery = `WHERE eth1.tx_hash = $3`
 		}
-	} else if utils.IsEth1Address(trimmedQuery) {
+	} else if utils.IsAddress(trimmedQuery) {
 		searchQuery = `WHERE eth1.from_address = $3`
 	} else if uiQuery, parseErr := strconv.ParseUint(query, 10, 31); parseErr == nil { // Limit to 31 bits to stay within math.MaxInt32
 		param = uiQuery
@@ -436,7 +436,7 @@ func GetEth2Deposits(query string, length, start uint64, orderBy, orderDir strin
 	} else if utils.IsValidWithdrawalCredentials(trimmedQuery) {
 		param = hash
 		searchQuery = `WHERE blocks_deposits.withdrawalcredentials = $3`
-	} else if utils.IsEth1Address(trimmedQuery) {
+	} else if utils.IsAddress(trimmedQuery) {
 		param = hash
 		searchQuery = `
 				LEFT JOIN eth1_deposits ON blocks_deposits.publickey = eth1_deposits.publickey
@@ -1168,7 +1168,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 	defer stmtExecutionPayload.Close()
 
 	stmtBlock, err := tx.Prepare(`
-		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, randaoreveal, graffiti, graffiti_text, eth1data_depositroot, eth1data_depositcount, eth1data_blockhash, syncaggregate_bits, syncaggregate_signature, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, syncaggregate_participation, proposer, status, exec_parent_hash, exec_fee_recipient, exec_state_root, exec_receipts_root, exec_logs_bloom, exec_random, exec_block_number, exec_gas_limit, exec_gas_used, exec_timestamp, exec_extra_data, exec_base_fee_per_gas, exec_block_hash, exec_transactions_count)
+		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, randaoreveal, graffiti, graffiti_text, eth1data_depositroot, eth1data_depositcount, eth1data_blockhash, syncaggregate_bits, syncaggregate_signatures, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, syncaggregate_participation, proposer, status, exec_parent_hash, exec_fee_recipient, exec_state_root, exec_receipts_root, exec_logs_bloom, exec_random, exec_block_number, exec_gas_limit, exec_gas_used, exec_timestamp, exec_extra_data, exec_base_fee_per_gas, exec_block_hash, exec_transactions_count)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37)
 		ON CONFLICT (slot, blockroot) DO NOTHING`)
 	if err != nil {
@@ -1204,7 +1204,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 	defer stmtProposerSlashing.Close()
 
 	stmtAttesterSlashing, err := tx.Prepare(`
-		INSERT INTO blocks_attesterslashings (block_slot, block_index, block_root, attestation1_indices, attestation1_signature, attestation1_slot, attestation1_index, attestation1_beaconblockroot, attestation1_source_epoch, attestation1_source_root, attestation1_target_epoch, attestation1_target_root, attestation2_indices, attestation2_signature, attestation2_slot, attestation2_index, attestation2_beaconblockroot, attestation2_source_epoch, attestation2_source_root, attestation2_target_epoch, attestation2_target_root)
+		INSERT INTO blocks_attesterslashings (block_slot, block_index, block_root, attestation1_indices, attestation1_signatures, attestation1_slot, attestation1_index, attestation1_beaconblockroot, attestation1_source_epoch, attestation1_source_root, attestation1_target_epoch, attestation1_target_root, attestation2_indices, attestation2_signatures, attestation2_slot, attestation2_index, attestation2_beaconblockroot, attestation2_source_epoch, attestation2_source_root, attestation2_target_epoch, attestation2_target_root)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
 		ON CONFLICT (block_slot, block_index) DO UPDATE SET attestation1_indices = excluded.attestation1_indices, attestation2_indices = excluded.attestation2_indices`)
 	if err != nil {
@@ -1213,7 +1213,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 	defer stmtAttesterSlashing.Close()
 
 	stmtAttestations, err := tx.Prepare(`
-		INSERT INTO blocks_attestations (block_slot, block_index, block_root, aggregationbits, validators, signature, slot, committeeindex, beaconblockroot, source_epoch, source_root, target_epoch, target_root)
+		INSERT INTO blocks_attestations (block_slot, block_index, block_root, aggregationbits, validators, signatures, slot, committeeindex, beaconblockroot, source_epoch, source_root, target_epoch, target_root)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 		ON CONFLICT (block_slot, block_index) DO NOTHING`)
 	if err != nil {
@@ -1291,11 +1291,11 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 				b.Proposer = MaxSqlInteger
 			}
 			syncAggBits := []byte{}
-			syncAggSig := []byte{}
+			syncAggSigs := [][]byte{}
 			syncAggParticipation := 0.0
 			if b.SyncAggregate != nil {
 				syncAggBits = b.SyncAggregate.SyncCommitteeBits
-				syncAggSig = b.SyncAggregate.SyncCommitteeSignature
+				syncAggSigs = b.SyncAggregate.SyncCommitteeSignatures
 				syncAggParticipation = b.SyncAggregate.SyncAggregateParticipation
 				// blockLog = blockLog.WithField("syncParticipation", b.SyncAggregate.SyncAggregateParticipation)
 			}
@@ -1359,7 +1359,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 				b.Eth1Data.DepositCount,
 				b.Eth1Data.BlockHash,
 				syncAggBits,
-				syncAggSig,
+				pq.Array(syncAggSigs),
 				len(b.ProposerSlashings),
 				len(b.AttesterSlashings),
 				len(b.Attestations),
@@ -1422,7 +1422,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 			t = time.Now()
 
 			for i, as := range b.AttesterSlashings {
-				_, err := stmtAttesterSlashing.Exec(b.Slot, i, b.BlockRoot, pq.Array(as.Attestation1.AttestingIndices), as.Attestation1.Signature, as.Attestation1.Data.Slot, as.Attestation1.Data.CommitteeIndex, as.Attestation1.Data.BeaconBlockRoot, as.Attestation1.Data.Source.Epoch, as.Attestation1.Data.Source.Root, as.Attestation1.Data.Target.Epoch, as.Attestation1.Data.Target.Root, pq.Array(as.Attestation2.AttestingIndices), as.Attestation2.Signature, as.Attestation2.Data.Slot, as.Attestation2.Data.CommitteeIndex, as.Attestation2.Data.BeaconBlockRoot, as.Attestation2.Data.Source.Epoch, as.Attestation2.Data.Source.Root, as.Attestation2.Data.Target.Epoch, as.Attestation2.Data.Target.Root)
+				_, err := stmtAttesterSlashing.Exec(b.Slot, i, b.BlockRoot, pq.Array(as.Attestation1.AttestingIndices), pq.Array(as.Attestation1.Signatures), as.Attestation1.Data.Slot, as.Attestation1.Data.CommitteeIndex, as.Attestation1.Data.BeaconBlockRoot, as.Attestation1.Data.Source.Epoch, as.Attestation1.Data.Source.Root, as.Attestation1.Data.Target.Epoch, as.Attestation1.Data.Target.Root, pq.Array(as.Attestation2.AttestingIndices), pq.Array(as.Attestation2.Signatures), as.Attestation2.Data.Slot, as.Attestation2.Data.CommitteeIndex, as.Attestation2.Data.BeaconBlockRoot, as.Attestation2.Data.Source.Epoch, as.Attestation2.Data.Source.Root, as.Attestation2.Data.Target.Epoch, as.Attestation2.Data.Target.Root)
 				if err != nil {
 					return fmt.Errorf("error executing stmtAttesterSlashing for block %v index %v: %w", b.Slot, i, err)
 				}
@@ -1430,7 +1430,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 			blockLog.WithField("duration", time.Since(t)).Tracef("stmtAttesterSlashing")
 			t = time.Now()
 			for i, a := range b.Attestations {
-				_, err = stmtAttestations.Exec(b.Slot, i, b.BlockRoot, a.AggregationBits, pq.Array(a.Attesters), a.Signature, a.Data.Slot, a.Data.CommitteeIndex, a.Data.BeaconBlockRoot, a.Data.Source.Epoch, a.Data.Source.Root, a.Data.Target.Epoch, a.Data.Target.Root)
+				_, err = stmtAttestations.Exec(b.Slot, i, b.BlockRoot, a.AggregationBits, pq.Array(a.Attesters), pq.Array(a.Signatures), a.Data.Slot, a.Data.CommitteeIndex, a.Data.BeaconBlockRoot, a.Data.Source.Epoch, a.Data.Source.Root, a.Data.Target.Epoch, a.Data.Target.Root)
 				if err != nil {
 					return fmt.Errorf("error executing stmtAttestations for block %v index %v: %w", b.Slot, i, err)
 				}
@@ -1820,11 +1820,10 @@ func GetSlotVizData(latestEpoch uint64) ([]*types.SlotVizEpochs, error) {
 		_, exists := epochMap[b.Epoch]
 		if !exists {
 			r := types.SlotVizEpochs{
-				Epoch:     b.Epoch,
-				Finalized: b.Finalized,
-				// TODO: NaN
-				// Particicpation: b.Globalparticipationrate,
-				Slots: []*types.SlotVizSlots{},
+				Epoch:          b.Epoch,
+				Finalized:      b.Finalized,
+				Particicpation: b.Globalparticipationrate,
+				Slots:          []*types.SlotVizSlots{},
 			}
 			r.Slots = make([]*types.SlotVizSlots, utils.Config.Chain.ClConfig.SlotsPerEpoch)
 			epochMap[b.Epoch] = &r
@@ -1972,7 +1971,7 @@ func GetWithdrawalsCountForQuery(query string) (uint64, error) {
 	var err error = nil
 
 	trimmedQuery := strings.ToLower(strings.TrimPrefix(query, "0x"))
-	if utils.IsEth1Address(query) {
+	if utils.IsAddress(query) {
 		searchQuery := `WHERE w.address = $1`
 		addr, decErr := hex.DecodeString(trimmedQuery)
 		if err != nil {
@@ -2037,7 +2036,7 @@ func GetWithdrawals(query string, length, start uint64, orderBy, orderDir string
 
 	trimmedQuery := strings.ToLower(strings.TrimPrefix(query, "0x"))
 	if trimmedQuery != "" {
-		if utils.IsEth1Address(query) {
+		if utils.IsAddress(query) {
 			searchQuery := `WHERE w.address = $3`
 			addr, decErr := hex.DecodeString(trimmedQuery)
 			if decErr != nil {
