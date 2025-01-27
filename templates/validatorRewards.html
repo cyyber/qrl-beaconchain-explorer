@@ -10,11 +10,6 @@
   {{ .CsrfField }}
 <script> const MIN_TIMESTAMP = {{.MinDateTimestamp }}</script>
   <script src="/js/validatorRewards.js"></script>
-<script>
-    $(document).ready(function () {
-        updateCurrencies({{.Currencies }}, "currency")
-    })
-</script>
 {{ end }}
 
 {{ define "css" }}
@@ -37,7 +32,7 @@
           </ol>
         </nav>
       </div>
-      <p class="mb-4">Get the income history of your validators or subscribe to our monthly income report</p>
+      <p class="mb-4">Get the income history of your validators</p>
     </div>
 
     <div class="d-flex justify-content-center align-items-center my-3" style="width: 100%;">
@@ -45,9 +40,9 @@
         <div class="card-body">
           <span>Total Income </span>
           <span id="total-income-eth-span" class="ml-1"></span>
-          <span class="mx-2">|</span>
+          <!-- <span class="mx-2">|</span> -->
           <!-- <span>Total</span>  -->
-          <span id="total-income-currency-span"></span>
+          <!-- <span id="total-income-currency-span"></span> -->
         </div>
       </div>
     </div>
@@ -64,8 +59,8 @@
                 <th>Date</th>
                 <th>Balance</th>
                 <th>Income</th>
-                <th>ETH Value</th>
-                <th>Income</th>
+                <!-- <th>ETH Value</th> -->
+                <!-- <th>Income</th> -->
                 <!-- <th>Currency</th> -->
               </tr>
             </thead>
@@ -84,12 +79,6 @@
                 <input class="form-control typeahead-validators mb-2" type="text" placeholder="Find Validator via Validator index, Graffiti or Zond Address" aria-label="Search" />
                 <textarea id="validator-index-view" name="validators" class="form-control mt-2" style="width: 100%; background-color: rgba(0, 0, 0, 0);" placeholder="or add validator indices manually. eg. 1234,5678,9012, ..." required></textarea>
               </div>
-
-              <div class="form-group">
-                <label for="currency">Currency</label>
-                <select id="currency" name="currency" class="form-control" required></select>
-              </div>
-
               <div class="form-group">
                 <label for="days">Date Range</label>
                 <div class="d-flex flex-row align-items-center">
@@ -100,11 +89,6 @@
               </div>
 
               <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex justify-content-end align-items-center">
-                  <button class="btn btn-secondary text-white" id="report-sub-btn" type="button" disabled="true"><i class="fas fa-envelope p-1"></i>Subscribe</button>
-                  <span class="ml-1 d-none d-md-flex" style="color: gray; font-size: 12px;">to receive a monthly report for listed validators</span>
-                  <i class="fas fa-info-circle ml-1" style="color: gray; font-size: 12px;" data-toggle="tooltip" data-placement="top" title="Sign in to use this feature"></i>
-                </div>
                 <button type="submit" class="btn btn-primary text-white">Generate</button>
               </div>
             </form>

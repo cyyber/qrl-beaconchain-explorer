@@ -254,32 +254,32 @@ function showTable(data) {
           return data
         },
       },
-      {
-        targets: 3,
-        data: "3",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          // return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
-          return data
-        },
-      },
-      {
-        targets: 4,
-        data: "4",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          //    return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
-          return data
-        },
-        // }, {
-        //     targets: 5,
-        //     data: '5',
-        //     "orderable": false,
-        //     visible: false,
-        //     render: function (data, type, row, meta) {
-        //         return data.toUpperCase()
-        //     }
-      },
+      // {
+      //   targets: 3,
+      //   data: "3",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     // return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
+      //     return data
+      //   },
+      // },
+      // {
+      //   targets: 4,
+      //   data: "4",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     //    return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
+      //     return data
+      //   },
+      //   // }, {
+      //   //     targets: 5,
+      //   //     data: '5',
+      //   //     "orderable": false,
+      //   //     visible: false,
+      //   //     render: function (data, type, row, meta) {
+      //   //         return data.toUpperCase()
+      //   //     }
+      // },
     ],
   })
 }

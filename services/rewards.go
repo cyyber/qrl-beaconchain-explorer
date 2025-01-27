@@ -18,13 +18,13 @@ import (
 )
 
 type rewardHistory struct {
-	History       [][]string `json:"history"`
-	TotalETH      string     `json:"total_eth"`
-	TotalCurrency string     `json:"total_currency"`
-	Validators    []uint64   `json:"validators"`
+	History  [][]string `json:"history"`
+	TotalETH string     `json:"total_eth"`
+	// TotalCurrency string     `json:"total_currency"`
+	Validators []uint64 `json:"validators"`
 }
 
-func GetValidatorHist(validatorArr []uint64, currency string, start uint64, end uint64) rewardHistory {
+func GetValidatorHist(validatorArr []uint64 /*currency string,*/, start uint64, end uint64) rewardHistory {
 	var err error
 
 	var pricesDb []types.Price
@@ -54,58 +54,58 @@ func GetValidatorHist(validatorArr []uint64, currency string, start uint64, end 
 		logger.Errorf("error getting income history for validator hist: %v", err)
 	}
 
-	prices := map[string]float64{}
-	for _, item := range pricesDb {
-		date := fmt.Sprintf("%v", item.TS)
-		date = strings.Split(date, " ")[0]
-		switch currency {
-		case "eur":
-			prices[date] = item.EUR
-		case "usd":
-			prices[date] = item.USD
-		case "gbp":
-			prices[date] = item.GBP
-		case "cad":
-			prices[date] = item.CAD
-		case "cny":
-			prices[date] = item.CNY
-		case "jpy":
-			prices[date] = item.JPY
-		case "rub":
-			prices[date] = item.RUB
-		case "aud":
-			prices[date] = item.AUD
-		default:
-			prices[date] = item.USD
-			currency = "usd"
-		}
-	}
+	// prices := map[string]float64{}
+	// for _, item := range pricesDb {
+	// 	date := fmt.Sprintf("%v", item.TS)
+	// 	date = strings.Split(date, " ")[0]
+	// 	switch currency {
+	// 	case "eur":
+	// 		prices[date] = item.EUR
+	// 	case "usd":
+	// 		prices[date] = item.USD
+	// 	case "gbp":
+	// 		prices[date] = item.GBP
+	// 	case "cad":
+	// 		prices[date] = item.CAD
+	// 	case "cny":
+	// 		prices[date] = item.CNY
+	// 	case "jpy":
+	// 		prices[date] = item.JPY
+	// 	case "rub":
+	// 		prices[date] = item.RUB
+	// 	case "aud":
+	// 		prices[date] = item.AUD
+	// 	default:
+	// 		prices[date] = item.USD
+	// 		currency = "usd"
+	// 	}
+	// }
 
 	data := make([][]string, len(income))
 	tETH := 0.0
-	tCur := 0.0
+	// tCur := 0.0
 
 	for i, item := range income {
 		key := fmt.Sprintf("%v", utils.DayToTime(item.Day))
 		key = strings.Split(key, " ")[0]
 		iETH := float64(item.ClRewards) / 1e9
 		tETH += iETH
-		iCur := iETH * prices[key]
-		tCur += iCur
+		// iCur := iETH * prices[key]
+		// tCur += iCur
 		data[i] = []string{
 			key,
-			addCommas(float64(item.EndBalance.Int64)/1e9, "%.5f"),                           // end of day balance
-			addCommas(iETH, "%.5f"),                                                         // income of day ETH
-			fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(prices[key], "%.2f")), //price will default to 0 if key does not exist
-			fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(iCur, "%.2f")),        // income of day Currency
+			addCommas(float64(item.EndBalance.Int64)/1e9, "%.5f"), // end of day balance
+			addCommas(iETH, "%.5f"),                               // income of day ETH
+			// fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(prices[key], "%.2f")), //price will default to 0 if key does not exist
+			// fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(iCur, "%.2f")),        // income of day Currency
 		}
 	}
 
 	return rewardHistory{
-		History:       data,
-		TotalETH:      addCommas(tETH, "%.5f"),
-		TotalCurrency: fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(tCur, "%.2f")),
-		Validators:    validatorArr,
+		History:  data,
+		TotalETH: addCommas(tETH, "%.5f"),
+		// TotalCurrency: fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(tCur, "%.2f")),
+		Validators: validatorArr,
 	}
 }
 
@@ -174,7 +174,7 @@ func GeneratePdfReport(hist rewardHistory, currency string) []byte {
 	pdf.SetTextColor(24, 24, 24)
 	pdf.SetFillColor(255, 255, 255)
 	// pdf.Ln(-1)
-	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s | %s", hist.TotalETH, hist.TotalCurrency), "", 0, "CM", true, 0, "")
+	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalETH), "", 0, "CM", true, 0, "")
 
 	header := [colCount]string{"Date", "Balance", "Income", "ETH Value", fmt.Sprintf("Income (%v)", currency)}
 
@@ -296,7 +296,7 @@ func GeneratePdfReport(hist rewardHistory, currency string) []byte {
 }
 
 func GetPdfReport(validatorArr []uint64, currency string, start uint64, end uint64) []byte {
-	hist := GetValidatorHist(validatorArr, currency, start, end)
+	hist := GetValidatorHist(validatorArr /*currency,*/, start, end)
 	return GeneratePdfReport(hist, currency)
 }
 

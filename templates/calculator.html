@@ -79,7 +79,7 @@
         this.config.slotsPerEpoch = 32
         this.config.secondsPerEpoch = this.config.secondsPerSlot * this.config.slotsPerEpoch
         this.config.epochsPerDay = (3600 * 24) / this.config.secondsPerEpoch
-        this.config.minNetworkStake = 40000e9 * 16387
+        this.config.minNetworkStake = 40000e9 * 2625
         this.config.minValidatorStake = 40000e9
         this.config.symbols = {
           USD: "$",
@@ -105,7 +105,7 @@
           RUB: 15277.44,
           USD: 208.96,
         }
-        this.config.totalEthSupply = 115113251499000000
+        this.config.totalEthSupply = 105000000000000000
         this.config.showCosts = false
 
         // the param key, encoding function, decoding function, include in url params bool, update element function
@@ -396,7 +396,7 @@
                 }
               }
               if (data && data.result && data.result > this.config.totalEthSupply) {
-                console.log("updating totalsuplly")
+                console.log("updating totalsupply")
                 this.config.totalEthSupply = data.result / 1e9
               }
               var ethSupply = this.config.totalEthSupply / 1e9
@@ -479,8 +479,8 @@
         } else {
           document.getElementById("staking-variable-yourStake-validation").style.display = "none"
         }
-        if (isNaN(p.networkStake) || p.networkStake < 40000 * 16387 * 1e9) {
-          p.networkStake = 40000 * 16387 * 1e9
+        if (isNaN(p.networkStake) || p.networkStake < 40000 * 2625 * 1e9) {
+          p.networkStake = 40000 * 2625 * 1e9
           document.getElementById("staking-variable-totalStake-validation").style.display = "initial"
         } else {
           document.getElementById("staking-variable-totalStake-validation").style.display = "none"
@@ -970,7 +970,7 @@
                   <div class="setting">
                     <div class="d-flex justify-content-between">
                       <h6 width="50%">
-                        Total staked ether <span id="totalStake-currency">ETH</span>
+                        Total staked <span id="totalStake-currency">ETH</span>
                         <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="Total staked ether is the sum of effective balances of all active validators attesting in the network."></i>
                       </h6>
                       <span id="staking-variable-totalStake-percentage"></span>
