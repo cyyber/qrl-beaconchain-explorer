@@ -15,7 +15,7 @@ jobs:
       - name: Publish to Dockerhub Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: theQRL/zond-beaconchain-explorer
+          name: qrledger/zond-beaconchain-explorer
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tags: "newfrontend"
