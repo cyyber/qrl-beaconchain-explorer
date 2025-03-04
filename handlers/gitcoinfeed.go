@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
 )
 
 func GitcoinFeed(w http.ResponseWriter, r *http.Request) {

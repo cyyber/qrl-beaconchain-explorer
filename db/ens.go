@@ -11,11 +11,11 @@ import (
 	"sync"
 	"time"
 
-	ensContracts "github.com/gobitfly/eth2-beaconchain-explorer/contracts/ens"
-	"github.com/gobitfly/eth2-beaconchain-explorer/metrics"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
 	"github.com/sirupsen/logrus"
+	ensContracts "github.com/theQRL/zond-beaconchain-explorer/contracts/ens"
+	"github.com/theQRL/zond-beaconchain-explorer/metrics"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 	"golang.org/x/sync/errgroup"

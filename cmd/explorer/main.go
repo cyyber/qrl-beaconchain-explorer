@@ -12,20 +12,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/cache"
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	ethclients "github.com/gobitfly/eth2-beaconchain-explorer/ethClients"
-	"github.com/gobitfly/eth2-beaconchain-explorer/exporter"
-	"github.com/gobitfly/eth2-beaconchain-explorer/handlers"
-	"github.com/gobitfly/eth2-beaconchain-explorer/metrics"
-	"github.com/gobitfly/eth2-beaconchain-explorer/price"
-	"github.com/gobitfly/eth2-beaconchain-explorer/ratelimit"
-	"github.com/gobitfly/eth2-beaconchain-explorer/rpc"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/static"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
-	"github.com/gobitfly/eth2-beaconchain-explorer/version"
+	"github.com/theQRL/zond-beaconchain-explorer/cache"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	ethclients "github.com/theQRL/zond-beaconchain-explorer/ethClients"
+	"github.com/theQRL/zond-beaconchain-explorer/exporter"
+	"github.com/theQRL/zond-beaconchain-explorer/handlers"
+	"github.com/theQRL/zond-beaconchain-explorer/metrics"
+	"github.com/theQRL/zond-beaconchain-explorer/price"
+	"github.com/theQRL/zond-beaconchain-explorer/ratelimit"
+	"github.com/theQRL/zond-beaconchain-explorer/rpc"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/static"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/version"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 
@@ -33,7 +33,7 @@ import (
 
 	_ "net/http/pprof"
 
-	_ "github.com/gobitfly/eth2-beaconchain-explorer/docs"
+	_ "github.com/theQRL/zond-beaconchain-explorer/docs"
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"

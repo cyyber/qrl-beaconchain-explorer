@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/messaging"

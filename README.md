@@ -1,13 +1,13 @@
-# Ethereum Beacon Chain Explorer
+# Zond Beacon Chain Explorer
 
-The explorer provides a comprehensive and easy to use interface for the upcoming Ethereum beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
+The explorer provides a comprehensive and easy to use interface for the upcoming Zond beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
 
 [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://dsc.gg/beaconchain)
 [![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=Twitter&logoColor=white)](https://twitter.com/beaconcha_in)
 
-[![Badge](https://github.com/gobitfly/eth2-beaconchain-explorer/workflows/Build/badge.svg)](https://github.com/gobitfly/eth2-beaconchain-explorer/actions?query=workflow%3A%22Build+%26+Publish+Docker+images%22)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gobitfly/eth2-beaconchain-explorer)](https://goreportcard.com/report/github.com/gobitfly/eth2-beaconchain-explorer)
-[![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/gobitfly/eth2-beaconchain-explorer/badge)](https://www.gitpoap.io/gh/gobitfly/eth2-beaconchain-explorer)
+[![Badge](https://github.com/theQRL/zond-beaconchain-explorer/workflows/Build/badge.svg)](https://github.com/theQRL/zond-beaconchain-explorer/actions?query=workflow%3A%22Build+%26+Publish+Docker+images%22)
+[![Go Report Card](https://goreportcard.com/badge/github.com/theQRL/zond-beaconchain-explorer)](https://goreportcard.com/report/github.com/theQRL/zond-beaconchain-explorer)
+[![GitPOAP Badge](https://public-api.gitpoap.io/v1/repo/theQRL/zond-beaconchain-explorer/badge)](https://www.gitpoap.io/gh/theQRL/zond-beaconchain-explorer)
 
 ## About
 
@@ -69,7 +69,7 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
 
 ## Getting started
 
-We currently do not provide any pre-built binaries of the explorer. Docker images are available at https://hub.docker.com/repository/docker/gobitfly/eth2-beaconchain-explorer.
+We currently do not provide any pre-built binaries of the explorer. Docker images are available at https://hub.docker.com/repository/docker/theQRL/zond-beaconchain-explorer.
 
 - Download the latest version of the Prysm beacon chain client and start it with the `--archive` flag set
 - Wait till the client finishes the initial sync

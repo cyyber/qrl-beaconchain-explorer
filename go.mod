@@ -1,4 +1,4 @@
-module github.com/gobitfly/eth2-beaconchain-explorer
+module github.com/theQRL/zond-beaconchain-explorer
 
 go 1.21
 

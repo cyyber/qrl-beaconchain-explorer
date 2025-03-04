@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
 )
 
 // Will return the slot finder page

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/contracts/oneinchoracle"
-	"github.com/gobitfly/eth2-beaconchain-explorer/erc20"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/contracts/oneinchoracle"
+	"github.com/theQRL/zond-beaconchain-explorer/erc20"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"

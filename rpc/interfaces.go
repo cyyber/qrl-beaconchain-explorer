@@ -3,7 +3,7 @@ package rpc
 import (
 	"math/big"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
 
 	"github.com/sirupsen/logrus"
 )

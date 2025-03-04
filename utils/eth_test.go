@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
 
 	capella "github.com/attestantio/go-eth2-client/spec/capella"
 	"github.com/attestantio/go-eth2-client/spec/phase0"

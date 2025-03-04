@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
 )
 
 type customFileServer struct {
