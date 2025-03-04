@@ -85,7 +85,6 @@ func GetTemplateFuncs() template.FuncMap {
 		"includeSvg":                              IncludeSvg,
 		"formatHTML":                              FormatMessageToHtml,
 		"formatBalance":                           FormatBalance,
-		"formatNotificationChannel":               FormatNotificationChannel,
 		"formatBalanceSql":                        FormatBalanceSql,
 		"formatCurrentBalance":                    FormatCurrentBalance,
 		"formatElCurrency":                        FormatElCurrency,
@@ -136,14 +135,12 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatFloat":                             FormatFloat,
 		"formatAmount":                            FormatAmount,
 		"formatBytes":                             FormatBytes,
-		"formatBlobVersionedHash":                 FormatBlobVersionedHash,
 		"formatBigAmount":                         FormatBigAmount,
 		"formatBytesAmount":                       FormatBytesAmount,
 		"formatYesNo":                             FormatYesNo,
 		"formatAmountFormatted":                   FormatAmountFormatted,
 		"formatAddressAsLink":                     FormatAddressAsLink,
 		"formatBuilder":                           FormatBuilder,
-		"formatDifficulty":                        FormatDifficulty,
 		"getCurrencyLabel":                        price.GetCurrencyLabel,
 		"config":                                  func() *types.Config { return Config },
 		"epochOfSlot":                             EpochOfSlot,
@@ -226,8 +223,6 @@ func GetTemplateFuncs() template.FuncMap {
 			return nil
 		},
 		"formatBigNumberAddCommasFormated": FormatBigNumberAddCommasFormated,
-		"formatEthstoreComparison":         FormatEthstoreComparison,
-		"formatPoolPerformance":            FormatPoolPerformance,
 		"formatTokenSymbolTitle":           FormatTokenSymbolTitle,
 		"formatTokenSymbol":                FormatTokenSymbol,
 		"dict": func(values ...interface{}) (map[string]interface{}, error) {
@@ -297,9 +292,6 @@ func fixUtf(r rune) rune {
 }
 
 func SyncPeriodOfEpoch(epoch uint64) uint64 {
-	if epoch < Config.Chain.ClConfig.AltairForkEpoch {
-		return 0
-	}
 	return epoch / Config.Chain.ClConfig.EpochsPerSyncCommitteePeriod
 }
 
@@ -437,7 +429,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 	}
 
 	if cfg.Chain.ClConfigPath == "" {
-		// var prysmParamsConfig *prysmParams.BeaconChainConfig
+		// var qrysmParamsConfig *qrysmParams.BeaconChainConfig
 		switch cfg.Chain.Name {
 		case "mainnet":
 			err = yaml.Unmarshal([]byte(config.MainnetChainYml), &cfg.Chain.ClConfig)
@@ -1205,6 +1197,7 @@ func TryFetchContractMetadata(address []byte) (*types.ContractMetadata, error) {
 // 	}
 // }
 
+/*
 func GetEtherscanAPIBaseUrl(provideDefault bool) string {
 	const mainnetBaseUrl = "api.etherscan.io"
 	const goerliBaseUrl = "api-goerli.etherscan.io"
@@ -1231,7 +1224,9 @@ func GetEtherscanAPIBaseUrl(provideDefault bool) string {
 	}
 	return ""
 }
+*/
 
+/*
 func getABIFromEtherscan(address []byte) (*types.ContractMetadata, error) {
 	baseUrl := GetEtherscanAPIBaseUrl(false)
 	if len(baseUrl) < 1 {
@@ -1287,6 +1282,7 @@ func getABIFromEtherscan(address []byte) (*types.ContractMetadata, error) {
 	meta.Name = data.Result[0].ContractName
 	return meta, nil
 }
+*/
 
 func FormatThousandsEnglish(number string) string {
 	runes := []rune(number)
@@ -1329,7 +1325,7 @@ func FormatThousandsEnglish(number string) string {
 // returns two transparent base64 encoded img strings for dark and light theme
 // the first has a black QR code the second a white QR code
 func GenerateQRCodeForAddress(address []byte) (string, string, error) {
-	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("%x", address)), qrcode.Medium)
+	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("Z%x", address)), qrcode.Medium)
 	if err != nil {
 		return "", "", err
 	}
@@ -1360,23 +1356,6 @@ func SliceContains(list []string, target string) bool {
 		}
 	}
 	return false
-}
-
-func FormatEthstoreComparison(pool string, val float64) template.HTML {
-	prefix := ""
-	textClass := "text-danger"
-	ou := "underperforms"
-	if val > 0 {
-		prefix = "+"
-		textClass = "text-success"
-		ou = "outperforms"
-	}
-
-	return template.HTML(fmt.Sprintf(`<sub title="%s %s the ETH.STORE® indicator by %s%.2f%%" data-toggle="tooltip" class="%s">(%s%.2f%%)</sub>`, pool, ou, prefix, val, textClass, prefix, val))
-}
-
-func FormatPoolPerformance(val float64) template.HTML {
-	return template.HTML(fmt.Sprintf(`<span data-toggle="tooltip" title=%f%%>%s%%</span>`, val, fmt.Sprintf("%.2f", val)))
 }
 
 func FormatTokenSymbolTitle(symbol string) string {
@@ -1438,27 +1417,6 @@ func GetLastBalanceInfoSlotForDay(day uint64) uint64 {
 
 // ForkVersionAtEpoch returns the forkversion active a specific epoch
 func ForkVersionAtEpoch(epoch uint64) *types.ForkVersion {
-	if epoch >= Config.Chain.ClConfig.CappellaForkEpoch {
-		return &types.ForkVersion{
-			Epoch:           Config.Chain.ClConfig.CappellaForkEpoch,
-			CurrentVersion:  MustParseHex(Config.Chain.ClConfig.CappellaForkVersion),
-			PreviousVersion: MustParseHex(Config.Chain.ClConfig.BellatrixForkVersion),
-		}
-	}
-	if epoch >= Config.Chain.ClConfig.BellatrixForkEpoch {
-		return &types.ForkVersion{
-			Epoch:           Config.Chain.ClConfig.BellatrixForkEpoch,
-			CurrentVersion:  MustParseHex(Config.Chain.ClConfig.BellatrixForkVersion),
-			PreviousVersion: MustParseHex(Config.Chain.ClConfig.AltairForkVersion),
-		}
-	}
-	if epoch >= Config.Chain.ClConfig.AltairForkEpoch {
-		return &types.ForkVersion{
-			Epoch:           Config.Chain.ClConfig.AltairForkEpoch,
-			CurrentVersion:  MustParseHex(Config.Chain.ClConfig.AltairForkVersion),
-			PreviousVersion: MustParseHex(Config.Chain.ClConfig.GenesisForkVersion),
-		}
-	}
 	return &types.ForkVersion{
 		Epoch:           0,
 		CurrentVersion:  MustParseHex(Config.Chain.ClConfig.GenesisForkVersion),
@@ -1541,7 +1499,7 @@ func logErrorInfo(err error, callerSkip int, additionalInfos ...map[string]inter
 }
 
 func GetSigningDomain() ([]byte, error) {
-	beaconConfig := prysm_params.BeaconConfig()
+	beaconConfig := qrysm_params.BeaconConfig()
 	genForkVersion, err := hex.DecodeString(strings.Replace(Config.Chain.ClConfig.GenesisForkVersion, "0x", "", -1))
 	if err != nil {
 		return nil, err
@@ -1576,16 +1534,6 @@ func SlotsPerSyncCommittee() uint64 {
 func GetRemainingScheduledSyncDuties(validatorCount int, stats types.SyncCommitteesStats, lastExportedEpoch, firstEpochOfPeriod uint64) uint64 {
 	// check how many sync duties remain in the current sync committee based on firstEpochOfPeriod
 	slotsPerSyncCommittee := SlotsPerSyncCommittee()
-	if firstEpochOfPeriod <= Config.Chain.ClConfig.AltairForkEpoch {
-		if firstEpochOfPeriod+SlotsPerSyncCommittee() < Config.Chain.ClConfig.AltairForkEpoch {
-			// not a valid sync committee as altair comes after the complete sync committee period
-			return 0
-		}
-
-		// the first sync period at altair might be shorter, see https://eth2book.info/capella/annotated-spec/#sync-committee-updates
-		firstEpochOfNextSyncPeriod := FirstEpochOfSyncPeriod(SyncPeriodOfEpoch(Config.Chain.ClConfig.AltairForkEpoch) + 1)
-		slotsPerSyncCommittee = (firstEpochOfNextSyncPeriod - Config.Chain.ClConfig.AltairForkEpoch) * Config.Chain.ClConfig.SlotsPerEpoch
-	}
 	dutiesPerSyncCommittee := slotsPerSyncCommittee * uint64(validatorCount)
 
 	// check how many duties are already exported
@@ -1791,24 +1739,6 @@ func GetCurrentFuncName() string {
 func GetParentFuncName() string {
 	pc, _, _, _ := runtime.Caller(2)
 	return runtime.FuncForPC(pc).Name()
-}
-
-// Returns true if the given block number is 0 and if it is (according to its timestamp) included in slot 0
-//
-// This is only true for networks that launch with active PoS at block 0 which requires
-//
-//   - Belatrix happening at epoch 0 (pre condition for merged networks)
-//   - Genesis for PoS to happen at the same timestamp as the first block
-func IsPoSBlock0(number uint64, ts int64) bool {
-	if number > 0 {
-		return false
-	}
-
-	if Config.Chain.ClConfig.BellatrixForkEpoch > 0 {
-		return false
-	}
-
-	return time.Unix(int64(Config.Chain.GenesisTimestamp-Config.Chain.ClConfig.GenesisDelay), 0).UTC().Equal(time.Unix(ts, 0))
 }
 
 func GetMaxAllowedDayRangeValidatorStats(validatorAmount int) int {

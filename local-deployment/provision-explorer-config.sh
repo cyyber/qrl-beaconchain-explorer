@@ -65,7 +65,7 @@ redisSessionStoreEndpoint: '127.0.0.1:$REDIS_SESSIONS_PORT'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"
-  siteName: 'Open Source Ethereum (ETH) Testnet Explorer' # Name of the site, displayed in the title tag
+  siteName: 'Open Source Zond (ETH) Testnet Explorer' # Name of the site, displayed in the title tag
   siteSubtitle: "Showing a local testnet."
   server:
     host: '0.0.0.0' # Address to listen on
@@ -86,21 +86,11 @@ frontend:
   jwtSigningSecret: "1111111111111111111111111111111111111111111111111111111111111111"
   jwtIssuer: "localhost"
   jwtValidityInMinutes: 30
-  maxMailsPerEmailPerDay: 10
-  mail:
-    mailgun:
-      sender: no-reply@localhost
-      domain: mg.localhost
-      privateKey: "key-11111111111111111111111111111111"
   csrfAuthKey: '1111111111111111111111111111111111111111111111111111111111111111'
   legal:
     termsOfServiceUrl: "tos.pdf"
     privacyPolicyUrl: "privacy.pdf"
     imprintTemplate: '{{ define "js" }}{{ end }}{{ define "css" }}{{ end }}{{ define "content" }}Imprint{{ end }}'
-  stripe:
-    sapphire: price_sapphire
-    emerald: price_emerald
-    diamond: price_diamond
   ratelimitUpdateInterval: 1s
 
 indexer:

@@ -11,7 +11,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/cache"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -126,7 +125,8 @@ func main() {
 		logrus.Fatalf("error connecting to bigtable: %v", err)
 	}
 
-	price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.Eth1ErigonEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
+	// TODO(rgerades24): remove
+	// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.Eth1ErigonEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
 
 	if utils.Config.TieredCacheProvider != "redis" {
 		logrus.Fatalf("No cache provider set. Please set TierdCacheProvider (example redis)")
@@ -139,13 +139,13 @@ func main() {
 	var rpcClient rpc.Client
 
 	chainID := new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID)
-	if utils.Config.Indexer.Node.Type == "lighthouse" {
-		rpcClient, err = rpc.NewLighthouseClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainID)
+	if utils.Config.Indexer.Node.Type == "qrysm" {
+		rpcClient, err = rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainID)
 		if err != nil {
-			utils.LogFatal(err, "new explorer lighthouse client error", 0)
+			utils.LogFatal(err, "new explorer qrysm client error", 0)
 		}
 	} else {
-		logrus.Fatalf("invalid note type %v specified. supported node types are prysm and lighthouse", utils.Config.Indexer.Node.Type)
+		logrus.Fatalf("invalid note type %v specified. supported node types: qrysm", utils.Config.Indexer.Node.Type)
 	}
 
 	if opt.statisticsDaysToExport != "" {

@@ -1,4 +1,4 @@
-package ethclients
+package zondclients
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var logger = logrus.New().WithField("module", "ethClients")
+var logger = logrus.New().WithField("module", "zondClients")
 
 type ethernodesAPIStruct struct {
 	Client string `json:"client"`
@@ -47,41 +47,31 @@ type clientUpdateInfo struct {
 	Date time.Time
 }
 
-type EthClients struct {
+type ZondClients struct {
 	ClientReleaseVersion string
 	ClientReleaseDate    template.HTML
 	NetworkShare         string
 	IsUserSubscribed     bool
 }
 
-type EthClientServicesPageData struct {
-	LastUpdate          time.Time
-	Geth                EthClients
-	Nethermind          EthClients
-	Besu                EthClients
-	Teku                EthClients
-	Prysm               EthClients
-	Nimbus              EthClients
-	Lighthouse          EthClients
-	Erigon              EthClients
-	Reth                EthClients
-	RocketpoolSmartnode EthClients
-	MevBoost            EthClients
-	Lodestar            EthClients
-	Banner              string
-	CsrfField           template.HTML
+type ZondClientServicesPageData struct {
+	LastUpdate time.Time
+	Gzond      ZondClients
+	Qrysm      ZondClients
+	CsrfField  template.HTML
 }
 
-var ethClients = EthClientServicesPageData{}
-var ethClientsMux = &sync.RWMutex{}
+var zondClients = ZondClientServicesPageData{}
+var zondClientsMux = &sync.RWMutex{}
 var bannerClients = []clientUpdateInfo{}
 var bannerClientsMux = &sync.RWMutex{}
 
 var httpClient = &http.Client{Timeout: time.Second * 10}
 
-// Init starts a go routine to update the ETH Clients Info
+// Init starts a go routine to update the Zond Clients Info
 func Init() {
-	go update()
+	// TODO(rgeraldes24)
+	// go update()
 }
 
 func fetchClientData(repo string) *gitAPIResponse {
@@ -94,27 +84,28 @@ func fetchClientData(repo string) *gitAPIResponse {
 	resp, err := httpClient.Get(fmt.Sprintf("https://%s/repos%s/releases/latest", githubAPIHost, repo))
 
 	if err != nil {
-		logger.Errorf("error retrieving ETH Client Data: %v", err)
+		logger.Errorf("error retrieving ZOND Client Data: %v", err)
 		return nil
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		logger.Errorf("error retrieving ETH Client Data, status code: %v", resp.StatusCode)
+		logger.Errorf("error retrieving ZOND Client Data, status code: %v", resp.StatusCode)
 		return nil
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&gitAPI)
 
 	if err != nil {
-		logger.Errorf("error decoding ETH Clients json response to struct: %v", err)
+		logger.Errorf("error decoding ZOND Clients json response to struct: %v", err)
 		return nil
 	}
 
 	return gitAPI
 }
 
+/*
 var ethernodesAPI []ethernodesAPIStruct
 
 func fetchClientNetworkShare() []ethernodesAPIStruct {
@@ -135,6 +126,7 @@ func fetchClientNetworkShare() []ethernodesAPIStruct {
 
 	return ethernodesAPI
 }
+*/
 
 func getRepoTime(date string, dTime string) (time.Time, error) {
 	var year, month, day, hour, min int64
@@ -167,7 +159,7 @@ func getRepoTime(date string, dTime string) (time.Time, error) {
 	return time.Date(int(year), time.Month(int(month)), int(day), int(hour), int(min), 0, 0, time.UTC), nil
 }
 
-func prepareEthClientData(repo string, name string, curTime time.Time) (string, template.HTML) {
+func prepareZondClientData(repo string, name string, curTime time.Time) (string, template.HTML) {
 	client := fetchClientData(repo)
 	time.Sleep(time.Millisecond * 250) // consider github rate limit
 
@@ -193,77 +185,60 @@ func prepareEthClientData(repo string, name string, curTime time.Time) (string, 
 	return "Github", "searching" // If API limit is exceeded
 }
 
-func updateEthClientNetShare() {
-	nShare := fetchClientNetworkShare()
-	total := 0
-	for _, item := range nShare {
-		total += item.Value
-	}
-
-	for _, item := range nShare {
-		share := fmt.Sprintf("%.1f%%", (float64(item.Value)/float64(total))*100.0)
-		switch item.Client {
-		case "geth":
-			ethClients.Geth.NetworkShare = share
-		case "nethermind":
-			ethClients.Nethermind.NetworkShare = share
-		case "besu":
-			ethClients.Besu.NetworkShare = share
-		case "erigon":
-			ethClients.Erigon.NetworkShare = share
-		case "reth":
-			ethClients.Reth.NetworkShare = share
-		default:
-			continue
+func updateZondClientNetShare() {
+	/*
+		nShare := fetchClientNetworkShare()
+		total := 0
+		for _, item := range nShare {
+			total += item.Value
 		}
-	}
+
+		for _, item := range nShare {
+			share := fmt.Sprintf("%.1f%%", (float64(item.Value)/float64(total))*100.0)
+			switch item.Client {
+			case "gzond":
+				zondClients.Gzond.NetworkShare = share
+			default:
+				continue
+			}
+		}
+	*/
 }
 
-func updateEthClient() {
+func updateZondClient() {
 	curTime := time.Now()
 	// sending 8 requests to github per call
 	// git api rate-limit 60 per hour : 60/8 = 7.5 minutes minimum
-	if curTime.Sub(ethClients.LastUpdate) < time.Hour { // LastUpdate is initialized at January 1, year 1 so no need to check for nil
+	if curTime.Sub(zondClients.LastUpdate) < time.Hour { // LastUpdate is initialized at January 1, year 1 so no need to check for nil
 		return
 	}
 
-	logger.Println("Updating ETH Clients Information")
-	ethClientsMux.Lock()
-	defer ethClientsMux.Unlock()
+	logger.Println("Updating Zond Clients Information")
+	zondClientsMux.Lock()
+	defer zondClientsMux.Unlock()
 	bannerClientsMux.Lock()
 	defer bannerClientsMux.Unlock()
 	bannerClients = []clientUpdateInfo{}
-	updateEthClientNetShare()
-	ethClients.Geth.ClientReleaseVersion, ethClients.Geth.ClientReleaseDate = prepareEthClientData("/ethereum/go-ethereum", "Geth", curTime)
-	ethClients.Nethermind.ClientReleaseVersion, ethClients.Nethermind.ClientReleaseDate = prepareEthClientData("/NethermindEth/nethermind", "Nethermind", curTime)
-	ethClients.Besu.ClientReleaseVersion, ethClients.Besu.ClientReleaseDate = prepareEthClientData("/hyperledger/besu", "Besu", curTime)
-	ethClients.Erigon.ClientReleaseVersion, ethClients.Erigon.ClientReleaseDate = prepareEthClientData("/erigontech/erigon", "Erigon", curTime)
-	ethClients.Reth.ClientReleaseVersion, ethClients.Reth.ClientReleaseDate = prepareEthClientData("/paradigmxyz/reth", "Reth", curTime)
+	updateZondClientNetShare()
+	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareZondClientData("/theQRL/go-zond", "Gzond", curTime)
 
-	ethClients.Teku.ClientReleaseVersion, ethClients.Teku.ClientReleaseDate = prepareEthClientData("/ConsenSys/teku", "Teku", curTime)
-	ethClients.Prysm.ClientReleaseVersion, ethClients.Prysm.ClientReleaseDate = prepareEthClientData("/prysmaticlabs/prysm", "Prysm", curTime)
-	ethClients.Nimbus.ClientReleaseVersion, ethClients.Nimbus.ClientReleaseDate = prepareEthClientData("/status-im/nimbus-eth2", "Nimbus", curTime)
-	ethClients.Lighthouse.ClientReleaseVersion, ethClients.Lighthouse.ClientReleaseDate = prepareEthClientData("/sigp/lighthouse", "Lighthouse", curTime)
-	ethClients.Lodestar.ClientReleaseVersion, ethClients.Lodestar.ClientReleaseDate = prepareEthClientData("/chainsafe/lodestar", "Lodestar", curTime)
+	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareZondClientData("/theQRL/qrysm", "Qrysm", curTime)
 
-	ethClients.RocketpoolSmartnode.ClientReleaseVersion, ethClients.RocketpoolSmartnode.ClientReleaseDate = prepareEthClientData("/rocket-pool/smartnode-install", "Rocketpool", curTime)
-	ethClients.MevBoost.ClientReleaseVersion, ethClients.MevBoost.ClientReleaseDate = prepareEthClientData("/flashbots/mev-boost", "MEV-Boost", curTime)
-
-	ethClients.LastUpdate = curTime
+	zondClients.LastUpdate = curTime
 }
 
 func update() {
 	for {
-		updateEthClient()
+		updateZondClient()
 		time.Sleep(time.Minute * 5)
 	}
 }
 
-// GetEthClientData returns a EthClientServicesPageData
-func GetEthClientData() EthClientServicesPageData {
-	ethClientsMux.Lock()
-	defer ethClientsMux.Unlock()
-	return ethClients
+// GetZondClientData returns a ZondClientServicesPageData
+func GetZondClientData() ZondClientServicesPageData {
+	zondClientsMux.Lock()
+	defer zondClientsMux.Unlock()
+	return zondClients
 }
 
 // GetUpdatedClients returns a slice of latest updated clients or empty slice if no updates
@@ -271,5 +246,5 @@ func GetUpdatedClients() []clientUpdateInfo {
 	bannerClientsMux.Lock()
 	defer bannerClientsMux.Unlock()
 	return bannerClients
-	// return []string{"Prysm", "Teku"}
+	// return []string{"Qrysm"}
 }

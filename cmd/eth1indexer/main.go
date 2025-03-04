@@ -26,22 +26,22 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/version"
 
 	"github.com/coocood/freecache"
-	"github.com/ethereum/go-ethereum/common"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/common"
 	"golang.org/x/sync/errgroup"
 
 	_ "net/http/pprof"
 )
 
 func main() {
-	erigonEndpoint := flag.String("erigon", "", "Erigon archive node enpoint")
+	gzondEndpoint := flag.String("gzond", "", "Gzond archive node enpoint")
 	block := flag.Int64("block", 0, "Index a specific block")
 
 	reorgDepth := flag.Int("reorg.depth", 20, "Lookback to check and handle chain reorgs")
 
-	concurrencyBlocks := flag.Int64("blocks.concurrency", 30, "Concurrency to use when indexing blocks from erigon")
+	concurrencyBlocks := flag.Int64("blocks.concurrency", 30, "Concurrency to use when indexing blocks from gzond")
 	startBlocks := flag.Int64("blocks.start", 0, "Block to start indexing")
 	endBlocks := flag.Int64("blocks.end", 0, "Block to finish indexing")
 	bulkBlocks := flag.Int64("blocks.bulk", 8000, "Maximum number of blocks to be processed before saving")
@@ -128,20 +128,20 @@ func main() {
 	defer db.ReaderDb.Close()
 	defer db.WriterDb.Close()
 
-	if erigonEndpoint == nil || *erigonEndpoint == "" {
+	if gzondEndpoint == nil || *gzondEndpoint == "" {
 
-		if utils.Config.Eth1ErigonEndpoint == "" {
+		if utils.Config.Eth1GzondEndpoint == "" {
 
-			utils.LogFatal(nil, "no erigon node url provided", 0)
+			utils.LogFatal(nil, "no gzond node url provided", 0)
 		} else {
-			logrus.Info("applying erigon endpoint from config")
-			*erigonEndpoint = utils.Config.Eth1ErigonEndpoint
+			logrus.Info("applying gzond endpoint from config")
+			*gzondEndpoint = utils.Config.Eth1GzondEndpoint
 		}
 
 	}
 
-	logrus.Infof("using erigon node at %v", *erigonEndpoint)
-	client, err := rpc.NewErigonClient(*erigonEndpoint)
+	logrus.Infof("using gzond node at %v", *gzondEndpoint)
+	client, err := rpc.NewGzondClient(*gzondEndpoint)
 	if err != nil {
 		utils.LogFatal(err, "erigon client creation error", 0)
 	}
@@ -188,11 +188,9 @@ func main() {
 		bt.TransformBlock,
 		bt.TransformTx,
 		bt.TransformItx,
-		bt.TransformBlobTx,
 		bt.TransformERC20,
 		bt.TransformERC721,
 		bt.TransformERC1155,
-		bt.TransformUncle,
 		bt.TransformWithdrawals,
 		bt.TransformEnsNameRegistered,
 		bt.TransformContract)
@@ -393,7 +391,7 @@ func main() {
 	// utils.WaitForCtrlC()
 }
 
-func UpdateTokenPrices(bt *db.Bigtable, client *rpc.ErigonClient, tokenListPath string) error {
+func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath string) error {
 
 	tokenListContent, err := os.ReadFile(tokenListPath)
 	if err != nil {
@@ -488,7 +486,7 @@ func UpdateTokenPrices(bt *db.Bigtable, client *rpc.ErigonClient, tokenListPath 
 	return bt.SaveERC20TokenPrices(tokenPrices)
 }
 
-func HandleChainReorgs(bt *db.Bigtable, client *rpc.ErigonClient, depth int) error {
+func HandleChainReorgs(bt *db.Bigtable, client *rpc.GzondClient, depth int) error {
 	ctx := context.Background()
 	// get latest block from the node
 	latestNodeBlock, err := client.GetNativeClient().BlockByNumber(ctx, nil)
@@ -555,7 +553,7 @@ func HandleChainReorgs(bt *db.Bigtable, client *rpc.ErigonClient, depth int) err
 	return nil
 }
 
-func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.ErigonClient, prefix string, batchSize int, iterations int) {
+func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.GzondClient, prefix string, batchSize int, iterations int) {
 	lastKey := prefix
 
 	its := 0
@@ -607,7 +605,7 @@ func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.ErigonClient, prefix st
 	}
 }
 
-func IndexFromNode(bt *db.Bigtable, client *rpc.ErigonClient, start, end, concurrency int64, traceMode string) error {
+func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurrency int64, traceMode string) error {
 	ctx := context.Background()
 	g, gCtx := errgroup.WithContext(ctx)
 	g.SetLimit(int(concurrency))

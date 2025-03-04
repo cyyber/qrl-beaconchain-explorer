@@ -76,21 +76,6 @@ cbt -project $PROJECT -instance $INSTANCE createfamily data f
 cbt -project $PROJECT -instance $INSTANCE setgcpolicy data c maxage=1d
 ```
 ----
-Table name: `machine_metrics`
-
-```
-cbt -project $PROJECT -instance $INSTANCE createtable machine_metrics
-```
-
-Column families:
-* Name: `mm` | GC Policy: Age based policy with a max age of 31 days
-
-```
-cbt -project $PROJECT -instance $INSTANCE createfamily machine_metrics mm
-
-cbt -project $PROJECT -instance $INSTANCE setgcpolicy machine_metrics mm maxage=31d
-```
-----
 Table name: `metadata`
 
 ```

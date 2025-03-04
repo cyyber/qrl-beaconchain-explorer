@@ -44,16 +44,6 @@ import (
 	"github.com/zesik/proxyaddr"
 )
 
-func initStripe(http *mux.Router) error {
-	if utils.Config == nil {
-		return fmt.Errorf("error no config found")
-	}
-	stripe.Key = utils.Config.Frontend.Stripe.SecretKey
-	http.HandleFunc("/stripe/create-checkout-session", handlers.StripeCreateCheckoutSession).Methods("POST", "OPTIONS")
-	http.HandleFunc("/stripe/customer-portal", handlers.StripeCustomerPortal).Methods("POST", "OPTIONS")
-	return nil
-}
-
 func init() {
 	gob.Register(types.DataTableSaveState{})
 }
@@ -662,10 +652,6 @@ func main() {
 				logrus.WithError(err).Fatal("Error serving metrics")
 			}
 		}(utils.Config.Metrics.Address)
-	}
-
-	if utils.Config.Frontend.ShowDonors.Enabled {
-		services.InitGitCoinFeed()
 	}
 
 	utils.WaitForCtrlC()

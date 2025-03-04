@@ -22,11 +22,10 @@ import (
 
 // PageData is a struct to hold web page data
 type PageData struct {
-	Active                string
-	AdConfigurations      []*AdConfig
-	Meta                  *Meta
-	ShowSyncingMessage    bool
-	User                  *User
+	Active             string
+	Meta               *Meta
+	ShowSyncingMessage bool
+	// User                  *User
 	Data                  interface{}
 	Version               string
 	Year                  int
@@ -44,7 +43,6 @@ type PageData struct {
 	// IsUserClientUpdated   func(uint64) bool
 	ChainConfig         ClChainConfig
 	Lang                string
-	NoAds               bool
 	Debug               bool
 	DebugTemplates      []string
 	DebugSession        map[string]interface{}
@@ -147,12 +145,12 @@ type Stats struct {
 	LatestValidatorWithdrawalIndex *uint64 `db:"index"`
 	WithdrawableValidatorCount     *uint64 `db:"count"`
 	// WithdrawableAmount             *uint64 `db:"amount"`
-	PendingBLSChangeValidatorCount *uint64 `db:"count"`
-	NonWithdrawableCount           *uint64 `db:"count"`
-	TotalAmountWithdrawn           *uint64 `db:"amount"`
-	WithdrawalCount                *uint64 `db:"count"`
-	TotalAmountDeposited           *uint64 `db:"amount"`
-	BLSChangeCount                 *uint64 `db:"count"`
+	PendingDilithiumChangeValidatorCount *uint64 `db:"count"`
+	NonWithdrawableCount                 *uint64 `db:"count"`
+	TotalAmountWithdrawn                 *uint64 `db:"amount"`
+	WithdrawalCount                      *uint64 `db:"count"`
+	TotalAmountDeposited                 *uint64 `db:"amount"`
+	DilithiumChangeCount                 *uint64 `db:"count"`
 }
 
 type StatsTopDepositors struct {
@@ -297,7 +295,6 @@ type ValidatorsPageData struct {
 	VoluntaryExitsCount  uint64
 	UnknownCount         uint64
 	Validators           []*ValidatorsData
-	CappellaHasHappened  bool
 }
 
 // ValidatorsData is a struct to hold data about validators
@@ -389,7 +386,6 @@ type ValidatorPageData struct {
 	Deposits                                 *ValidatorDeposits
 	Eth1DepositAddress                       []byte
 	FlashMessage                             string
-	Watchlist                                []*TaggedValidators
 	SubscriptionFlash                        []interface{}
 	User                                     *User
 	AttestationInclusionEffectiveness        float64
@@ -402,43 +398,13 @@ type ValidatorPageData struct {
 	InclusionDelay                           int64
 	CurrentAttestationStreak                 uint64
 	LongestAttestationStreak                 uint64
-	IsRocketpool                             bool
-	Rocketpool                               *RocketpoolValidatorPageData
 	ShowMultipleWithdrawalCredentialsWarning bool
-	CappellaHasHappened                      bool
 	BLSChange                                *BLSChange
 	IsWithdrawableAddress                    bool
 	EstimatedNextWithdrawal                  template.HTML
 	AddValidatorWatchlistModal               *AddValidatorWatchlistModal
 	NextWithdrawalRow                        [][]interface{}
 	ValidatorProposalData
-}
-
-type RocketpoolValidatorPageData struct {
-	NodeAddress          *[]byte    `db:"node_address"`
-	MinipoolAddress      *[]byte    `db:"minipool_address"`
-	MinipoolNodeFee      *float64   `db:"minipool_node_fee"`
-	MinipoolDepositType  *string    `db:"minipool_deposit_type"`
-	MinipoolStatus       *string    `db:"minipool_status"`
-	MinipoolStatusTime   *time.Time `db:"minipool_status_time"`
-	NodeTimezoneLocation *string    `db:"node_timezone_location"`
-	NodeRPLStake         *string    `db:"node_rpl_stake"`
-	NodeMinRPLStake      *string    `db:"node_min_rpl_stake"`
-	NodeMaxRPLStake      *string    `db:"node_max_rpl_stake"`
-	CumulativeRPL        *string    `db:"rpl_cumulative_rewards"`
-	SmoothingClaimed     *string    `db:"claimed_smoothing_pool"`
-	SmoothingUnclaimed   *string    `db:"unclaimed_smoothing_pool"`
-	UnclaimedRPL         *string    `db:"unclaimed_rpl_rewards"`
-	SmoothingPoolOptIn   bool       `db:"smoothing_pool_opted_in"`
-	PenaltyCount         int        `db:"penalty_count"`
-	RocketscanUrl        string     `db:"-"`
-	NodeDepositBalance   *string    `db:"node_deposit_balance"`
-	NodeRefundBalance    *string    `db:"node_refund_balance"`
-	UserDepositBalance   *string    `db:"user_deposit_balance"`
-	IsVacant             bool       `db:"is_vacant"`
-	Version              *string    `db:"version"`
-	NodeDepositCredit    *string    `db:"deposit_credit"`
-	EffectiveRPLStake    *string    `db:"effective_rpl_stake"`
 }
 
 type ValidatorStatsTablePageData struct {
@@ -579,19 +545,10 @@ type VisChartData struct {
 
 	Proposer uint64 `db:"proposer" json:"proposer"`
 
-	Number     uint64   `json:"number"`
-	Timestamp  uint64   `json:"timestamp"`
-	Hash       string   `json:"hash"`
-	Parents    []string `json:"parents"`
-	Difficulty uint64   `json:"difficulty"`
-}
-
-type GraffitiwallData struct {
-	X         uint64 `db:"x" json:"x"`
-	Y         uint64 `db:"y" json:"y"`
-	Color     string `db:"color" json:"color"`
-	Slot      uint64 `db:"slot" json:"slot"`
-	Validator uint64 `db:"validator" json:"validator"`
+	Number    uint64   `json:"number"`
+	Timestamp uint64   `json:"timestamp"`
+	Hash      string   `json:"hash"`
+	Parents   []string `json:"parents"`
 }
 
 // VisVotesPageData is a struct for the visualization votes page data
@@ -669,7 +626,6 @@ type BlockPageData struct {
 	AttesterSlashings []*BlockPageAttesterSlashing
 	ProposerSlashings []*BlockPageProposerSlashing
 	SyncCommittee     []uint64 // TODO: Setting it to contain the validator index
-	BlobSidecars      []*BlockPageBlobSidecar
 
 	Tags       TagMetadataSlice `db:"tags"`
 	IsValidMev bool             `db:"is_valid_mev"`
@@ -731,7 +687,7 @@ type BlockPageAttestation struct {
 	BlockIndex      uint64        `db:"block_index"`
 	AggregationBits []byte        `db:"aggregationbits"`
 	Validators      pq.Int64Array `db:"validators"`
-	Signature       []byte        `db:"signature"`
+	Signatures      pq.ByteaArray `db:"signatures"`
 	Slot            uint64        `db:"slot"`
 	CommitteeIndex  uint64        `db:"committeeindex"`
 	BeaconBlockRoot []byte        `db:"beaconblockroot"`
@@ -760,7 +716,7 @@ type BlockPageAttesterSlashing struct {
 	BlockSlot                   uint64        `db:"block_slot"`
 	BlockIndex                  uint64        `db:"block_index"`
 	Attestation1Indices         pq.Int64Array `db:"attestation1_indices"`
-	Attestation1Signature       []byte        `db:"attestation1_signature"`
+	Attestation1Signatures      pq.ByteaArray `db:"attestation1_signatures"`
 	Attestation1Slot            uint64        `db:"attestation1_slot"`
 	Attestation1Index           uint64        `db:"attestation1_index"`
 	Attestation1BeaconBlockRoot []byte        `db:"attestation1_beaconblockroot"`
@@ -769,7 +725,7 @@ type BlockPageAttesterSlashing struct {
 	Attestation1TargetEpoch     uint64        `db:"attestation1_target_epoch"`
 	Attestation1TargetRoot      []byte        `db:"attestation1_target_root"`
 	Attestation2Indices         pq.Int64Array `db:"attestation2_indices"`
-	Attestation2Signature       []byte        `db:"attestation2_signature"`
+	Attestation2Signatures      pq.ByteaArray `db:"attestation2_signatures"`
 	Attestation2Slot            uint64        `db:"attestation2_slot"`
 	Attestation2Index           uint64        `db:"attestation2_index"`
 	Attestation2BeaconBlockRoot []byte        `db:"attestation2_beaconblockroot"`
@@ -796,16 +752,6 @@ type BlockPageProposerSlashing struct {
 	Header2StateRoot  []byte `db:"header2_stateroot"`
 	Header2BodyRoot   []byte `db:"header2_bodyroot"`
 	Header2Signature  []byte `db:"header2_signature"`
-}
-
-// BlockPageBlobSidecar holds data of blob-sidecars of the corresponding block
-type BlockPageBlobSidecar struct {
-	BlockSlot         uint64 `db:"block_slot"`
-	BlockRoot         []byte `db:"block_root"`
-	Index             uint64 `db:"index"`
-	KzgCommitment     []byte `db:"kzg_commitment"`
-	KzgProof          []byte `db:"kzg_proof"`
-	BlobVersionedHash []byte `db:"blob_versioned_hash"`
 }
 
 // DataTableResponse is a struct to hold data for data table responses
@@ -1217,122 +1163,6 @@ type CsrfData struct {
 	CsrfField template.HTML
 }
 
-type UserSettingsPageData struct {
-	CsrfField template.HTML
-	AuthData
-	Subscription        UserSubscription
-	Premium             UserPremiumSubscription
-	PairedDevices       []PairedDevice
-	Sapphire            *string
-	Emerald             *string
-	Diamond             *string
-	ShareMonitoringData bool
-	ApiStatistics       *ApiStatistics
-}
-
-type PairedDevice struct {
-	ID            uint      `json:"id"`
-	DeviceName    string    `json:"device_name"`
-	NotifyEnabled bool      `json:"notify_enabled"`
-	Active        bool      `json:"active"`
-	AppName       string    `json:"app_name"`
-	CreatedAt     time.Time `json:"created_ts"`
-}
-
-type UserAuthorizeConfirmPageData struct {
-	AppData *OAuthAppData
-	AuthData
-}
-
-type UserNotificationsPageData struct {
-	Email              string   `json:"email"`
-	CountWatchlist     int      `json:"countwatchlist"`
-	CountSubscriptions int      `json:"countsubscriptions"`
-	WatchlistIndices   []uint64 `json:"watchlistIndices"`
-	DashboardLink      string   `json:"dashboardLink"`
-	AuthData
-	// Subscriptions []*Subscription
-}
-
-type UserNotificationsCenterPageData struct {
-	AuthData
-	Metrics                    interface{}                          `json:"metrics"`
-	Validators                 []UserValidatorNotificationTableData `json:"validators"`
-	Network                    interface{}                          `json:"network"`
-	MonitoringSubscriptions    []Subscription                       `json:"monitoring_subscriptions"`
-	Machines                   []string
-	DashboardLink              string `json:"dashboardLink"`
-	NotificationChannelsModal  NotificationChannelsModal
-	AddValidatorWatchlistModal AddValidatorWatchlistModal
-	ManageNotificationModal    ManageNotificationModal
-	NetworkEventModal          NetworkEventModal
-	// Subscriptions []*Subscription
-}
-
-type NotificationChannelsModal struct {
-	CsrfField            template.HTML
-	NotificationChannels []UserNotificationChannels
-}
-
-type UserNotificationChannels struct {
-	Channel NotificationChannel `db:"channel"`
-	Active  bool                `db:"active"`
-}
-
-type UserValidatorNotificationTableData struct {
-	Index          uint64
-	Pubkey         string
-	DepositAddress string
-	DepositEnsName string
-	Notification   []struct {
-		Notification string
-		Timestamp    uint64
-		Threshold    string
-	}
-}
-
-type AdvertiseWithUsPageData struct {
-	FlashMessage string
-	CsrfField    template.HTML
-	RecaptchaKey string
-}
-
-type ApiPricing struct {
-	FlashMessage string
-	User         *User
-	CsrfField    template.HTML
-	RecaptchaKey string
-	Subscription UserSubscription
-	StripePK     string
-	Sapphire     string
-	Emerald      string
-	Diamond      string
-}
-
-type MobilePricing struct {
-	FlashMessage         string
-	User                 *User
-	CsrfField            template.HTML
-	RecaptchaKey         string
-	Subscription         UserSubscription
-	StripePK             string
-	Plankton             string
-	Goldfish             string
-	Whale                string
-	Guppy                string
-	GuppyYearly          string
-	Dolphin              string
-	DolphinYearly        string
-	Orca                 string
-	OrcaYearly           string
-	ActiveMobileStoreSub bool
-}
-
-type StakeWithUsPageData struct {
-	FlashMessage string
-	RecaptchaKey string
-}
-
 type PasswordResetNotAllowedError struct{}
 
 func (e *PasswordResetNotAllowedError) Error() string {
@@ -1379,81 +1209,6 @@ type ApiStatistics struct {
 	MaxMonthly *int
 }
 
-type RocketpoolPageData struct{}
-type RocketpoolPageDataMinipool struct {
-	TotalCount               uint64    `db:"total_count"`
-	RocketpoolStorageAddress []byte    `db:"rocketpool_storage_address"`
-	ValidatorName            string    `db:"validator_name"`
-	ValidatorIndex           *uint64   `db:"validator_index"`
-	Address                  []byte    `db:"address"`
-	Pubkey                   []byte    `db:"pubkey"`
-	NodeAddress              []byte    `db:"node_address"`
-	NodeFee                  float64   `db:"node_fee"`
-	DepositType              string    `db:"deposit_type"`
-	Status                   string    `db:"status"`
-	StatusTime               time.Time `db:"status_time"`
-	PenaltyCount             uint64    `db:"penalty_count"`
-	DepositEth               int       `db:"node_deposit_balance"`
-}
-
-type RocketpoolPageDataNode struct {
-	TotalCount               uint64 `db:"total_count"`
-	RocketpoolStorageAddress []byte `db:"rocketpool_storage_address"`
-	Address                  []byte `db:"address"`
-	TimezoneLocation         string `db:"timezone_location"`
-	RPLStake                 string `db:"rpl_stake"`
-	MinRPLStake              string `db:"min_rpl_stake"`
-	MaxRPLStake              string `db:"max_rpl_stake"`
-	CumulativeRPL            string `db:"rpl_cumulative_rewards"`
-	ClaimedSmoothingPool     string `db:"claimed_smoothing_pool"`
-	UnclaimedSmoothingPool   string `db:"unclaimed_smoothing_pool"`
-	UnclaimedRplRewards      string `db:"unclaimed_rpl_rewards"`
-	SmoothingPoolOptIn       bool   `db:"smoothing_pool_opted_in"`
-	DepositCredit            string `db:"deposit_credit"`
-}
-
-type RocketpoolPageDataDAOProposal struct {
-	TotalCount               uint64    `db:"total_count"`
-	RocketpoolStorageAddress []byte    `db:"rocketpool_storage_address"`
-	ID                       uint64    `db:"id"`
-	DAO                      string    `db:"dao"`
-	ProposerAddress          []byte    `db:"proposer_address"`
-	Message                  string    `db:"message"`
-	CreatedTime              time.Time `db:"created_time"`
-	StartTime                time.Time `db:"start_time"`
-	EndTime                  time.Time `db:"end_time"`
-	ExpiryTime               time.Time `db:"expiry_time"`
-	VotesRequired            float64   `db:"votes_required"`
-	VotesFor                 float64   `db:"votes_for"`
-	VotesAgainst             float64   `db:"votes_against"`
-	MemberVoted              bool      `db:"member_voted"`
-	MemberSupported          bool      `db:"member_supported"`
-	IsCancelled              bool      `db:"is_cancelled"`
-	IsExecuted               bool      `db:"is_executed"`
-	Payload                  []byte    `db:"payload"`
-	State                    string    `db:"state"`
-	MemberVotesJSON          []byte    `db:"member_votes"`
-}
-
-type RocketpoolPageDataDAOProposalMemberVotes struct {
-	Address   string `json:"member_address"`
-	Name      string `json:"name"`
-	Voted     bool   `json:"voted"`
-	Supported bool   `json:"supported"`
-}
-
-type RocketpoolPageDataDAOMember struct {
-	TotalCount               uint64    `db:"total_count"`
-	RocketpoolStorageAddress []byte    `db:"rocketpool_storage_address"`
-	Address                  []byte    `db:"address"`
-	ID                       string    `db:"id"`
-	URL                      string    `url:"url"`
-	JoinedTime               time.Time `db:"joined_time"`
-	LastProposalTime         time.Time `db:"last_proposal_time"`
-	RPLBondAmount            string    `db:"rpl_bond_amount"`
-	UnbondedValidatorCount   uint64    `db:"unbonded_validator_count"`
-}
-
 type UserWebhookRow struct {
 	ID           uint64 `db:"id" json:"id"`
 	UrlFull      string
@@ -1479,73 +1234,6 @@ type AdConfigurationPageData struct {
 type ExplorerConfigurationPageData struct {
 	Configurations ExplorerConfigurationMap
 	CsrfField      template.HTML
-}
-
-type UserWebhookRowError struct {
-	SummaryRequest  template.HTML
-	SummaryResponse template.HTML
-	ContentRequest  template.HTML
-	ContentResponse template.HTML
-}
-
-type WebhookPageData struct {
-	WebhookRows  []UserWebhookRow
-	Webhooks     []UserWebhook
-	Events       []EventNameCheckbox
-	CsrfField    template.HTML
-	Allowed      uint64
-	WebhookCount uint64
-	Flashes      []interface{}
-}
-
-type EventNameCheckbox struct {
-	EventLabel string
-	EventName
-	Active  bool
-	Warning template.HTML
-	Info    template.HTML
-}
-
-type PoolsResp struct {
-	PoolsDistribution       ChartsPageDataChart
-	HistoricPoolPerformance ChartsPageDataChart
-	PoolInfos               []*PoolInfo
-}
-
-type PoolsData struct {
-	*PoolsResp
-	Disclaimer string
-}
-
-type PoolInfo struct {
-	Name                  string  `db:"name"`
-	Count                 int64   `db:"count"`
-	AvgPerformance31d     float64 `db:"avg_performance_31d"`
-	AvgPerformance7d      float64 `db:"avg_performance_7d"`
-	AvgPerformance1d      float64 `db:"avg_performance_1d"`
-	EthstoreComparison1d  float64
-	EthstoreComparison7d  float64
-	EthstoreComparison31d float64
-}
-
-type AddValidatorWatchlistModal struct {
-	CsrfField       template.HTML
-	ValidatorIndex  uint64
-	ValidatorPubkey string
-	Events          []EventNameCheckbox
-}
-type ManageNotificationModal struct {
-	CsrfField       template.HTML
-	ValidatorIndex  int64
-	ValidatorPubkey string
-	Events          []EventNameCheckbox
-}
-
-type NetworkEventModal struct {
-	CsrfField       template.HTML
-	ValidatorIndex  int64
-	ValidatorPubkey string
-	Events          []EventNameCheckbox
 }
 
 type DataTableSaveState struct {
@@ -1595,9 +1283,7 @@ type Eth1AddressPageData struct {
 	Metadata           *Eth1AddressMetadata
 	WithdrawalsSummary template.HTML
 	BlocksMinedTable   *DataTableResponse
-	UnclesMinedTable   *DataTableResponse
 	TransactionsTable  *DataTableResponse
-	BlobTxnsTable      *DataTableResponse
 	InternalTxnsTable  *DataTableResponse
 	Erc20Table         *DataTableResponse
 	Erc721Table        *DataTableResponse
@@ -1739,9 +1425,6 @@ type Eth1TxData struct {
 		Limit          uint64
 		TxFee          []byte
 		EffectiveFee   []byte
-		BlobGasUsed    uint64
-		BlobGasPrice   []byte
-		BlobTxFee      []byte
 	}
 	Epoch                       EpochInfo
 	TypeFormatted               string
@@ -1764,7 +1447,6 @@ type Eth1TxData struct {
 	DepositContractInteractions []DepositContractInteraction
 	CurrentEtherPrice           template.HTML
 	HistoricalEtherPrice        template.HTML
-	BlobHashes                  [][]byte
 }
 
 type Eth1EventData struct {
@@ -1855,10 +1537,7 @@ type Eth1BlockPageData struct {
 	PreviousBlock         uint64
 	NextBlock             uint64
 	TxCount               uint64
-	BlobTxCount           uint64
-	BlobCount             uint64
 	WithdrawalCount       uint64
-	UncleCount            uint64
 	Hash                  string
 	ParentHash            string
 	MinerAddress          string
@@ -1873,17 +1552,11 @@ type Eth1BlockPageData struct {
 	GasLimit              uint64
 	LowestGasPrice        *big.Int
 	Ts                    time.Time
-	Difficulty            *big.Int
 	BaseFeePerGas         *big.Int
 	BurnedFees            *big.Int
 	BurnedTxFees          *big.Int
-	BurnedBlobFees        *big.Int
-	BlobGasUsed           uint64
-	BlobGasPrice          *big.Int
-	ExcessBlobGas         uint64
 	Extra                 string
 	Txs                   []Eth1BlockPageTransaction
-	Uncles                []Eth1BlockPageData
 	State                 string
 }
 
@@ -2009,40 +1682,23 @@ type EthStoreStatistics struct {
 	StartEpoch                uint64
 }
 
-type EthStoreData struct {
-	*EthStoreStatistics
-	Disclaimer string
-}
-type BLSChange struct {
-	Slot           uint64 `db:"slot" json:"slot,omitempty"`
-	BlockRoot      []byte `db:"block_rot" json:"blockroot,omitempty"`
-	Validatorindex uint64 `db:"validatorindex" json:"validatorindex,omitempty"`
-	BlsPubkey      []byte `db:"pubkey" json:"pubkey,omitempty"`
-	Address        []byte `db:"address" json:"address,omitempty"`
-	Signature      []byte `db:"signature" json:"signature,omitempty"`
+type DilithiumChange struct {
+	Slot            uint64 `db:"slot" json:"slot,omitempty"`
+	BlockRoot       []byte `db:"block_rot" json:"blockroot,omitempty"`
+	Validatorindex  uint64 `db:"validatorindex" json:"validatorindex,omitempty"`
+	DilithiumPubkey []byte `db:"pubkey" json:"pubkey,omitempty"`
+	Address         []byte `db:"address" json:"address,omitempty"`
+	Signature       []byte `db:"signature" json:"signature,omitempty"`
 }
 
-type ValidatorsBLSChange struct {
+type ValidatorsDilithiumChange struct {
 	Slot                     uint64 `db:"slot" json:"slot,omitempty"`
 	BlockRoot                []byte `db:"block_root" json:"blockroot,omitempty"`
 	Validatorindex           uint64 `db:"validatorindex" json:"validatorindex,omitempty"`
-	BlsPubkey                []byte `db:"pubkey" json:"pubkey,omitempty"`
+	DilithiumPubkey          []byte `db:"pubkey" json:"pubkey,omitempty"`
 	Address                  []byte `db:"address" json:"address,omitempty"`
 	Signature                []byte `db:"signature" json:"signature,omitempty"`
 	WithdrawalCredentialsOld []byte `db:"withdrawalcredentials" json:"withdrawalcredentials,omitempty"`
-}
-
-// AdConfig is a struct to hold the configuration for one specific ad banner placement
-type AdConfig struct {
-	Id              string `db:"id"`
-	TemplateId      string `db:"template_id"`
-	JQuerySelector  string `db:"jquery_selector"`
-	InsertMode      string `db:"insert_mode"`
-	RefreshInterval uint64 `db:"refresh_interval"`
-	Enabled         bool   `db:"enabled"`
-	ForAllUsers     bool   `db:"for_all_users"`
-	BannerId        uint64 `db:"banner_id"`
-	HtmlContent     string `db:"html_content"`
 }
 
 type ExplorerConfigurationCategory string
@@ -2094,10 +1750,10 @@ type WithdrawalsPageData struct {
 }
 
 type WithdrawalStats struct {
-	WithdrawalsCount             uint64
-	WithdrawalsTotal             uint64
-	BLSChangeCount               uint64
-	ValidatorsWithBLSCredentials uint64
+	WithdrawalsCount                   uint64
+	WithdrawalsTotal                   uint64
+	DilithiumChangeCount               uint64
+	ValidatorsWithDilithiumCredentials uint64
 }
 
 type ChangeWithdrawalCredentialsPageData struct {

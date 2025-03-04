@@ -1,6 +1,6 @@
 # Extends the mainnet preset
 PRESET_BASE: 'mainnet'
-CONFIG_NAME: testnet # needs to exist because of Prysm. Otherwise it conflicts with mainnet genesis
+CONFIG_NAME: testnet # needs to exist because of Qrysm. Otherwise it conflicts with mainnet genesis
 
 # Genesis
 # ---------------------------------------------------------------
@@ -12,30 +12,6 @@ MIN_GENESIS_TIME: 1675263480
 GENESIS_FORK_VERSION: 0x00000069
 GENESIS_DELAY: 120
 
-
-# Forking
-# ---------------------------------------------------------------
-# Some forks are disabled for now:
-#  - These may be re-assigned to another fork-version later
-#  - Temporarily set to max uint64 value: 2**64 - 1
-
-# Altair
-ALTAIR_FORK_VERSION: 0x00000070
-ALTAIR_FORK_EPOCH: 0
-# Merge
-BELLATRIX_FORK_VERSION: 0x00000071
-BELLATRIX_FORK_EPOCH: 0
-TERMINAL_TOTAL_DIFFICULTY: 0
-TERMINAL_BLOCK_HASH: 0x0000000000000000000000000000000000000000000000000000000000000000
-TERMINAL_BLOCK_HASH_ACTIVATION_EPOCH: 18446744073709551615
-
-# Capella
-CAPELLA_FORK_VERSION: 0x00000072
-CAPELLA_FORK_EPOCH: 1350
-
-# EIP4844
-EIP4844_FORK_VERSION: 0x00000073
-EIP4844_FORK_EPOCH: 18446744073709551615
 
 # Time parameters
 # ---------------------------------------------------------------
@@ -73,7 +49,7 @@ PROPOSER_SCORE_BOOST: 40
 # ---------------------------------------------------------------
 DEPOSIT_CHAIN_ID: 1337803
 DEPOSIT_NETWORK_ID: 1337803
-DEPOSIT_CONTRACT_ADDRESS: 0x4242424242424242424242424242424242424242
+DEPOSIT_CONTRACT_ADDRESS: Z4242424242424242424242424242424242424242
 INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648
 MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64
 PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2
@@ -115,7 +91,7 @@ MAX_EFFECTIVE_BALANCE: 32000000000
 # Max operations per block
 # ---------------------------------------------------------------
 # 2**4 (= 16)
-MAX_BLS_TO_EXECUTION_CHANGES: 16
+MAX_DILITHIUM_TO_EXECUTION_CHANGES: 16
 
 
 # Execution

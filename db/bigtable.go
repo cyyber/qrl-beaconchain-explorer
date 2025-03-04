@@ -35,7 +35,6 @@ const (
 	SYNC_COMMITTEES_FAMILY                = "sc"
 	INCOME_DETAILS_COLUMN_FAMILY          = "id"
 	STATS_COLUMN_FAMILY                   = "stats"
-	MACHINE_METRICS_COLUMN_FAMILY         = "mm"
 	SERIES_FAMILY                         = "series"
 
 	SUM_COLUMN = "sum"
@@ -64,8 +63,6 @@ type Bigtable struct {
 	tableBlocks          *gcp_bigtable.Table
 	tableMetadataUpdates *gcp_bigtable.Table
 	tableMetadata        *gcp_bigtable.Table
-
-	tableMachineMetrics *gcp_bigtable.Table
 
 	redisCache *redis.Client
 
@@ -120,7 +117,6 @@ func InitBigtable(project, instance, chainId, redisAddress string) (*Bigtable, e
 		tableMetadataUpdates:           btClient.Open("metadata_updates"),
 		tableMetadata:                  btClient.Open("metadata"),
 		tableBeaconchain:               btClient.Open("beaconchain"),
-		tableMachineMetrics:            btClient.Open("machine_metrics"),
 		tableValidators:                btClient.Open("beaconchain_validators"),
 		tableValidatorsHistory:         btClient.Open("beaconchain_validators_history"),
 		chainId:                        chainId,

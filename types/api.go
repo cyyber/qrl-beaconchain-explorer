@@ -97,48 +97,6 @@ type DashboardRequest struct {
 	IndicesOrPubKey string `json:"indicesOrPubkey"`
 }
 
-type DiscordEmbed struct {
-	Color       string              `json:"color,omitempty"`
-	Description string              `json:"description,omitempty"`
-	Fields      []DiscordEmbedField `json:"fields,omitempty"`
-	Title       string              `json:"title,omitempty"`
-	Type        string              `json:"type,omitempty"`
-}
-
-type DiscordEmbedField struct {
-	Inline bool   `json:"inline"`
-	Name   string `json:"name"`
-	Value  string `json:"value"`
-}
-
-type DiscordComponent struct {
-	Type       uint64                   `json:"type"`
-	Components []DiscordComponentButton `json:"components"`
-}
-
-type DiscordComponentButton struct {
-	Style    uint64 `json:"style"`
-	CustomID string `json:"custom_id"`
-	Label    string `json:"label"`
-	URL      string `json:"url"`
-	Disabled bool   `json:"disabled"`
-	Type     uint64 `json:"type"`
-}
-
-type DiscordReq struct {
-	Content         string             `json:"content,omitempty"`
-	Username        string             `json:"username,omitempty"`
-	Avatar_url      string             `json:"avatar_url,omitempty"`
-	Tts             bool               `json:"tts,omitempty"`
-	Embeds          []DiscordEmbed     `json:"embeds,omitempty"`
-	AllowedMentions []interface{}      `json:"allowedMentions,omitempty"`
-	Components      []DiscordComponent `json:"components,omitempty"`
-	Files           interface{}        `json:"files,omitempty"`
-	Payload         string             `json:"payload,omitempty"`
-	Attachments     interface{}        `json:"attachments,omitempty"`
-	Flags           int                `json:"flags,omitempty"`
-}
-
 type ExecutionPerformanceResponse struct {
 	Performance1d    *big.Int `json:"performance1d"`
 	Performance7d    *big.Int `json:"performance7d"`
@@ -254,36 +212,21 @@ type Eth1InternalTransactionParsed struct {
 type Eth1BlockParsed struct {
 	Hash                     string    `json:"hash,omitempty"`
 	ParentHash               string    `json:"parent_hash,omitempty"`
-	UncleHash                string    `json:"uncle_hash,omitempty"`
 	Coinbase                 string    `json:"coinbase,omitempty"`
 	TxReward                 string    `json:"tx_reward,omitempty"`
-	Difficulty               string    `json:"difficulty,omitempty"`
 	Number                   uint64    `json:"number,omitempty"`
 	GasLimit                 uint64    `json:"gas_limit,omitempty"`
 	GasUsed                  uint64    `json:"gas_used,omitempty"`
 	Time                     time.Time `json:"time,omitempty"`
 	BaseFee                  string    `json:"base_fee,omitempty"`
-	UncleCount               uint64    `json:"uncle_count,omitempty"`
 	TransactionCount         uint64    `json:"transaction_count,omitempty"`
 	InternalTransactionCount uint64    `json:"internal_transaction_count,omitempty"`
 	Mev                      string    `json:"mev,omitempty"`
 	LowestGasPrice           string    `json:"lowest_gas_price,omitempty"`
 	HighestGasPrice          string    `json:"highest_gas_price,omitempty"`
 	// Duration uint64 `json:"duration,omitempty"`
-	UncleReward string `json:"uncle_reward,omitempty"`
 	// BaseFeeChange string `json:"base_fee_change,omitempty"`
 	// BlockUtilizationChange string `json:"block_utilization_change,omitempty"`
-}
-
-type Eth1UncleParsed struct {
-	BlockNumber uint64    `json:"block,omitempty"`
-	Number      uint64    `json:"number,omitempty"`
-	GasLimit    uint64    `json:"gas_limit,omitempty"`
-	GasUsed     uint64    `json:"gas_used,omitempty"`
-	BaseFee     string    `json:"base_fee,omitempty"`
-	Difficulty  string    `json:"difficulty,omitempty"`
-	Time        time.Time `json:"time,omitempty"`
-	Reward      string    `json:"reward,omitempty"`
 }
 
 type Eth1TokenTxParsed struct {
@@ -592,13 +535,13 @@ type ApiValidatorWithdrawalResponse struct {
 	Amount         uint64 `json:"amount"`
 }
 
-type ApiValidatorBlsChangeResponse struct {
+type ApiValidatorDilithiumChangeResponse struct {
 	Epoch                    uint64 `db:"epoch" json:"epoch,omitempty"`
 	Slot                     uint64 `db:"slot" json:"slot,omitempty"`
 	BlockRoot                string `db:"block_rot" json:"blockroot,omitempty"`
 	Validatorindex           uint64 `db:"validatorindex" json:"validatorindex,omitempty"`
-	BlsPubkey                string `db:"pubkey" json:"bls_pubkey,omitempty"`
-	Signature                string `db:"signature" json:"bls_signature,omitempty"`
+	DilithiumPubkey          string `db:"pubkey" json:"dilithium_pubkey,omitempty"`
+	Signature                string `db:"signature" json:"dilithium_signature,omitempty"`
 	Address                  string `db:"address" json:"address,omitempty"`
 	WithdrawalCredentialsOld string `db:"withdrawalcredentials_0x00" json:"withdrawalcredentials_0x00,omitempty"`
 	WithdrawalCredentialsNew string `db:"withdrawalcredentials_0x01" json:"withdrawalcredentials_0x01,omitempty"`

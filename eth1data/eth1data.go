@@ -17,12 +17,11 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	geth_types "github.com/ethereum/go-ethereum/core/types"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/accounts/abi/bind"
+	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/core"
+	gzond_types "github.com/theQRL/go-zond/core/types"
 )
 
 var logger = logrus.New().WithField("module", "eth1data")
@@ -48,7 +47,7 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 		}
 		return data, nil
 	}
-	tx, pending, err := rpc.CurrentErigonClient.GetNativeClient().TransactionByHash(ctx, hash)
+	tx, pending, err := rpc.CurrentGzondClient.GetNativeClient().TransactionByHash(ctx, hash)
 
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving data for tx: %w", err)
@@ -91,7 +90,7 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 	txPageData.BlockNumber = header.Number.Int64()
 	txPageData.Timestamp = time.Unix(int64(header.Time), 0)
 
-	msg, err := core.TransactionToMessage(tx, geth_types.NewCancunSigner(tx.ChainId()), header.BaseFee)
+	msg, err := core.TransactionToMessage(tx, gzond_types.NewShanghaiSigner(tx.ChainId()), header.BaseFee)
 	if err != nil {
 		return nil, fmt.Errorf("error getting sender of tx: %w", err)
 	}
@@ -124,46 +123,36 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 		txPageData.Gas.TxFee = msg.GasFeeCap.Mul(msg.GasFeeCap, big.NewInt(int64(receipt.GasUsed))).Bytes()
 	}
 
-	if receipt.Type == 3 {
-		txPageData.Gas.BlobGasPrice = receipt.BlobGasPrice.Bytes()
-		txPageData.Gas.BlobGasUsed = receipt.BlobGasUsed
-		txPageData.Gas.BlobTxFee = new(big.Int).Mul(receipt.BlobGasPrice, big.NewInt(int64(txPageData.Gas.BlobGasUsed))).Bytes()
-
-		txPageData.BlobHashes = make([][]byte, len(tx.BlobHashes()))
-		for i, h := range tx.BlobHashes() {
-			txPageData.BlobHashes[i] = h.Bytes()
-		}
-	}
-
-	data, err := rpc.CurrentErigonClient.TraceParityTx(tx.Hash().Hex())
-	if err != nil {
-		return nil, fmt.Errorf("failed to get parity trace for revert reason: %w", err)
-	}
+	// data, err := rpc.CurrentGzondClient.TraceParityTx(tx.Hash().Hex())
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to get parity trace for revert reason: %w", err)
+	// }
 	if receipt.Status != 1 {
-		errorMsg, err := abi.UnpackRevert(utils.MustParseHex(data[0].Result.Output))
-		if err == nil {
-			txPageData.ErrorMsg = errorMsg
-		}
+		// TODO(rgeraldes24)
+		// errorMsg, err := abi.UnpackRevert(utils.MustParseHex(data[0].Result.Output))
+		// if err == nil {
+		// 	txPageData.ErrorMsg = errorMsg
+		// }
 	} else {
 		txPageData.Transfers, err = db.BigtableClient.GetArbitraryTokenTransfersForTransaction(tx.Hash().Bytes())
 		if err != nil {
 			return nil, fmt.Errorf("error loading token transfers from tx: %w", err)
 		}
 	}
-	txPageData.InternalTxns, err = db.BigtableClient.GetInternalTransfersForTransaction(tx.Hash().Bytes(), msg.From.Bytes(), data, currency)
-	if err != nil {
-		return nil, fmt.Errorf("error loading internal transfers from tx: %w", err)
-	}
-	txPageData.FromName, err = db.BigtableClient.GetAddressName(msg.From.Bytes())
-	if err != nil {
-		return nil, fmt.Errorf("error retrieveing from name for tx: %w", err)
-	}
-	if msg.To != nil {
-		txPageData.ToName, err = db.BigtableClient.GetAddressName(msg.To.Bytes())
-		if err != nil {
-			return nil, fmt.Errorf("error retrieveing to name for tx: %w", err)
-		}
-	}
+	// txPageData.InternalTxns, err = db.BigtableClient.GetInternalTransfersForTransaction(tx.Hash().Bytes(), msg.From.Bytes(), data, currency)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error loading internal transfers from tx: %w", err)
+	// }
+	// txPageData.FromName, err = db.BigtableClient.GetAddressName(msg.From.Bytes())
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error retrieveing from name for tx: %w", err)
+	// }
+	// if msg.To != nil {
+	// 	txPageData.ToName, err = db.BigtableClient.GetAddressName(msg.To.Bytes())
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("error retrieveing to name for tx: %w", err)
+	// 	}
+	// }
 
 	if len(receipt.Logs) > 0 {
 		var wasContractMetadataCached bool
@@ -302,7 +291,7 @@ func IsContract(ctx context.Context, address common.Address) (bool, error) {
 		return wanted, nil
 	}
 
-	code, err := rpc.CurrentErigonClient.GetNativeClient().CodeAt(ctx, address, nil)
+	code, err := rpc.CurrentGzondClient.GetNativeClient().CodeAt(ctx, address, nil)
 	if err != nil {
 		return false, fmt.Errorf("error retrieving code data for address %v: %w", address, err)
 	}
@@ -316,8 +305,8 @@ func IsContract(ctx context.Context, address common.Address) (bool, error) {
 	return isContract, nil
 }
 
-func getBlockHeaderByHash(ctx context.Context, hash common.Hash) (*geth_types.Header, error) {
-	header, err := rpc.CurrentErigonClient.GetNativeClient().HeaderByHash(ctx, hash)
+func getBlockHeaderByHash(ctx context.Context, hash common.Hash) (*gzond_types.Header, error) {
+	header, err := rpc.CurrentGzondClient.GetNativeClient().HeaderByHash(ctx, hash)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving block header data for tx: %w", err)
 	}
@@ -325,15 +314,15 @@ func getBlockHeaderByHash(ctx context.Context, hash common.Hash) (*geth_types.He
 	return header, nil
 }
 
-func getTransactionReceipt(ctx context.Context, hash common.Hash) (*geth_types.Receipt, error) {
+func getTransactionReceipt(ctx context.Context, hash common.Hash) (*gzond_types.Receipt, error) {
 	cacheKey := fmt.Sprintf("%d:r:%s", utils.Config.Chain.ClConfig.DepositChainID, hash.String())
 
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour, new(geth_types.Receipt)); err == nil {
+	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour, new(gzond_types.Receipt)); err == nil {
 		logger.Infof("retrieved receipt data for tx %v from cache", hash)
-		return wanted.(*geth_types.Receipt), nil
+		return wanted.(*gzond_types.Receipt), nil
 	}
 
-	receipt, err := rpc.CurrentErigonClient.GetNativeClient().TransactionReceipt(ctx, hash)
+	receipt, err := rpc.CurrentGzondClient.GetNativeClient().TransactionReceipt(ctx, hash)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving receipt data for tx: %w", err)
 	}

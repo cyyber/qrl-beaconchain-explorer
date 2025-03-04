@@ -95,9 +95,9 @@ func main() {
 
 	chainIDBig := new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID)
 
-	rpcClient, err := rpc.NewLighthouseClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
+	rpcClient, err := rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
 	if err != nil {
-		utils.LogFatal(err, "new bigtable lighthouse client error", 0)
+		utils.LogFatal(err, "new bigtable qrysm client error", 0)
 	}
 
 	gOuter := errgroup.Group{}
@@ -205,16 +205,16 @@ func monitor(configPath string) {
 	chainIDBig := new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID)
 
 	var rpcClient rpc.Client
-	rpcClient, err = rpc.NewLighthouseClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
+	rpcClient, err = rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
 	if err != nil {
-		utils.LogFatal(err, "new bigtable lighthouse client in monitor error", 0)
+		utils.LogFatal(err, "new bigtable qrysm client in monitor error", 0)
 	}
 	current := uint64(0)
 
 	for ; ; time.Sleep(time.Second * 12) {
 		head, err := rpcClient.GetChainHead()
 		if err != nil {
-			utils.LogFatal(err, "getting chain head from lighthouse in monitor error", 0)
+			utils.LogFatal(err, "getting chain head from qrysm in monitor error", 0)
 		}
 
 		logrus.Infof("current is %v, head is %v, finalized is %v", current, head.HeadEpoch, head.FinalizedEpoch)

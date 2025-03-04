@@ -61,8 +61,6 @@ const (
 
 var updateInterval = time.Second * 60 // how often to update ratelimits, weights and stats
 
-var apiProducts = map[string]*ApiProduct{} // key: <bucket>:<product_name>
-var apiProductsMu = &sync.RWMutex{}
 
 var redisClient *redis.Client
 var redisIsHealthy atomic.Bool
@@ -138,15 +136,6 @@ type RedisKey struct {
 	ExpireAt time.Time
 }
 
-type ApiProduct struct {
-	Name          string    `db:"name"`
-	Bucket        string    `db:"bucket"`
-	StripePriceID string    `db:"stripe_price_id"`
-	Second        int64     `db:"second"`
-	Hour          int64     `db:"hour"`
-	Month         int64     `db:"month"`
-	ValidFrom     time.Time `db:"valid_from"`
-}
 
 type responseWriterDelegator struct {
 	http.ResponseWriter
@@ -623,16 +612,6 @@ func updateRateLimits() error {
 		return err
 	}
 
-	dbApiProducts, err := DBGetCurrentApiProducts()
-	if err != nil {
-		return err
-	}
-	apiProductsMu.Lock()
-	for _, dbApiProduct := range dbApiProducts {
-		apiProducts[fmt.Sprintf("%s:%s", dbApiProduct.Bucket, dbApiProduct.Name)] = dbApiProduct
-	}
-	apiProductsMu.Unlock()
-
 	rateLimitsMu.Lock()
 	now := time.Now()
 	for _, dbKey := range dbApiKeys {
@@ -882,20 +861,6 @@ func getDefaultRatelimit(bucket string) (freeRatelimit, nokeyRatelimit *RateLimi
 		Month:  DefaultRateLimitMonth,
 	}
 
-	apiProductsMu.RLock()
-	apiProduct, ok := apiProducts[fmt.Sprintf("%s:%s", bucket, "nokey")]
-	if ok {
-		nokeyRatelimit.Second = apiProduct.Second
-		nokeyRatelimit.Hour = apiProduct.Hour
-		nokeyRatelimit.Month = apiProduct.Month
-	}
-	apiProduct, ok = apiProducts[fmt.Sprintf("%s:%s", bucket, "free")]
-	if ok {
-		freeRatelimit.Second = apiProduct.Second
-		freeRatelimit.Hour = apiProduct.Hour
-		freeRatelimit.Month = apiProduct.Month
-	}
-	apiProductsMu.RUnlock()
 
 	return freeRatelimit, nokeyRatelimit
 }
@@ -1044,16 +1009,6 @@ func DBGetUserApiRateLimit(userId int64) (*RateLimit, error) {
 		return freeRatelimit, nil
 	}
 	return rl, err
-}
-
-func DBGetCurrentApiProducts() ([]*ApiProduct, error) {
-	apiProducts := []*ApiProduct{}
-	err := db.FrontendWriterDB.Select(&apiProducts, `
-        select distinct on (name, bucket) name, bucket, stripe_price_id, second, hour, month, valid_from 
-        from api_products 
-        where valid_from <= now()
-        order by name, bucket, valid_from desc`)
-	return apiProducts, err
 }
 
 func DBUpdater() {
