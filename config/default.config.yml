@@ -12,7 +12,7 @@ writerDatabase:
   port: "<dbport>"
   password: "<dbpassword>"
 
-# Chain network configuration (example will work for the prysm testnet)
+# Chain network configuration
 chain:
   name: "mainnet"
 

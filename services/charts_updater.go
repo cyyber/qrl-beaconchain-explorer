@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"hash/fnv"
 	"html/template"
 	"math"
 	"sort"
@@ -44,8 +43,6 @@ var ChartHandlers = map[string]chartHandler{
 	"deposits":                       {13, depositsChartData},
 	"withdrawals":                    {17, withdrawalsChartData},
 	"graffiti_wordcloud":             {14, graffitiCloudChartData},
-	"pools_distribution":             {15, poolsDistributionChartData},
-	"historic_pool_performance":      {16, historicPoolPerformanceData},
 
 	// execution charts start with 20+
 
@@ -467,96 +464,6 @@ func participationRateChartData() (*types.GenericChartData, error) {
 	return chartData, nil
 }
 
-func historicPoolPerformanceData() (*types.GenericChartData, error) {
-	// retrieve pool performance from db
-	var performanceDays []types.EthStoreDay
-	err := db.ReaderDb.Select(&performanceDays, `
-		SELECT pool, day, max(effective_balances_sum_wei) as effective_balances_sum_wei, min(start_balances_sum_wei) as start_balances_sum_wei, max(end_balances_sum_wei) as end_balances_sum_wei, max(deposits_sum_wei) as deposits_sum_wei, AVG(apr) as apr
-		FROM historical_pool_performance
-		where pool IN (select pool from historical_pool_performance group by pool, day, validators order by day desc, validators desc limit 10)
-		GROUP BY pool, day
-		ORDER BY day, pool ASC;`)
-	if err != nil {
-		return nil, fmt.Errorf("error getting historical pool performance: %w", err)
-	}
-
-	// generate pool performance series datapoints
-	poolSeriesData := map[string][][2]float64{}
-	var timestamp float64
-	for _, poolPerfDay := range performanceDays {
-		timestamp = float64(utils.DayToTime(int64(poolPerfDay.Day)).Unix() * 1000)
-		poolSeriesData[poolPerfDay.Pool] = append(poolSeriesData[poolPerfDay.Pool], [2]float64{
-			timestamp,
-			poolPerfDay.APR.InexactFloat64() * 100,
-		})
-	}
-
-	// create pool performance series
-	var colors = [...]string{
-		"#7fa6d4", "#90c978", "#e6a467", "#cc8398", "#bebdbe", "#928b8b", "#a5e5e1", "#ca5c58",
-		"#939b58", "#594f9d", "#7d81dc", "#d9cd66", "#d9cd66"}
-
-	chartSeries := []*types.GenericChartDataSeries{}
-	hash := fnv.New32()
-	var index int
-
-	for poolName, poolData := range poolSeriesData {
-		// generate hash from poolname for deterministic way of getting color index
-		hash.Write([]byte(poolName))
-		index = int(hash.Sum32()) % len(colors)
-		hash.Reset()
-
-		poolSeries := types.GenericChartDataSeries{
-			Name:  poolName,
-			Data:  poolData,
-			Color: colors[index],
-		}
-		chartSeries = append(chartSeries, &poolSeries)
-	}
-
-	// retrieve eth.store data from db
-	performanceDays = nil
-	err = db.ReaderDb.Select(&performanceDays, `
-		SELECT	day, effective_balances_sum_wei, start_balances_sum_wei, end_balances_sum_wei, deposits_sum_wei, apr
-		FROM	eth_store_stats WHERE validator = -1 
-		ORDER BY day ASC`)
-	if err != nil {
-		return nil, fmt.Errorf("error getting eth store days: %w", err)
-	}
-	if len(performanceDays) > 0 {
-		// generate eth store series datapoints
-		for _, ethStoreDay := range performanceDays {
-			timestamp = float64(utils.DayToTime(int64(ethStoreDay.Day)).Unix() * 1000)
-			poolSeriesData["ETH.STORE"] = append(poolSeriesData["ETH.STORE"], [2]float64{
-				timestamp,
-				ethStoreDay.APR.InexactFloat64() * 100,
-			})
-		}
-		// create eth store series
-		ethStoreSeries := types.GenericChartDataSeries{
-			Name:  "ETH.STORE®",
-			Data:  poolSeriesData["ETH.STORE"],
-			Color: "#ed1c24",
-		}
-		chartSeries = append([]*types.GenericChartDataSeries{&ethStoreSeries}, chartSeries...)
-	}
-
-	//create chart struct, hypertext color is hardcoded into subtitle text
-	chartData := &types.GenericChartData{
-		Title:         "Historical Pool Performance",
-		Subtitle:      "Uses a neutral & verifiable formula <a href=\"https://github.com/gobitfly/eth.store\">ETH.STORE®</a><sup>1</sup> to measure pool performance for consensus & execution rewards.",
-		XAxisTitle:    "",
-		YAxisTitle:    "APR [%] (Logarithmic)",
-		StackingMode:  "false",
-		Type:          "line",
-		TooltipShared: false,
-		Series:        chartSeries,
-		Footer:        EthStoreDisclaimer(),
-	}
-
-	return chartData, nil
-}
-
 func stakeEffectivenessChartData() (*types.GenericChartData, error) {
 	if LatestEpoch() == 0 {
 		return nil, fmt.Errorf("chart-data not available pre-genesis")
@@ -864,65 +771,6 @@ func withdrawalsChartData() (*types.GenericChartData, error) {
 		Series: []*types.GenericChartDataSeries{
 			{
 				Name: "Withdrawals",
-				Data: seriesData,
-			},
-		},
-	}
-
-	return chartData, nil
-}
-
-func poolsDistributionChartData() (*types.GenericChartData, error) {
-
-	type seriesDataItem struct {
-		Name      string `json:"name"`
-		Address   string `json:"address"`
-		Y         int64  `json:"y"`
-		Drilldown string `json:"drilldown"`
-	}
-
-	poolsPageData := LatestPoolsPageData()
-	poolData := []*types.PoolInfo{}
-	if poolsPageData == nil {
-		utils.LogError(nil, "got nil for LatestPoolsPageData", 0)
-	} else {
-		poolData = poolsPageData.PoolInfos
-	}
-	if len(poolData) > 1 {
-		poolData = poolData[1:]
-	}
-
-	seriesData := make([]seriesDataItem, 0, len(poolData))
-
-	for _, row := range poolData {
-		seriesData = append(seriesData, seriesDataItem{
-			Name: row.Name,
-			Y:    row.Count,
-		})
-	}
-
-	chartData := &types.GenericChartData{
-		IsNormalChart:    true,
-		Type:             "pie",
-		Title:            "Pool Distribution",
-		Subtitle:         "Validator distribution by staking pool.",
-		TooltipFormatter: `function(){ return '<b>'+this.point.name+'</b><br\>Percentage: '+this.point.percentage.toFixed(2)+'%<br\>Validators: '+this.point.y }`,
-		PlotOptionsPie: `{
-			borderWidth: 1,
-			borderColor: null, 
-			dataLabels: { 
-				enabled:true, 
-				formatter: function() { 
-					var name = this.point.name.length > 20 ? this.point.name.substring(0,20)+'...' : this.point.name;
-					return '<span style="stroke:none; fill: var(--font-color)"><b style="stroke:none; fill: var(--font-color)">'+name+'</b></span>' 
-				} 
-			} 
-		}`,
-		PlotOptionsSeriesCursor: "pointer",
-		Series: []*types.GenericChartDataSeries{
-			{
-				Name: "Pool Distribution",
-				Type: "pie",
 				Data: seriesData,
 			},
 		},
