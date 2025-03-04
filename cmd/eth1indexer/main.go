@@ -70,8 +70,8 @@ func main() {
 
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
-	enableEnsUpdater := flag.Bool("ens.enabled", false, "Enable ens update process")
-	ensBatchSize := flag.Int64("ens.batch", 200, "Batch size for ens updates")
+	// enableEnsUpdater := flag.Bool("ens.enabled", false, "Enable ens update process")
+	// ensBatchSize := flag.Int64("ens.batch", 200, "Batch size for ens updates")
 
 	flag.Parse()
 
@@ -192,7 +192,7 @@ func main() {
 		bt.TransformERC721,
 		bt.TransformERC1155,
 		bt.TransformWithdrawals,
-		bt.TransformEnsNameRegistered,
+		// bt.TransformEnsNameRegistered,
 		bt.TransformContract)
 
 	cache := freecache.NewCache(100 * 1024 * 1024) // 100 MB limit
@@ -376,13 +376,15 @@ func main() {
 			ProcessMetadataUpdates(bt, client, balanceUpdaterPrefix, *balanceUpdaterBatchSize, 10)
 		}
 
-		if *enableEnsUpdater {
-			err := bt.ImportEnsUpdates(client.GetNativeClient(), *ensBatchSize)
-			if err != nil {
-				utils.LogError(err, "error importing ens updates", 0, nil)
-				continue
+		/*
+			if *enableEnsUpdater {
+				err := bt.ImportEnsUpdates(client.GetNativeClient(), *ensBatchSize)
+				if err != nil {
+					utils.LogError(err, "error importing ens updates", 0, nil)
+					continue
+				}
 			}
-		}
+		*/
 
 		logrus.Infof("index run completed")
 		services.ReportStatus("eth1indexer", "Running", nil)

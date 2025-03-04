@@ -39,7 +39,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/phyber/negroni-gzip/gzip"
-	"github.com/stripe/stripe-go/v72"
 	"github.com/urfave/negroni"
 	"github.com/zesik/proxyaddr"
 )
@@ -513,25 +512,6 @@ func main() {
 			router.HandleFunc("/notifications/unsubscribe", handlers.UserNotificationsUnsubscribeByHash).Methods("GET")
 
 			router.HandleFunc("/monitoring/{module}", handlers.Monitoring).Methods("GET", "OPTIONS")
-
-			signUpRouter := router.PathPrefix("/").Subrouter()
-			signUpRouter.HandleFunc("/login", handlers.Login).Methods("GET")
-			signUpRouter.HandleFunc("/login", handlers.LoginPost).Methods("POST")
-			signUpRouter.HandleFunc("/logout", handlers.Logout).Methods("GET")
-			signUpRouter.HandleFunc("/register", handlers.Register).Methods("GET")
-			signUpRouter.HandleFunc("/register", handlers.RegisterPost).Methods("POST")
-			signUpRouter.HandleFunc("/resend", handlers.ResendConfirmation).Methods("GET")
-			signUpRouter.HandleFunc("/resend", handlers.ResendConfirmationPost).Methods("POST")
-			signUpRouter.HandleFunc("/requestReset", handlers.RequestResetPassword).Methods("GET")
-			signUpRouter.HandleFunc("/requestReset", handlers.RequestResetPasswordPost).Methods("POST")
-			signUpRouter.HandleFunc("/reset", handlers.ResetPasswordPost).Methods("POST")
-			signUpRouter.HandleFunc("/reset/{hash}", handlers.ResetPassword).Methods("GET")
-			signUpRouter.HandleFunc("/confirm/{hash}", handlers.ConfirmEmail).Methods("GET")
-			signUpRouter.HandleFunc("/confirmation", handlers.Confirmation).Methods("GET")
-			signUpRouter.HandleFunc("/pricing", handlers.Pricing).Methods("GET")
-			signUpRouter.HandleFunc("/pricing", handlers.PricingPost).Methods("POST")
-			signUpRouter.HandleFunc("/premium", handlers.MobilePricing).Methods("GET")
-			signUpRouter.Use(csrfHandler)
 
 			oauthRouter := router.PathPrefix("/user").Subrouter()
 			oauthRouter.HandleFunc("/authorize", handlers.UserAuthorizeConfirm).Methods("GET")

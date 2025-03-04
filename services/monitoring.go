@@ -259,16 +259,11 @@ func startServicesMonitoringService() {
 		"indexPageDataUpdater":      time.Minute * 15,
 		"latestBlockUpdater":        time.Minute * 15,
 		"headBlockRootHashUpdater":  time.Minute * 15,
-		"notification-collector":    time.Minute * 15,
 		"relaysUpdater":             time.Minute * 15,
-		"ethstoreExporter":          time.Minute * 60,
 		"statsUpdater":              time.Minute * 30,
-		"poolsUpdater":              time.Minute * 30,
 		"slotExporter":              time.Minute * 15,
 		"statistics":                time.Minute * 90,
-		"ethStoreStatistics":        time.Minute * 15,
 		"lastExportedStatisticDay":  time.Minute * 15,
-		//"notification-sender", //exclude for now as the sender is only running on mainnet
 	}
 
 	if utils.Config.Monitoring.ServiceMonitoringConfigurations != nil {

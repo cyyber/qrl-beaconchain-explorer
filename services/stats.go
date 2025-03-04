@@ -212,6 +212,7 @@ func getValidatorActivationChurnLimit(validatorCount, epoch uint64) (uint64, err
 	if err != nil {
 		return 0, err
 	}
+	// TODO(rgeraldes24)
 	if utils.Config.Chain.ClConfig.DenebForkEpoch > epoch {
 		return vcl, nil
 	}

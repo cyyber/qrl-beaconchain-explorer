@@ -17,8 +17,8 @@ import (
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 	"github.com/go-redis/redis/v8"
-	itypes "github.com/gobitfly/eth-rewards/types"
 	"github.com/sirupsen/logrus"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/api/option"
 	"google.golang.org/protobuf/proto"
@@ -72,8 +72,6 @@ type Bigtable struct {
 	chainId string
 
 	v2SchemaCutOffEpoch uint64
-
-	machineMetricsQueuedWritesChan chan (types.BulkMutation)
 }
 
 func InitBigtable(project, instance, chainId, redisAddress string) (*Bigtable, error) {
@@ -111,419 +109,31 @@ func InitBigtable(project, instance, chainId, redisAddress string) (*Bigtable, e
 	}
 
 	bt := &Bigtable{
-		client:                         btClient,
-		tableData:                      btClient.Open("data"),
-		tableBlocks:                    btClient.Open("blocks"),
-		tableMetadataUpdates:           btClient.Open("metadata_updates"),
-		tableMetadata:                  btClient.Open("metadata"),
-		tableBeaconchain:               btClient.Open("beaconchain"),
-		tableValidators:                btClient.Open("beaconchain_validators"),
-		tableValidatorsHistory:         btClient.Open("beaconchain_validators_history"),
-		chainId:                        chainId,
-		redisCache:                     rdc,
-		LastAttestationCacheMux:        &sync.Mutex{},
-		v2SchemaCutOffEpoch:            utils.Config.Bigtable.V2SchemaCutOffEpoch,
-		machineMetricsQueuedWritesChan: make(chan types.BulkMutation, MAX_BATCH_MUTATIONS),
-	}
-
-	if utils.Config.Frontend.Enabled { // Only activate machine metrics inserts on frontend / api instances
-		go bt.commitQueuedMachineMetricWrites()
+		client:                  btClient,
+		tableData:               btClient.Open("data"),
+		tableBlocks:             btClient.Open("blocks"),
+		tableMetadataUpdates:    btClient.Open("metadata_updates"),
+		tableMetadata:           btClient.Open("metadata"),
+		tableBeaconchain:        btClient.Open("beaconchain"),
+		tableValidators:         btClient.Open("beaconchain_validators"),
+		tableValidatorsHistory:  btClient.Open("beaconchain_validators_history"),
+		chainId:                 chainId,
+		redisCache:              rdc,
+		LastAttestationCacheMux: &sync.Mutex{},
+		v2SchemaCutOffEpoch:     utils.Config.Bigtable.V2SchemaCutOffEpoch,
 	}
 
 	BigtableClient = bt
 	return bt, nil
 }
 
-func (bigtable *Bigtable) commitQueuedMachineMetricWrites() {
-
-	// copy the pending mutations over and commit them
-
-	batchSize := 10000
-
-	muts := types.NewBulkMutations(batchSize)
-
-	tmr := time.NewTicker(time.Second * 10)
-	for {
-		select {
-		case mut, ok := <-bigtable.machineMetricsQueuedWritesChan:
-
-			if ok {
-				muts.Keys = append(muts.Keys, mut.Key)
-				muts.Muts = append(muts.Muts, mut.Mut)
-			}
-
-			if len(muts.Keys) >= batchSize || !ok && len(muts.Keys) > 0 { // commit when batch size is reached or on channel close
-				logger.Infof("committing %v queued machine metric inserts (trigger=batchSize, ok=%v)", len(muts.Keys), ok)
-				err := bigtable.WriteBulk(muts, bigtable.tableMachineMetrics, batchSize)
-
-				if err == nil {
-					muts = types.NewBulkMutations(batchSize)
-				} else {
-					logger.Errorf("error writing queued machine metrics to bigtable: %v", err)
-				}
-			}
-
-			if !ok { // insert chan is closed, stop the timer and exit
-				tmr.Stop()
-				logger.Infof("stopping batched machine metrics insert")
-				return
-			}
-
-		case <-tmr.C:
-			if len(muts.Keys) > 0 {
-				logger.Infof("committing %v queued machine metric inserts (trigger=timeout)", len(muts.Keys))
-				err := bigtable.WriteBulk(muts, bigtable.tableMachineMetrics, DEFAULT_BATCH_INSERTS)
-
-				if err == nil {
-					muts = types.NewBulkMutations(batchSize)
-				} else {
-					logger.Errorf("error writing queued machine metrics to bigtable: %v", err)
-				}
-			}
-		}
-	}
-
-}
-
 func (bigtable *Bigtable) Close() {
-	close(bigtable.machineMetricsQueuedWritesChan)
 	time.Sleep(time.Second * 5)
 	bigtable.client.Close()
 }
 
 func (bigtable *Bigtable) GetClient() *gcp_bigtable.Client {
 	return bigtable.client
-}
-
-func (bigtable *Bigtable) SaveMachineMetric(process string, userID uint64, machine string, data []byte) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
-
-	rowKeyData := fmt.Sprintf("u:%s:p:%s:m:%v", bigtable.reversePaddedUserID(userID), process, machine)
-
-	ts := gcp_bigtable.Now()
-	rateLimitKey := fmt.Sprintf("%s:%d", rowKeyData, ts.Time().Minute())
-	keySet, err := bigtable.redisCache.SetNX(ctx, rateLimitKey, "1", time.Minute).Result()
-	if err != nil {
-		return err
-	}
-	if !keySet {
-		return fmt.Errorf("rate limit, last metric insert was less than 1 min ago")
-	}
-
-	// for limiting machines per user, add the machine field to a redis set
-	// bucket period is 15mins
-	machineLimitKey := fmt.Sprintf("%s:%d", bigtable.reversePaddedUserID(userID), ts.Time().Minute()%15)
-	pipe := bigtable.redisCache.Pipeline()
-	pipe.SAdd(ctx, machineLimitKey, machine)
-	pipe.Expire(ctx, machineLimitKey, time.Minute*15)
-	_, err = pipe.Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	dataMut := gcp_bigtable.NewMutation()
-	dataMut.Set(MACHINE_METRICS_COLUMN_FAMILY, "v1", ts, data)
-
-	bulkMut := types.BulkMutation{ // schedule the mutation for writing
-		Key: rowKeyData,
-		Mut: dataMut,
-	}
-
-	bigtable.machineMetricsQueuedWritesChan <- bulkMut
-
-	return nil
-}
-
-func (bigtable Bigtable) getMachineMetricNamesMap(userID uint64, searchDepth int) (map[string]bool, error) {
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
-	defer cancel()
-
-	rangePrefix := fmt.Sprintf("u:%s:p:", bigtable.reversePaddedUserID(userID))
-
-	filter := gcp_bigtable.ChainFilters(
-		gcp_bigtable.FamilyFilter(MACHINE_METRICS_COLUMN_FAMILY),
-		gcp_bigtable.LatestNFilter(searchDepth),
-		gcp_bigtable.TimestampRangeFilter(time.Now().Add(time.Duration(searchDepth*-1)*time.Minute), time.Now()),
-		gcp_bigtable.StripValueFilter(),
-	)
-
-	machineNames := make(map[string]bool)
-
-	err := bigtable.tableMachineMetrics.ReadRows(ctx, gcp_bigtable.PrefixRange(rangePrefix), func(r gcp_bigtable.Row) bool {
-		success, _, machine, _ := machineMetricRowParts(r.Key())
-		if !success {
-			return false
-		}
-		machineNames[machine] = true
-
-		return true
-	}, gcp_bigtable.RowFilter(filter))
-	if err != nil {
-		return machineNames, err
-	}
-
-	return machineNames, nil
-}
-
-func (bigtable Bigtable) GetMachineMetricsMachineNames(userID uint64) ([]string, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"userId": userID,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	names, err := bigtable.getMachineMetricNamesMap(userID, 300)
-	if err != nil {
-		return nil, err
-	}
-
-	result := []string{}
-	for key := range names {
-		result = append(result, key)
-	}
-
-	return result, nil
-}
-
-func (bigtable Bigtable) GetMachineMetricsMachineCount(userID uint64) (uint64, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"userId": userID,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-
-	machineLimitKey := fmt.Sprintf("%s:%d", bigtable.reversePaddedUserID(userID), time.Now().Minute()%15)
-
-	card, err := bigtable.redisCache.SCard(ctx, machineLimitKey).Result()
-	if err != nil {
-		return 0, err
-	}
-	return uint64(card), nil
-}
-
-func (bigtable Bigtable) GetMachineMetricsNode(userID uint64, limit, offset int) ([]*types.MachineMetricNode, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"userId": userID,
-			"limit":  limit,
-			"offset": offset,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	return getMachineMetrics(bigtable, "beaconnode", userID, limit, offset,
-		func(data []byte, machine string) *types.MachineMetricNode {
-			obj := &types.MachineMetricNode{}
-			err := proto.Unmarshal(data, obj)
-			if err != nil {
-				return nil
-			}
-			obj.Machine = &machine
-			return obj
-		},
-	)
-}
-
-func (bigtable Bigtable) GetMachineMetricsValidator(userID uint64, limit, offset int) ([]*types.MachineMetricValidator, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"userId": userID,
-			"limit":  limit,
-			"offset": offset,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	return getMachineMetrics(bigtable, "validator", userID, limit, offset,
-		func(data []byte, machine string) *types.MachineMetricValidator {
-			obj := &types.MachineMetricValidator{}
-			err := proto.Unmarshal(data, obj)
-			if err != nil {
-				return nil
-			}
-			obj.Machine = &machine
-			return obj
-		},
-	)
-}
-
-func (bigtable Bigtable) GetMachineMetricsSystem(userID uint64, limit, offset int) ([]*types.MachineMetricSystem, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"userId": userID,
-			"limit":  limit,
-			"offset": offset,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	return getMachineMetrics(bigtable, "system", userID, limit, offset,
-		func(data []byte, machine string) *types.MachineMetricSystem {
-			obj := &types.MachineMetricSystem{}
-			err := proto.Unmarshal(data, obj)
-			if err != nil {
-				return nil
-			}
-			obj.Machine = &machine
-			return obj
-		},
-	)
-}
-
-func getMachineMetrics[T types.MachineMetricSystem | types.MachineMetricNode | types.MachineMetricValidator](bigtable Bigtable, process string, userID uint64, limit, offset int, marshler func(data []byte, machine string) *T) ([]*T, error) {
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
-	defer cancel()
-
-	rangePrefix := fmt.Sprintf("u:%s:p:%s:m:", bigtable.reversePaddedUserID(userID), process)
-	res := make([]*T, 0)
-	if offset <= 0 {
-		offset = 1
-	}
-
-	filter := gcp_bigtable.ChainFilters(
-		gcp_bigtable.FamilyFilter(MACHINE_METRICS_COLUMN_FAMILY),
-		gcp_bigtable.LatestNFilter(limit),
-		gcp_bigtable.CellsPerRowOffsetFilter(offset),
-	)
-	gapSize := getMachineStatsGap(uint64(limit))
-	err := bigtable.tableMachineMetrics.ReadRows(ctx, gcp_bigtable.PrefixRange(rangePrefix), func(r gcp_bigtable.Row) bool {
-		success, _, machine, _ := machineMetricRowParts(r.Key())
-		if !success {
-			return false
-		}
-		var count = -1
-		for _, ri := range r[MACHINE_METRICS_COLUMN_FAMILY] {
-			count++
-			if count%gapSize != 0 {
-				continue
-			}
-
-			obj := marshler(ri.Value, machine)
-			if obj == nil {
-				return false
-			}
-
-			res = append(res, obj)
-		}
-		return true
-	}, gcp_bigtable.RowFilter(filter))
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
-
-func (bigtable Bigtable) GetMachineRowKey(userID uint64, process string, machine string) string {
-	return fmt.Sprintf("u:%s:p:%s:m:%s", bigtable.reversePaddedUserID(userID), process, machine)
-}
-
-// Returns a map[userID]map[machineName]machineData
-// machineData contains the latest machine data in CurrentData
-// and 5 minute old data in fiveMinuteOldData (defined in limit)
-// as well as the insert timestamps of both
-func (bigtable Bigtable) GetMachineMetricsForNotifications(rowKeys gcp_bigtable.RowList) (map[uint64]map[string]*types.MachineMetricSystemUser, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"rowKeys": rowKeys,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*200))
-	defer cancel()
-
-	res := make(map[uint64]map[string]*types.MachineMetricSystemUser) // userID -> machine -> data
-
-	limit := 5
-
-	filter := gcp_bigtable.ChainFilters(
-		gcp_bigtable.FamilyFilter(MACHINE_METRICS_COLUMN_FAMILY),
-		gcp_bigtable.LatestNFilter(limit),
-	)
-
-	err := bigtable.tableMachineMetrics.ReadRows(ctx, rowKeys, func(r gcp_bigtable.Row) bool {
-		success, userID, machine, _ := machineMetricRowParts(r.Key())
-		if !success {
-			return false
-		}
-
-		count := 0
-		for _, ri := range r[MACHINE_METRICS_COLUMN_FAMILY] {
-
-			obj := &types.MachineMetricSystem{}
-			err := proto.Unmarshal(ri.Value, obj)
-			if err != nil {
-				return false
-			}
-
-			if _, found := res[userID]; !found {
-				res[userID] = make(map[string]*types.MachineMetricSystemUser)
-			}
-
-			last, found := res[userID][machine]
-
-			if found && count == limit-1 {
-				res[userID][machine] = &types.MachineMetricSystemUser{
-					UserID:                    userID,
-					Machine:                   machine,
-					CurrentData:               last.CurrentData,
-					FiveMinuteOldData:         obj,
-					CurrentDataInsertTs:       last.CurrentDataInsertTs,
-					FiveMinuteOldDataInsertTs: ri.Timestamp.Time().Unix(),
-				}
-			} else {
-				res[userID][machine] = &types.MachineMetricSystemUser{
-					UserID:                    userID,
-					Machine:                   machine,
-					CurrentData:               obj,
-					FiveMinuteOldData:         nil,
-					CurrentDataInsertTs:       ri.Timestamp.Time().Unix(),
-					FiveMinuteOldDataInsertTs: 0,
-				}
-			}
-			count++
-
-		}
-		return true
-	}, gcp_bigtable.RowFilter(filter))
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
-
-func machineMetricRowParts(r string) (bool, uint64, string, string) {
-	keySplit := strings.Split(r, ":")
-
-	userID, err := strconv.ParseUint(keySplit[1], 10, 64)
-	if err != nil {
-		logger.Errorf("error parsing slot from row key %v: %v", r, err)
-		return false, 0, "", ""
-	}
-	userID = ^uint64(0) - userID
-
-	machine := ""
-	if len(keySplit) >= 6 {
-		machine = keySplit[5]
-	}
-
-	process := keySplit[3]
-
-	return true, userID, machine, process
 }
 
 func (bigtable *Bigtable) SaveValidatorBalances(epoch uint64, validators []*types.Validator) error {
@@ -547,6 +157,7 @@ func (bigtable *Bigtable) SaveValidatorBalances(epoch uint64, validators []*type
 
 		balanceEncoded := make([]byte, 8)
 		binary.LittleEndian.PutUint64(balanceEncoded, validator.Balance)
+		// TODO(rgeraldes24)
 		effectiveBalanceEncoded := uint8(validator.EffectiveBalance / 1e9) // we can encode the effective balance in 1 byte as it is capped at 32ETH and only decrements in 1 ETH steps
 
 		combined := append(balanceEncoded, effectiveBalanceEncoded)

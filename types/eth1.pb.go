@@ -43,7 +43,6 @@ type Eth1Block struct {
 	MixDigest    []byte               `protobuf:"bytes,14,opt,name=mix_digest,json=mixDigest,proto3" json:"mix_digest,omitempty"`
 	Bloom        []byte               `protobuf:"bytes,17,opt,name=bloom,proto3" json:"bloom,omitempty"`
 	BaseFee      []byte               `protobuf:"bytes,18,opt,name=base_fee,json=baseFee,proto3" json:"base_fee,omitempty"`
-	Uncles       []*Eth1Block         `protobuf:"bytes,20,rep,name=uncles,proto3" json:"uncles,omitempty"`
 	Transactions []*Eth1Transaction   `protobuf:"bytes,21,rep,name=transactions,proto3" json:"transactions,omitempty"`
 	Withdrawals  []*Eth1Withdrawal    `protobuf:"bytes,22,rep,name=withdrawals,proto3" json:"withdrawals,omitempty"`
 	// EIP 4844
@@ -93,13 +92,6 @@ func (x *Eth1Block) GetHash() []byte {
 func (x *Eth1Block) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
-	}
-	return nil
-}
-
-func (x *Eth1Block) GetUncleHash() []byte {
-	if x != nil {
-		return x.UncleHash
 	}
 	return nil
 }

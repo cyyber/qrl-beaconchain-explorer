@@ -10,13 +10,6 @@ PRESET_BASE: "mainnet"
 # Must match the regex: [a-z0-9\-]
 CONFIG_NAME: "mainnet"
 
-# Transition
-# ---------------------------------------------------------------
-# TBD, 2**256-2**10 is a placeholder
-TERMINAL_TOTAL_DIFFICULTY: 115792089237316195423570985008687907853269984665640564039457584007913129638912
-# By default, don't use these params
-TERMINAL_BLOCK_HASH: 0x0000000000000000000000000000000000000000000000000000000000000000
-TERMINAL_BLOCK_HASH_ACTIVATION_EPOCH: 18446744073709551615
 
 # Genesis
 # ---------------------------------------------------------------
@@ -28,29 +21,6 @@ MIN_GENESIS_TIME: 1606824000
 GENESIS_FORK_VERSION: 0x00000000
 # 604800 seconds (7 days)
 GENESIS_DELAY: 604800
-
-# Forking
-# ---------------------------------------------------------------
-# Some forks are disabled for now:
-#  - These may be re-assigned to another fork-version later
-#  - Temporarily set to max uint64 value: 2**64 - 1
-
-# Altair
-ALTAIR_FORK_VERSION: 0x01000000
-ALTAIR_FORK_EPOCH: 74240 # Oct 27, 2021, 10:56:23am UTC
-# Bellatrix
-BELLATRIX_FORK_VERSION: 0x02000000
-BELLATRIX_FORK_EPOCH: 144896 # Sept 6, 2022, 11:34:47am UTC
-# Capella
-CAPELLA_FORK_VERSION: 0x03000000
-CAPELLA_FORK_EPOCH: 194048 # April 12, 2023, 10:27:35pm UTC
-# Deneb
-DENEB_FORK_VERSION: 0x04000000
-DENEB_FORK_EPOCH: 18446744073709551615
-# Byzantium
-BYZANTIUM_FORK_BLOCK: 4370000
-# Constantinople
-CONSTANTINOPLE_FORK_BLOCK: 7280000
 
 # Time parameters
 # ---------------------------------------------------------------
@@ -273,8 +243,6 @@ MAX_SHARD_PROPOSER_SLASHINGS: 16
 MAX_SHARD_HEADERS_PER_SHARD: 4
 # 2**8 (= 256)
 SHARD_STATE_MEMORY_SLOTS: 256
-# 2**40 (= 1,099,511,627,776)
-BLOB_BUILDER_REGISTRY_LIMIT: 1099511627776
 
 # Shard blob samples
 # ---------------------------------------------------------------
@@ -293,7 +261,7 @@ MIN_SAMPLE_PRICE: 8
 # Max operations per block
 # ---------------------------------------------------------------
 # 2**4 (= 16)
-MAX_BLS_TO_EXECUTION_CHANGES: 16
+MAX_DILITHIUM_TO_EXECUTION_CHANGES: 16
 
 # Execution
 # ---------------------------------------------------------------
