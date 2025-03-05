@@ -71,7 +71,6 @@ func VisBlocks(w http.ResponseWriter, r *http.Request) {
 			d.Parents = []string{lastMissedHash}
 			lastMissedHash = d.Hash
 		}
-		d.Difficulty = d.Slot
 	}
 
 	logger.Printf("returning %v blocks since %v", len(chartData), sinceSlot)

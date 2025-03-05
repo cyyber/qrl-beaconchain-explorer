@@ -8,12 +8,12 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
+	zond "github.com/theQRL/go-zond"
+	"github.com/theQRL/go-zond/accounts/abi"
+	"github.com/theQRL/go-zond/accounts/abi/bind"
+	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/core/types"
+	"github.com/theQRL/go-zond/event"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -21,7 +21,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = ethereum.NotFound
+	_ = zond.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -42,7 +42,7 @@ var Erc721ABI = Erc721MetaData.ABI
 // Deprecated: Use Erc721MetaData.Bin instead.
 var Erc721Bin = Erc721MetaData.Bin
 
-// DeployErc721 deploys a new Ethereum contract, binding an instance of Erc721 to it.
+// DeployErc721 deploys a new Zond contract, binding an instance of Erc721 to it.
 func DeployErc721(auth *bind.TransactOpts, backend bind.ContractBackend, name_ string, symbol_ string) (common.Address, *types.Transaction, *Erc721, error) {
 	parsed, err := Erc721MetaData.GetAbi()
 	if err != nil {
@@ -59,29 +59,29 @@ func DeployErc721(auth *bind.TransactOpts, backend bind.ContractBackend, name_ s
 	return address, tx, &Erc721{Erc721Caller: Erc721Caller{contract: contract}, Erc721Transactor: Erc721Transactor{contract: contract}, Erc721Filterer: Erc721Filterer{contract: contract}}, nil
 }
 
-// Erc721 is an auto generated Go binding around an Ethereum contract.
+// Erc721 is an auto generated Go binding around an Zond contract.
 type Erc721 struct {
 	Erc721Caller     // Read-only binding to the contract
 	Erc721Transactor // Write-only binding to the contract
 	Erc721Filterer   // Log filterer for contract events
 }
 
-// Erc721Caller is an auto generated read-only Go binding around an Ethereum contract.
+// Erc721Caller is an auto generated read-only Go binding around an Zond contract.
 type Erc721Caller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Erc721Transactor is an auto generated write-only Go binding around an Ethereum contract.
+// Erc721Transactor is an auto generated write-only Go binding around an Zond contract.
 type Erc721Transactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Erc721Filterer is an auto generated log filtering Go binding around an Ethereum contract events.
+// Erc721Filterer is an auto generated log filtering Go binding around an Zond contract events.
 type Erc721Filterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Erc721Session is an auto generated Go binding around an Ethereum contract,
+// Erc721Session is an auto generated Go binding around an Zond contract,
 // with pre-set call and transact options.
 type Erc721Session struct {
 	Contract     *Erc721           // Generic contract binding to set the session for
@@ -89,31 +89,31 @@ type Erc721Session struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Erc721CallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// Erc721CallerSession is an auto generated read-only Go binding around an Zond contract,
 // with pre-set call options.
 type Erc721CallerSession struct {
 	Contract *Erc721Caller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts // Call options to use throughout this session
 }
 
-// Erc721TransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// Erc721TransactorSession is an auto generated write-only Go binding around an Zond contract,
 // with pre-set transact options.
 type Erc721TransactorSession struct {
 	Contract     *Erc721Transactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Erc721Raw is an auto generated low-level Go binding around an Ethereum contract.
+// Erc721Raw is an auto generated low-level Go binding around an Zond contract.
 type Erc721Raw struct {
 	Contract *Erc721 // Generic contract binding to access the raw methods on
 }
 
-// Erc721CallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+// Erc721CallerRaw is an auto generated low-level read-only Go binding around an Zond contract.
 type Erc721CallerRaw struct {
 	Contract *Erc721Caller // Generic read-only contract binding to access the raw methods on
 }
 
-// Erc721TransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+// Erc721TransactorRaw is an auto generated low-level write-only Go binding around an Zond contract.
 type Erc721TransactorRaw struct {
 	Contract *Erc721Transactor // Generic write-only contract binding to access the raw methods on
 }
@@ -562,7 +562,7 @@ type Erc721ApprovalIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -724,7 +724,7 @@ type Erc721ApprovalForAllIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -878,7 +878,7 @@ type Erc721TransferIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }

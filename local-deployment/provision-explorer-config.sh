@@ -83,10 +83,6 @@ frontend:
     user: postgres
     password: "pass"
   sessionSecret: "11111111111111111111111111111111"
-  jwtSigningSecret: "1111111111111111111111111111111111111111111111111111111111111111"
-  jwtIssuer: "localhost"
-  jwtValidityInMinutes: 30
-  csrfAuthKey: '1111111111111111111111111111111111111111111111111111111111111111'
   legal:
     termsOfServiceUrl: "tos.pdf"
     privacyPolicyUrl: "privacy.pdf"

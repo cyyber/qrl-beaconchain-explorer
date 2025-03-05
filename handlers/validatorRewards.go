@@ -5,15 +5,11 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/csrf"
@@ -23,10 +19,9 @@ import (
 const USER_SUBSCRIPTION_LIMIT = 8
 
 type rewardsResp struct {
-	Currencies        []string
-	CsrfField         template.HTML
-	ShowSubscriptions bool
-	MinDateTimestamp  uint64
+	Currencies       []string
+	CsrfField        template.HTML
+	MinDateTimestamp uint64
 }
 
 func ValidatorRewards(w http.ResponseWriter, r *http.Request) {

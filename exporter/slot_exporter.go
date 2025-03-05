@@ -21,7 +21,6 @@ import (
 func RunSlotExporter(client rpc.Client, firstRun bool) error {
 	// get the current chain head
 	head, err := client.GetChainHead()
-
 	if err != nil {
 		return fmt.Errorf("error retrieving chain head: %w", err)
 	}

@@ -67,7 +67,6 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	erc721 := &types.DataTableResponse{}
 	erc1155 := &types.DataTableResponse{}
 	blocksMined := &types.DataTableResponse{}
-	unclesMined := &types.DataTableResponse{}
 	withdrawals := &types.DataTableResponse{}
 	withdrawalSummary := template.HTML("0")
 
@@ -135,14 +134,6 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		blocksMined, err = db.BigtableClient.GetAddressBlocksMinedTableData(address, "")
 		if err != nil {
 			return fmt.Errorf("GetAddressBlocksMinedTableData: %w", err)
-		}
-		return nil
-	})
-	g.Go(func() error {
-		var err error
-		unclesMined, err = db.BigtableClient.GetAddressUnclesMinedTableData(address, "")
-		if err != nil {
-			return fmt.Errorf("GetAddressUnclesMinedTableData: %w", err)
 		}
 		return nil
 	})

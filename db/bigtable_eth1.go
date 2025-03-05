@@ -793,42 +793,17 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 	idx := types.Eth1BlockIndexed{
 		Hash:       block.GetHash(),
 		ParentHash: block.GetParentHash(),
-		UncleHash:  block.GetUncleHash(),
 		Coinbase:   block.GetCoinbase(),
-		Difficulty: block.GetDifficulty(),
 		Number:     block.GetNumber(),
 		GasLimit:   block.GetGasLimit(),
 		GasUsed:    block.GetGasUsed(),
 		Time:       block.GetTime(),
 		BaseFee:    block.GetBaseFee(),
 		// Duration:               uint64(block.GetTime().AsTime().Unix() - previous.GetTime().AsTime().Unix()),
-		UncleCount:       uint64(len(block.GetUncles())),
 		TransactionCount: uint64(len(block.GetTransactions())),
 		// BaseFeeChange:          new(big.Int).Sub(new(big.Int).SetBytes(block.GetBaseFee()), new(big.Int).SetBytes(previous.GetBaseFee())).Bytes(),
 		// BlockUtilizationChange: new(big.Int).Sub(new(big.Int).Div(big.NewInt(int64(block.GetGasUsed())), big.NewInt(int64(block.GetGasLimit()))), new(big.Int).Div(big.NewInt(int64(previous.GetGasUsed())), big.NewInt(int64(previous.GetGasLimit())))).Bytes(),
-		BlobGasUsed:   block.GetBlobGasUsed(),
-		ExcessBlobGas: block.GetExcessBlobGas(),
 	}
-
-	uncleReward := big.NewInt(0)
-	r := new(big.Int)
-
-	for _, uncle := range block.Uncles {
-
-		if len(block.Difficulty) == 0 { // no uncle rewards in PoS
-			continue
-		}
-
-		r.Add(big.NewInt(int64(uncle.GetNumber())), big.NewInt(8))
-		r.Sub(r, big.NewInt(int64(block.GetNumber())))
-		r.Mul(r, utils.Eth1BlockReward(block.GetNumber(), block.Difficulty))
-		r.Div(r, big.NewInt(8))
-
-		r.Div(utils.Eth1BlockReward(block.GetNumber(), block.Difficulty), big.NewInt(32))
-		uncleReward.Add(uncleReward, r)
-	}
-
-	idx.UncleReward = uncleReward.Bytes()
 
 	var maxGasPrice *big.Int
 	var minGasPrice *big.Int
@@ -2526,46 +2501,6 @@ func (bigtable *Bigtable) GetEth1UnclesForAddress(prefix string, limit int64) ([
 	}
 
 	return data, indexes[len(indexes)-1], nil
-}
-
-func (bigtable *Bigtable) GetAddressUnclesMinedTableData(address string, pageToken string) (*types.DataTableResponse, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"address":   address,
-			"pageToken": pageToken,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	defaultPageToken := fmt.Sprintf("%s:I:U:%s:", bigtable.chainId, address)
-	if pageToken == "" {
-		pageToken = defaultPageToken
-	} else if !strings.HasPrefix(pageToken, defaultPageToken) {
-		return nil, fmt.Errorf("invalid pageToken for function GetAddressUnclesMinedTableData: %s", pageToken)
-	}
-
-	uncles, lastKey, err := BigtableClient.GetEth1UnclesForAddress(pageToken, DefaultInfScrollRows)
-	if err != nil {
-		return nil, err
-	}
-
-	tableData := make([][]interface{}, len(uncles))
-	for i, u := range uncles {
-		tableData[i] = []interface{}{
-			utils.FormatBlockNumber(u.Number),
-			utils.FormatTimestamp(u.Time.AsTime().Unix()),
-			utils.FormatDifficulty(new(big.Int).SetBytes(u.Difficulty)),
-			utils.FormatAmount(new(big.Int).SetBytes(u.Reward), utils.Config.Frontend.ElCurrency, 6),
-		}
-	}
-
-	data := &types.DataTableResponse{
-		Data:        tableData,
-		PagingToken: lastKey,
-	}
-
-	return data, nil
 }
 
 func (bigtable *Bigtable) GetEth1BtxForAddress(prefix string, limit int64) ([]*types.Eth1BlobTransactionIndexed, string, error) {

@@ -20,15 +20,8 @@ func Start(client rpc.Client) {
 	go networkLivenessUpdater(client)
 	go eth1DepositsExporter()
 	go genesisDepositsExporter(client)
-	go checkSubscriptions()
 	go syncCommitteesExporter(client)
 	go syncCommitteesCountExporter()
-	if utils.Config.SSVExporter.Enabled {
-		go ssvExporter()
-	}
-	if utils.Config.RocketpoolExporter.Enabled {
-		go rocketpoolExporter()
-	}
 
 	if utils.Config.Indexer.PubKeyTagsExporter.Enabled {
 		go UpdatePubkeyTag()

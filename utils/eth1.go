@@ -145,13 +145,6 @@ func FormatBytes(b []byte, addCopyToClipboard bool, link string) template.HTML {
 	return template.HTML(ret)
 }
 
-func FormatBlobVersionedHash(h []byte) template.HTML {
-	if Config.Frontend.BlobProviderUrl == "" {
-		return FormatBytes(h, true, "")
-	}
-	return FormatBytes(h, true, fmt.Sprintf("%s/%#x", Config.Frontend.BlobProviderUrl, h))
-}
-
 func FormatAddressWithLimits(address []byte, name string, isContract bool, link string, digitsLimit int, nameLimit int, addCopyToClipboard bool) template.HTML {
 	return formatAddress(address, nil, name, isContract, link, digitsLimit, nameLimit, addCopyToClipboard)
 }

@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 
-	"database/sql"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -26,16 +24,12 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/version"
 
 	"github.com/coocood/freecache"
-	"github.com/ethereum/go-ethereum/common"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
 	utilMath "github.com/protolambda/zrnt/eth2/util/math"
-	go_ens "github.com/wealdtech/go-ens/v3"
 	"golang.org/x/sync/errgroup"
 
 	"flag"
-
-	"github.com/Gurpartap/storekit-go"
 
 	"github.com/sirupsen/logrus"
 )
@@ -67,15 +61,15 @@ var opts = struct {
 }{}
 
 var bt *db.Bigtable
-var erigonClient *rpc.ErigonClient
-var lighthouseClient *rpc.LighthouseClient
-var rpcClient *rpc.LighthouseClient
+var gzondClient *rpc.GzondClient
+var qrysmClient *rpc.QrysmClient
+var rpcClient *rpc.QrysmClient
 
 func main() {
 	statsPartitionCommand := commands.StatsMigratorCommand{}
 
 	configPath := flag.String("config", "config/default.config.yml", "Path to the config file")
-	flag.StringVar(&opts.Command, "command", "", "command to run, available: updateAPIKey, applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, historic-prices-export, index-missing-blocks, export-epoch-missed-slots, migrate-last-attestation-slot-bigtable, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats, migrate-app-purchases, disable-user-per-email")
+	flag.StringVar(&opts.Command, "command", "", "command to run, available: updateAPIKey, applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, historic-prices-export, index-missing-blocks, export-epoch-missed-slots, migrate-last-attestation-slot-bigtable, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats, migrate-app-purchases")
 	flag.Uint64Var(&opts.StartEpoch, "start-epoch", 0, "start epoch")
 	flag.Uint64Var(&opts.EndEpoch, "end-epoch", 0, "end epoch")
 	flag.Uint64Var(&opts.User, "user", 0, "user id")
@@ -137,19 +131,19 @@ func main() {
 	go func() {
 		defer wg.Done()
 		var err error
-		rpcClient, err = rpc.NewLighthouseClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
+		rpcClient, err = rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
 		if err != nil {
 			utils.LogFatal(err, "lighthouse client error", 0)
 		}
-		lighthouseClient = rpcClient
+		qrysmClient = rpcClient
 	}()
 
 	go func() {
 		defer wg.Done()
 		var err error
-		erigonClient, err = rpc.NewErigonClient(utils.Config.Eth1ErigonEndpoint)
+		gzondClient, err = rpc.NewGzondClient(utils.Config.Eth1GzondEndpoint)
 		if err != nil {
-			logrus.Fatalf("error initializing erigon client: %v", err)
+			logrus.Fatalf("error initializing gzond client: %v", err)
 		}
 	}()
 
@@ -309,7 +303,7 @@ func main() {
 	case "clear-bigtable":
 		clearBigtable(opts.Table, opts.Family, opts.Columns, opts.Key, opts.DryRun, bt)
 	case "index-old-eth1-blocks":
-		indexOldEth1Blocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, erigonClient)
+		indexOldEth1Blocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, gzondClient)
 	case "update-aggregation-bits":
 		updateAggreationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
 	case "update-block-finalization-sequentially":
@@ -317,11 +311,9 @@ func main() {
 	case "historic-prices-export":
 		exportHistoricPrices(opts.StartDay, opts.EndDay)
 	case "index-missing-blocks":
-		indexMissingBlocks(opts.StartBlock, opts.EndBlock, bt, erigonClient)
+		indexMissingBlocks(opts.StartBlock, opts.EndBlock, bt, gzondClient)
 	case "migrate-last-attestation-slot-bigtable":
 		migrateLastAttestationSlotToBigtable()
-	case "migrate-app-purchases":
-		err = migrateAppPurchases(opts.Key)
 	case "export-genesis-validators":
 		logrus.Infof("retrieving genesis validator state")
 		validators, err := rpcClient.GetValidatorState(0)
@@ -430,12 +422,10 @@ func main() {
 	case "partition-validator-stats":
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
-	case "fix-ens":
-		err = fixEns(erigonClient)
-	case "fix-ens-addresses":
-		err = fixEnsAddresses(erigonClient)
-	case "disable-user-per-email":
-		err = disableUserPerEmail()
+	// case "fix-ens":
+	// 	err = fixEns(erigonClient)
+	// case "fix-ens-addresses":
+	// 	err = fixEnsAddresses(erigonClient)
 	case "fix-epochs":
 		err = fixEpochs()
 	default:
@@ -466,7 +456,7 @@ func fixEpoch(e uint64) error {
 		return fmt.Errorf("error starting tx: %w", err)
 	}
 	defer tx.Rollback()
-	s, err := lighthouseClient.GetValidatorParticipation(e)
+	s, err := qrysmClient.GetValidatorParticipation(e)
 	if err != nil {
 		return err
 	}
@@ -477,69 +467,7 @@ func fixEpoch(e uint64) error {
 	return tx.Commit()
 }
 
-func disableUserPerEmail() error {
-	if opts.Email == "" {
-		return errors.New("no email specified")
-	}
-
-	if utils.Config.Frontend.SessionSecret == "" {
-		return fmt.Errorf("session secret is empty, please provide a secure random string")
-	}
-
-	logrus.Infof("initializing session store: %v", utils.Config.RedisSessionStoreEndpoint)
-
-	utils.InitSessionStore(utils.Config.Frontend.SessionSecret)
-
-	user := struct {
-		ID    uint64 `db:"id"`
-		Email string `db:"email"`
-	}{}
-	err := db.FrontendWriterDB.Get(&user, `select id, email from users where email = $1`, opts.Email)
-	if err != nil {
-		return err
-	}
-
-	if !askForConfirmation(fmt.Sprintf(`Do you want to disable the user with email: %v (id: %v)?
-
-- the user will get logged out
-- the password will change
-- the apikey will change
-- password-reset will be disabled
-`, user.Email, user.ID)) {
-		logrus.Warnf("aborted")
-		return nil
-	}
-
-	_, err = db.FrontendWriterDB.Exec(`update users set password = $3, api_key = $4, password_reset_not_allowed = true where id = $1 and email = $2`, user.ID, user.Email, utils.RandomString(128), utils.RandomString(32))
-	if err != nil {
-		return err
-	}
-	logrus.Infof("changed password and apikey and disallowed password-reset for user %v", user.ID)
-
-	ctx := context.Background()
-
-	// invalidate all sessions for this user
-	err = utils.SessionStore.SCS.Iterate(ctx, func(ctx context.Context) error {
-		sessionUserID, ok := utils.SessionStore.SCS.Get(ctx, "user_id").(uint64)
-		if !ok {
-			return nil
-		}
-
-		if user.ID == sessionUserID {
-			logrus.Infof("destroying a session of user %v", user.ID)
-			return utils.SessionStore.SCS.Destroy(ctx)
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
+/*
 func fixEns(erigonClient *rpc.ErigonClient) error {
 	logrus.WithField("dry", opts.DryRun).Infof("command: fix-ens")
 	addrs := []struct {
@@ -778,147 +706,7 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 	}
 	return nil
 }
-
-func migrateAppPurchases(appStoreSecret string) error {
-	// This code runs once so please don't judge code style too harshly
-
-	if appStoreSecret == "" {
-		return fmt.Errorf("appStoreSecret is empty")
-	}
-
-	client := storekit.NewVerificationClient().OnProductionEnv()
-
-	tx, err := db.WriterDb.Beginx()
-	if err != nil {
-		return fmt.Errorf("error starting db transactions: %w", err)
-	}
-	defer tx.Rollback()
-
-	// Delete marked as duplicate, though the duplicate reject reason is not always set - mainly missing on historical data
-	_, err = tx.Exec("DELETE FROM users_app_subscriptions WHERE store = 'ios-appstore' AND reject_reason = 'duplicate';")
-	if err != nil {
-		return errors.Wrap(err, "error deleting duplicate receipt")
-	}
-
-	// Backup legacy receipts into custom column
-	_, err = tx.Exec("UPDATE users_app_subscriptions set legacy_receipt = receipt where legacy_receipt is null;")
-	if err != nil {
-		return errors.Wrap(err, "error backing up legacy receipts")
-	}
-
-	receipts := []*types.PremiumData{}
-	err = tx.Select(&receipts,
-		"SELECT id, receipt, store, active, validate_remotely, expires_at, product_id, user_id from users_app_subscriptions order by id desc",
-	)
-	if err != nil {
-		return errors.Wrap(err, "error getting app subscriptions")
-	}
-
-	for _, receipt := range receipts {
-		if receipt.Store != "ios-appstore" { // only interested in migrating iOS
-			continue
-		}
-		if len(receipt.Receipt) < 100 { // dont migrate data that has already been migrated (new receipt is a number of a hand full of digits while old one is insanely large)
-			continue
-		}
-
-		receiptData, err := base64.StdEncoding.DecodeString(receipt.Receipt)
-		if err != nil {
-			return errors.Wrap(err, "error decoding receipt")
-		}
-
-		// Call old deprecated endpoint to get the origin transaction id (new receipt info for new endpoints)
-		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-		defer cancel()
-		_, resp, err := client.Verify(ctx, &storekit.ReceiptRequest{
-			ReceiptData:            receiptData,
-			Password:               appStoreSecret,
-			ExcludeOldTransactions: true,
-		})
-
-		if err != nil {
-			return errors.Wrap(err, "error verifying receipt")
-		}
-
-		if resp.LatestReceiptInfo == nil || len(resp.LatestReceiptInfo) == 0 {
-			logrus.Infof("no receipt info for purchase id %v", receipt.ID)
-			if receipt.Active && receipt.ValidateRemotely { // sanity, if there is an active subscription without receipt info we cam't delete it.
-				return fmt.Errorf("no receipt info for active purchase id %v", receipt.ID)
-			}
-			// since it is not active any more and we don't get any new receipt info from apple, just drop the receipt info
-			// hash can stay the same since a collision is unlikely (new and old receipt info)
-			_, err = tx.Exec("UPDATE users_app_subscriptions SET receipt = '' WHERE id = $1", receipt.ID)
-			if err != nil {
-				return errors.Wrap(err, "error deleting duplicate receipt")
-			}
-			continue
-		}
-
-		latestReceiptInfo := resp.LatestReceiptInfo[0]
-		logrus.Infof("Update purchase id %v with new receipt %v", receipt.ID, latestReceiptInfo.OriginalTransactionId)
-
-		_, err = tx.Exec("UPDATE users_app_subscriptions SET receipt = $1, receipt_hash = $2 WHERE id = $3", latestReceiptInfo.OriginalTransactionId, utils.HashAndEncode(latestReceiptInfo.OriginalTransactionId), receipt.ID)
-		if err != nil {
-			if strings.Contains(err.Error(), "duplicate key") { // handle historic duplicates
-				// get the duplicate receipt
-				duplicateReceipt := types.PremiumData{}
-				err = tx.Get(&duplicateReceipt, "SELECT id, user_id, active FROM users_app_subscriptions WHERE receipt_hash = $1", utils.HashAndEncode(latestReceiptInfo.OriginalTransactionId))
-				if err != nil {
-					return errors.Wrap(err, "error getting duplicate receipt")
-				}
-
-				// Keep the active receipt and delete the other one. In case both are inactive keep the newest
-				var deleteReceiptID uint64
-				if !duplicateReceipt.Active && receipt.Active {
-					deleteReceiptID = duplicateReceipt.ID
-				} else if duplicateReceipt.Active && !receipt.Active {
-					deleteReceiptID = receipt.ID
-				} else if !duplicateReceipt.Active && !receipt.Active {
-					if duplicateReceipt.ID > receipt.ID { // keep the newer one
-						deleteReceiptID = duplicateReceipt.ID
-					} else {
-						deleteReceiptID = receipt.ID
-					}
-				} else {
-					return fmt.Errorf("duplicate receipt has same active status: %v != %v for id: %v != %v", duplicateReceipt.Active, receipt.Active, duplicateReceipt.ID, receipt.ID)
-				}
-
-				// new ios handler will automatically update the product id if the user switched the package, so we will just drop this receipt
-				_, err = tx.Exec("DELETE FROM users_app_subscriptions WHERE id = $1", deleteReceiptID)
-				if err != nil {
-					return errors.Wrap(err, "error deleting duplicate receipt")
-				}
-				logrus.Infof("deleted duplicate receipt id %v", receipt.ID)
-
-				// the one we keep and update is opposite of the one we deleted
-				var updateReceiptID uint64
-				if deleteReceiptID == duplicateReceipt.ID {
-					updateReceiptID = receipt.ID
-				} else {
-					updateReceiptID = duplicateReceipt.ID
-				}
-
-				_, err = tx.Exec("UPDATE users_app_subscriptions SET receipt = $1, receipt_hash = $2 WHERE id = $3", latestReceiptInfo.OriginalTransactionId, utils.HashAndEncode(latestReceiptInfo.OriginalTransactionId), updateReceiptID)
-				if err != nil {
-					return errors.Wrap(err, "error updating receipt")
-				}
-			} else {
-				return errors.Wrap(err, "error updating purchase id")
-			}
-		}
-
-		logrus.Infof("Migrated purchase id %v\n", receipt.ID)
-		time.Sleep(100 * time.Millisecond)
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return errors.Wrap(err, "error committing tx")
-	}
-
-	logrus.Infof("done migrating data")
-	return nil
-}
+*/
 
 func fixExecTransactionsCount() error {
 	startBlockNumber := uint64(opts.StartBlock)
@@ -1061,12 +849,12 @@ func updateBlockFinalizationSequentially() error {
 }
 
 func debugBlocks() error {
-	elClient, err := rpc.NewErigonClient(utils.Config.Eth1ErigonEndpoint)
+	elClient, err := rpc.NewGzondClient(utils.Config.Eth1GzondEndpoint)
 	if err != nil {
 		return err
 	}
 
-	clClient, err := rpc.NewLighthouseClient(fmt.Sprintf("http://%v:%v", utils.Config.Indexer.Node.Host, utils.Config.Indexer.Node.Port), new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID))
+	clClient, err := rpc.NewQrysmClient(fmt.Sprintf("http://%v:%v", utils.Config.Indexer.Node.Host, utils.Config.Indexer.Node.Port), new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID))
 	if err != nil {
 		return err
 	}
@@ -1078,7 +866,7 @@ func debugBlocks() error {
 		}
 		// logrus.WithFields(logrus.Fields{"block": i, "data": fmt.Sprintf("%+v", b)}).Infof("block from bt")
 
-		elBlock, _, err := elClient.GetBlock(int64(i), "parity/geth")
+		elBlock, _, err := elClient.GetBlock(int64(i) /*"parity/geth"*/)
 		if err != nil {
 			return err
 		}
@@ -1089,15 +877,11 @@ func debugBlocks() error {
 			return err
 		}
 		logFields := logrus.Fields{
-			"block":            i,
-			"bt.hash":          fmt.Sprintf("%#x", btBlock.Hash),
-			"bt.BlobGasUsed":   btBlock.BlobGasUsed,
-			"bt.ExcessBlobGas": btBlock.ExcessBlobGas,
-			"bt.txs":           len(btBlock.Transactions),
-			"el.BlobGasUsed":   elBlock.BlobGasUsed,
-			"el.hash":          fmt.Sprintf("%#x", elBlock.Hash),
-			"el.ExcessBlobGas": elBlock.ExcessBlobGas,
-			"el.txs":           len(elBlock.Transactions),
+			"block":   i,
+			"bt.hash": fmt.Sprintf("%#x", btBlock.Hash),
+			"bt.txs":  len(btBlock.Transactions),
+			"el.hash": fmt.Sprintf("%#x", elBlock.Hash),
+			"el.txs":  len(elBlock.Transactions),
 		}
 		if !bytes.Equal(clBlock.ExecutionPayload.BlockHash, elBlock.Hash) {
 			logrus.Warnf("clBlock.ExecutionPayload.BlockHash != i: %x != %x", clBlock.ExecutionPayload.BlockHash, elBlock.Hash)
@@ -1112,26 +896,10 @@ func debugBlocks() error {
 		for i := range elBlock.Transactions {
 			btx := elBlock.Transactions[i]
 			ctx := elBlock.Transactions[i]
-			btxH := []string{}
-			ctxH := []string{}
-			for _, h := range btx.BlobVersionedHashes {
-				btxH = append(btxH, fmt.Sprintf("%#x", h))
-			}
-			for _, h := range ctx.BlobVersionedHashes {
-				ctxH = append(ctxH, fmt.Sprintf("%#x", h))
-			}
 
 			logrus.WithFields(logrus.Fields{
-				"b.hash":                 fmt.Sprintf("%#x", btx.Hash),
-				"el.hash":                fmt.Sprintf("%#x", ctx.Hash),
-				"b.BlobVersionedHashes":  fmt.Sprintf("%+v", btxH),
-				"el.BlobVersionedHashes": fmt.Sprintf("%+v", ctxH),
-				"b.maxFeePerBlobGas":     btx.MaxFeePerBlobGas,
-				"el.maxFeePerBlobGas":    ctx.MaxFeePerBlobGas,
-				"b.BlobGasPrice":         btx.BlobGasPrice,
-				"el.BlobGasPrice":        ctx.BlobGasPrice,
-				"b.BlobGasUsed":          btx.BlobGasUsed,
-				"el.BlobGasUsed":         ctx.BlobGasUsed,
+				"b.hash":  fmt.Sprintf("%#x", btx.Hash),
+				"el.hash": fmt.Sprintf("%#x", ctx.Hash),
 			}).Infof("debug tx")
 		}
 	}
@@ -1207,7 +975,7 @@ func migrateLastAttestationSlotToBigtable() {
 	}
 }
 
-func updateAggreationBits(rpcClient *rpc.LighthouseClient, startEpoch uint64, endEpoch uint64, concurency uint64) {
+func updateAggreationBits(rpcClient *rpc.QrysmClient, startEpoch uint64, endEpoch uint64, concurency uint64) {
 	logrus.Infof("update-aggregation-bits epochs %v - %v", startEpoch, endEpoch)
 	for epoch := startEpoch; epoch <= endEpoch; epoch++ {
 		logrus.Infof("Getting data from the node for epoch %v", epoch)
@@ -1328,7 +1096,7 @@ func updateAggreationBits(rpcClient *rpc.LighthouseClient, startEpoch uint64, en
 								block_index=$2
 						`, block.Slot, index)
 						if err != nil {
-							return fmt.Errorf("error getting aggregationbits on Slot [%v] Index [%v] with Sig [%v]: %v", block.Slot, index, att.Signature, err)
+							return fmt.Errorf("error getting aggregationbits on Slot [%v] Index [%v] with Signatures [%v]: %v", block.Slot, index, att.Signatures, err)
 						}
 
 						if !bytes.Equal(*aggregationbits, att.AggregationBits) {
@@ -1491,7 +1259,7 @@ func clearBigtable(table string, family string, columns string, key string, dryR
 //
 //	Both [start] and [end] are inclusive
 //	Pass math.MaxInt64 as [end] to export from [start] to the last block in the blocks table
-func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.ErigonClient) {
+func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.GzondClient) {
 	if end == math.MaxInt64 {
 		lastBlockFromBlocksTable, err := bt.GetLastBlockInBlocksTable()
 		if err != nil {
@@ -1546,7 +1314,7 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.E
 			if _, err := db.BigtableClient.GetBlockFromBlocksTable(block); err != nil {
 				logrus.Infof("could not load [%v] from blocks table, will try to fetch it from the node and save it", block)
 
-				bc, _, err := client.GetBlock(int64(block), "parity/geth")
+				bc, _, err := client.GetBlock(int64(block) /*, "parity/geth"*/)
 				if err != nil {
 					utils.LogError(err, fmt.Sprintf("error getting block %v from the node", block), 0)
 					return
@@ -1564,7 +1332,7 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.E
 	}
 }
 
-func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.ErigonClient) {
+func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.GzondClient) {
 	if endBlock > 0 && endBlock < startBlock {
 		utils.LogError(nil, fmt.Sprintf("endBlock [%v] < startBlock [%v]", endBlock, startBlock), 0)
 		return
@@ -1583,13 +1351,13 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 	logrus.Infof("transformerFlag: %v", transformerFlag)
 	transformerList := strings.Split(transformerFlag, ",")
 	if transformerFlag == "all" {
-		transformerList = []string{"TransformBlock", "TransformTx", "TransformBlobTx", "TransformItx", "TransformERC20", "TransformERC721", "TransformERC1155", "TransformWithdrawals", "TransformUncle", "TransformEnsNameRegistered", "TransformContract"}
+		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformERC20", "TransformERC721", "TransformERC1155", "TransformWithdrawals", "TransformEnsNameRegistered", "TransformContract"}
 	} else if len(transformerList) == 0 {
 		utils.LogError(nil, "no transformer functions provided", 0)
 		return
 	}
 	logrus.Infof("transformers: %v", transformerList)
-	importENSChanges := false
+	// importENSChanges := false
 	/**
 	* Add additional transformers you want to sync to this switch case
 	**/
@@ -1599,8 +1367,6 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformBlock)
 		case "TransformTx":
 			transforms = append(transforms, bt.TransformTx)
-		case "TransformBlobTx":
-			transforms = append(transforms, bt.TransformBlobTx)
 		case "TransformItx":
 			transforms = append(transforms, bt.TransformItx)
 		case "TransformERC20":
@@ -1611,11 +1377,9 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformERC1155)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
-		case "TransformUncle":
-			transforms = append(transforms, bt.TransformUncle)
-		case "TransformEnsNameRegistered":
-			transforms = append(transforms, bt.TransformEnsNameRegistered)
-			importENSChanges = true
+		// case "TransformEnsNameRegistered":
+		// 	transforms = append(transforms, bt.TransformEnsNameRegistered)
+		// 	importENSChanges = true
 		case "TransformContract":
 			transforms = append(transforms, bt.TransformContract)
 		default:
@@ -1651,12 +1415,12 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 
 	}
 
-	if importENSChanges {
-		if err := bt.ImportEnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
-			utils.LogError(err, "error importing ens from events", 0)
-			return
-		}
-	}
+	// if importENSChanges {
+	// 	if err := bt.ImportEnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
+	// 		utils.LogError(err, "error importing ens from events", 0)
+	// 		return
+	// 	}
+	// }
 
 	logrus.Infof("index run completed")
 }
@@ -1821,7 +1585,7 @@ this method will replace each sync committee period one by one with the new one.
 func exportSyncCommitteePeriods(rpcClient rpc.Client, startDay, endDay uint64, dryRun bool) {
 	var lastEpoch = uint64(0)
 
-	firstPeriod := utils.SyncPeriodOfEpoch(utils.Config.Chain.ClConfig.AltairForkEpoch)
+	firstPeriod := uint64(0)
 	if startDay > 0 {
 		firstEpoch, _ := utils.GetFirstAndLastEpochForDay(startDay)
 		firstPeriod = utils.SyncPeriodOfEpoch(firstEpoch)

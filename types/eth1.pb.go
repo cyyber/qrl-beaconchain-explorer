@@ -811,29 +811,21 @@ type Eth1BlockIndexed struct {
 
 	Hash             []byte               `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 	ParentHash       []byte               `protobuf:"bytes,2,opt,name=parent_hash,json=parentHash,proto3" json:"parent_hash,omitempty"`
-	UncleHash        []byte               `protobuf:"bytes,3,opt,name=uncle_hash,json=uncleHash,proto3" json:"uncle_hash,omitempty"`
 	Coinbase         []byte               `protobuf:"bytes,4,opt,name=coinbase,proto3" json:"coinbase,omitempty"`
-	Difficulty       []byte               `protobuf:"bytes,8,opt,name=difficulty,proto3" json:"difficulty,omitempty"`
 	Number           uint64               `protobuf:"varint,9,opt,name=number,proto3" json:"number,omitempty"`
 	GasLimit         uint64               `protobuf:"varint,10,opt,name=gas_limit,json=gasLimit,proto3" json:"gas_limit,omitempty"`
 	GasUsed          uint64               `protobuf:"varint,11,opt,name=gas_used,json=gasUsed,proto3" json:"gas_used,omitempty"`
 	Time             *timestamp.Timestamp `protobuf:"bytes,12,opt,name=time,proto3" json:"time,omitempty"`
 	BaseFee          []byte               `protobuf:"bytes,18,opt,name=base_fee,json=baseFee,proto3" json:"base_fee,omitempty"`
-	UncleCount       uint64               `protobuf:"varint,19,opt,name=uncle_count,json=uncleCount,proto3" json:"uncle_count,omitempty"`
 	TransactionCount uint64               `protobuf:"varint,20,opt,name=transaction_count,json=transactionCount,proto3" json:"transaction_count,omitempty"`
 	Mev              []byte               `protobuf:"bytes,21,opt,name=mev,proto3" json:"mev,omitempty"`
 	LowestGasPrice   []byte               `protobuf:"bytes,22,opt,name=lowest_gas_price,json=lowestGasPrice,proto3" json:"lowest_gas_price,omitempty"`
 	HighestGasPrice  []byte               `protobuf:"bytes,23,opt,name=highest_gas_price,json=highestGasPrice,proto3" json:"highest_gas_price,omitempty"`
 	// uint64 duration = 24;
 	TxReward    []byte `protobuf:"bytes,25,opt,name=tx_reward,json=txReward,proto3" json:"tx_reward,omitempty"`
-	UncleReward []byte `protobuf:"bytes,26,opt,name=uncle_reward,json=uncleReward,proto3" json:"uncle_reward,omitempty"`
 	// bytes base_fee_change = 27;
 	// bytes block_utilization_change = 28;
 	InternalTransactionCount uint64 `protobuf:"varint,29,opt,name=internal_transaction_count,json=internalTransactionCount,proto3" json:"internal_transaction_count,omitempty"`
-	// https://eips.ethereum.org/EIPS/eip-4844
-	BlobGasUsed          uint64 `protobuf:"varint,30,opt,name=blob_gas_used,json=blobGasUsed,proto3" json:"blob_gas_used,omitempty"`
-	ExcessBlobGas        uint64 `protobuf:"varint,31,opt,name=excess_blob_gas,json=excessBlobGas,proto3" json:"excess_blob_gas,omitempty"`
-	BlobTransactionCount uint64 `protobuf:"varint,32,opt,name=blob_transaction_count,json=blobTransactionCount,proto3" json:"blob_transaction_count,omitempty"`
 }
 
 func (x *Eth1BlockIndexed) Reset() {

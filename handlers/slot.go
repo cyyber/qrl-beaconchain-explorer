@@ -42,7 +42,6 @@ func Slot(w http.ResponseWriter, r *http.Request) {
 		"slot/attesterSlashing.html",
 		"slot/proposerSlashing.html",
 		"slot/exits.html",
-		"slot/blobs.html",
 		"components/timestamp.html",
 		"slot/overview.html",
 		"slot/execTransactions.html")
@@ -129,10 +128,7 @@ func Slot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if the network started with PoS, slot 0 will contain block 0; checking for blockPageData.ExecBlockNumber.Int64 > 0 does not work in this case
-	isMergedSlot0 := slotPageData.Slot == 0 && slotPageData.Epoch >= utils.Config.Chain.ClConfig.BellatrixForkEpoch
-
-	if slotPageData.Status == 1 && (slotPageData.ExecBlockNumber.Int64 > 0 || isMergedSlot0) {
+	if slotPageData.Status == 1 && (slotPageData.ExecBlockNumber.Int64 > 0) {
 		// slot has corresponding execution block, fetch execution data
 		eth1BlockPageData, err := GetExecutionBlockPageData(uint64(slotPageData.ExecBlockNumber.Int64), 10)
 		// if err != nil, simply show slot view without block
@@ -170,7 +166,7 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 			block_index,
 			aggregationbits,
 			validators,
-			signature,
+			signatures,
 			slot,
 			committeeindex,
 			beaconblockroot,
@@ -195,7 +191,7 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 			&attestation.BlockIndex,
 			&attestation.AggregationBits,
 			&attestation.Validators,
-			&attestation.Signature,
+			&attestation.Signatures,
 			&attestation.Slot,
 			&attestation.CommitteeIndex,
 			&attestation.BeaconBlockRoot,
@@ -233,7 +229,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			blocks.eth1data_depositcount,
 			blocks.eth1data_blockhash,
 			blocks.syncaggregate_bits,
-			blocks.syncaggregate_signature,
+			blocks.syncaggregate_signatures,
 			blocks.syncaggregate_participation,
 			blocks.proposerslashingscount,
 			blocks.attesterslashingscount,
@@ -247,7 +243,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			jsonb_agg(tags.metadata) as tags,
 			COALESCE(not 'invalid-relay-reward'=ANY(array_agg(tags.id)), true) as is_valid_mev,
 			COALESCE(validator_names.name, '') AS name,
-			(SELECT count(*) from blocks_bls_change where block_slot = $1) as bls_change_count
+			(SELECT count(*) from blocks_dilithium_change where block_slot = $1) as dilithium_change_count
 		FROM blocks 
 		LEFT JOIN validators ON blocks.proposer = validators.validatorindex
 		LEFT JOIN validator_names ON validators.pubkey = validator_names.publickey
@@ -325,7 +321,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			block_slot,
 			block_index,
 			attestation1_indices,
-			attestation1_signature,
+			attestation1_signatures,
 			attestation1_slot,
 			attestation1_index,
 			attestation1_beaconblockroot,
@@ -334,7 +330,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			attestation1_target_epoch,
 			attestation1_target_root,
 			attestation2_indices,
-			attestation2_signature,
+			attestation2_signatures,
 			attestation2_slot,
 			attestation2_index,
 			attestation2_beaconblockroot,
@@ -714,7 +710,7 @@ type attestationsData struct {
 	SourceRoot      string        `json:"SourceRoot"`
 	TargetEpoch     uint64        `json:"TargetEpoch"`
 	TargetRoot      string        `json:"TargetRoot"`
-	Signature       string        `json:"Signature"`
+	Signatures      []string      `json:"Signatures"`
 }
 
 // SlotAttestationsData returns the attestations for a specific slot
@@ -753,7 +749,10 @@ func SlotAttestationsData(w http.ResponseWriter, r *http.Request) {
 			SourceRoot:      fmt.Sprintf("%x", v.SourceRoot),
 			TargetEpoch:     v.TargetEpoch,
 			TargetRoot:      fmt.Sprintf("%x", v.TargetRoot),
-			Signature:       fmt.Sprintf("%x", v.Signature),
+			Signatures:      make([]string, len(v.Signatures)),
+		}
+		for j, sig := range v.Signatures {
+			data[i].Signatures[j] = fmt.Sprintf("%x", sig)
 		}
 	}
 
@@ -804,7 +803,7 @@ func SlotWithdrawalData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SlotBlsChangeData(w http.ResponseWriter, r *http.Request) {
+func SlotDilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 
@@ -814,24 +813,24 @@ func SlotBlsChangeData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error: Invalid parameter slot.", http.StatusBadRequest)
 		return
 	}
-	blsChange, err := db.GetSlotBLSChange(slot)
+	dilithiumChange, err := db.GetSlotDilithiumChange(slot)
 	if err != nil {
-		logger.Errorf("error retrieving blsChange data for slot %v, err: %v", slot, err)
+		logger.Errorf("error retrieving dilithiumChange data for slot %v, err: %v", slot, err)
 	}
 
-	tableData := make([][]interface{}, 0, len(blsChange))
-	for _, c := range blsChange {
+	tableData := make([][]interface{}, 0, len(dilithiumChange))
+	for _, c := range dilithiumChange {
 		tableData = append(tableData, []interface{}{
 			utils.FormatValidator(c.Validatorindex),
 			utils.FormatHashWithCopy(c.Signature),
-			utils.FormatHashWithCopy(c.BlsPubkey),
+			utils.FormatHashWithCopy(c.DilithiumPubkey),
 			utils.FormatAddress(c.Address, nil, "", false, false, true),
 		})
 	}
 
 	data := &types.DataTableResponse{
 		Draw:         1,
-		RecordsTotal: uint64(len(blsChange)),
+		RecordsTotal: uint64(len(dilithiumChange)),
 		// RecordsFiltered: uint64(len(withdrawals)),
 		Data: tableData,
 	}

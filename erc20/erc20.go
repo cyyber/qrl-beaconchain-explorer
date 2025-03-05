@@ -9,9 +9,9 @@ import (
 
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/accounts/abi"
 )
 
 var ERC20Abi, _ = abi.JSON(strings.NewReader(Erc20ABI))

@@ -425,7 +425,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 	}
 
 	if cfg.Frontend.SiteBrand == "" {
-		cfg.Frontend.SiteBrand = "beaconcha.in"
+		cfg.Frontend.SiteBrand = "Zond Explorer"
 	}
 
 	if cfg.Chain.ClConfigPath == "" {
@@ -433,25 +433,15 @@ func ReadConfig(cfg *types.Config, path string) error {
 		switch cfg.Chain.Name {
 		case "mainnet":
 			err = yaml.Unmarshal([]byte(config.MainnetChainYml), &cfg.Chain.ClConfig)
-		case "prater":
-			err = yaml.Unmarshal([]byte(config.PraterChainYml), &cfg.Chain.ClConfig)
-		case "ropsten":
-			err = yaml.Unmarshal([]byte(config.RopstenChainYml), &cfg.Chain.ClConfig)
-		case "sepolia":
-			err = yaml.Unmarshal([]byte(config.SepoliaChainYml), &cfg.Chain.ClConfig)
-		case "gnosis":
-			err = yaml.Unmarshal([]byte(config.GnosisChainYml), &cfg.Chain.ClConfig)
-		case "holesky":
-			err = yaml.Unmarshal([]byte(config.HoleskyChainYml), &cfg.Chain.ClConfig)
 		default:
 			return fmt.Errorf("tried to set known chain-config, but unknown chain-name: %v (path: %v)", cfg.Chain.Name, cfg.Chain.ClConfigPath)
 		}
 		if err != nil {
 			return err
 		}
-		// err = prysmParams.SetActive(prysmParamsConfig)
+		// err = qrysmParams.SetActive(qrysmParamsConfig)
 		// if err != nil {
-		// 	return fmt.Errorf("error setting chainConfig (%v) for prysmParams: %w", cfg.Chain.Name, err)
+		// 	return fmt.Errorf("error setting chainConfig (%v) for qrysmParams: %w", cfg.Chain.Name, err)
 		// }
 	} else if cfg.Chain.ClConfigPath == "node" {
 		nodeEndpoint := fmt.Sprintf("http://%s:%s", cfg.Indexer.Node.Host, cfg.Indexer.Node.Port)
@@ -459,7 +449,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 		jr := &types.ConfigJsonResponse{}
 
 		err := requests.
-			URL(nodeEndpoint + "/eth/v1/config/spec").
+			URL(nodeEndpoint + "/zond/v1/config/spec").
 			ToJSON(jr).
 			Fetch(context.Background())
 
@@ -470,21 +460,10 @@ func ReadConfig(cfg *types.Config, path string) error {
 		chainCfg := types.ClChainConfig{
 			PresetBase:                              jr.Data.PresetBase,
 			ConfigName:                              jr.Data.ConfigName,
-			TerminalTotalDifficulty:                 jr.Data.TerminalTotalDifficulty,
-			TerminalBlockHash:                       jr.Data.TerminalBlockHash,
-			TerminalBlockHashActivationEpoch:        mustParseUint(jr.Data.TerminalBlockHashActivationEpoch),
 			MinGenesisActiveValidatorCount:          mustParseUint(jr.Data.MinGenesisActiveValidatorCount),
 			MinGenesisTime:                          int64(mustParseUint(jr.Data.MinGenesisTime)),
 			GenesisForkVersion:                      jr.Data.GenesisForkVersion,
 			GenesisDelay:                            mustParseUint(jr.Data.GenesisDelay),
-			AltairForkVersion:                       jr.Data.AltairForkVersion,
-			AltairForkEpoch:                         mustParseUint(jr.Data.AltairForkEpoch),
-			BellatrixForkVersion:                    jr.Data.BellatrixForkVersion,
-			BellatrixForkEpoch:                      mustParseUint(jr.Data.BellatrixForkEpoch),
-			CappellaForkVersion:                     jr.Data.CapellaForkVersion,
-			CappellaForkEpoch:                       mustParseUint(jr.Data.CapellaForkEpoch),
-			DenebForkVersion:                        jr.Data.DenebForkVersion,
-			DenebForkEpoch:                          mustParseUint(jr.Data.DenebForkEpoch),
 			SecondsPerSlot:                          mustParseUint(jr.Data.SecondsPerSlot),
 			SecondsPerEth1Block:                     mustParseUint(jr.Data.SecondsPerEth1Block),
 			MinValidatorWithdrawabilityDelay:        mustParseUint(jr.Data.MinValidatorWithdrawabilityDelay),
@@ -548,20 +527,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 			MaxExtraDataBytes:                       mustParseUint(jr.Data.MaxExtraDataBytes),
 			MaxWithdrawalsPerPayload:                mustParseUint(jr.Data.MaxWithdrawalsPerPayload),
 			MaxValidatorsPerWithdrawalSweep:         mustParseUint(jr.Data.MaxValidatorsPerWithdrawalsSweep),
-			MaxBlsToExecutionChange:                 mustParseUint(jr.Data.MaxBlsToExecutionChanges),
-		}
-
-		if jr.Data.AltairForkEpoch == "" {
-			chainCfg.AltairForkEpoch = 18446744073709551615
-		}
-		if jr.Data.BellatrixForkEpoch == "" {
-			chainCfg.BellatrixForkEpoch = 18446744073709551615
-		}
-		if jr.Data.CapellaForkEpoch == "" {
-			chainCfg.CappellaForkEpoch = 18446744073709551615
-		}
-		if jr.Data.DenebForkEpoch == "" {
-			chainCfg.DenebForkEpoch = 18446744073709551615
+			MaxDilithiumToExecutionChange:           mustParseUint(jr.Data.MaxDilithiumToExecutionChanges),
 		}
 
 		cfg.Chain.ClConfig = chainCfg
@@ -577,7 +543,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 		gtr := &GenesisResponse{}
 
 		err = requests.
-			URL(nodeEndpoint + "/eth/v1/beacon/genesis").
+			URL(nodeEndpoint + "/zond/v1/beacon/genesis").
 			ToJSON(gtr).
 			Fetch(context.Background())
 
@@ -660,16 +626,6 @@ func ReadConfig(cfg *types.Config, path string) error {
 		switch cfg.Chain.Name {
 		case "mainnet":
 			cfg.Chain.GenesisTimestamp = 1606824023
-		case "prater":
-			cfg.Chain.GenesisTimestamp = 1616508000
-		case "sepolia":
-			cfg.Chain.GenesisTimestamp = 1655733600
-		case "zhejiang":
-			cfg.Chain.GenesisTimestamp = 1675263600
-		case "gnosis":
-			cfg.Chain.GenesisTimestamp = 1638993340
-		case "holesky":
-			cfg.Chain.GenesisTimestamp = 1695902400
 		default:
 			return fmt.Errorf("tried to set known genesis-timestamp, but unknown chain-name")
 		}
@@ -679,23 +635,13 @@ func ReadConfig(cfg *types.Config, path string) error {
 		switch cfg.Chain.Name {
 		case "mainnet":
 			cfg.Chain.GenesisValidatorsRoot = "0x4b363db94e286120d76eb905340fdd4e54bfe9f06bf33ff6cf5ad27f511bfe95"
-		case "prater":
-			cfg.Chain.GenesisValidatorsRoot = "0x043db0d9a83813551ee2f33450d23797757d430911a9320530ad8a0eabc43efb"
-		case "sepolia":
-			cfg.Chain.GenesisValidatorsRoot = "0xd8ea171f3c94aea21ebc42a1ed61052acf3f9209c00e4efbaaddac09ed9b8078"
-		case "zhejiang":
-			cfg.Chain.GenesisValidatorsRoot = "0x53a92d8f2bb1d85f62d16a156e6ebcd1bcaba652d0900b2c2f387826f3481f6f"
-		case "gnosis":
-			cfg.Chain.GenesisValidatorsRoot = "0xf5dcb5564e829aab27264b9becd5dfaa017085611224cb3036f573368dbb9d47"
-		case "holesky":
-			cfg.Chain.GenesisValidatorsRoot = "0x9143aa7c615a7f7115e2b6aac319c03529df8242ae705fba9df39b79c59fa8b1"
 		default:
 			return fmt.Errorf("tried to set known genesis-validators-root, but unknown chain-name")
 		}
 	}
 
-	if cfg.Chain.DomainBLSToExecutionChange == "" {
-		cfg.Chain.DomainBLSToExecutionChange = "0x0A000000"
+	if cfg.Chain.DomainDilithiumToExecutionChange == "" {
+		cfg.Chain.DomainDilithiumToExecutionChange = "0x0A000000"
 	}
 	if cfg.Chain.DomainVoluntaryExit == "" {
 		cfg.Chain.DomainVoluntaryExit = "0x04000000"
@@ -703,11 +649,6 @@ func ReadConfig(cfg *types.Config, path string) error {
 
 	if cfg.Frontend.ClCurrency == "" {
 		switch cfg.Chain.Name {
-		case "gnosis":
-			cfg.Frontend.MainCurrency = "GNO"
-			cfg.Frontend.ClCurrency = "mGNO"
-			cfg.Frontend.ClCurrencyDecimals = 18
-			cfg.Frontend.ClCurrencyDivisor = 1e9
 		default:
 			cfg.Frontend.MainCurrency = "ETH"
 			cfg.Frontend.ClCurrency = "ETH"
@@ -718,10 +659,6 @@ func ReadConfig(cfg *types.Config, path string) error {
 
 	if cfg.Frontend.ElCurrency == "" {
 		switch cfg.Chain.Name {
-		case "gnosis":
-			cfg.Frontend.ElCurrency = "xDAI"
-			cfg.Frontend.ElCurrencyDecimals = 18
-			cfg.Frontend.ElCurrencyDivisor = 1e18
 		default:
 			cfg.Frontend.ElCurrency = "ETH"
 			cfg.Frontend.ElCurrencyDecimals = 18
@@ -730,25 +667,19 @@ func ReadConfig(cfg *types.Config, path string) error {
 	}
 
 	if cfg.Frontend.SiteTitle == "" {
-		cfg.Frontend.SiteTitle = "Open Source Ethereum Explorer"
+		cfg.Frontend.SiteTitle = "Open Source Zond Explorer"
 	}
 
 	if cfg.Frontend.Keywords == "" {
-		cfg.Frontend.Keywords = "open source ethereum block explorer, ethereum block explorer, beacon chain explorer, ethereum blockchain explorer"
+		cfg.Frontend.Keywords = "open source zond block explorer, zond block explorer, beacon chain explorer, zond blockchain explorer"
 	}
 
 	if cfg.Chain.Id != 0 {
 		switch cfg.Chain.Name {
 		case "mainnet", "ethereum":
 			cfg.Chain.Id = 1
-		case "prater", "goerli":
+		case "goerli":
 			cfg.Chain.Id = 5
-		case "holesky":
-			cfg.Chain.Id = 17000
-		case "sepolia":
-			cfg.Chain.Id = 11155111
-		case "gnosis":
-			cfg.Chain.Id = 100
 		}
 	}
 

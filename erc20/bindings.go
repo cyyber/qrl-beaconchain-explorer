@@ -7,19 +7,19 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
+	zond "github.com/theQRL/go-zond"
+	"github.com/theQRL/go-zond/accounts/abi"
+	"github.com/theQRL/go-zond/accounts/abi/bind"
+	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/core/types"
+	"github.com/theQRL/go-zond/event"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = ethereum.NotFound
+	_ = zond.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -29,29 +29,29 @@ var (
 // Erc20ABI is the input ABI used to generate the binding from.
 const Erc20ABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"version\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"balance\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_extraData\",\"type\":\"bytes\"}],\"name\":\"approveAndCall\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"remaining\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"inputs\":[{\"name\":\"_initialAmount\",\"type\":\"uint256\"},{\"name\":\"_tokenName\",\"type\":\"string\"},{\"name\":\"_decimalUnits\",\"type\":\"uint8\"},{\"name\":\"_tokenSymbol\",\"type\":\"string\"}],\"type\":\"constructor\"},{\"payable\":false,\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"}]"
 
-// Erc20 is an auto generated Go binding around an Ethereum contract.
+// Erc20 is an auto generated Go binding around an Zond contract.
 type Erc20 struct {
 	Erc20Caller     // Read-only binding to the contract
 	Erc20Transactor // Write-only binding to the contract
 	Erc20Filterer   // Log filterer for contract events
 }
 
-// Erc20Caller is an auto generated read-only Go binding around an Ethereum contract.
+// Erc20Caller is an auto generated read-only Go binding around an Zond contract.
 type Erc20Caller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Erc20Transactor is an auto generated write-only Go binding around an Ethereum contract.
+// Erc20Transactor is an auto generated write-only Go binding around an Zond contract.
 type Erc20Transactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Erc20Filterer is an auto generated log filtering Go binding around an Ethereum contract events.
+// Erc20Filterer is an auto generated log filtering Go binding around an Zond contract events.
 type Erc20Filterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Erc20Session is an auto generated Go binding around an Ethereum contract,
+// Erc20Session is an auto generated Go binding around an Zond contract,
 // with pre-set call and transact options.
 type Erc20Session struct {
 	Contract     *Erc20            // Generic contract binding to set the session for
@@ -59,31 +59,31 @@ type Erc20Session struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Erc20CallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// Erc20CallerSession is an auto generated read-only Go binding around an Zond contract,
 // with pre-set call options.
 type Erc20CallerSession struct {
 	Contract *Erc20Caller  // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts // Call options to use throughout this session
 }
 
-// Erc20TransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// Erc20TransactorSession is an auto generated write-only Go binding around an Zond contract,
 // with pre-set transact options.
 type Erc20TransactorSession struct {
 	Contract     *Erc20Transactor  // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Erc20Raw is an auto generated low-level Go binding around an Ethereum contract.
+// Erc20Raw is an auto generated low-level Go binding around an Zond contract.
 type Erc20Raw struct {
 	Contract *Erc20 // Generic contract binding to access the raw methods on
 }
 
-// Erc20CallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+// Erc20CallerRaw is an auto generated low-level read-only Go binding around an Zond contract.
 type Erc20CallerRaw struct {
 	Contract *Erc20Caller // Generic read-only contract binding to access the raw methods on
 }
 
-// Erc20TransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+// Erc20TransactorRaw is an auto generated low-level write-only Go binding around an Zond contract.
 type Erc20TransactorRaw struct {
 	Contract *Erc20Transactor // Generic write-only contract binding to access the raw methods on
 }
@@ -501,7 +501,7 @@ type Erc20ApprovalIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -654,7 +654,7 @@ type Erc20TransferIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }

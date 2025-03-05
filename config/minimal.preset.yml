@@ -100,7 +100,6 @@ EARLY_DERIVED_SECRET_REVEAL_SLOT_REWARD_MULTIPLE: 2
 MINOR_REWARD_QUOTIENT: 256
 # Minimal preset - Deneb
 
-
 # Execution
 # ---------------------------------------------------------------
 # [customized]

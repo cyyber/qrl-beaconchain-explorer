@@ -61,6 +61,8 @@ const (
 
 var updateInterval = time.Second * 60 // how often to update ratelimits, weights and stats
 
+// var apiProducts = map[string]*ApiProduct{} // key: <bucket>:<product_name>
+// var apiProductsMu = &sync.RWMutex{}
 
 var redisClient *redis.Client
 var redisIsHealthy atomic.Bool
@@ -136,7 +138,6 @@ type RedisKey struct {
 	ExpireAt time.Time
 }
 
-
 type responseWriterDelegator struct {
 	http.ResponseWriter
 	written     int64
@@ -208,40 +209,46 @@ func Init() {
 		updateInterval = time.Second * 60
 	}
 
-	initializedWg.Add(3)
+	// initializedWg.Add(3)
+	initializedWg.Add(1)
 
-	go func() {
-		firstRun := true
-		for {
-			err := updateWeights(firstRun)
-			if err != nil {
-				logger.WithError(err).Errorf("error updating weights")
-				time.Sleep(time.Second * 2)
-				continue
+	/*
+		go func() {
+			firstRun := true
+			for {
+				err := updateWeights(firstRun)
+				if err != nil {
+					logger.WithError(err).Errorf("error updating weights")
+					time.Sleep(time.Second * 2)
+					continue
+				}
+				if firstRun {
+					initializedWg.Done()
+					firstRun = false
+				}
+				time.Sleep(updateInterval)
 			}
-			if firstRun {
-				initializedWg.Done()
-				firstRun = false
+		}()
+	*/
+	// TODO(rgeraldes24)
+	/*
+		go func() {
+			firstRun := true
+			for {
+				err := updateRateLimits()
+				if err != nil {
+					logger.WithError(err).Errorf("error updating ratelimits")
+					time.Sleep(time.Second * 2)
+					continue
+				}
+				if firstRun {
+					initializedWg.Done()
+					firstRun = false
+				}
+				time.Sleep(updateInterval)
 			}
-			time.Sleep(updateInterval)
-		}
-	}()
-	go func() {
-		firstRun := true
-		for {
-			err := updateRateLimits()
-			if err != nil {
-				logger.WithError(err).Errorf("error updating ratelimits")
-				time.Sleep(time.Second * 2)
-				continue
-			}
-			if firstRun {
-				initializedWg.Done()
-				firstRun = false
-			}
-			time.Sleep(updateInterval)
-		}
-	}()
+		}()
+	*/
 	go func() {
 		firstRun := true
 		for {
@@ -612,6 +619,16 @@ func updateRateLimits() error {
 		return err
 	}
 
+	// dbApiProducts, err := DBGetCurrentApiProducts()
+	// if err != nil {
+	// 	return err
+	// }
+	// apiProductsMu.Lock()
+	// for _, dbApiProduct := range dbApiProducts {
+	// 	apiProducts[fmt.Sprintf("%s:%s", dbApiProduct.Bucket, dbApiProduct.Name)] = dbApiProduct
+	// }
+	// apiProductsMu.Unlock()
+
 	rateLimitsMu.Lock()
 	now := time.Now()
 	for _, dbKey := range dbApiKeys {
@@ -861,6 +878,20 @@ func getDefaultRatelimit(bucket string) (freeRatelimit, nokeyRatelimit *RateLimi
 		Month:  DefaultRateLimitMonth,
 	}
 
+	// apiProductsMu.RLock()
+	// apiProduct, ok := apiProducts[fmt.Sprintf("%s:%s", bucket, "nokey")]
+	// if ok {
+	// 	nokeyRatelimit.Second = apiProduct.Second
+	// 	nokeyRatelimit.Hour = apiProduct.Hour
+	// 	nokeyRatelimit.Month = apiProduct.Month
+	// }
+	// apiProduct, ok = apiProducts[fmt.Sprintf("%s:%s", bucket, "free")]
+	// if ok {
+	// 	freeRatelimit.Second = apiProduct.Second
+	// 	freeRatelimit.Hour = apiProduct.Hour
+	// 	freeRatelimit.Month = apiProduct.Month
+	// }
+	// apiProductsMu.RUnlock()
 
 	return freeRatelimit, nokeyRatelimit
 }

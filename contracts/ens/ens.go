@@ -3,27 +3,16 @@ package ens
 import (
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/theQRL/go-zond/accounts/abi"
+	"github.com/theQRL/go-zond/accounts/abi/bind"
+	"github.com/theQRL/go-zond/common"
 )
 
-var ENSCrontractAddressesEthereum = map[string]string{
-	"0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
-	"0x253553366Da8546fC250F225fe3d25d0C782303b": "ETHRegistrarController",
-	"0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldEnsRegistrarController",
-}
-
-var ENSCrontractAddressesHolesky = map[string]string{
-	"0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
-	"0x179Be112b24Ad4cFC392eF8924DfA08C20Ad8583": "ETHRegistrarController",
-	"0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldEnsRegistrarController",
-}
-
-var ENSCrontractAddressesSepolia = map[string]string{
-	"0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
-	"0xFED6a969AaA60E4961FCD3EBF1A2e8913ac65B72": "ETHRegistrarController",
-	"0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldEnsRegistrarController",
+// TODO(rgeraldes24)
+var ENSCrontractAddressesZond = map[string]string{
+	"Z00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
+	"Z253553366Da8546fC250F225fe3d25d0C782303b": "ETHRegistrarController",
+	"Z283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldEnsRegistrarController",
 }
 
 var ENSRegistryParsedABI, ENSBaseRegistrarParsedABI, ENSOldRegistrarControllerParsedABI, ENSPublicResolverParsedABI, ENSETHRegistrarControllerParsedABI *abi.ABI

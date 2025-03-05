@@ -23,13 +23,11 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
 - Website
   - [Validator Dashboard](https://beaconcha.in/dashboard) with status, income, balance, attestations, proposals and charts
   - Overviews about [blocks](https://beaconcha.in/blocks), [slots](https://beaconcha.in/slots), [epochs](https://beaconcha.in/epochs), [transactions](https://beaconcha.in/transactions), [validators](https://beaconcha.in/validators), [slashings](https://beaconcha.in/validators/slashings) and the [mempool](https://beaconcha.in/mempool)
-  - Stats and info about [MEV relays](https://beaconcha.in/relays) and [Ethereum clients](https://beaconcha.in/user/ethClients)
+  - Stats and info about [MEV relays](https://beaconcha.in/relays) and [Zond clients](https://beaconcha.in/user/ethClients)
   - Leaderboards about [validators](https://beaconcha.in/validators/leaderboard) and [deposits](https://beaconcha.in/validators/deposit-leaderboard)
   - [Charts](https://beaconcha.in/charts) about various stats
 
 - Tools
-  - [APIs](https://beaconcha.in/api/v1/docs/index.html) for Execution Layer and Consensus Layer
-  - [Ethereum Staking Pool benchmark and overview](https://beaconcha.in/pools)
   - [Income History](https://beaconcha.in/user/rewards)
   - [Profit Calculator](https://beaconcha.in/calculator)
   - Block Visualizer [[1](https://beaconcha.in/vis)] [[2](https://beaconcha.in/charts/slotviz)]
@@ -44,7 +42,7 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
 
 ## Getting started
 
-We currently do not provide any pre-built binaries of the explorer. Docker images are available at https://hub.docker.com/repository/docker/qrlledger/zond-beaconchain-explorer.
+We currently do not provide any pre-built binaries of the explorer. Docker images are available at https://hub.docker.com/repository/docker/qrledger/zond-beaconchain-explorer.
 
 - Download the latest version of the Qrysm beacon chain client and start it with the `--archive` flag set
 - Wait till the client finishes the initial sync

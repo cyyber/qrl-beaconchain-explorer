@@ -48,7 +48,7 @@ func main() {
 	offsetBlocks := flag.Int64("blocks.offset", 100, "Blocks offset")
 	checkBlocksGaps := flag.Bool("blocks.gaps", false, "Check for gaps in the blocks table")
 	checkBlocksGapsLookback := flag.Int("blocks.gaps.lookback", 1000000, "Lookback for gaps check of the blocks table")
-	traceMode := flag.String("blocks.tracemode", "parity/geth", "Trace mode to use, can bei either 'parity', 'geth' or 'parity/geth' for both")
+	traceMode := flag.String("blocks.tracemode", "parity/geth", "Trace mode to use, can bei either 'parity', 'gzond' or 'parity/gzond' for both") // TODO(rgeraldes24)
 
 	concurrencyData := flag.Int64("data.concurrency", 30, "Concurrency to use when indexing data from bigtable")
 	startData := flag.Int64("data.start", 0, "Block to start indexing")
@@ -387,7 +387,7 @@ func main() {
 		*/
 
 		logrus.Infof("index run completed")
-		services.ReportStatus("eth1indexer", "Running", nil)
+		services.ReportStatus("eth1indexer", "Running", nil) // TODO(rgeraldes24)
 	}
 
 	// utils.WaitForCtrlC()
@@ -412,7 +412,7 @@ func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath s
 	}
 	coinsList := make([]string, 0, len(tokenList.Tokens))
 	for _, token := range tokenList.Tokens {
-		coinsList = append(coinsList, "ethereum:"+token.Address)
+		coinsList = append(coinsList, "zond:"+token.Address)
 	}
 
 	req := &defillamaPriceRequest{
@@ -581,7 +581,7 @@ func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.GzondClient, prefix str
 
 			logrus.Infof("processing batch %v with start %v and end %v", b, start, end)
 
-			b, err := client.GetBalances(pairs[start:end], 2, 4)
+			b, err := client.GetBalances(pairs[start:end] /*, 2, 4*/) // TODO(rgeraldes24): remove, not used
 
 			if err != nil {
 				logrus.Errorf("error retrieving balances from node: %v", err)
@@ -633,9 +633,9 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 			}()
 
 			blockStartTs := time.Now()
-			bc, timings, err := client.GetBlock(i, traceMode)
+			bc, timings, err := client.GetBlock(i /*, traceMode*/)
 			if err != nil {
-				return fmt.Errorf("error getting block: %v from ethereum node err: %w", i, err)
+				return fmt.Errorf("error getting block: %v from zond node err: %w", i, err)
 			}
 
 			metrics.TaskDuration.WithLabelValues("rpc_el_get_block_headers").Observe(timings.Headers.Seconds())
