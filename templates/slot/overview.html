@@ -120,7 +120,7 @@
         </div>
         {{ if ne .Slot 0 }}
           <div class="row border-bottom p-3 mx-0">
-            <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="The BLS signature obtained by using the BeaconState, BeaconBlock and private key">Signature:</span></div>
+            <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="The Dilithium signature obtained by using the BeaconState, BeaconBlock and private key">Signature:</span></div>
             <div class="col-md-10 text-monospace text-break">0x{{ printf "%x" .Signature }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .Signature }}"></i></div>
           </div>
           <div class="row border-bottom p-3 mx-0">
@@ -156,7 +156,7 @@
               </div>
             </div>
           </div>
-          {{ if .SyncAggregateSignature }}
+          {{ if .SyncAggregateSignatures }}
             <div class="row border-bottom p-3 mx-0">
               <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Aggregate (Altair Light-Client support)">Sync Aggregate:</span></div>
               <div class="col-md-10">
@@ -171,9 +171,11 @@
                   <div class="col-md-10 text-monospace text-break">{{ formatBitvectorValidators .SyncAggregateBits .SyncCommittee }}</div>
                 </div>
                 <div class="row p-1">
-                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Committee Signature">Signature:</span></div>
+                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Committee Signatures">Signatures:</span></div>
                   <div class="col-md-10 text-monospace text-break">
-                    <span>0x{{ printf "%x" .SyncAggregateSignature }}</span>
+                    {{ range $sig := .SyncAggregateSignatures }}
+                    <span>0x{{ printf "%x" $sig }}</span>
+                    {{ end }}
                   </div>
                 </div>
               </div>
@@ -227,50 +229,21 @@
                   <div class="col-md-10 text-monospace text-break">{{ .GasLimit }}</div>
                 </div>
 
-                {{ if ge $.Data.Epoch config.Chain.ClConfig.DenebForkEpoch }}
-                  <div class="row p-1">
-                    <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Excess Blob Gas">Excess Blob Gas:</span></div>
-                    <div class="col-md-10 text-monospace text-break">{{ .ExcessBlobGas }}</div>
-                  </div>
-                {{ end }}
-
 
                 <div class="row p-1">
                   <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Base fee per gas">Base fee per gas:</span></div>
                   <div class="col-md-10 text-monospace text-break">{{ formatAmount .BaseFeePerGas "GWei" 5 }}</div>
                 </div>
 
-                {{ if ge $.Data.Epoch config.Chain.ClConfig.DenebForkEpoch }}
-                  <div class="row p-1">
-                    <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Burned tx fees">Burned tx fees:</span></div>
-                    <div class="col-md-10 text-monospace text-break">{{ formatAmount .BurnedTxFees config.Frontend.ElCurrency 5 }}</div>
-                  </div>
-                {{ end }}
-
-                {{ if ge $.Data.Epoch config.Chain.ClConfig.DenebForkEpoch }}
-                  <div class="row p-1">
-                    <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Burned blob fees">Burned blob fees:</span></div>
-                    <div class="col-md-10 text-monospace text-break">{{ formatAmount .BurnedBlobFees config.Frontend.ElCurrency 5 }}</div>
-                  </div>
-                {{ end }}
-
-
                 <div class="row p-1">
-                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Burned fees">Burned fees{{ if ge $.Data.Epoch config.Chain.ClConfig.DenebForkEpoch }}(total){{ end }}:</span></div>
+                  <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Burned fees">Burned fees:</span></div>
                   <div class="col-md-10 text-monospace text-break">{{ formatAmount .BurnedFees config.Frontend.ElCurrency 5 }}</div>
                 </div>
 
                 <div class="row p-1">
                   <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Transactions">Transactions:</span></div>
-                  <div class="col-md-10 text-monospace text-break">{{ .TxCount }} {{ if gt .BlobTxCount 0 }}({{ .BlobTxCount }} Blob Transactions){{ end }}</div>
+                  <div class="col-md-10 text-monospace text-break">{{ .TxCount }}</div>
                 </div>
-
-                {{ if ge $.Data.Epoch config.Chain.ClConfig.DenebForkEpoch }}
-                  <div class="row p-1">
-                    <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Blobs">Blobs:</span></div>
-                    <div class="col-md-10 text-monospace text-break">{{ .BlobCount }}</div>
-                  </div>
-                {{ end }}
 
 
                 <div class="row p-1">
@@ -324,8 +297,8 @@
           <div class="col-md-10"><b>{{ formatAddCommas .WithdrawalCount }}</b></div>
         </div>
         <div class="row border-bottom p-3 mx-0">
-          <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Amount of validators that changed their withdrawal address from 0x00 to 0x01">BLS Address Changes:</span></div>
-          <div class="col-md-10"><b>{{ formatAddCommas .BLSChangeCount }}</b></div>
+          <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Amount of validators that changed their withdrawal address from 0x00 to 0x01">Dilithium Address Changes:</span></div>
+          <div class="col-md-10"><b>{{ formatAddCommas .DilithiumChangeCount }}</b></div>
         </div>
       {{ end }}
     </div>

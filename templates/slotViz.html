@@ -368,7 +368,7 @@
             )
         },
       })
-      addWaterMark()
+      // addWaterMark()
     }
 
     var lastSlotVizData;
@@ -445,22 +445,22 @@
       processLaunchMetrics(lastSlotVizData);
     })
 
-    function addWaterMark() {
-      const watermarkContainer = document.createElement("div")
-      watermarkContainer.style.position = "relative"
+    // function addWaterMark() {
+    //   const watermarkContainer = document.createElement("div")
+    //   watermarkContainer.style.position = "relative"
 
-      const watermarkContent = document.createElement("a")
-      watermarkContent.href = "https://beaconcha.in"
-      watermarkContent.style.position = "absolute"
-      watermarkContent.style.top = "100%"
-      watermarkContent.style.right = 0
-      watermarkContent.innerText = "beaconcha.in"
-      watermarkContent.classList.add("text-muted")
-      watermarkContent.classList.add("font-weight-bold")
+    //   const watermarkContent = document.createElement("a")
+    //   watermarkContent.href = "https://beaconcha.in"
+    //   watermarkContent.style.position = "absolute"
+    //   watermarkContent.style.top = "100%"
+    //   watermarkContent.style.right = 0
+    //   watermarkContent.innerText = "beaconcha.in"
+    //   watermarkContent.classList.add("text-muted")
+    //   watermarkContent.classList.add("font-weight-bold")
 
-      watermarkContainer.appendChild(watermarkContent)
+    //   watermarkContainer.appendChild(watermarkContent)
 
-      $(selector).append(watermarkContainer)
-    }
+    //   $(selector).append(watermarkContainer)
+    // }
   </script>
 {{ end }}

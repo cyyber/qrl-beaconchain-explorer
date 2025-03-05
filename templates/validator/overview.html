@@ -91,8 +91,7 @@
               {{ end }}
               <br />
               <br /><br />
-              Join our <a href="https://dsc.gg/beaconchain">Discord server</a> for support, questions and suggestions. <br /><br />
-              Download the <a href="https://beaconcha.in/mobile">mobile app</a> to monitor your validator.
+              Join our <a href="https://www.theqrl.org/discord">Discord server</a> for support, questions and suggestions. <br /><br />
             </span>
           </div>
         </div>
@@ -215,15 +214,8 @@
             {{ else }}
               This validator has exited the system during epoch <a href="/epoch/{{ .ExitEpoch }}">{{ .ExitEpoch }}</a> and is no longer validating. There is no need to keep the validator running anymore.
             {{ end }}
-
-            {{ if .CappellaHasHappened }}
-              Funds will be withdrawable after epoch <span><a href="/epoch/{{ .WithdrawableEpoch }}">{{ .WithdrawableEpoch }}</a></span
-              >.
-            {{ else }}
-              <span data-toggle="tooltip" title="Please note that the withdraw functionality has not been implemented by ACD yet.">
-                Funds will be withdrawable after epoch <span><a href="/epoch/{{ .WithdrawableEpoch }}">{{ .WithdrawableEpoch }}</a></span></span
-              >.
-            {{ end }}
+            Funds will be withdrawable after epoch <span><a href="/epoch/{{ .WithdrawableEpoch }}">{{ .WithdrawableEpoch }}</a></span
+            >.
           </div>
           {{ if .Slashed }}<div class="p-2">Slashed by {{ .SlashedBy | formatValidator }} at Slot {{ .SlashedAt | formatBlockSlot }}, Reason: {{ .SlashedFor }}</div>{{ end }}
         </div>
@@ -264,22 +256,20 @@
       <span id="depositCount" style="cursor: pointer;" data-toggle="tooltip" title="Deposits made to the deposit contract"><i class="fas fa-wallet"></i> {{ .DepositsCount }}</span>
     </div>
 
-    {{ if .CappellaHasHappened }}
-      <div class="mx-3">
-        <span id="withdrawalCount" style="cursor: pointer;" data-toggle="tooltip" {{ if .IsWithdrawableAddress }}title="Withdrawals processed for this validator"{{ else }}title="To receive withdrawals, 0x01 withdrawal credentials are required. Click here for more information."{{ end }}>
-          {{ if .IsWithdrawableAddress }}
-            <i class="fas fa-money-bill"></i>
-            {{ .WithdrawalCount }}
-          {{ else }}
-            <a href="{{ if eq config.Chain.Id 100 }}https://docs.gnosischain.com/node/management/withdrawals/#how-to-change-the-withdrawal-credential{{ else }}https://launchpad.ethereum.org/en/withdrawals{{ end }}">
-              <i class="fas fa-money-bill" style="color:var(--body-color)"></i>
-              <i class="text-warning fas fa-exclamation-triangle"></i>
-              <i class="fas fa-external-link-alt"></i>
-            </a>
-          {{ end }}
-        </span>
-      </div>
-    {{ end }}
+    <div class="mx-3">
+      <span id="withdrawalCount" style="cursor: pointer;" data-toggle="tooltip" {{ if .IsWithdrawableAddress }}title="Withdrawals processed for this validator"{{ else }}title="To receive withdrawals, 0x01 withdrawal credentials are required. Click here for more information."{{ end }}>
+        {{ if .IsWithdrawableAddress }}
+          <i class="fas fa-money-bill"></i>
+          {{ .WithdrawalCount }}
+        {{ else }}
+          <a href="{{ if eq config.Chain.Id 100 }}https://docs.gnosischain.com/node/management/withdrawals/#how-to-change-the-withdrawal-credential{{ else }}https://launchpad.ethereum.org/en/withdrawals{{ end }}">
+            <i class="fas fa-money-bill" style="color:var(--body-color)"></i>
+            <i class="text-warning fas fa-exclamation-triangle"></i>
+            <i class="fas fa-external-link-alt"></i>
+          </a>
+        {{ end }}
+      </span>
+    </div>
 
 
     <!--

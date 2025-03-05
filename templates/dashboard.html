@@ -208,17 +208,11 @@
                   <button data-toggle="tooltip" title="Open in reward history" style="visibility:hidden;" id="rewards-button" class="btn btn-primary btn-sm m-1">
                     <i class="far fa-money-bill-alt text-white" style="width:18px;"></i>
                   </button>
-                  {{ if $.User.Authenticated }}
-                    <button data-toggle="tooltip" title="Save all to Watchlist" style="visibility:hidden;" id="bookmark-button" type="button" class="btn btn-primary btn-sm m-1">
+                  <span class="" data-toggle="tooltip" title="You need to login to follow a validator">
+                    <button style="visibility:hidden;" id="bookmark-button" disabled type="button" class="btn btn-primary btn-sm m-1 disabled">
                       <i class="far fa-bookmark text-white" style="width:18px;"></i>
                     </button>
-                  {{ else }}
-                    <span class="" data-toggle="tooltip" title="You need to login to follow a validator">
-                      <button style="visibility:hidden;" id="bookmark-button" disabled type="button" class="btn btn-primary btn-sm m-1 disabled">
-                        <i class="far fa-bookmark text-white" style="width:18px;"></i>
-                      </button>
-                    </span>
-                  {{ end }}
+                  </span>
                   <button data-toggle="tooltip" data-original-title="Copy Link to Dashboard" style="visibility:hidden;" id="copy-button" data-clipboard-text="https://beaconcha.in/dashboard" type="button" class="btn btn-primary btn-sm m-1">
                     <i class="fa fa-copy text-white" style="width:18px;"></i>
                   </button>
@@ -325,14 +319,12 @@
                     <span class="tab-text dashboard-table-nav-text"> Proposals</span>
                   </a>
                 </li>
-                {{ if .CappellaHasHappened }}
-                  <li class="nav-item dashboard-table-nav" style="flex:1;">
-                    <a class="nav-link" id="withdrawal-tab" data-toggle="tab" href="#withdrawals" role="tab" aria-controls="withdrawals" aria-selected="false" style="text-align:center;white-space:nowrap;">
-                      <i class="tab-icon mr-md-1 fas fa-money-bill"></i>
-                      <span class="tab-text">Withdrawals</span>
-                    </a>
-                  </li>
-                {{ end }}
+                <li class="nav-item dashboard-table-nav" style="flex:1;">
+                  <a class="nav-link" id="withdrawal-tab" data-toggle="tab" href="#withdrawals" role="tab" aria-controls="withdrawals" aria-selected="false" style="text-align:center;white-space:nowrap;">
+                    <i class="tab-icon mr-md-1 fas fa-money-bill"></i>
+                    <span class="tab-text">Withdrawals</span>
+                  </a>
+                </li>
               </ul>
               <div class="tab-content h-100" id="dashTabContent">
                 <div id="validators-tableTabPanel" class="tab-pane fade h-100" role="tabpanel" aria-labelledby="validators-tab">
@@ -621,11 +613,9 @@
                     </div>
                   </div>
                 </div>
-                {{ if .CappellaHasHappened }}
-                  <div class="tab-pane fade h-100" id="withdrawalsTabPanel" role="tabpanel" aria-labelledby="withdrawal-tab" aria-controls="withdrawals">
-                    {{ template "dashboardWithdrawalTable" . }}
-                  </div>
-                {{ end }}
+                <div class="tab-pane fade h-100" id="withdrawalsTabPanel" role="tabpanel" aria-labelledby="withdrawal-tab" aria-controls="withdrawals">
+                  {{ template "dashboardWithdrawalTable" . }}
+                </div>
               </div>
             </div>
           </div>

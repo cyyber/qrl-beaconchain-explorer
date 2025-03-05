@@ -41,11 +41,6 @@
             <a class="nav-link" id="transactions-tab" data-toggle="pill" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions <span class="badge bg-secondary text-white">{{ .TxCount }}</span></a>
           </li>
         {{ end }}
-        {{ if gt (len .Uncles) 0 }}
-          <li class="nav-item">
-            <a class="nav-link" id="uncles-tab" data-toggle="pill" href="#uncles" role="tab" aria-controls="uncles" aria-selected="false">Uncles <span class="badge bg-secondary text-white">{{ .UncleCount }}</span></a>
-          </li>
-        {{ end }}
       </ul>
       <style>
         .block-card {
@@ -96,10 +91,6 @@
                 </div>
               </div>
               <div class="row border-bottom p-3 mx-0">
-                <div class="col-md-2">Difficulty:</div>
-                <div class="col-md-10">{{ formatDifficulty .Difficulty }}</div>
-              </div>
-              <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-2">Base fee:</div>
                 <div class="col-md-10">{{ formatAmount .BaseFeePerGas "GWei" 5 }}</div>
               </div>
@@ -128,31 +119,6 @@
             </div>
             <div class="tab-pane fade" id="transactionsTabPanel" role="tabpanel" aria-labelledby="transactions-tab">
               {{ template "execution_transactions" . }}
-            </div>
-            <div class="tab-pane fade" id="unclesTabPanel" role="tabpanel" aria-labelledby="uncles-tab">
-              <div class="row border-bottom p-1 mx-0">
-                <div class="col-md-12 text-center"><b>Showing {{ .UncleCount }} Uncle{{ if gt .UncleCount 1 }}s{{ end }} </b></div>
-              </div>
-              <div class="table-responsive">
-                <table class="table table-sm table-bordered text-center">
-                  <tr>
-                    <th>Number</th>
-                    <th>Level</th>
-                    <th>Miner</th>
-                    <th>Reward</th>
-                    <th>Extra</th>
-                  </tr>
-                  {{ range .Uncles }}
-                    <tr>
-                      <td>{{ .Number }}</td>
-                      <td>{{ subUI64 $.Data.Number .Number }}</td>
-                      <td>{{ .MinerFormatted }}</td>
-                      <td>{{ formatAmount .Reward config.Frontend.ElCurrency 5 }}</td>
-                      <td>{{ .Extra }}</td>
-                    </tr>
-                  {{ end }}
-                </table>
-              </div>
             </div>
           </div>
         </div>

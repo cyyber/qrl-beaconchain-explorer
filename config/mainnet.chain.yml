@@ -6,10 +6,8 @@ PRESET_BASE: "mainnet"
 # Free-form short name of the network that this configuration applies to - known
 # canonical network names include:
 # * 'mainnet' - there can be only one
-# * 'prater' - testnet
 # Must match the regex: [a-z0-9\-]
 CONFIG_NAME: "mainnet"
-
 
 # Genesis
 # ---------------------------------------------------------------
@@ -58,7 +56,7 @@ PROPOSER_SCORE_BOOST: 40
 # Ethereum PoW Mainnet
 DEPOSIT_CHAIN_ID: 1
 DEPOSIT_NETWORK_ID: 1
-DEPOSIT_CONTRACT_ADDRESS: 0x00000000219ab540356cBB839Cbe05303d7705Fa
+DEPOSIT_CONTRACT_ADDRESS: Z00000000219ab540356cBB839Cbe05303d7705Fa
 
 # Mainnet preset - Altair
 
@@ -105,8 +103,6 @@ MAX_TRANSACTIONS_PER_PAYLOAD: 1048576
 BYTES_PER_LOGS_BLOOM: 256
 # 2**5 (= 32)
 MAX_EXTRA_DATA_BYTES: 32
-# Minimal preset - Capella
-# Mainnet preset - Custody Game
 
 # Time parameters
 # ---------------------------------------------------------------

@@ -47,13 +47,12 @@ MAX_TRANSACTIONS_PER_PAYLOAD: 1048576
 BYTES_PER_LOGS_BLOOM: 256
 # 2**5 (= 32)
 MAX_EXTRA_DATA_BYTES: 32
-# Mainnet preset - Capella
 
 # Misc
 # Max operations per block
 # ---------------------------------------------------------------
 # 2**4 (= 16)
-MAX_BLS_TO_EXECUTION_CHANGES: 16
+MAX_DILITHIUM_TO_EXECUTION_CHANGES: 16
 
 # Execution
 # ---------------------------------------------------------------
@@ -99,16 +98,7 @@ MAX_CUSTODY_SLASHINGS: 1
 EARLY_DERIVED_SECRET_REVEAL_SLOT_REWARD_MULTIPLE: 2
 # 2**8 (= 256)
 MINOR_REWARD_QUOTIENT: 256
-# Mainnet preset - Deneb
 
-# Misc
-# ---------------------------------------------------------------
-# `uint64(4096)`
-FIELD_ELEMENTS_PER_BLOB: 4096
-# `uint64(2**12)` (= 4096)
-MAX_BLOB_COMMITMENTS_PER_BLOCK: 4096
-# `uint64(6)`
-MAX_BLOBS_PER_BLOCK: 6
 # Mainnet preset - EIP6110
 
 # Execution
@@ -219,8 +209,6 @@ MAX_SHARD_PROPOSER_SLASHINGS: 16
 MAX_SHARD_HEADERS_PER_SHARD: 4
 # 2**8 (= 256)
 SHARD_STATE_MEMORY_SLOTS: 256
-# 2**40 (= 1,099,511,627,776)
-BLOB_BUILDER_REGISTRY_LIMIT: 1099511627776
 
 # Shard blob samples
 # ---------------------------------------------------------------

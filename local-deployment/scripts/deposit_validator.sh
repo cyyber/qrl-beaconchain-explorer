@@ -27,8 +27,8 @@ mkdir -p /tmp/deposit
 deposit_path="m/44'/60'/0'/0/3"
 privatekey="ef5177cd0b6b21c87db5a0bf35d4084a8a57a9d6a064f86d51ac85f2b873a4e2"
 publickey="0x878705ba3f8Bc32FCf7F4CAa1A35E72AF65CF766"
-fork_version=$(curl -s $bn_endpoint/eth/v1/beacon/genesis | jq -r '.data.genesis_fork_version')
-deposit_contract_address=$(curl -s $bn_endpoint/eth/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
+fork_version=$(curl -s $bn_endpoint/zond/v1/beacon/genesis | jq -r '.data.genesis_fork_version')
+deposit_contract_address=$(curl -s $bn_endpoint/zond/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
 eth2-val-tools deposit-data --source-min=192 --source-max=200 --amount=32000000000 --fork-version=$fork_version --withdrawals-mnemonic="$mnemonic" --validators-mnemonic="$mnemonic" > /tmp/deposit/deposits_0-9.txt
 while read x; do
     account_name="$(echo "$x" | jq '.account')"

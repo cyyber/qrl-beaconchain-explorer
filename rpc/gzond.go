@@ -53,7 +53,7 @@ func NewGethClient(endpoint string) (*GethClient, error) {
 	}
 	client.ethClient = ethClient
 
-	client.multiChecker, err = NewBalance(common.HexToAddress("0xb1F8e55c7f64D203C1400B9D8555d050F94aDF39"), client.ethClient)
+	client.multiChecker, err = NewBalance(common.HexToAddress(""), client.ethClient)
 	if err != nil {
 		return nil, fmt.Errorf("error initiation balance checker contract: %v", err)
 	}

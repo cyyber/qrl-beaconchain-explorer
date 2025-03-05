@@ -155,19 +155,19 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 	// }
 
 	if len(receipt.Logs) > 0 {
-		var wasContractMetadataCached bool
+		// var wasContractMetadataCached bool
 		type contractMetadataMapEntry struct {
 			err  error
 			meta *types.ContractMetadata
 		}
 		var cmEntry contractMetadataMapEntry
-		contractMetadataCache := make(map[common.Address]contractMetadataMapEntry)
+		// contractMetadataCache := make(map[common.Address]contractMetadataMapEntry)
 
 		for _, log := range receipt.Logs {
-			if cmEntry, wasContractMetadataCached = contractMetadataCache[log.Address]; !wasContractMetadataCached {
-				cmEntry.meta, cmEntry.err = db.BigtableClient.GetContractMetadata(log.Address.Bytes())
-				contractMetadataCache[log.Address] = cmEntry
-			}
+			// if cmEntry, wasContractMetadataCached = contractMetadataCache[log.Address]; !wasContractMetadataCached {
+			// 	cmEntry.meta, cmEntry.err = db.BigtableClient.GetContractMetadata(log.Address.Bytes())
+			// 	contractMetadataCache[log.Address] = cmEntry
+			// }
 			if cmEntry.err != nil || cmEntry.meta == nil || cmEntry.meta.ABI == nil {
 				name := ""
 				if len(log.Topics) > 0 {
@@ -238,7 +238,11 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 
 	// staking deposit information (only add complete events if any)
 	for _, v := range txPageData.Events {
-		if v.Address == common.HexToAddress(utils.Config.Chain.ClConfig.DepositContractAddress) && strings.HasPrefix(v.Name, "DepositEvent") {
+		addr, err := common.NewAddressFromString(utils.Config.Chain.ClConfig.DepositContractAddress)
+		if err != nil {
+			return nil, err
+		}
+		if v.Address == addr && strings.HasPrefix(v.Name, "DepositEvent") {
 			var d types.DepositContractInteraction
 
 			if pubkey, found := v.DecodedData["pubkey"]; found {

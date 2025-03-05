@@ -79,8 +79,8 @@
         this.config.slotsPerEpoch = 32
         this.config.secondsPerEpoch = this.config.secondsPerSlot * this.config.slotsPerEpoch
         this.config.epochsPerDay = (3600 * 24) / this.config.secondsPerEpoch
-        this.config.minNetworkStake = 32e9 * 16387
-        this.config.minValidatorStake = 32e9
+        this.config.minNetworkStake = 40000e9 * 2625
+        this.config.minValidatorStake = 40000e9
         this.config.symbols = {
           USD: "$",
           EUR: "€",
@@ -105,7 +105,7 @@
           RUB: 15277.44,
           USD: 208.96,
         }
-        this.config.totalEthSupply = 115113251499000000
+        this.config.totalEthSupply = 105000000000000000
         this.config.showCosts = false
 
         // the param key, encoding function, decoding function, include in url params bool, update element function
@@ -382,6 +382,7 @@
       fetchStats() {
         return new Promise((resolve, reject) => {
           var count = 0
+          // TODO(rgeraldes24)
           fetch("https://{{ .EtherscanApiBaseUrl }}/api?module=stats&action=ethsupply&apikey=")
             .then((res) => res.json())
             .then((data) => {
@@ -395,7 +396,7 @@
                 }
               }
               if (data && data.result && data.result > this.config.totalEthSupply) {
-                console.log("updating totalsuplly")
+                console.log("updating totalsupply")
                 this.config.totalEthSupply = data.result / 1e9
               }
               var ethSupply = this.config.totalEthSupply / 1e9
@@ -478,8 +479,8 @@
         } else {
           document.getElementById("staking-variable-yourStake-validation").style.display = "none"
         }
-        if (isNaN(p.networkStake) || p.networkStake < 32 * 16387 * 1e9) {
-          p.networkStake = 32 * 16387 * 1e9
+        if (isNaN(p.networkStake) || p.networkStake < 40000 * 2625 * 1e9) {
+          p.networkStake = 40000 * 2625 * 1e9
           document.getElementById("staking-variable-totalStake-validation").style.display = "initial"
         } else {
           document.getElementById("staking-variable-totalStake-validation").style.display = "none"
@@ -560,7 +561,7 @@
         this.result.profitDollarChartData = []
         this.result.profitEthChartData = []
         this.result.breakEvenPoint = null
-        this.result.numberOfPossibleValidators = Math.floor(this.params.stake / (32 * 1e9)).toFixed(0) || "0"
+        this.result.numberOfPossibleValidators = Math.floor(this.params.stake / (40000 * 1e9)).toFixed(0) || "0"
 
         var price = this.params.price
         var costs = this.params.initialCosts //+ this.params.stake * price / 1e9
@@ -574,7 +575,7 @@
         var priceChangePerEpoch = this.params.priceChangePerMonth / epochsPerMonth
         var onlineProbability = this.params.networkOnlineProbability
         var totalStake = this.params.networkStake
-        var valStake = 32e9
+        var valStake = 40000e9
         var baseRewardFactor = 64
         var baseRewardsPerEpoch = 4
         var baseReward = (valStake * baseRewardFactor) / (baseRewardsPerEpoch * Math.sqrt(totalStake))
@@ -883,13 +884,13 @@
       <div class="row my-3">
         <div class="col-xl-4 col-md-5 col-sm-12 py-3 variables">
           <div class="stake">
-            <h5 class="mb-0">Your Ethereum Stake <span id="yourStake-currency">ETH</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="This value represents the amount of ETH you want to use for stacking. If you are not staking on a pool it must be a multiple of 32, since validators can only join the network with a minimum of 32 ETH."></i></h5>
+            <h5 class="mb-0">Your Zond Stake <span id="yourStake-currency">ETH</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="This value represents the amount of ETH you want to use for stacking. If you are not staking on a pool it must be a multiple of 40000, since validators can only join the network with a minimum of 40000 ETH."></i></h5>
             <div class="justify-content-between d-flex p-3 pb-0 align-content-center">
-              <input id="staking-variable-yourStake" class="staking-variable form-control col-6" type="text" value="32" />
-              <h5 class="mb-0 mt-1" id="validator-count col-6"><span id="validator-count">0</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="The total number of validators that can be added to the network with your stake. A minimum of 32 ethereum is needed for a validator to participate in the network. Ignore this value when you are staking over a pool."></i></h5>
+              <input id="staking-variable-yourStake" class="staking-variable form-control col-6" type="text" value="40000" />
+              <h5 class="mb-0 mt-1" id="validator-count col-6"><span id="validator-count">0</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="The total number of validators that can be added to the network with your stake. A minimum of 40000 eth is needed for a validator to participate in the network. Ignore this value when you are staking over a pool."></i></h5>
             </div>
             <div class="p-3 pt-0">
-              <span id="staking-variable-yourStake-validation" class="input-validation">Your ethereum stake must be greater than 0</span>
+              <span id="staking-variable-yourStake-validation" class="input-validation">Your zond stake must be greater than 0</span>
             </div>
           </div>
           <div class="accordion" id="calculator-accordion">
