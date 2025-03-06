@@ -1,5 +1,7 @@
 package db
 
+// TODO(rgeraldes24)
+/*
 import (
 	"bytes"
 	"context"
@@ -11,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/sirupsen/logrus"
 	ensContracts "github.com/theQRL/zond-beaconchain-explorer/contracts/ens"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
@@ -21,11 +24,10 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/coocood/freecache"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/theQRL/go-zond/accounts/abi/bind"
+	"github.com/theQRL/go-zond/common"
 
-	eth_types "github.com/ethereum/go-ethereum/core/types"
+	eth_types "github.com/theQRL/go-zond/core/types"
 	go_ens "github.com/wealdtech/go-ens/v3"
 )
 
@@ -86,10 +88,6 @@ func (bigtable *Bigtable) TransformEnsNameRegistered(blk *types.Eth1Block, cache
 	switch bigtable.chainId {
 	case "1":
 		ensCrontractAddresses = ensContracts.ENSCrontractAddressesEthereum
-	case "17000":
-		ensCrontractAddresses = ensContracts.ENSCrontractAddressesHolesky
-	case "11155111":
-		ensCrontractAddresses = ensContracts.ENSCrontractAddressesSepolia
 	default:
 		return nil, nil, nil
 	}
@@ -683,3 +681,4 @@ func removeEnsName(client *ethclient.Client, name string) error {
 	logger.Infof("Ens name removed from db: %v", name)
 	return nil
 }
+*/

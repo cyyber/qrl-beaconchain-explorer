@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -46,11 +45,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/address/"+ensData.Domain, http.StatusMovedPermanently)
 	} else if utils.IsValidWithdrawalCredentials(search) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
-	} else if utils.IsValidEth1Tx(search) {
+	} else if utils.IsValidTxHash(search) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)
-	} else if len(search) == 96 {
+	} else if len(search) == 5184 {
 		http.Redirect(w, r, "/validator/"+search, http.StatusMovedPermanently)
-	} else if utils.IsValidEth1Address(search) {
+	} else if utils.IsValidAddress(search) {
 		http.Redirect(w, r, "/address/"+search, http.StatusMovedPermanently)
 	} else {
 		w.Header().Set("Content-Type", "text/html")
@@ -236,19 +235,19 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			LEFT JOIN validators ON validators.pubkey = eth1_deposits.publickey
 			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_eth1_addresses":
-		search = ReplaceEnsNameWithAddress(search)
-		if !utils.IsEth1Address(search) {
+		// search = ReplaceEnsNameWithAddress(search)
+		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
 	case "count_indexed_validators_by_eth1_address":
-		var ensData *types.EnsDomainResponse
-		if utils.IsValidEnsDomain(search) {
-			ensData, _ = GetEnsDomain(search)
-			if len(ensData.Address) > 0 {
-				lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
-			}
-		}
+		// var ensData *types.EnsDomainResponse
+		// if utils.IsValidEnsDomain(search) {
+		// 	ensData, _ = GetEnsDomain(search)
+		// 	if len(ensData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
+		// 	}
+		// }
 		if !searchLikeRE.MatchString(lowerStrippedSearch) {
 			break
 		}
@@ -269,13 +268,13 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
-		var ensData *types.EnsDomainResponse
-		if utils.IsValidEnsDomain(search) {
-			ensData, _ = GetEnsDomain(search)
-			if len(ensData.Address) > 0 {
-				lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
-			}
-		}
+		// var ensData *types.EnsDomainResponse
+		// if utils.IsValidEnsDomain(search) {
+		// 	ensData, _ = GetEnsDomain(search)
+		// 	if len(ensData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
+		// 	}
+		// }
 		if len(lowerStrippedSearch) == 40 {
 			// when the user gives an address (that validators might withdraw to) we transform the address into credentials
 			lowerStrippedSearch = utils.BeginningOfSetWithdrawalCredentials + lowerStrippedSearch
@@ -366,18 +365,18 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			res[i].Name = string(utils.FormatValidatorName(res[i].Name))
 		}
 		result = &res
-	case "ens":
-		if !utils.IsValidEnsDomain(search) {
-			break
-		}
-		data, ensErr := GetEnsDomain(search)
-		if ensErr != nil {
-			if ensErr != sql.ErrNoRows {
-				err = ensErr
-			}
-			break
-		}
-		result = &data
+	// case "ens":
+	// 	if !utils.IsValidEnsDomain(search) {
+	// 		break
+	// 	}
+	// 	data, ensErr := GetEnsDomain(search)
+	// 	if ensErr != nil {
+	// 		if ensErr != sql.ErrNoRows {
+	// 			err = ensErr
+	// 		}
+	// 		break
+	// 	}
+	// 	result = &data
 	default:
 		http.Error(w, "Not found", 404)
 		return
@@ -397,14 +396,15 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 
 // search can either be a valid ETH address or an ENS name mapping to one
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
-	search = strings.ToLower(strings.Replace(ReplaceEnsNameWithAddress(search), "0x", "", -1))
-	if !utils.IsValidEth1Address(search) {
-		return nil, fmt.Errorf("not a valid Eth1 address: %v", search)
+	// search = strings.ToLower(strings.Replace(ReplaceEnsNameWithAddress(search), "0x", "", -1))
+	search = strings.ToLower(search)
+	if !utils.IsValidAddress(search) {
+		return nil, fmt.Errorf("not a valid Zond address: %v", search)
 	}
 	// find validators per eth1-address (limit result by N addresses and M validators per address)
 
 	result := &[]struct {
-		Eth1Address      string        `db:"from_address_text" json:"eth1_address"`
+		ZondAddress      string        `db:"from_address_text" json:"zond_address"`
 		ValidatorIndices pq.Int64Array `db:"validatorindices" json:"validator_indices"`
 		Count            uint64        `db:"count" json:"-"`
 	}{}

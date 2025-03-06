@@ -353,11 +353,6 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 		}
 	}
 
-	err = db.ReaderDb.Select(&slotPageData.BlobSidecars, `SELECT block_slot, block_root, index, kzg_commitment, kzg_proof, blob_versioned_hash FROM blocks_blob_sidecars WHERE block_root = $1`, slotPageData.BlockRoot)
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving block blob sidecars (slot: %d, blockroot: %#x): %w", slotPageData.Slot, slotPageData.BlockRoot, err)
-	}
-
 	err = db.ReaderDb.Select(&slotPageData.ProposerSlashings, "SELECT block_slot, block_index, block_root, proposerindex, header1_slot, header1_parentroot, header1_stateroot, header1_bodyroot, header1_signature, header2_slot, header2_parentroot, header2_stateroot, header2_bodyroot, header2_signature FROM blocks_proposerslashings WHERE block_slot = $1", slotPageData.Slot)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving block proposer slashings data: %v", err)

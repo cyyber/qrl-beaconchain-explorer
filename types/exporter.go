@@ -101,51 +101,47 @@ type ValidatorQueue struct {
 type SyncAggregate struct {
 	SyncCommitteeValidators    []uint64
 	SyncCommitteeBits          []byte
-	SyncCommitteeSignature     []byte
+	SyncCommitteeSignatures    [][]byte
 	SyncAggregateParticipation float64
 }
 
 // Block is a struct to hold block data
 type Block struct {
-	Status                     uint64
-	Proposer                   uint64
-	BlockRoot                  []byte
-	Slot                       uint64
-	ParentRoot                 []byte
-	StateRoot                  []byte
-	Signature                  []byte
-	RandaoReveal               []byte
-	Graffiti                   []byte
-	Eth1Data                   *Eth1Data
-	BodyRoot                   []byte
-	ProposerSlashings          []*ProposerSlashing
-	AttesterSlashings          []*AttesterSlashing
-	Attestations               []*Attestation
-	Deposits                   []*Deposit
-	VoluntaryExits             []*VoluntaryExit
-	SyncAggregate              *SyncAggregate    // warning: sync aggregate may be nil, for phase0 blocks
-	ExecutionPayload           *ExecutionPayload // warning: payload may be nil, for phase0/altair blocks
-	SignedBLSToExecutionChange []*SignedBLSToExecutionChange
-	BlobGasUsed                uint64
-	ExcessBlobGas              uint64
-	BlobKZGCommitments         [][]byte
-	BlobKZGProofs              [][]byte
-	AttestationDuties          map[ValidatorIndex][]Slot
-	SyncDuties                 map[ValidatorIndex]bool
-	Finalized                  bool
-	EpochAssignments           *EpochAssignments
-	Validators                 []*Validator
+	Status                           uint64
+	Proposer                         uint64
+	BlockRoot                        []byte
+	Slot                             uint64
+	ParentRoot                       []byte
+	StateRoot                        []byte
+	Signature                        []byte
+	RandaoReveal                     []byte
+	Graffiti                         []byte
+	Eth1Data                         *Eth1Data
+	BodyRoot                         []byte
+	ProposerSlashings                []*ProposerSlashing
+	AttesterSlashings                []*AttesterSlashing
+	Attestations                     []*Attestation
+	Deposits                         []*Deposit
+	VoluntaryExits                   []*VoluntaryExit
+	SyncAggregate                    *SyncAggregate
+	ExecutionPayload                 *ExecutionPayload
+	SignedDilithiumToExecutionChange []*SignedDilithiumToExecutionChange
+	AttestationDuties                map[ValidatorIndex][]Slot
+	SyncDuties                       map[ValidatorIndex]bool
+	Finalized                        bool
+	EpochAssignments                 *EpochAssignments
+	Validators                       []*Validator
 }
 
-type SignedBLSToExecutionChange struct {
-	Message   BLSToExecutionChange
+type SignedDilithiumToExecutionChange struct {
+	Message   DilithiumToExecutionChange
 	Signature []byte
 }
 
-type BLSToExecutionChange struct {
-	Validatorindex uint64
-	BlsPubkey      []byte
-	Address        []byte
+type DilithiumToExecutionChange struct {
+	Validatorindex  uint64
+	DilithiumPubkey []byte
+	Address         []byte
 }
 
 type Transaction struct {
@@ -164,9 +160,6 @@ type Transaction struct {
 
 	MaxPriorityFeePerGas uint64
 	MaxFeePerGas         uint64
-
-	MaxFeePerBlobGas    uint64
-	BlobVersionedHashes [][]byte
 }
 
 type ExecutionPayload struct {
@@ -185,8 +178,6 @@ type ExecutionPayload struct {
 	BlockHash     []byte
 	Transactions  []*Transaction
 	Withdrawals   []*Withdrawals
-	BlobGasUsed   uint64
-	ExcessBlobGas uint64
 }
 
 type Withdrawals struct {
@@ -237,7 +228,7 @@ type AttesterSlashing struct {
 type IndexedAttestation struct {
 	Data             *AttestationData
 	AttestingIndices []uint64
-	Signature        []byte
+	Signatures       [][]byte
 }
 
 // Attestation is a struct to hold attestation header data
@@ -245,7 +236,7 @@ type Attestation struct {
 	AggregationBits []byte
 	Attesters       []uint64
 	Data            *AttestationData
-	Signature       []byte
+	Signatures      [][]byte
 }
 
 // AttestationData to hold attestation detail data

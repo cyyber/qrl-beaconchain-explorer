@@ -23,7 +23,7 @@ import (
 	"github.com/theQRL/qrysm/contracts/deposit"
 	"github.com/theQRL/qrysm/crypto/hash"
 	"github.com/theQRL/qrysm/encoding/bytesutil"
-	ethpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
+	zondpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
 )
 
 var eth1LookBack = uint64(100)
@@ -198,7 +198,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 		if err != nil {
 			return depositsToSave, fmt.Errorf("error unpacking eth1-deposit-log: %x: %w", depositLog.Data, err)
 		}
-		err = deposit.VerifyDepositSignature(&ethpb.Deposit_Data{
+		err = deposit.VerifyDepositSignature(&zondpb.Deposit_Data{
 			PublicKey:             pubkey,
 			WithdrawalCredentials: withdrawalCredentials,
 			Amount:                bytesutil.FromBytes8(amount),

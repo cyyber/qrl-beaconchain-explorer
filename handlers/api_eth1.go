@@ -11,16 +11,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
-	"github.com/shopspring/decimal"
 	"golang.org/x/exp/maps"
 )
 
@@ -129,7 +127,7 @@ func ApiETH1AccountProducedBlocks(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	maxValidators := getUserPremium(r).MaxValidators
+	maxValidators := 10
 	addresses, indices, err := getAddressesOrIndicesFromAddressIndexOrPubkey(vars["addressIndexOrPubkey"], maxValidators)
 	if err != nil {
 		SendBadRequestResponse(
@@ -266,7 +264,9 @@ func ApiEth1GasNowData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gasnowData.Data.PriceUSD = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
+	// TODO(rgeraldes24)
+	// gasnowData.Data.PriceUSD = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
+	gasnowData.Data.PriceUSD = 1.0
 	gasnowData.Data.Currency = ""
 
 	err := json.NewEncoder(w).Encode(gasnowData)
@@ -277,12 +277,13 @@ func ApiEth1GasNowData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
 // ApiEth1Address godoc
-// @Summary Gets information about an Ethereum address.
+// @Summary Gets information about an Zond address.
 // @Tags Execution
-// @Description Returns the ether balance and any token balances for a given Ethereum address. Amount of different ECR20 tokens is limited to 200. If you need more, use the /execution/address/{address}/erc20tokens endpoint.
+// @Description Returns the ether balance and any token balances for a given Zond address. Amount of different ECR20 tokens is limited to 200. If you need more, use the /execution/address/{address}/erc20tokens endpoint.
 // @Produce json
-// @Param address path string true "provide an Ethereum address consists of an optional 0x prefix followed by 40 hexadecimal characters". It can also be a valid ENS name.
+// @Param address path string true "provide an Zond address consists of an optional 0x prefix followed by 40 hexadecimal characters". It can also be a valid ENS name.
 // @Param token query string false "filter for a specific token by providing a ethereum token contract address"
 // @Success 200 {object} types.ApiResponse
 // @Failure 400 {object} types.ApiResponse
@@ -299,7 +300,7 @@ func ApiEth1Address(w http.ResponseWriter, r *http.Request) {
 	address = strings.ToLower(address)
 
 	if !utils.IsEth1Address(address) {
-		SendBadRequestResponse(w, r.URL.String(), "error invalid address. An Ethereum address consists of an optional 0x prefix followed by 40 hexadecimal characters.")
+		SendBadRequestResponse(w, r.URL.String(), "error invalid address. A Zond address consists of a Z prefix followed by 40 hexadecimal characters.")
 		return
 	}
 	token := q.Get("token")
@@ -339,7 +340,9 @@ func ApiEth1Address(w http.ResponseWriter, r *http.Request) {
 
 	SendOKResponse(json.NewEncoder(w), r.URL.String(), []interface{}{response})
 }
+*/
 
+/*
 // ApiEth1AddressERC20Tokens godoc
 // @Summary Returns the ERC20 token balances for a given Ethereum address.
 // @Tags Execution
@@ -408,6 +411,7 @@ func ApiEth1AddressERC20Tokens(w http.ResponseWriter, r *http.Request) {
 
 	SendOKResponse(json.NewEncoder(w), r.URL.String(), []interface{}{response})
 }
+*/
 
 func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, relaysData map[common.Hash]types.RelaysData, beaconDataMap map[uint64]types.ExecBlockProposer, sortFunc func(i, j types.ExecutionBlockApiResponse) bool) []types.ExecutionBlockApiResponse {
 	results := []types.ExecutionBlockApiResponse{}
@@ -428,10 +432,6 @@ func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, relaysData map
 		}
 
 		consensusAlgorithm := "pos"
-		if len(block.GetDifficulty()) != 0 {
-			consensusAlgorithm = "pow"
-		}
-
 		var mevBribe *big.Int = big.NewInt(0)
 		relayData, ok := relaysData[common.BytesToHash(block.Hash)]
 		var relayDataResponse *types.RelayDataApiResponse = nil
@@ -771,7 +771,7 @@ func getAddressesOrIndicesFromAddressIndexOrPubkey(search string, max int) ([][]
 }
 
 func parseFromAddressIndexOrPubkey(search string) (types.AddressIndexOrPubkey, error) {
-	search = ReplaceEnsNameWithAddress(search)
+	// search = ReplaceEnsNameWithAddress(search)
 	if strings.Contains(search, "0x") && len(search) == 42 {
 		address, err := hex.DecodeString(search[2:])
 		if err != nil {
@@ -780,12 +780,12 @@ func parseFromAddressIndexOrPubkey(search string) (types.AddressIndexOrPubkey, e
 		return types.AddressIndexOrPubkey{
 			Address: address,
 		}, nil
-	} else if strings.Contains(search, "0x") || len(search) == 96 {
+	} else if strings.Contains(search, "0x") || len(search) == 5184 {
 		if len(search) < 94 {
 			return types.AddressIndexOrPubkey{}, fmt.Errorf("invalid pubkey")
 		}
 		start := 2
-		if len(search) == 96 {
+		if len(search) == 5184 {
 			start = 0
 		}
 		pubkey, err := hex.DecodeString(search[start:])

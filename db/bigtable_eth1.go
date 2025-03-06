@@ -3,7 +3,6 @@ package db
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -31,11 +30,10 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/coocood/freecache"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	eth_types "github.com/ethereum/go-ethereum/core/types"
 	"github.com/go-redis/redis/v8"
+	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/common/math"
+	eth_types "github.com/theQRL/go-zond/core/types"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
@@ -810,24 +808,25 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 	txReward := big.NewInt(0)
 
 	for _, t := range block.GetTransactions() {
-		price := new(big.Int).SetBytes(t.GasPrice)
+		// price := new(big.Int).SetBytes(t.GasPrice)
 
-		if minGasPrice == nil {
-			minGasPrice = price
-		}
-		if maxGasPrice == nil {
-			maxGasPrice = price
-		}
+		// if minGasPrice == nil {
+		// 	minGasPrice = price
+		// }
+		// if maxGasPrice == nil {
+		// 	maxGasPrice = price
+		// }
 
-		if price.Cmp(maxGasPrice) > 0 {
-			maxGasPrice = price
-		}
+		// if price.Cmp(maxGasPrice) > 0 {
+		// 	maxGasPrice = price
+		// }
 
-		if price.Cmp(minGasPrice) < 0 {
-			minGasPrice = price
-		}
+		// if price.Cmp(minGasPrice) < 0 {
+		// 	minGasPrice = price
+		// }
 
-		txFee := new(big.Int).Mul(new(big.Int).SetBytes(t.GasPrice), big.NewInt(int64(t.GasUsed)))
+		// txFee := new(big.Int).Mul(new(big.Int).SetBytes(t.GasPrice), big.NewInt(int64(t.GasUsed)))
+		txFee := new(big.Int)
 
 		if len(block.BaseFee) > 0 {
 			effectiveGasPrice := math.BigMin(new(big.Int).Add(new(big.Int).SetBytes(t.MaxPriorityFeePerGas), new(big.Int).SetBytes(block.BaseFee)), new(big.Int).SetBytes(t.MaxFeePerGas))
@@ -850,11 +849,6 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 			}
 			idx.InternalTransactionCount++
 		}
-
-		if t.GetType() == 3 {
-			idx.BlobTransactionCount++
-		}
-
 	}
 
 	idx.TxReward = txReward.Bytes()
@@ -930,9 +924,7 @@ func CalculateTxFeeFromTransaction(tx *types.Eth1Transaction, blockBaseFee *big.
 	// calculate tx fee depending on tx type
 	txFee := new(big.Int).SetUint64(tx.GasUsed)
 	switch tx.Type {
-	case 0, 1:
-		txFee.Mul(txFee, new(big.Int).SetBytes(tx.GasPrice))
-	case 2, 3:
+	case 2:
 		// multiply gasused with min(baseFee + maxpriorityfee, maxfee)
 		if normalGasPrice, maxGasPrice := new(big.Int).Add(blockBaseFee, new(big.Int).SetBytes(tx.MaxPriorityFeePerGas)), new(big.Int).SetBytes(tx.MaxFeePerGas); normalGasPrice.Cmp(maxGasPrice) <= 0 {
 			txFee.Mul(txFee, normalGasPrice)
@@ -974,20 +966,17 @@ func (bigtable *Bigtable) TransformTx(blk *types.Eth1Block, cache *freecache.Cac
 		}
 
 		key := fmt.Sprintf("%s:TX:%x", bigtable.chainId, tx.GetHash())
-		fee := new(big.Int).Mul(new(big.Int).SetBytes(tx.GetGasPrice()), big.NewInt(int64(tx.GetGasUsed()))).Bytes()
-		blobFee := new(big.Int).Mul(new(big.Int).SetBytes(tx.GetBlobGasPrice()), big.NewInt(int64(tx.GetBlobGasUsed()))).Bytes()
+		// fee := new(big.Int).Mul(new(big.Int).SetBytes(tx.GetGasPrice()), big.NewInt(int64(tx.GetGasUsed()))).Bytes()
 		indexedTx := &types.Eth1TransactionIndexed{
-			Hash:               tx.GetHash(),
-			BlockNumber:        blk.GetNumber(),
-			Time:               blk.GetTime(),
-			MethodId:           method,
-			From:               tx.GetFrom(),
-			To:                 to,
-			Value:              tx.GetValue(),
-			TxFee:              fee,
-			GasPrice:           tx.GetGasPrice(),
-			BlobTxFee:          blobFee,
-			BlobGasPrice:       tx.GetBlobGasPrice(),
+			Hash:        tx.GetHash(),
+			BlockNumber: blk.GetNumber(),
+			Time:        blk.GetTime(),
+			MethodId:    method,
+			From:        tx.GetFrom(),
+			To:          to,
+			Value:       tx.GetValue(),
+			// TxFee:              fee,
+			// GasPrice:           tx.GetGasPrice(),
 			IsContractCreation: isContract,
 			ErrorMsg:           tx.GetErrorMsg(),
 		}
@@ -1029,93 +1018,6 @@ func (bigtable *Bigtable) TransformTx(blk *types.Eth1Block, cache *freecache.Cac
 		if indexedTx.IsContractCreation {
 			indexes = append(indexes, fmt.Sprintf("%s:I:TX:%x:CONTRACT:%s:%s", bigtable.chainId, tx.GetFrom(), reversePaddedBigtableTimestamp(blk.GetTime()), iReverse))
 			indexes = append(indexes, fmt.Sprintf("%s:I:TX:%x:CONTRACT:%s:%s", bigtable.chainId, to, reversePaddedBigtableTimestamp(blk.GetTime()), iReverse))
-		}
-
-		for _, idx := range indexes {
-			mut := gcp_bigtable.NewMutation()
-			mut.Set(DEFAULT_FAMILY, key, gcp_bigtable.Timestamp(0), nil)
-
-			bulkData.Keys = append(bulkData.Keys, idx)
-			bulkData.Muts = append(bulkData.Muts, mut)
-		}
-
-	}
-
-	return bulkData, bulkMetadataUpdates, nil
-}
-
-// TransformBlobTx extracts transactions from bigtable more specifically from the table blocks.
-func (bigtable *Bigtable) TransformBlobTx(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
-	startTime := time.Now()
-	defer func() {
-		metrics.TaskDuration.WithLabelValues("bt_transform_blob_tx").Observe(time.Since(startTime).Seconds())
-	}()
-
-	bulkData = &types.BulkMutations{}
-	bulkMetadataUpdates = &types.BulkMutations{}
-
-	for i, tx := range blk.Transactions {
-		if i >= TX_PER_BLOCK_LIMIT {
-			return nil, nil, fmt.Errorf("unexpected number of transactions in block expected at most %d but got: %v, tx: %x", TX_PER_BLOCK_LIMIT-1, i, tx.GetHash())
-		}
-		if tx.Type != 3 {
-			// skip non blob-txs
-			continue
-		}
-		iReverse := reversePaddedIndex(i, TX_PER_BLOCK_LIMIT)
-		// logger.Infof("address to: %x address: contract: %x, len(to): %v, len(contract): %v, contranct zero: %v", tx.GetTo(), tx.GetContractAddress(), len(tx.GetTo()), len(tx.GetContractAddress()), bytes.Equal(tx.GetContractAddress(), ZERO_ADDRESS))
-		to := tx.GetTo()
-
-		// logger.Infof("sending to: %x", to)
-
-		key := fmt.Sprintf("%s:BTX:%x", bigtable.chainId, tx.GetHash())
-		fee := new(big.Int).Mul(new(big.Int).SetBytes(tx.GetGasPrice()), big.NewInt(int64(tx.GetGasUsed()))).Bytes()
-		blobFee := new(big.Int).Mul(new(big.Int).SetBytes(tx.GetBlobGasPrice()), big.NewInt(int64(tx.GetBlobGasUsed()))).Bytes()
-		indexedTx := &types.Eth1BlobTransactionIndexed{
-			Hash:                tx.GetHash(),
-			BlockNumber:         blk.GetNumber(),
-			Time:                blk.GetTime(),
-			From:                tx.GetFrom(),
-			To:                  to,
-			Value:               tx.GetValue(),
-			TxFee:               fee,
-			GasPrice:            tx.GetGasPrice(),
-			BlobTxFee:           blobFee,
-			BlobGasPrice:        tx.GetBlobGasPrice(),
-			ErrorMsg:            tx.GetErrorMsg(),
-			BlobVersionedHashes: tx.GetBlobVersionedHashes(),
-		}
-		// Mark Sender and Recipient for balance update
-		bigtable.markBalanceUpdate(indexedTx.From, []byte{0x0}, bulkMetadataUpdates, cache)
-		bigtable.markBalanceUpdate(indexedTx.To, []byte{0x0}, bulkMetadataUpdates, cache)
-
-		if len(indexedTx.Hash) != 32 {
-			logger.Fatalf("retrieved hash of length %v for a tx in block %v", len(indexedTx.Hash), blk.GetNumber())
-		}
-
-		b, err := proto.Marshal(indexedTx)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		mut := gcp_bigtable.NewMutation()
-		mut.Set(DEFAULT_FAMILY, DATA_COLUMN, gcp_bigtable.Timestamp(0), b)
-
-		bulkData.Keys = append(bulkData.Keys, key)
-		bulkData.Muts = append(bulkData.Muts, mut)
-
-		indexes := []string{
-			fmt.Sprintf("%s:I:BTX:%x:TO:%x:%s:%s", bigtable.chainId, tx.GetFrom(), to, reversePaddedBigtableTimestamp(blk.GetTime()), iReverse),
-			fmt.Sprintf("%s:I:BTX:%x:TIME:%s:%s", bigtable.chainId, tx.GetFrom(), reversePaddedBigtableTimestamp(blk.GetTime()), iReverse),
-			fmt.Sprintf("%s:I:BTX:%x:BLOCK:%s:%s", bigtable.chainId, tx.GetFrom(), reversedPaddedBlockNumber(blk.GetNumber()), iReverse),
-			fmt.Sprintf("%s:I:BTX:%x:FROM:%x:%s:%s", bigtable.chainId, to, tx.GetFrom(), reversePaddedBigtableTimestamp(blk.GetTime()), iReverse),
-			fmt.Sprintf("%s:I:BTX:%x:TIME:%s:%s", bigtable.chainId, to, reversePaddedBigtableTimestamp(blk.GetTime()), iReverse),
-			fmt.Sprintf("%s:I:BTX:%x:BLOCK:%s:%s", bigtable.chainId, to, reversedPaddedBlockNumber(blk.GetNumber()), iReverse),
-		}
-
-		if indexedTx.ErrorMsg != "" {
-			indexes = append(indexes, fmt.Sprintf("%s:I:BTX:%x:ERROR:%s:%s", bigtable.chainId, tx.GetFrom(), reversePaddedBigtableTimestamp(blk.GetTime()), iReverse))
-			indexes = append(indexes, fmt.Sprintf("%s:I:BTX:%x:ERROR:%s:%s", bigtable.chainId, to, reversePaddedBigtableTimestamp(blk.GetTime()), iReverse))
 		}
 
 		for _, idx := range indexes {
@@ -1829,94 +1731,9 @@ func (bigtable *Bigtable) TransformERC1155(blk *types.Eth1Block, cache *freecach
 	return bulkData, bulkMetadataUpdates, nil
 }
 
-// TransformUncle accepts an eth1 block and creates bigtable mutations.
-// It transforms the uncles contained within a block, extracts the necessary information to create a view and writes that information to bigtable
-// It writes uncles to table data:
-// Row:    <chainID>:U:<reversePaddedNumber>
-// Family: f
-// Column: data
-// Cell:   Proto<Eth1UncleIndexed>
-// Example scan: "1:U:" returns mainnet uncles mined in desc order
-// Example scan: "1:U:984886725" returns mainnet uncles mined after block 15113275 (1000000000 - 984886725)
-//
-// It indexes uncles by:
-// Row:    <chainID>:I:U:<Miner>:TIME:<reversePaddedBigtableTimestamp>
-// Family: f
-// Column: <chainID>:U:<reversePaddedNumber>
-// Cell:   nil
-// Example lookup: "1:I:U:ea674fdde714fd979de3edf0f56aa9716b898ec8:TIME:" returns mainnet uncles mined by ethermine in desc order
-func (bigtable *Bigtable) TransformUncle(block *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
-	startTime := time.Now()
-	defer func() {
-		metrics.TaskDuration.WithLabelValues("bt_transform_uncle").Observe(time.Since(startTime).Seconds())
-	}()
-
-	bulkData = &types.BulkMutations{}
-	bulkMetadataUpdates = &types.BulkMutations{}
-
-	for i, uncle := range block.Uncles {
-		if i > 99 {
-			return nil, nil, fmt.Errorf("unexpected number of uncles in block expected at most 99 but got: %v", i)
-		}
-		iReversed := reversePaddedIndex(i, 10)
-		r := new(big.Int)
-
-		if len(block.Difficulty) > 0 {
-			r.Add(big.NewInt(int64(uncle.GetNumber())), big.NewInt(8))
-			r.Sub(r, big.NewInt(int64(block.GetNumber())))
-			r.Mul(r, utils.Eth1BlockReward(block.GetNumber(), block.Difficulty))
-			r.Div(r, big.NewInt(8))
-
-			r.Div(utils.Eth1BlockReward(block.GetNumber(), block.Difficulty), big.NewInt(32))
-		}
-
-		uncleIndexed := types.Eth1UncleIndexed{
-			Number:      uncle.GetNumber(),
-			BlockNumber: block.GetNumber(),
-			GasLimit:    uncle.GetGasLimit(),
-			GasUsed:     uncle.GetGasUsed(),
-			BaseFee:     uncle.GetBaseFee(),
-			Difficulty:  uncle.GetDifficulty(),
-			Time:        uncle.GetTime(),
-			Reward:      r.Bytes(),
-		}
-
-		bigtable.markBalanceUpdate(uncle.Coinbase, []byte{0x0}, bulkMetadataUpdates, cache)
-
-		// store uncles in with the key <chainid>:U:<reversePaddedBlockNumber>:<reversePaddedUncleIndex>
-		key := fmt.Sprintf("%s:U:%s:%s", bigtable.chainId, reversedPaddedBlockNumber(block.GetNumber()), iReversed)
-		mut := gcp_bigtable.NewMutation()
-
-		b, err := proto.Marshal(&uncleIndexed)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error marshalling proto object err: %w", err)
-		}
-
-		mut.Set(DEFAULT_FAMILY, DATA_COLUMN, gcp_bigtable.Timestamp(0), b)
-
-		bulkData.Keys = append(bulkData.Keys, key)
-		bulkData.Muts = append(bulkData.Muts, mut)
-
-		indexes := []string{
-			// Index uncle by the miners address
-			fmt.Sprintf("%s:I:U:%x:TIME:%s:%s", bigtable.chainId, uncle.GetCoinbase(), reversePaddedBigtableTimestamp(block.Time), iReversed),
-		}
-
-		for _, idx := range indexes {
-			mut := gcp_bigtable.NewMutation()
-			mut.Set(DEFAULT_FAMILY, key, gcp_bigtable.Timestamp(0), nil)
-
-			bulkData.Keys = append(bulkData.Keys, idx)
-			bulkData.Muts = append(bulkData.Muts, mut)
-		}
-	}
-
-	return bulkData, bulkMetadataUpdates, nil
-}
-
 // TransformWithdrawals accepts an eth1 block and creates bigtable mutations.
 // It transforms the withdrawals contained within a block, extracts the necessary information to create a view and writes that information to bigtable
-// It writes uncles to table data:
+// It writes withdrawals to table data:
 // Row:    <chainID>:W:<reversePaddedNumber>:<reversedWithdrawalIndex>
 // Family: f
 // Column: data
@@ -2196,15 +2013,15 @@ func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, 
 	g.SetLimit(25)
 	mux := sync.Mutex{}
 
-	if names != nil {
-		g.Go(func() error {
-			err := bigtable.GetAddressNames(*names)
-			if err != nil {
-				return err
-			}
-			return nil
-		})
-	}
+	// if names != nil {
+	// 	g.Go(func() error {
+	// 		err := bigtable.GetAddressNames(*names)
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 		return nil
+	// 	})
+	// }
 
 	if inputMetadata != nil {
 		for address := range *inputMetadata {
@@ -2427,188 +2244,14 @@ func (bigtable *Bigtable) GetAddressBlocksMinedTableData(address string, pageTok
 
 	tableData := make([][]interface{}, len(blocks))
 	for i, b := range blocks {
-		reward := new(big.Int).Add(utils.Eth1BlockReward(b.Number, b.Difficulty), new(big.Int).SetBytes(b.TxReward))
+		// TODO(rgeraldes24)
+		reward := new(big.Int).SetBytes(b.TxReward)
 
 		tableData[i] = []interface{}{
 			utils.FormatBlockNumber(b.Number),
 			utils.FormatTimestamp(b.Time.AsTime().Unix()),
 			utils.FormatBlockUsage(b.GasUsed, b.GasLimit),
 			utils.FormatAmount(reward, utils.Config.Frontend.ElCurrency, 6),
-		}
-	}
-
-	data := &types.DataTableResponse{
-		Data:        tableData,
-		PagingToken: lastKey,
-	}
-
-	return data, nil
-}
-
-func (bigtable *Bigtable) GetEth1UnclesForAddress(prefix string, limit int64) ([]*types.Eth1UncleIndexed, string, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"prefix": prefix,
-			"limit":  limit,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
-	defer cancel()
-
-	// add \x00 to the row range such that we skip the previous value
-	rowRange := gcp_bigtable.NewRange(prefix+"\x00", prefixSuccessor(prefix, 4))
-	data := make([]*types.Eth1UncleIndexed, 0, limit)
-	keys := make([]string, 0, limit)
-	indexes := make([]string, 0, limit)
-	keysMap := make(map[string]*types.Eth1UncleIndexed, limit)
-
-	err := bigtable.tableData.ReadRows(ctx, rowRange, func(row gcp_bigtable.Row) bool {
-		keys = append(keys, strings.TrimPrefix(row[DEFAULT_FAMILY][0].Column, "f:"))
-		indexes = append(indexes, row.Key())
-		return true
-	}, gcp_bigtable.LimitRows(limit))
-	if err != nil {
-		return nil, "", err
-	}
-
-	if len(keys) == 0 {
-		return data, "", nil
-	}
-
-	err = bigtable.tableData.ReadRows(ctx, gcp_bigtable.RowList(keys), func(row gcp_bigtable.Row) bool {
-		b := &types.Eth1UncleIndexed{}
-		err := proto.Unmarshal(row[DEFAULT_FAMILY][0].Value, b)
-
-		if err != nil {
-			logrus.Fatalf("error parsing Eth1UncleIndexed data: %v", err)
-		}
-		keysMap[row.Key()] = b
-
-		return true
-	})
-	if err != nil {
-		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1UnclesForAddress")
-		return nil, "", err
-	}
-
-	for _, key := range keys {
-		if d := keysMap[key]; d != nil {
-			data = append(data, d)
-		}
-	}
-
-	return data, indexes[len(indexes)-1], nil
-}
-
-func (bigtable *Bigtable) GetEth1BtxForAddress(prefix string, limit int64) ([]*types.Eth1BlobTransactionIndexed, string, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"prefix": prefix,
-			"limit":  limit,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
-	defer cancel()
-
-	// add \x00 to the row range such that we skip the previous value
-	rowRange := gcp_bigtable.NewRange(prefix+"\x00", prefixSuccessor(prefix, 5))
-	data := make([]*types.Eth1BlobTransactionIndexed, 0, limit)
-	keys := make([]string, 0, limit)
-	indexes := make([]string, 0, limit)
-	keysMap := make(map[string]*types.Eth1BlobTransactionIndexed, limit)
-
-	err := bigtable.tableData.ReadRows(ctx, rowRange, func(row gcp_bigtable.Row) bool {
-		keys = append(keys, strings.TrimPrefix(row[DEFAULT_FAMILY][0].Column, "f:"))
-		indexes = append(indexes, row.Key())
-		return true
-	}, gcp_bigtable.LimitRows(limit))
-	if err != nil {
-		return nil, "", err
-	}
-	if len(keys) == 0 {
-		return data, "", nil
-	}
-
-	indexes, keys = bigtable.rearrangeReversePaddedIndexZero(ctx, indexes, keys)
-
-	err = bigtable.tableData.ReadRows(ctx, gcp_bigtable.RowList(keys), func(row gcp_bigtable.Row) bool {
-		b := &types.Eth1BlobTransactionIndexed{}
-		err := proto.Unmarshal(row[DEFAULT_FAMILY][0].Value, b)
-		if err != nil {
-			logrus.Fatalf("error parsing Eth1BlobTransactionIndexed data: %v", err)
-		}
-		keysMap[row.Key()] = b
-		return true
-	})
-	if err != nil {
-		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1BtxForAddress")
-		return nil, "", err
-	}
-
-	for _, key := range keys {
-		if d := keysMap[key]; d != nil {
-			data = append(data, d)
-		}
-	}
-
-	return data, skipBlockIfLastTxIndex(indexes[len(indexes)-1]), nil
-}
-
-func (bigtable *Bigtable) GetAddressBlobTableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"address":   address,
-			"pageToken": pageToken,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	// defaults to most recent
-	defaultPageToken := fmt.Sprintf("%s:I:BTX:%x:%s:", bigtable.chainId, address, FILTER_TIME)
-	if pageToken == "" {
-		pageToken = defaultPageToken
-	} else if !strings.HasPrefix(pageToken, defaultPageToken) {
-		return nil, fmt.Errorf("invalid pageToken for function GetAddressBlobTableData: %s", pageToken)
-	}
-
-	transactions, lastKey, err := bigtable.GetEth1BtxForAddress(pageToken, DefaultInfScrollRows)
-	if err != nil {
-		return nil, err
-	}
-
-	names := make(map[string]string)
-	for _, t := range transactions {
-		names[string(t.From)] = ""
-		names[string(t.To)] = ""
-	}
-	names, _, err = BigtableClient.GetAddressesNamesArMetadata(&names, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	tableData := make([][]interface{}, len(transactions))
-	for i, t := range transactions {
-
-		fromName := names[string(t.From)]
-		toName := names[string(t.To)]
-
-		tableData[i] = []interface{}{
-			utils.FormatTransactionHash(t.Hash, t.ErrorMsg == ""),
-			utils.FormatBlockNumber(t.BlockNumber),
-			utils.FormatTimestamp(t.Time.AsTime().Unix()),
-			utils.FormatAddressWithLimitsInAddressPageTable(address, t.From, fromName, false, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
-			utils.FormatInOutSelf(address, t.From, t.To),
-			utils.FormatAddressWithLimitsInAddressPageTable(address, t.To, toName, false, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
-			utils.FormatBytesAmount(t.BlobGasPrice, "GWei", 6),
-			utils.FormatBytesAmount(t.BlobTxFee, "ETH", 6),
-			len(t.BlobVersionedHashes),
 		}
 	}
 
@@ -2793,10 +2436,10 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 		names[string(to)] = ""
 	}
 
-	err := bigtable.GetAddressNames(names)
-	if err != nil {
-		return nil, err
-	}
+	// err := bigtable.GetAddressNames(names)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	contractInteractionTypes, err := BigtableClient.GetAddressContractInteractionsAtParityTraces(parityTrace)
 	if err != nil {
@@ -2902,13 +2545,13 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	}
 	g := new(errgroup.Group)
 	g.SetLimit(25)
-	g.Go(func() error {
-		err := bigtable.GetAddressNames(names)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+	// g.Go(func() error {
+	// 	err := bigtable.GetAddressNames(names)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	return nil
+	// })
 
 	for address := range tokens {
 		address := address
@@ -3608,7 +3251,7 @@ func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC
 	if row == nil { // Retrieve token metadata from Ethplorer and store it for later usage
 		logger.Infof("retrieving metadata for token %x via rpc", address)
 
-		metadata, err := rpc.CurrentGethClient.GetERC20TokenMetadata(address)
+		metadata, err := rpc.CurrentGzondClient.GetERC20TokenMetadata(address)
 		if err != nil {
 			logger.Warnf("error retrieving metadata for token %x: %v", address, err)
 			metadata = &types.ERC20Metadata{
@@ -3706,6 +3349,7 @@ func (bigtable *Bigtable) SaveERC20Metadata(address []byte, metadata *types.ERC2
 	return bigtable.tableMetadata.Apply(ctx, rowKey, mut)
 }
 
+/*
 func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -3749,7 +3393,9 @@ func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 	err = cache.TieredCache.SetString(cacheKey, wanted, time.Hour)
 	return wanted, err
 }
+*/
 
+/*
 func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -3790,6 +3436,7 @@ func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
 
 	return err
 }
+*/
 
 type isContractInfo struct {
 	update *types.IsContractUpdate
@@ -4022,6 +3669,7 @@ func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 	return bigtable.tableMetadata.Apply(ctx, fmt.Sprintf("%s:%x", bigtable.chainId, address), mut)
 }
 
+/*
 func (bigtable *Bigtable) GetContractMetadata(address []byte) (*types.ContractMetadata, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -4109,6 +3757,7 @@ func (bigtable *Bigtable) GetContractMetadata(address []byte) (*types.ContractMe
 	err = cache.TieredCache.Set(cacheKey, ret, utils.Day)
 	return ret, err
 }
+*/
 
 func (bigtable *Bigtable) SaveContractMetadata(address []byte, metadata *types.ContractMetadata) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))

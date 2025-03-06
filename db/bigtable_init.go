@@ -33,9 +33,6 @@ func InitBigtableSchema() error {
 		CONTRACT_METADATA_FAMILY: gcp_bigtable.MaxAgeGCPolicy(utils.Day),
 		DEFAULT_FAMILY:           nil,
 	}
-	tables["machine_metrics"] = map[string]gcp_bigtable.GCPolicy{
-		MACHINE_METRICS_COLUMN_FAMILY: gcp_bigtable.MaxAgeGCPolicy(utils.Day * 31),
-	}
 	tables["metadata"] = map[string]gcp_bigtable.GCPolicy{
 		ACCOUNT_METADATA_FAMILY:  nil,
 		CONTRACT_METADATA_FAMILY: nil,

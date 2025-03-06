@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/theQRL/go-zond/params"
 )
 
 // Config is a struct to hold the configuration data
@@ -37,30 +37,21 @@ type Config struct {
 		EmulatorHost        string `yaml:"emulatorHost" envconfig:"BIGTABLE_EMULATOR_HOST"`
 		V2SchemaCutOffEpoch uint64 `yaml:"v2SchemaCutOffEpoch" envconfig:"BIGTABLE_V2_SCHEMA_CUTT_OFF_EPOCH"`
 	} `yaml:"bigtable"`
-	BlobIndexer struct {
-		S3 struct {
-			Endpoint        string `yaml:"endpoint" envconfig:"BLOB_INDEXER_S3_ENDPOINT"`
-			Bucket          string `yaml:"bucket" envconfig:"BLOB_INDEXER_S3_BUCKET"`
-			AccessKeyId     string `yaml:"accessKeyId" envconfig:"BLOB_INDEXER_S3_ACCESS_KEY_ID"`
-			AccessKeySecret string `yaml:"accessKeySecret" envconfig:"BLOB_INDEXER_S3_ACCESS_KEY_SECRET"`
-		} `yaml:"s3"`
-	} `yaml:"blobIndexer"`
 	Chain struct {
-		Name                       string `yaml:"name" envconfig:"CHAIN_NAME"`
-		Id                         uint64 `yaml:"id" envconfig:"CHAIN_ID"`
-		GenesisTimestamp           uint64 `yaml:"genesisTimestamp" envconfig:"CHAIN_GENESIS_TIMESTAMP"`
-		GenesisValidatorsRoot      string `yaml:"genesisValidatorsRoot" envconfig:"CHAIN_GENESIS_VALIDATORS_ROOT"`
-		DomainBLSToExecutionChange string `yaml:"domainBLSToExecutionChange" envconfig:"CHAIN_DOMAIN_BLS_TO_EXECUTION_CHANGE"`
-		DomainVoluntaryExit        string `yaml:"domainVoluntaryExit" envconfig:"CHAIN_DOMAIN_VOLUNTARY_EXIT"`
-		ClConfigPath               string `yaml:"clConfigPath" envconfig:"CHAIN_CL_CONFIG_PATH"`
-		ElConfigPath               string `yaml:"elConfigPath" envconfig:"CHAIN_EL_CONFIG_PATH"`
-		ClConfig                   ClChainConfig
-		ElConfig                   *params.ChainConfig
+		Name                             string `yaml:"name" envconfig:"CHAIN_NAME"`
+		Id                               uint64 `yaml:"id" envconfig:"CHAIN_ID"`
+		GenesisTimestamp                 uint64 `yaml:"genesisTimestamp" envconfig:"CHAIN_GENESIS_TIMESTAMP"`
+		GenesisValidatorsRoot            string `yaml:"genesisValidatorsRoot" envconfig:"CHAIN_GENESIS_VALIDATORS_ROOT"`
+		DomainDilithiumToExecutionChange string `yaml:"domainDilithiumToExecutionChange" envconfig:"CHAIN_DOMAIN_DILITHIUM_TO_EXECUTION_CHANGE"`
+		DomainVoluntaryExit              string `yaml:"domainVoluntaryExit" envconfig:"CHAIN_DOMAIN_VOLUNTARY_EXIT"`
+		ClConfigPath                     string `yaml:"clConfigPath" envconfig:"CHAIN_CL_CONFIG_PATH"`
+		ElConfigPath                     string `yaml:"elConfigPath" envconfig:"CHAIN_EL_CONFIG_PATH"`
+		ClConfig                         ClChainConfig
+		ElConfig                         *params.ChainConfig
 	} `yaml:"chain"`
-	Eth1ErigonEndpoint        string `yaml:"eth1ErigonEndpoint" envconfig:"ETH1_ERIGON_ENDPOINT"`
-	Eth1GethEndpoint          string `yaml:"eth1GethEndpoint" envconfig:"ETH1_GETH_ENDPOINT"`
-	EtherscanAPIKey           string `yaml:"etherscanApiKey" envconfig:"ETHERSCAN_API_KEY"`
-	EtherscanAPIBaseURL       string `yaml:"etherscanApiBaseUrl" envconfig:"ETHERSCAN_API_BASEURL"`
+	Eth1GzondEndpoint string `yaml:"eth1GzondEndpoint" envconfig:"ETH1_GZOND_ENDPOINT"`
+	// EtherscanAPIKey           string `yaml:"etherscanApiKey" envconfig:"ETHERSCAN_API_KEY"`
+	// EtherscanAPIBaseURL       string `yaml:"etherscanApiBaseUrl" envconfig:"ETHERSCAN_API_BASEURL"`
 	RedisCacheEndpoint        string `yaml:"redisCacheEndpoint" envconfig:"REDIS_CACHE_ENDPOINT"`
 	RedisSessionStoreEndpoint string `yaml:"redisSessionStoreEndpoint" envconfig:"REDIS_SESSION_STORE_ENDPOINT"`
 	TieredCacheProvider       string `yaml:"tieredCacheProvider" envconfig:"CACHE_PROVIDER"`
@@ -198,7 +189,6 @@ type ConfigJsonResponse struct {
 	Data struct {
 		ConfigName                           string `json:"CONFIG_NAME"`
 		PresetBase                           string `json:"PRESET_BASE"`
-		TerminalTotalDifficulty              string `json:"TERMINAL_TOTAL_DIFFICULTY"`
 		TerminalBlockHash                    string `json:"TERMINAL_BLOCK_HASH"`
 		TerminalBlockHashActivationEpoch     string `json:"TERMINAL_BLOCK_HASH_ACTIVATION_EPOCH"`
 		SafeSlotsToImportOptimistically      string `json:"SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY"`
@@ -262,13 +252,13 @@ type ConfigJsonResponse struct {
 		MaxTransactionsPerPayload            string `json:"MAX_TRANSACTIONS_PER_PAYLOAD"`
 		BytesPerLogsBloom                    string `json:"BYTES_PER_LOGS_BLOOM"`
 		MaxExtraDataBytes                    string `json:"MAX_EXTRA_DATA_BYTES"`
-		MaxBlsToExecutionChanges             string `json:"MAX_BLS_TO_EXECUTION_CHANGES"`
+		MaxDilithiumToExecutionChanges       string `json:"MAX_DILITHIUM_TO_EXECUTION_CHANGES"`
 		MaxWithdrawalsPerPayload             string `json:"MAX_WITHDRAWALS_PER_PAYLOAD"`
 		MaxValidatorsPerWithdrawalsSweep     string `json:"MAX_VALIDATORS_PER_WITHDRAWALS_SWEEP"`
 		DomainAggregateAndProof              string `json:"DOMAIN_AGGREGATE_AND_PROOF"`
 		TargetAggregatorsPerSyncSubcommittee string `json:"TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE"`
 		SyncCommitteeSubnetCount             string `json:"SYNC_COMMITTEE_SUBNET_COUNT"`
-		BlsWithdrawalPrefix                  string `json:"BLS_WITHDRAWAL_PREFIX"`
+		DilithiumWithdrawalPrefix            string `json:"DILITHIUM_WITHDRAWAL_PREFIX"`
 		DomainRandao                         string `json:"DOMAIN_RANDAO"`
 		DomainVoluntaryExit                  string `json:"DOMAIN_VOLUNTARY_EXIT"`
 		DomainSyncCommitteeSelectionProof    string `json:"DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF"`

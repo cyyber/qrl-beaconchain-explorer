@@ -15,20 +15,18 @@ import (
 
 	"github.com/theQRL/zond-beaconchain-explorer/cache"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	ethclients "github.com/theQRL/zond-beaconchain-explorer/ethClients"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/ratelimit"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
 	"github.com/shopspring/decimal"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/common"
 
-	geth_types "github.com/ethereum/go-ethereum/core/types"
-	geth_rpc "github.com/ethereum/go-ethereum/rpc"
+	gzond_types "github.com/theQRL/go-zond/core/types"
+	gzond_rpc "github.com/theQRL/go-zond/rpc"
 )
 
 var logger = logrus.New().WithField("module", "services")
@@ -58,9 +56,6 @@ func Init() {
 	go indexPageDataUpdater(ready)
 
 	ready.Add(1)
-	go poolsUpdater(ready)
-
-	ready.Add(1)
 	go relaysUpdater(ready)
 
 	ready.Add(1)
@@ -78,8 +73,8 @@ func Init() {
 	ready.Add(1)
 	go gasNowUpdater(ready)
 
-	ready.Add(1)
-	go startMonitoringService(ready)
+	// ready.Add(1)
+	// go startMonitoringService(ready)
 
 	ready.Add(1)
 	go latestExportedStatisticDayUpdater(ready)
@@ -89,22 +84,6 @@ func Init() {
 	}
 
 	ready.Wait()
-}
-
-func InitNotificationSender() {
-	logger.Infof("starting notifications-sender")
-	go notificationSender()
-}
-
-func InitNotificationCollector(pubkeyCachePath string) {
-	err := initPubkeyCache(pubkeyCachePath)
-	if err != nil {
-		logger.Fatalf("error initializing pubkey cache path for notifications: %v", err)
-	}
-
-	go ethclients.Init()
-
-	go notificationCollector()
 }
 
 func getRelaysPageData() (*types.RelaysResp, error) {
@@ -432,32 +411,6 @@ func slotUpdater(wg *sync.WaitGroup) {
 	}
 }
 
-func poolsUpdater(wg *sync.WaitGroup) {
-	firstRun := true
-
-	for {
-		data, err := getPoolsPageData()
-		if err != nil {
-			logger.Errorf("error retrieving pools page data: %v", err)
-			time.Sleep(time.Second * 10)
-			continue
-		}
-
-		cacheKey := fmt.Sprintf("%d:frontend:poolsData", utils.Config.Chain.ClConfig.DepositChainID)
-		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
-		if err != nil {
-			logger.Errorf("error caching poolsData: %v", err)
-		}
-		if firstRun {
-			logger.Info("initialized pools page updater")
-			wg.Done()
-			firstRun = false
-		}
-		ReportStatus("poolsUpdater", "Running", nil)
-		time.Sleep(time.Minute * 10)
-	}
-}
-
 func latestProposedSlotUpdater(wg *sync.WaitGroup) {
 	firstRun := true
 
@@ -497,7 +450,7 @@ func indexPageDataUpdater(wg *sync.WaitGroup) {
 			time.Sleep(time.Second * 10)
 			continue
 		}
-		logger.WithFields(logrus.Fields{"genesis": data.Genesis, "currentEpoch": data.CurrentEpoch, "networkName": data.NetworkName, "networkStartTs": data.NetworkStartTs}).Infof("index page data update completed in %v", time.Since(start))
+		logger.WithFields(logrus.Fields{"currentEpoch": data.CurrentEpoch, "networkName": data.NetworkName, "networkStartTs": data.NetworkStartTs}).Infof("index page data update completed in %v", time.Since(start))
 
 		cacheKey := fmt.Sprintf("%d:frontend:indexPageData", utils.Config.Chain.ClConfig.DepositChainID)
 		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
@@ -579,7 +532,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				FROM eth1_deposits
 				WHERE valid_signature = true
 				GROUP BY publickey
-				HAVING SUM(amount) >= 32e9
+				HAVING SUM(amount) >= 40000e9
 			) a`)
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving eth1 deposits: %v", err)
@@ -658,23 +611,6 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				}
 			}
 		}
-	}
-
-	// has genesis occurred
-	if now.After(startSlotTime) {
-		data.Genesis = true
-	} else {
-		data.Genesis = false
-	}
-	// show the transition view one hour before the first slot and until epoch 30 is reached
-	if now.Add(utils.Day).After(startSlotTime) && now.Before(genesisTransition) {
-		data.GenesisPeriod = true
-	} else {
-		data.GenesisPeriod = false
-	}
-
-	if startSlotTime == time.Unix(0, 0) {
-		data.Genesis = false
 	}
 
 	var scheduledCount uint8
@@ -778,13 +714,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		data.Epochs = data.Epochs[:15]
 	}
 
-	if data.GenesisPeriod {
-		for _, blk := range blocks {
-			if blk.Status != 0 {
-				data.CurrentSlot = blk.Slot
-			}
-		}
-	} else if len(blocks) > 0 {
+	if len(blocks) > 0 {
 		data.CurrentSlot = blocks[0].Slot
 	}
 
@@ -953,25 +883,6 @@ func LatestIndexPageData() *types.IndexPageData {
 	return &types.IndexPageData{}
 }
 
-// LatestPoolsPageData returns the latest pools page data
-func LatestPoolsPageData() *types.PoolsResp {
-
-	wanted := &types.PoolsResp{}
-	cacheKey := fmt.Sprintf("%d:frontend:poolsData", utils.Config.Chain.ClConfig.DepositChainID)
-
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Second*5, wanted); err == nil {
-		return wanted.(*types.PoolsResp)
-	} else {
-		logger.Errorf("error retrieving poolsData from cache: %v", err)
-	}
-
-	return &types.PoolsResp{
-		PoolsDistribution:       types.ChartsPageDataChart{},
-		HistoricPoolPerformance: types.ChartsPageDataChart{},
-		PoolInfos:               []*types.PoolInfo{},
-	}
-}
-
 func LatestGasNowData() *types.GasNowPageData {
 	wanted := &types.GasNowPageData{}
 	cacheKey := fmt.Sprintf("%d:frontend:gasNow", utils.Config.Chain.ClConfig.DepositChainID)
@@ -1021,11 +932,12 @@ func LatestState() *types.LatestState {
 	data.LastProposedSlot = LatestProposedSlot()
 	data.FinalityDelay = FinalizationDelay()
 	data.IsSyncing = IsSyncing()
-	data.Rates = GetRates(utils.Config.Frontend.MainCurrency)
+	// data.Rates = GetRates(utils.Config.Frontend.MainCurrency)
 
 	return data
 }
 
+/*
 func GetRates(selectedCurrency string) *types.Rates {
 	r := types.Rates{}
 
@@ -1080,6 +992,7 @@ func GetRates(selectedCurrency string) *types.Rates {
 
 	return &r
 }
+*/
 
 func GetLatestStats() *types.Stats {
 	wanted := &types.Stats{}
@@ -1170,12 +1083,12 @@ func getGasNowData() (*types.GasNowPageData, error) {
 	gpoData.Code = 200
 	gpoData.Data.Timestamp = time.Now().UnixNano() / 1e6
 
-	client, err := geth_rpc.Dial(utils.Config.Eth1GethEndpoint)
+	client, err := gzond_rpc.Dial(utils.Config.Eth1GzondEndpoint)
 	if err != nil {
 		return nil, err
 	}
 	var raw json.RawMessage
-	err = client.Call(&raw, "eth_getBlockByNumber", "pending", true)
+	err = client.Call(&raw, "zond_getBlockByNumber", "pending", true)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving pending block data: %.1000s", err) // limit error message to 1000 characters
 	}
@@ -1186,7 +1099,7 @@ func getGasNowData() (*types.GasNowPageData, error) {
 	// 	return nil, err
 	// }
 
-	var header *geth_types.Header
+	var header *gzond_types.Header
 	var body rpcBlock
 
 	err = json.Unmarshal(raw, &header)
@@ -1268,8 +1181,9 @@ func getGasNowData() (*types.GasNowPageData, error) {
 		logrus.WithError(err).Error("error updating gas now history")
 	}
 
-	gpoData.Data.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
-	gpoData.Data.Currency = "USD"
+	// TODO(rgeraldes24)
+	// gpoData.Data.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
+	// gpoData.Data.Currency = "USD"
 
 	// gpoData.RapidUSD = gpoData.Rapid * 21000 * params.GWei / params.Ether * usd
 	// gpoData.FastUSD = gpoData.Fast * 21000 * params.GWei / params.Ether * usd
@@ -1313,7 +1227,7 @@ func (tx *TxPoolContentTransaction) GetGasPrice() *big.Int {
 }
 
 type rpcTransaction struct {
-	tx *geth_types.Transaction
+	tx *gzond_types.Transaction
 	txExtraInfo
 }
 
@@ -1338,15 +1252,15 @@ func mempoolUpdater(wg *sync.WaitGroup) {
 	firstRun := true
 	errorCount := 0
 
-	var client *geth_rpc.Client
+	var client *gzond_rpc.Client
 
 	for {
 		var err error
 
 		if client == nil {
-			client, err = geth_rpc.Dial(utils.Config.Eth1GethEndpoint)
+			client, err = gzond_rpc.Dial(utils.Config.Eth1GzondEndpoint)
 			if err != nil {
-				utils.LogError(err, "can't connect to geth node", 0)
+				utils.LogError(err, "can't connect to gzond node", 0)
 				time.Sleep(time.Second * 30)
 				continue
 			}
@@ -1390,16 +1304,16 @@ func mempoolUpdater(wg *sync.WaitGroup) {
 				tx.Input = nil // nil inputs to save space
 			}
 		}
-		for _, txs := range mempoolTx.BaseFee {
-			for _, tx := range txs {
-				mempoolTx.TxsByHash[tx.Hash] = tx
+		// for _, txs := range mempoolTx.BaseFee {
+		// 	for _, tx := range txs {
+		// 		mempoolTx.TxsByHash[tx.Hash] = tx
 
-				if tx.GasPrice == nil {
-					tx.GasPrice = tx.GasFeeCap
-				}
-				tx.Input = nil // nil inputs to save space
-			}
-		}
+		// 		if tx.GasPrice == nil {
+		// 			tx.GasPrice = tx.GasFeeCap
+		// 		}
+		// 		tx.Input = nil // nil inputs to save space
+		// 	}
+		// }
 
 		cacheKey := fmt.Sprintf("%d:frontend:mempool", utils.Config.Chain.ClConfig.DepositChainID)
 		err = cache.TieredCache.Set(cacheKey, mempoolTx, utils.Day)
@@ -1565,8 +1479,6 @@ func getBurnPageData() (*types.BurnPageData, error) {
 
 		burned := new(big.Int).Mul(baseFee, big.NewInt(int64(blk.GetGasUsed())))
 
-		blockReward := new(big.Int).Add(utils.Eth1BlockReward(blockNumber, blk.GetDifficulty()), new(big.Int).Add(txReward, new(big.Int).SetBytes(blk.GetUncleReward())))
-
 		data.Blocks = append(data.Blocks, &types.BurnPageDataBlock{
 			Number:        int64(blockNumber),
 			Hash:          hex.EncodeToString(blk.Hash),
@@ -1576,7 +1488,7 @@ func getBurnPageData() (*types.BurnPageData, error) {
 			Age:           blk.Time.AsTime(),
 			BaseFeePerGas: float64(baseFee.Int64()),
 			BurnedFees:    float64(burned.Int64()),
-			Rewards:       float64(blockReward.Int64()),
+			Rewards:       float64(txReward.Int64()),
 		})
 	}
 

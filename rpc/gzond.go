@@ -8,16 +8,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/contracts/oneinchoracle"
+	"github.com/davecgh/go-spew/spew"
+	zond "github.com/theQRL/go-zond"
+	"github.com/theQRL/go-zond/common/hexutil"
+	"github.com/theQRL/go-zond/zondclient"
 	"github.com/theQRL/zond-beaconchain-explorer/erc20"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
-	geth_rpc "github.com/ethereum/go-ethereum/rpc"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/accounts/abi/bind"
+	"github.com/theQRL/go-zond/common"
+	gzond_rpc "github.com/theQRL/go-zond/rpc"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -32,7 +34,60 @@ type GzondClient struct {
 	multiChecker *Balance
 }
 
-var CurrentGethClient *GethClient
+type ParityTraceResult struct {
+	Action struct {
+		CallType      string `json:"callType"`
+		From          string `json:"from"`
+		Gas           string `json:"gas"`
+		Input         string `json:"input"`
+		To            string `json:"to"`
+		Value         string `json:"value"`
+		Init          string `json:"init"`
+		Address       string `json:"address"`
+		Balance       string `json:"balance"`
+		RefundAddress string `json:"refundAddress"`
+		Author        string `json:"author"`
+		RewardType    string `json:"rewardType"`
+	} `json:"action"`
+	BlockHash   string `json:"blockHash"`
+	BlockNumber int    `json:"blockNumber"`
+	Error       string `json:"error"`
+	Result      struct {
+		GasUsed string `json:"gasUsed"`
+		Code    string `json:"code"`
+		Output  string `json:"output"`
+		Address string `json:"address"`
+	} `json:"result"`
+
+	Subtraces           int     `json:"subtraces"`
+	TraceAddress        []int64 `json:"traceAddress"`
+	TransactionHash     string  `json:"transactionHash"`
+	TransactionPosition int     `json:"transactionPosition"`
+	Type                string  `json:"type"`
+}
+
+func (trace *ParityTraceResult) ConvertFields() ([]byte, []byte, []byte, string) {
+	var from, to, value []byte
+	tx_type := trace.Type
+
+	switch trace.Type {
+	case "create":
+		from = common.FromHex(trace.Action.From)
+		to = common.FromHex(trace.Result.Address)
+		value = common.FromHex(trace.Action.Value)
+	case "call":
+		from = common.FromHex(trace.Action.From)
+		to = common.FromHex(trace.Action.To)
+		value = common.FromHex(trace.Action.Value)
+		tx_type = trace.Action.CallType
+	default:
+		spew.Dump(trace)
+		utils.LogFatal(nil, "unknown trace type", 0, map[string]interface{}{"trace type": trace.Type, "tx hash": trace.TransactionHash})
+	}
+	return from, to, value, tx_type
+}
+
+var CurrentGzondClient *GzondClient
 
 func NewGzondClient(endpoint string) (*GzondClient, error) {
 	logger.Infof("initializing gzond client at %v", endpoint)
@@ -53,14 +108,15 @@ func NewGzondClient(endpoint string) (*GzondClient, error) {
 	}
 	client.zondClient = zondClient
 
-	client.multiChecker, err = NewBalance(common.HexToAddress(""), client.ethClient)
+	addr, _ := common.NewAddressFromString("Zb1F8e55c7f64D203C1400B9D8555d050F94aDF39")
+	client.multiChecker, err = NewBalance(addr, client.zondClient)
 	if err != nil {
 		return nil, fmt.Errorf("error initiation balance checker contract: %v", err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	chainID, err := client.ethClient.ChainID(ctx)
+	chainID, err := client.zondClient.ChainID(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting chainid of rpcclient: %w", err)
 	}
@@ -86,14 +142,14 @@ func (client *GzondClient) GetRPCClient() *gzond_rpc.Client {
 	return client.rpcClient
 }
 
-func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBlockTimings, error) {
+func (client *GzondClient) GetBlockByHash(hash common.Hash) (*types.Eth1Block, *types.GetBlockTimings, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	start := time.Now()
 	timings := &types.GetBlockTimings{}
 
-	block, err := client.ethClient.BlockByNumber(ctx, big.NewInt(int64(number)))
+	block, err := client.zondClient.BlockByHash(ctx, hash)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -113,7 +169,7 @@ func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBl
 		GasUsed:      block.GasUsed(),
 		Time:         timestamppb.New(time.Unix(int64(block.Time()), 0)),
 		Extra:        block.Extra(),
-		MixDigest:    block.MixDigest().Bytes(),
+		Random:       block.Random().Bytes(),
 		Bloom:        block.Bloom().Bytes(),
 		Transactions: []*types.Eth1Transaction{},
 	}
@@ -122,37 +178,15 @@ func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBl
 		c.BaseFee = block.BaseFee().Bytes()
 	}
 
-	for _, uncle := range block.Uncles() {
-		pbUncle := &types.Eth1Block{
-			Hash:        uncle.Hash().Bytes(),
-			ParentHash:  uncle.ParentHash.Bytes(),
-			UncleHash:   uncle.UncleHash.Bytes(),
-			Coinbase:    uncle.Coinbase.Bytes(),
-			Root:        uncle.Root.Bytes(),
-			TxHash:      uncle.TxHash.Bytes(),
-			ReceiptHash: uncle.ReceiptHash.Bytes(),
-			Difficulty:  uncle.Difficulty.Bytes(),
-			Number:      uncle.Number.Uint64(),
-			GasLimit:    uncle.GasLimit,
-			GasUsed:     uncle.GasUsed,
-			Time:        timestamppb.New(time.Unix(int64(uncle.Time), 0)),
-			Extra:       uncle.Extra,
-			MixDigest:   uncle.MixDigest.Bytes(),
-			Bloom:       uncle.Bloom.Bytes(),
-		}
-
-		c.Uncles = append(c.Uncles, pbUncle)
-	}
-
-	receipts := make([]*geth_types.Receipt, len(block.Transactions()))
-	reqs := make([]geth_rpc.BatchElem, len(block.Transactions()))
+	receipts := make([]*gzond_types.Receipt, len(block.Transactions()))
+	reqs := make([]gzond_rpc.BatchElem, len(block.Transactions()))
 
 	txs := block.Transactions()
 
 	for _, tx := range txs {
 
 		var from []byte
-		sender, err := geth_types.Sender(geth_types.NewCancunSigner(tx.ChainId()), tx)
+		sender, err := gzond_types.Sender(gzond_types.NewShanghaiSigner(tx.ChainId()), tx)
 		if err != nil {
 			from, _ = hex.DecodeString("abababababababababababababababababababab")
 			logrus.Errorf("error converting tx %v to msg: %v", tx.Hash(), err)
@@ -161,9 +195,9 @@ func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBl
 		}
 
 		pbTx := &types.Eth1Transaction{
-			Type:                 uint32(tx.Type()),
-			Nonce:                tx.Nonce(),
-			GasPrice:             tx.GasPrice().Bytes(),
+			Type:  uint32(tx.Type()),
+			Nonce: tx.Nonce(),
+			// GasPrice:             tx.GasPrice().Bytes(),
 			MaxPriorityFeePerGas: tx.GasTipCap().Bytes(),
 			MaxFeePerGas:         tx.GasFeeCap().Bytes(),
 			Gas:                  tx.Gas(),
@@ -184,8 +218,8 @@ func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBl
 	}
 
 	for i := range reqs {
-		reqs[i] = geth_rpc.BatchElem{
-			Method: "eth_getTransactionReceipt",
+		reqs[i] = gzond_rpc.BatchElem{
+			Method: "zond_getTransactionReceipt",
 			Args:   []interface{}{txs[i].Hash().String()},
 			Result: &receipts[i],
 		}
@@ -231,11 +265,134 @@ func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBl
 	return c, timings, nil
 }
 
-func (client *GethClient) GetLatestEth1BlockNumber() (uint64, error) {
+func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBlockTimings, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	latestBlock, err := client.ethClient.BlockByNumber(ctx, nil)
+	start := time.Now()
+	timings := &types.GetBlockTimings{}
+
+	block, err := client.zondClient.BlockByNumber(ctx, big.NewInt(int64(number)))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	timings.Headers = time.Since(start)
+	start = time.Now()
+
+	c := &types.Eth1Block{
+		Hash:         block.Hash().Bytes(),
+		ParentHash:   block.ParentHash().Bytes(),
+		Coinbase:     block.Coinbase().Bytes(),
+		Root:         block.Root().Bytes(),
+		TxHash:       block.TxHash().Bytes(),
+		ReceiptHash:  block.ReceiptHash().Bytes(),
+		Number:       block.NumberU64(),
+		GasLimit:     block.GasLimit(),
+		GasUsed:      block.GasUsed(),
+		Time:         timestamppb.New(time.Unix(int64(block.Time()), 0)),
+		Extra:        block.Extra(),
+		Random:       block.Random().Bytes(),
+		Bloom:        block.Bloom().Bytes(),
+		Transactions: []*types.Eth1Transaction{},
+	}
+
+	if block.BaseFee() != nil {
+		c.BaseFee = block.BaseFee().Bytes()
+	}
+
+	receipts := make([]*gzond_types.Receipt, len(block.Transactions()))
+	reqs := make([]gzond_rpc.BatchElem, len(block.Transactions()))
+
+	txs := block.Transactions()
+
+	for _, tx := range txs {
+
+		var from []byte
+		sender, err := gzond_types.Sender(gzond_types.NewShanghaiSigner(tx.ChainId()), tx)
+		if err != nil {
+			from, _ = hex.DecodeString("abababababababababababababababababababab")
+			logrus.Errorf("error converting tx %v to msg: %v", tx.Hash(), err)
+		} else {
+			from = sender.Bytes()
+		}
+
+		pbTx := &types.Eth1Transaction{
+			Type:  uint32(tx.Type()),
+			Nonce: tx.Nonce(),
+			// GasPrice:             tx.GasPrice().Bytes(),
+			MaxPriorityFeePerGas: tx.GasTipCap().Bytes(),
+			MaxFeePerGas:         tx.GasFeeCap().Bytes(),
+			Gas:                  tx.Gas(),
+			Value:                tx.Value().Bytes(),
+			Data:                 tx.Data(),
+			From:                 from,
+			ChainId:              tx.ChainId().Bytes(),
+			AccessList:           []*types.AccessList{},
+			Hash:                 tx.Hash().Bytes(),
+			Itx:                  []*types.Eth1InternalTransaction{},
+		}
+
+		if tx.To() != nil {
+			pbTx.To = tx.To().Bytes()
+		}
+		c.Transactions = append(c.Transactions, pbTx)
+
+	}
+
+	for i := range reqs {
+		reqs[i] = gzond_rpc.BatchElem{
+			Method: "zond_getTransactionReceipt",
+			Args:   []interface{}{txs[i].Hash().String()},
+			Result: &receipts[i],
+		}
+	}
+
+	if len(reqs) > 0 {
+		if err := client.rpcClient.BatchCallContext(ctx, reqs); err != nil {
+			return nil, nil, fmt.Errorf("error retrieving receipts for block %v: %v", block.Number(), err)
+		}
+	}
+	timings.Receipts = time.Since(start)
+
+	for i := range reqs {
+		if reqs[i].Error != nil {
+			return nil, nil, fmt.Errorf("error retrieving receipt %v for block %v: %v", i, block.Number(), reqs[i].Error)
+		}
+		if receipts[i] == nil {
+			return nil, nil, fmt.Errorf("got null value for receipt %d of block %v", i, block.Number())
+		}
+
+		r := receipts[i]
+		c.Transactions[i].ContractAddress = r.ContractAddress[:]
+		c.Transactions[i].CommulativeGasUsed = r.CumulativeGasUsed
+		c.Transactions[i].GasUsed = r.GasUsed
+		c.Transactions[i].LogsBloom = r.Bloom[:]
+		c.Transactions[i].Logs = make([]*types.Eth1Log, 0, len(r.Logs))
+
+		for _, l := range r.Logs {
+			pbLog := &types.Eth1Log{
+				Address: l.Address.Bytes(),
+				Data:    l.Data,
+				Removed: l.Removed,
+				Topics:  make([][]byte, 0, len(l.Topics)),
+			}
+
+			for _, t := range l.Topics {
+				pbLog.Topics = append(pbLog.Topics, t.Bytes())
+			}
+			c.Transactions[i].Logs = append(c.Transactions[i].Logs, pbLog)
+		}
+	}
+
+	return c, timings, nil
+}
+
+func (client *GzondClient) GetLatestEth1BlockNumber() (uint64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	latestBlock, err := client.zondClient.BlockByNumber(ctx, nil)
 	if err != nil {
 		return 0, fmt.Errorf("error getting latest block: %v", err)
 	}
@@ -243,10 +400,32 @@ func (client *GethClient) GetLatestEth1BlockNumber() (uint64, error) {
 	return latestBlock.NumberU64(), nil
 }
 
-func (client *GethClient) TraceGeth(blockHash common.Hash) ([]*GethTraceCallResult, error) {
-	var res []*GethTraceCallResult
+type GzondTraceCallResultWrapper struct {
+	Result *GzondTraceCallResult
+}
 
-	err := client.rpcClient.Call(&res, "debug_traceBlockByHash", blockHash, gethTracerArg)
+type GzondTraceCallResult struct {
+	TransactionPosition int
+	Time                string
+	GasUsed             string
+	From                common.Address
+	To                  common.Address
+	Value               string
+	Gas                 string
+	Input               string
+	Output              string
+	Error               string
+	Type                string
+}
+
+var gzondTracerArg = map[string]string{
+	"tracer": "callTracer",
+}
+
+func (client *GzondClient) TraceGzond(blockHash common.Hash) ([]*GzondTraceCallResult, error) {
+	var res []*GzondTraceCallResult
+
+	err := client.rpcClient.Call(&res, "debug_traceBlockByHash", blockHash, gzondTracerArg)
 	if err != nil {
 		return nil, err
 	}
@@ -254,21 +433,26 @@ func (client *GethClient) TraceGeth(blockHash common.Hash) ([]*GethTraceCallResu
 	return res, nil
 }
 
-func (client *GethClient) GetBalances(pairs []string) ([]*types.Eth1AddressBalance, error) {
-	batchElements := make([]geth_rpc.BatchElem, 0, len(pairs))
-
-	ret := make([]*types.Eth1AddressBalance, len(pairs))
-
-	for i, pair := range pairs {
-		s := strings.Split(pair, ":")
-
-		if len(s) != 3 {
-			logrus.Fatalf("%v has an invalid format", pair)
-		}
-
-		if s[0] != "B" {
-			logrus.Fatalf("%v has invalid balance update prefix", pair)
-		}
+func toCallArg(msg zond.CallMsg) interface{} {
+	arg := map[string]interface{}{
+		"from": msg.From,
+		"to":   msg.To,
+	}
+	if len(msg.Data) > 0 {
+		arg["data"] = hexutil.Bytes(msg.Data)
+	}
+	if msg.Value != nil {
+		arg["value"] = (*hexutil.Big)(msg.Value)
+	}
+	if msg.Gas != 0 {
+		arg["gas"] = hexutil.Uint64(msg.Gas)
+	}
+	// TODO(rgeraldes24)
+	// if msg.GasPrice != nil {
+	// 	arg["gasPrice"] = (*hexutil.Big)(msg.GasPrice)
+	// }
+	return arg
+}
 
 func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*types.Eth1AddressBalance, error) {
 	batchElements := make([]gzond_rpc.BatchElem, 0, len(pairs))

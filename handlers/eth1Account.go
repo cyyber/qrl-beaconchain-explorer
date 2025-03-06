@@ -42,13 +42,13 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	address = strings.Replace(address, "0x", "", -1)
+	address = strings.Replace(address, "Z", "", -1)
 	address = strings.ToLower(address)
 
 	currency := GetCurrency(r)
 
 	addressBytes := common.FromHex(address)
-	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address 0x%x", addressBytes), templateFiles)
+	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address Z%x", addressBytes), templateFiles)
 
 	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.ECR20TokensPerAddressLimit)
 	if err != nil {
@@ -61,7 +61,6 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 
 	isContract := false
 	txns := &types.DataTableResponse{}
-	blobs := &types.DataTableResponse{}
 	internal := &types.DataTableResponse{}
 	erc20 := &types.DataTableResponse{}
 	erc721 := &types.DataTableResponse{}
@@ -86,14 +85,6 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		txns, err = db.BigtableClient.GetAddressTransactionsTableData(addressBytes, "")
 		if err != nil {
 			return fmt.Errorf("GetAddressTransactionsTableData: %w", err)
-		}
-		return nil
-	})
-	g.Go(func() error {
-		var err error
-		blobs, err = db.BigtableClient.GetAddressBlobTableData(addressBytes, "")
-		if err != nil {
-			return fmt.Errorf("GetAddressBlobTableData: %w", err)
 		}
 		return nil
 	})
@@ -168,14 +159,6 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 
 	tabs := []types.Eth1AddressPageTabs{}
 
-	if blobs != nil && len(blobs.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
-			Id:   "blobTxns",
-			Href: "#blobTxns",
-			Text: "Blob Txns",
-			Data: blobs,
-		})
-	}
 	if internal != nil && len(internal.Data) != 0 {
 		tabs = append(tabs, types.Eth1AddressPageTabs{
 			Id:   "internalTxns",
@@ -208,14 +191,6 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 			Data: blocksMined,
 		})
 	}
-	if unclesMined != nil && len(unclesMined.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
-			Id:   "uncles",
-			Href: "#uncles",
-			Text: "Produced Uncles",
-			Data: unclesMined,
-		})
-	}
 	if erc1155 != nil && len(erc1155.Data) != 0 {
 		tabs = append(tabs, types.Eth1AddressPageTabs{
 			Id:   "erc1155Txns",
@@ -234,22 +209,20 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.Data = types.Eth1AddressPageData{
-		Address:            address,
-		EnsName:            ensData.Domain,
+		Address: address,
+		// EnsName:            ensData.Domain,
 		IsContract:         isContract,
 		QRCode:             pngStr,
 		QRCodeInverse:      pngStrInverse,
 		Metadata:           metadata,
 		WithdrawalsSummary: withdrawalSummary,
 		TransactionsTable:  txns,
-		BlobTxnsTable:      blobs,
 		InternalTxnsTable:  internal,
 		Erc20Table:         erc20,
 		Erc721Table:        erc721,
 		Erc1155Table:       erc1155,
 		WithdrawalsTable:   withdrawals,
 		BlocksMinedTable:   blocksMined,
-		UnclesMinedTable:   unclesMined,
 		EtherValue:         utils.FormatPricedValue(utils.WeiBytesToEther(metadata.EthBalance.Balance), utils.Config.Frontend.ElCurrency, currency),
 		Tabs:               tabs,
 	}
@@ -315,33 +288,6 @@ func Eth1AddressBlocksMined(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressUnclesMined(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	q := r.URL.Query()
-	address, err := lowerAddressFromRequest(w, r)
-	if err != nil {
-		return
-	}
-
-	errFields := map[string]interface{}{
-		"route": r.URL.String()}
-
-	pageToken := q.Get("pageToken")
-
-	data, err := db.BigtableClient.GetAddressUnclesMinedTableData(address, pageToken)
-	if err != nil {
-		utils.LogError(err, "error getting eth1 uncles mined data", 0, errFields)
-	}
-
-	err = json.NewEncoder(w).Encode(data)
-	if err != nil {
-		utils.LogError(err, "error enconding json response", 0, errFields)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-}
-
 func Eth1AddressWithdrawals(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -355,38 +301,15 @@ func Eth1AddressWithdrawals(w http.ResponseWriter, r *http.Request) {
 	errFields := map[string]interface{}{
 		"route": r.URL.String()}
 
-	data, err := db.GetAddressWithdrawalTableData(common.HexToAddress(address).Bytes(), q.Get("pageToken"), currency)
+	addr, err := common.NewAddressFromString(address)
+	if err != nil {
+		return
+	}
+	data, err := db.GetAddressWithdrawalTableData(addr.Bytes(), q.Get("pageToken"), currency)
 	if err != nil {
 		utils.LogError(err, "error getting address withdrawals data", 0, errFields)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
-	}
-
-	err = json.NewEncoder(w).Encode(data)
-	if err != nil {
-		utils.LogError(err, "error enconding json response", 0, errFields)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-}
-
-func Eth1AddressBlobTransactions(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	q := r.URL.Query()
-	address, err := lowerAddressFromRequest(w, r)
-	if err != nil {
-		return
-	}
-	addressBytes := common.FromHex(address)
-
-	errFields := map[string]interface{}{
-		"route": r.URL.String()}
-
-	pageToken := q.Get("pageToken")
-	data, err := db.BigtableClient.GetAddressBlobTableData(addressBytes, pageToken)
-	if err != nil {
-		utils.LogError(err, "error getting eth1 blob table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -509,17 +432,17 @@ func Eth1AddressErc1155Transactions(w http.ResponseWriter, r *http.Request) {
 func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, error) {
 	vars := mux.Vars(r)
 	address := vars["address"]
-	if utils.IsValidEnsDomain(address) {
-		ensData, err := GetEnsDomain(address)
-		if err != nil {
-			handleNotFoundJson(address, w, r, err)
-			return "", err
-		}
-		if len(ensData.Address) > 0 {
-			address = ensData.Address
-		}
-	}
-	return strings.ToLower(strings.Replace(address, "0x", "", -1)), nil
+	// if utils.IsValidEnsDomain(address) {
+	// 	ensData, err := GetEnsDomain(address)
+	// 	if err != nil {
+	// 		handleNotFoundJson(address, w, r, err)
+	// 		return "", err
+	// 	}
+	// 	if len(ensData.Address) > 0 {
+	// 		address = ensData.Address
+	// 	}
+	// }
+	return strings.ToLower(strings.Replace(address, "Z", "", -1)), nil
 }
 
 func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {

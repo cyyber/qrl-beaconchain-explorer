@@ -174,7 +174,7 @@ func GeneratePdfReport(hist rewardHistory, currency string) []byte {
 	pdf.SetTextColor(24, 24, 24)
 	pdf.SetFillColor(255, 255, 255)
 	// pdf.Ln(-1)
-	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s | %s", hist.TotalETH, hist.TotalCurrency), "", 0, "CM", true, 0, "")
+	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalETH), "", 0, "CM", true, 0, "")
 
 	header := [colCount]string{"Date", "Balance", "Income", "ETH Value", fmt.Sprintf("Income (%v)", currency)}
 

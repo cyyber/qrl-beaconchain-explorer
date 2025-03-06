@@ -84,29 +84,21 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 			logger.Errorf("error retrieving slot page data: %v", err)
 		}
 
-			data.Data = "block"
-			if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "GetSlotPageData", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
-				return // an error has occurred and was processed
-			}
-			return
-		}
-		blockPageData.ExecutionData = eth1BlockPageData
-		blockPageData.ExecutionData.IsValidMev = blockPageData.IsValidMev
-
-		data.Data = blockPageData
-
-		if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "Done (Post Merge)", blockTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+		data.Data = "block"
+		if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "GetSlotPageData", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 			return // an error has occurred and was processed
 		}
-	} else {
-		// Pre Merge PoW Block
-		data := InitPageData(w, r, "block", "/block", fmt.Sprintf("Block %d", eth1BlockPageData.Number), preMergeTemplateFiles)
-		data.Data = eth1BlockPageData
-
-		if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "Done (Pre Merge)", preMergeBlockTemplate.ExecuteTemplate(w, "layout", data)) != nil {
-			return // an error has occurred and was processed
-		}
+		return
 	}
+	blockPageData.ExecutionData = eth1BlockPageData
+	blockPageData.ExecutionData.IsValidMev = blockPageData.IsValidMev
+
+	data.Data = blockPageData
+
+	if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "Done (Post Merge)", blockTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+		return // an error has occurred and was processed
+	}
+
 }
 
 func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageData, error) {
@@ -180,8 +172,7 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		})
 	}
 
-	// TODO(rgeraldes24)
-	// blockReward := utils.Eth1BlockReward(block.Number, block.Difficulty)
+	// TODO(rgeraldes24): remove
 	blockReward := big.NewInt(0)
 
 	if limit > 0 {

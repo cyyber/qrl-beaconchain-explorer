@@ -34,7 +34,7 @@ var ErrTooManyValidators = errors.New("too many validators")
 func handleValidatorsQuery(w http.ResponseWriter, r *http.Request, checkValidatorLimit bool) ([]uint64, [][]byte, bool, error) {
 	q := r.URL.Query()
 	// TODO(rgeraldes24)
-	validatorLimit := getUserPremium(r).MaxValidators
+	// validatorLimit := getUserPremium(r).MaxValidators
 	validatorLimit := 10
 
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}

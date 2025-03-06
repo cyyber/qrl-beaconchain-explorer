@@ -9,14 +9,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/zond-beaconchain-explorer/cache"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/lib/pq"
@@ -900,12 +899,6 @@ func GatherValidatorSyncDutiesForDay(validators []uint64, day uint64, data []*ty
 	}()
 
 	firstEpoch, lastEpoch := utils.GetFirstAndLastEpochForDay(day)
-	if firstEpoch < utils.Config.Chain.ClConfig.AltairForkEpoch && lastEpoch > utils.Config.Chain.ClConfig.AltairForkEpoch {
-		firstEpoch = utils.Config.Chain.ClConfig.AltairForkEpoch
-	} else if lastEpoch < utils.Config.Chain.ClConfig.AltairForkEpoch {
-		logger.Infof("day %v is pre-altair, skipping sync committee export", day)
-		return nil
-	}
 	logger := logger.WithFields(logrus.Fields{
 		"day":         day,
 		"firstEpoch":  firstEpoch,
@@ -1189,7 +1182,9 @@ func GetValidatorIncomeHistoryChart(validatorIndices []uint64, currency string, 
 	}
 	var clRewardsSeries = make([]*types.ChartDataPoint, len(incomeHistory))
 
-	p := price.GetPrice(utils.Config.Frontend.ClCurrency, currency)
+	// TODO(rgeraldes24)
+	// p := price.GetPrice(utils.Config.Frontend.ClCurrency, currency)
+	p := 1.0
 
 	for i := 0; i < len(incomeHistory); i++ {
 		color := "#7cb5ec"
@@ -1543,19 +1538,12 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	txCount := int64(0)
 
 	totalBaseFee := decimal.NewFromInt(0)
-	totalGasPrice := decimal.NewFromInt(0)
 	totalTxSavings := decimal.NewFromInt(0)
 	totalTxFees := decimal.NewFromInt(0)
 	totalBurned := decimal.NewFromInt(0)
-	totalBurnedBlob := decimal.NewFromInt(0)
 	totalGasUsed := decimal.NewFromInt(0)
-	totalBlobGasUsed := decimal.NewFromInt(0)
-	totalBlobCount := decimal.NewFromInt(0)
 
-	legacyTxCount := int64(0)
-	accessListTxCount := int64(0)
 	eip1559TxCount := int64(0)
-	blobTxCount := int64(0)
 	failedTxCount := int64(0)
 	successTxCount := int64(0)
 
@@ -1588,7 +1576,8 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 			accumulatedBlockTime = accumulatedBlockTime.Add(decimal.NewFromInt(prevBlock.Time.AsTime().UnixMicro() - blk.Time.AsTime().UnixMicro()))
 		}
 
-		totalBaseBlockReward = totalBaseBlockReward.Add(decimal.NewFromBigInt(utils.Eth1BlockReward(blk.Number, blk.Difficulty), 0))
+		// TODO(rgeraldes24)
+		// totalBaseBlockReward = totalBaseBlockReward.Add(decimal.NewFromBigInt(utils.Eth1BlockReward(blk.Number, blk.Difficulty), 0))
 
 		for _, tx := range blk.Transactions {
 			// for _, itx := range tx.Itx {
@@ -1598,23 +1587,10 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 			maxFee := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.MaxFeePerGas), 0)
 			prioFee := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.MaxPriorityFeePerGas), 0)
 			gasUsed := decimal.NewFromBigInt(new(big.Int).SetUint64(tx.GasUsed), 0)
-			gasPrice := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.GasPrice), 0)
 
 			var tipFee decimal.Decimal
 			var txFees decimal.Decimal
 			switch tx.Type {
-			case 0:
-				legacyTxCount += 1
-				totalGasPrice = totalGasPrice.Add(gasPrice)
-				txFees = gasUsed.Mul(gasPrice)
-				tipFee = gasPrice.Sub(baseFee)
-
-			case 1:
-				accessListTxCount += 1
-				totalGasPrice = totalGasPrice.Add(gasPrice)
-				txFees = gasUsed.Mul(gasPrice)
-				tipFee = gasPrice.Sub(baseFee)
-
 			case 2:
 				// priority fee is capped because the base fee is filled first
 				tipFee = decimal.Min(prioFee, maxFee.Sub(baseFee))
@@ -1622,20 +1598,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 				// totalMinerTips = totalMinerTips.Add(tipFee.Mul(gasUsed))
 				txFees = baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))
 				totalTxSavings = totalTxSavings.Add(maxFee.Mul(gasUsed).Sub(baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))))
-
-			case 3:
-				// priority fee is capped because the base fee is filled first
-				tipFee = decimal.Min(prioFee, maxFee.Sub(baseFee))
-				blobTxCount += 1
-				// totalMinerTips = totalMinerTips.Add(tipFee.Mul(gasUsed))
-				txFees = baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))
-				totalTxSavings = totalTxSavings.Add(maxFee.Mul(gasUsed).Sub(baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))))
-
-				blobGasUsed := decimal.NewFromBigInt(new(big.Int).SetUint64(tx.BlobGasUsed), 0)
-				totalBlobGasUsed = totalBlobGasUsed.Add(blobGasUsed)
-				totalBurnedBlob = blobGasUsed.Mul(decimal.NewFromBigInt(new(big.Int).SetBytes(tx.BlobGasPrice), 0))
-				totalBlobCount = totalBlobCount.Add(decimal.NewFromInt(int64(len(tx.BlobVersionedHashes))))
-
 			default:
 				logger.Fatalf("error unknown tx type %v hash: %x", tx.Status, tx.Hash)
 			}
@@ -1652,12 +1614,8 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 				logger.Fatalf("error unknown status code %v hash: %x", tx.Status, tx.Hash)
 			}
 			totalGasUsed = totalGasUsed.Add(gasUsed)
-			totalBurned = totalBurned.Add(baseFee.Mul(gasUsed)).Add(totalBurnedBlob)
-			if blk.Number < 12244000 {
-				totalTips = totalTips.Add(gasUsed.Mul(gasPrice))
-			} else {
-				totalTips = totalTips.Add(gasUsed.Mul(tipFee))
-			}
+			totalBurned = totalBurned.Add(baseFee.Mul(gasUsed))
+			totalTips = totalTips.Add(gasUsed.Mul(tipFee))
 		}
 		prevBlock = blk
 	}
@@ -1681,12 +1639,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 		return fmt.Errorf("error calculating BURNED_FEES chart_series: %w", err)
 	}
 
-	logger.Infof("Exporting BURNED_BLOB_FEES %v", totalBurnedBlob.String())
-	err = SaveChartSeriesPoint(dateTrunc, "BURNED_BLOB_FEES", totalBurnedBlob.String())
-	if err != nil {
-		return fmt.Errorf("error calculating BURNED_BLOB_FEES chart_series: %w", err)
-	}
-
 	logger.Infof("Exporting NON_FAILED_TX_GAS_USAGE %v", totalGasUsed.Sub(totalFailedGasUsed).String())
 	err = SaveChartSeriesPoint(dateTrunc, "NON_FAILED_TX_GAS_USAGE", totalGasUsed.Sub(totalFailedGasUsed).String())
 	if err != nil {
@@ -1697,12 +1649,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	err = SaveChartSeriesPoint(dateTrunc, "BLOCK_COUNT", blockCount)
 	if err != nil {
 		return fmt.Errorf("error calculating BLOCK_COUNT chart_series: %w", err)
-	}
-
-	logger.Infof("Exporting BLOB_COUNT %v", blockCount)
-	err = SaveChartSeriesPoint(dateTrunc, "BLOB_COUNT", totalBlobCount)
-	if err != nil {
-		return fmt.Errorf("error calculating BLOB_COUNT chart_series: %w", err)
 	}
 
 	// convert microseconds to seconds
@@ -1727,14 +1673,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 		return fmt.Errorf("error calculating TOTAL_EMISSION chart_series: %w", err)
 	}
 
-	if totalGasPrice.GreaterThan(decimal.NewFromInt(0)) && decimal.NewFromInt(legacyTxCount).Add(decimal.NewFromInt(accessListTxCount)).GreaterThan(decimal.NewFromInt(0)) {
-		logger.Infof("Exporting AVG_GASPRICE")
-		err = SaveChartSeriesPoint(dateTrunc, "AVG_GASPRICE", totalGasPrice.Div((decimal.NewFromInt(legacyTxCount).Add(decimal.NewFromInt(accessListTxCount)))).String())
-		if err != nil {
-			return fmt.Errorf("error calculating AVG_GASPRICE chart_series err: %w", err)
-		}
-	}
-
 	if txCount > 0 {
 		logger.Infof("Exporting AVG_GASUSED %v", totalGasUsed.Div(decimal.NewFromInt(blockCount)).String())
 		err = SaveChartSeriesPoint(dateTrunc, "AVG_GASUSED", totalGasUsed.Div(decimal.NewFromInt(blockCount)).String())
@@ -1747,12 +1685,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	err = SaveChartSeriesPoint(dateTrunc, "TOTAL_GASUSED", totalGasUsed.String())
 	if err != nil {
 		return fmt.Errorf("error calculating TOTAL_GASUSED chart_series: %w", err)
-	}
-
-	logger.Infof("Exporting TOTAL_BLOB_GASUSED %v", totalBlobGasUsed.String())
-	err = SaveChartSeriesPoint(dateTrunc, "TOTAL_BLOB_GASUSED", totalBlobGasUsed.String())
-	if err != nil {
-		return fmt.Errorf("error calculating TOTAL_BLOB_GASUSED chart_series: %w", err)
 	}
 
 	if blockCount > 0 {
@@ -1774,8 +1706,11 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	switch utils.Config.Chain.ClConfig.DepositChainID {
 	case 1:
 		crowdSale := 72009990.50
-		logger.Infof("Exporting MARKET_CAP: %v", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
-		err = SaveChartSeriesPoint(dateTrunc, "MARKET_CAP", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
+		p := 1.0
+		// logger.Infof("Exporting MARKET_CAP: %v", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
+		logger.Infof("Exporting MARKET_CAP: %v", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(p)).String())
+		// err = SaveChartSeriesPoint(dateTrunc, "MARKET_CAP", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
+		err = SaveChartSeriesPoint(dateTrunc, "MARKET_CAP", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(p)).String())
 		if err != nil {
 			return fmt.Errorf("error calculating MARKET_CAP chart_series: %w", err)
 		}

@@ -1,21 +1,11 @@
 package price
 
 import (
-	"context"
 	"fmt"
 	"strings"
 	"sync"
-	"sync/atomic"
-	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/contracts/chainlink_feed"
-
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/sync/errgroup"
 )
 
 var logger = logrus.New().WithField("module", "price")
@@ -27,7 +17,8 @@ var runOnceWg sync.WaitGroup
 var prices = map[string]float64{}
 var pricesMu = &sync.Mutex{}
 var didInit = uint64(0)
-var feeds = map[string]*chainlink_feed.Feed{}
+
+// var feeds = map[string]*chainlink_feed.Feed{}
 var calcPairs = map[string]bool{}
 var clCurrency = "ETH"
 var elCurrency = "ETH"
@@ -55,6 +46,7 @@ func init() {
 	runOnceWg.Add(1)
 }
 
+/*
 func Init(chainId uint64, eth1Endpoint, clCurrencyParam, elCurrencyParam string) {
 	if atomic.AddUint64(&didInit, 1) > 1 {
 		logrus.Warnf("price.Init called multiple times")
@@ -194,6 +186,7 @@ func updatePrices() {
 
 	runOnce.Do(func() { runOnceWg.Done() })
 }
+*/
 
 func calcPricePairs(currency string) error {
 	pricesMu.Lock()
@@ -221,26 +214,30 @@ func setPrice(a, b string, v float64) {
 }
 
 func GetPrice(a, b string) float64 {
-	if didInit < 1 {
-		logger.Fatal("using GetPrice without calling price.Init once")
-	}
-	runOnceWg.Wait()
-	pricesMu.Lock()
-	defer pricesMu.Unlock()
-	if a == "xDAI" {
-		a = "DAI"
-	}
-	if b == "xDAI" {
-		b = "DAI"
-	}
-	price, exists := prices[a+"/"+b]
-	if !exists {
-		logrus.WithFields(logrus.Fields{"pair": a + "/" + b}).Warnf("price pair not found")
-		return 1
-	}
-	return price
+	return 1.0
+	/*
+		if didInit < 1 {
+			logger.Fatal("using GetPrice without calling price.Init once")
+		}
+		runOnceWg.Wait()
+		pricesMu.Lock()
+		defer pricesMu.Unlock()
+		if a == "xDAI" {
+			a = "DAI"
+		}
+		if b == "xDAI" {
+			b = "DAI"
+		}
+		price, exists := prices[a+"/"+b]
+		if !exists {
+			logrus.WithFields(logrus.Fields{"pair": a + "/" + b}).Warnf("price pair not found")
+			return 1
+		}
+		return price
+	*/
 }
 
+/*
 func getPriceFromFeed(feed *chainlink_feed.Feed) (float64, error) {
 	decimals := decimal.NewFromInt(1e8) // 8 decimal places for the Chainlink feeds
 	res, err := feed.LatestRoundData(&bind.CallOpts{})
@@ -249,6 +246,7 @@ func getPriceFromFeed(feed *chainlink_feed.Feed) (float64, error) {
 	}
 	return decimal.NewFromBigInt(res.Answer, 0).Div(decimals).InexactFloat64(), nil
 }
+*/
 
 func GetAvailableCurrencies() []string {
 	return availableCurrencies

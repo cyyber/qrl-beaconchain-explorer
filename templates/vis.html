@@ -146,20 +146,6 @@
         }, 0)
 
       var subgraphs = findSubgraphs(nodes)
-      subgraphs.sort(function (a, b) {
-        function totalDifficulty(nodes) {
-          return nodes
-            .map(function (a) {
-              return a.block.difficulty
-            })
-            .reduce(function (a, b) {
-              return a + b
-            }, 0)
-        }
-
-        return totalDifficulty(b) - totalDifficulty(a)
-      })
-
       var mincol = 0
       for (var i = 0; i < subgraphs.length; i++) {
         mincol = layoutSubgraph(subgraphs[i], mincol, latest)

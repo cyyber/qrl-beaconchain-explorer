@@ -63,6 +63,8 @@ var ErrRateLimit = errors.New("## RATE LIMIT ##")
 
 var localiser *i18n.I18n
 
+var logger = logrus.New().WithField("module", "oauth")
+
 // making sure language files are loaded only once
 func getLocaliser() *i18n.I18n {
 	if localiser == nil {
@@ -457,76 +459,70 @@ func ReadConfig(cfg *types.Config, path string) error {
 		}
 
 		chainCfg := types.ClChainConfig{
-			PresetBase:                              jr.Data.PresetBase,
-			ConfigName:                              jr.Data.ConfigName,
-			MinGenesisActiveValidatorCount:          mustParseUint(jr.Data.MinGenesisActiveValidatorCount),
-			MinGenesisTime:                          int64(mustParseUint(jr.Data.MinGenesisTime)),
-			GenesisForkVersion:                      jr.Data.GenesisForkVersion,
-			GenesisDelay:                            mustParseUint(jr.Data.GenesisDelay),
-			SecondsPerSlot:                          mustParseUint(jr.Data.SecondsPerSlot),
-			SecondsPerEth1Block:                     mustParseUint(jr.Data.SecondsPerEth1Block),
-			MinValidatorWithdrawabilityDelay:        mustParseUint(jr.Data.MinValidatorWithdrawabilityDelay),
-			ShardCommitteePeriod:                    mustParseUint(jr.Data.ShardCommitteePeriod),
-			Eth1FollowDistance:                      mustParseUint(jr.Data.Eth1FollowDistance),
-			InactivityScoreBias:                     mustParseUint(jr.Data.InactivityScoreBias),
-			InactivityScoreRecoveryRate:             mustParseUint(jr.Data.InactivityScoreRecoveryRate),
-			EjectionBalance:                         mustParseUint(jr.Data.EjectionBalance),
-			MinPerEpochChurnLimit:                   mustParseUint(jr.Data.MinPerEpochChurnLimit),
-			ChurnLimitQuotient:                      mustParseUint(jr.Data.ChurnLimitQuotient),
-			MaxPerEpochActivationChurnLimit:         mustParseUint(jr.Data.MaxPerEpochActivationChurnLimit),
-			ProposerScoreBoost:                      mustParseUint(jr.Data.ProposerScoreBoost),
-			DepositChainID:                          mustParseUint(jr.Data.DepositChainID),
-			DepositNetworkID:                        mustParseUint(jr.Data.DepositNetworkID),
-			DepositContractAddress:                  jr.Data.DepositContractAddress,
-			MaxCommitteesPerSlot:                    mustParseUint(jr.Data.MaxCommitteesPerSlot),
-			TargetCommitteeSize:                     mustParseUint(jr.Data.TargetCommitteeSize),
-			MaxValidatorsPerCommittee:               mustParseUint(jr.Data.TargetCommitteeSize),
-			ShuffleRoundCount:                       mustParseUint(jr.Data.ShuffleRoundCount),
-			HysteresisQuotient:                      mustParseUint(jr.Data.HysteresisQuotient),
-			HysteresisDownwardMultiplier:            mustParseUint(jr.Data.HysteresisDownwardMultiplier),
-			HysteresisUpwardMultiplier:              mustParseUint(jr.Data.HysteresisUpwardMultiplier),
-			SafeSlotsToUpdateJustified:              mustParseUint(jr.Data.SafeSlotsToUpdateJustified),
-			MinDepositAmount:                        mustParseUint(jr.Data.MinDepositAmount),
-			MaxEffectiveBalance:                     mustParseUint(jr.Data.MaxEffectiveBalance),
-			EffectiveBalanceIncrement:               mustParseUint(jr.Data.EffectiveBalanceIncrement),
-			MinAttestationInclusionDelay:            mustParseUint(jr.Data.MinAttestationInclusionDelay),
-			SlotsPerEpoch:                           mustParseUint(jr.Data.SlotsPerEpoch),
-			MinSeedLookahead:                        mustParseUint(jr.Data.MinSeedLookahead),
-			MaxSeedLookahead:                        mustParseUint(jr.Data.MaxSeedLookahead),
-			EpochsPerEth1VotingPeriod:               mustParseUint(jr.Data.EpochsPerEth1VotingPeriod),
-			SlotsPerHistoricalRoot:                  mustParseUint(jr.Data.SlotsPerHistoricalRoot),
-			MinEpochsToInactivityPenalty:            mustParseUint(jr.Data.MinEpochsToInactivityPenalty),
-			EpochsPerHistoricalVector:               mustParseUint(jr.Data.EpochsPerHistoricalVector),
-			EpochsPerSlashingsVector:                mustParseUint(jr.Data.EpochsPerSlashingsVector),
-			HistoricalRootsLimit:                    mustParseUint(jr.Data.HistoricalRootsLimit),
-			ValidatorRegistryLimit:                  mustParseUint(jr.Data.ValidatorRegistryLimit),
-			BaseRewardFactor:                        mustParseUint(jr.Data.BaseRewardFactor),
-			WhistleblowerRewardQuotient:             mustParseUint(jr.Data.WhistleblowerRewardQuotient),
-			ProposerRewardQuotient:                  mustParseUint(jr.Data.ProposerRewardQuotient),
-			InactivityPenaltyQuotient:               mustParseUint(jr.Data.InactivityPenaltyQuotient),
-			MinSlashingPenaltyQuotient:              mustParseUint(jr.Data.MinSlashingPenaltyQuotient),
-			ProportionalSlashingMultiplier:          mustParseUint(jr.Data.ProportionalSlashingMultiplier),
-			MaxProposerSlashings:                    mustParseUint(jr.Data.MaxProposerSlashings),
-			MaxAttesterSlashings:                    mustParseUint(jr.Data.MaxAttesterSlashings),
-			MaxAttestations:                         mustParseUint(jr.Data.MaxAttestations),
-			MaxDeposits:                             mustParseUint(jr.Data.MaxDeposits),
-			MaxVoluntaryExits:                       mustParseUint(jr.Data.MaxVoluntaryExits),
-			InvactivityPenaltyQuotientAltair:        mustParseUint(jr.Data.InactivityPenaltyQuotientAltair),
-			MinSlashingPenaltyQuotientAltair:        mustParseUint(jr.Data.MinSlashingPenaltyQuotientAltair),
-			ProportionalSlashingMultiplierAltair:    mustParseUint(jr.Data.ProportionalSlashingMultiplierAltair),
-			SyncCommitteeSize:                       mustParseUint(jr.Data.SyncCommitteeSize),
-			EpochsPerSyncCommitteePeriod:            mustParseUint(jr.Data.EpochsPerSyncCommitteePeriod),
-			MinSyncCommitteeParticipants:            mustParseUint(jr.Data.MinSyncCommitteeParticipants),
-			InvactivityPenaltyQuotientBellatrix:     mustParseUint(jr.Data.InactivityPenaltyQuotientBellatrix),
-			MinSlashingPenaltyQuotientBellatrix:     mustParseUint(jr.Data.MinSlashingPenaltyQuotientBellatrix),
-			ProportionalSlashingMultiplierBellatrix: mustParseUint(jr.Data.ProportionalSlashingMultiplierBellatrix),
-			MaxBytesPerTransaction:                  mustParseUint(jr.Data.MaxBytesPerTransaction),
-			MaxTransactionsPerPayload:               mustParseUint(jr.Data.MaxTransactionsPerPayload),
-			BytesPerLogsBloom:                       mustParseUint(jr.Data.BytesPerLogsBloom),
-			MaxExtraDataBytes:                       mustParseUint(jr.Data.MaxExtraDataBytes),
-			MaxWithdrawalsPerPayload:                mustParseUint(jr.Data.MaxWithdrawalsPerPayload),
-			MaxValidatorsPerWithdrawalSweep:         mustParseUint(jr.Data.MaxValidatorsPerWithdrawalsSweep),
-			MaxDilithiumToExecutionChange:           mustParseUint(jr.Data.MaxDilithiumToExecutionChanges),
+			PresetBase:                       jr.Data.PresetBase,
+			ConfigName:                       jr.Data.ConfigName,
+			MinGenesisActiveValidatorCount:   mustParseUint(jr.Data.MinGenesisActiveValidatorCount),
+			MinGenesisTime:                   int64(mustParseUint(jr.Data.MinGenesisTime)),
+			GenesisForkVersion:               jr.Data.GenesisForkVersion,
+			GenesisDelay:                     mustParseUint(jr.Data.GenesisDelay),
+			SecondsPerSlot:                   mustParseUint(jr.Data.SecondsPerSlot),
+			SecondsPerEth1Block:              mustParseUint(jr.Data.SecondsPerEth1Block),
+			MinValidatorWithdrawabilityDelay: mustParseUint(jr.Data.MinValidatorWithdrawabilityDelay),
+			ShardCommitteePeriod:             mustParseUint(jr.Data.ShardCommitteePeriod),
+			Eth1FollowDistance:               mustParseUint(jr.Data.Eth1FollowDistance),
+			InactivityScoreBias:              mustParseUint(jr.Data.InactivityScoreBias),
+			InactivityScoreRecoveryRate:      mustParseUint(jr.Data.InactivityScoreRecoveryRate),
+			EjectionBalance:                  mustParseUint(jr.Data.EjectionBalance),
+			MinPerEpochChurnLimit:            mustParseUint(jr.Data.MinPerEpochChurnLimit),
+			ChurnLimitQuotient:               mustParseUint(jr.Data.ChurnLimitQuotient),
+			MaxPerEpochActivationChurnLimit:  mustParseUint(jr.Data.MaxPerEpochActivationChurnLimit),
+			ProposerScoreBoost:               mustParseUint(jr.Data.ProposerScoreBoost),
+			DepositChainID:                   mustParseUint(jr.Data.DepositChainID),
+			DepositNetworkID:                 mustParseUint(jr.Data.DepositNetworkID),
+			DepositContractAddress:           jr.Data.DepositContractAddress,
+			MaxCommitteesPerSlot:             mustParseUint(jr.Data.MaxCommitteesPerSlot),
+			TargetCommitteeSize:              mustParseUint(jr.Data.TargetCommitteeSize),
+			MaxValidatorsPerCommittee:        mustParseUint(jr.Data.TargetCommitteeSize),
+			ShuffleRoundCount:                mustParseUint(jr.Data.ShuffleRoundCount),
+			HysteresisQuotient:               mustParseUint(jr.Data.HysteresisQuotient),
+			HysteresisDownwardMultiplier:     mustParseUint(jr.Data.HysteresisDownwardMultiplier),
+			HysteresisUpwardMultiplier:       mustParseUint(jr.Data.HysteresisUpwardMultiplier),
+			SafeSlotsToUpdateJustified:       mustParseUint(jr.Data.SafeSlotsToUpdateJustified),
+			MinDepositAmount:                 mustParseUint(jr.Data.MinDepositAmount),
+			MaxEffectiveBalance:              mustParseUint(jr.Data.MaxEffectiveBalance),
+			EffectiveBalanceIncrement:        mustParseUint(jr.Data.EffectiveBalanceIncrement),
+			MinAttestationInclusionDelay:     mustParseUint(jr.Data.MinAttestationInclusionDelay),
+			SlotsPerEpoch:                    mustParseUint(jr.Data.SlotsPerEpoch),
+			MinSeedLookahead:                 mustParseUint(jr.Data.MinSeedLookahead),
+			MaxSeedLookahead:                 mustParseUint(jr.Data.MaxSeedLookahead),
+			EpochsPerEth1VotingPeriod:        mustParseUint(jr.Data.EpochsPerEth1VotingPeriod),
+			SlotsPerHistoricalRoot:           mustParseUint(jr.Data.SlotsPerHistoricalRoot),
+			MinEpochsToInactivityPenalty:     mustParseUint(jr.Data.MinEpochsToInactivityPenalty),
+			EpochsPerHistoricalVector:        mustParseUint(jr.Data.EpochsPerHistoricalVector),
+			EpochsPerSlashingsVector:         mustParseUint(jr.Data.EpochsPerSlashingsVector),
+			HistoricalRootsLimit:             mustParseUint(jr.Data.HistoricalRootsLimit),
+			ValidatorRegistryLimit:           mustParseUint(jr.Data.ValidatorRegistryLimit),
+			BaseRewardFactor:                 mustParseUint(jr.Data.BaseRewardFactor),
+			WhistleblowerRewardQuotient:      mustParseUint(jr.Data.WhistleblowerRewardQuotient),
+			ProposerRewardQuotient:           mustParseUint(jr.Data.ProposerRewardQuotient),
+			InactivityPenaltyQuotient:        mustParseUint(jr.Data.InactivityPenaltyQuotient),
+			MinSlashingPenaltyQuotient:       mustParseUint(jr.Data.MinSlashingPenaltyQuotient),
+			ProportionalSlashingMultiplier:   mustParseUint(jr.Data.ProportionalSlashingMultiplier),
+			MaxProposerSlashings:             mustParseUint(jr.Data.MaxProposerSlashings),
+			MaxAttesterSlashings:             mustParseUint(jr.Data.MaxAttesterSlashings),
+			MaxAttestations:                  mustParseUint(jr.Data.MaxAttestations),
+			MaxDeposits:                      mustParseUint(jr.Data.MaxDeposits),
+			MaxVoluntaryExits:                mustParseUint(jr.Data.MaxVoluntaryExits),
+			SyncCommitteeSize:                mustParseUint(jr.Data.SyncCommitteeSize),
+			EpochsPerSyncCommitteePeriod:     mustParseUint(jr.Data.EpochsPerSyncCommitteePeriod),
+			MinSyncCommitteeParticipants:     mustParseUint(jr.Data.MinSyncCommitteeParticipants),
+			MaxBytesPerTransaction:           mustParseUint(jr.Data.MaxBytesPerTransaction),
+			MaxTransactionsPerPayload:        mustParseUint(jr.Data.MaxTransactionsPerPayload),
+			BytesPerLogsBloom:                mustParseUint(jr.Data.BytesPerLogsBloom),
+			MaxExtraDataBytes:                mustParseUint(jr.Data.MaxExtraDataBytes),
+			MaxWithdrawalsPerPayload:         mustParseUint(jr.Data.MaxWithdrawalsPerPayload),
+			MaxValidatorsPerWithdrawalSweep:  mustParseUint(jr.Data.MaxValidatorsPerWithdrawalsSweep),
+			MaxDilithiumToExecutionChange:    mustParseUint(jr.Data.MaxDilithiumToExecutionChanges),
 		}
 
 		cfg.Chain.ClConfig = chainCfg
@@ -569,41 +565,9 @@ func ReadConfig(cfg *types.Config, path string) error {
 		cfg.Chain.ClConfig = *chainConfig
 	}
 
-	type MinimalELConfig struct {
-		ByzantiumBlock      *big.Int `yaml:"BYZANTIUM_FORK_BLOCK,omitempty"`      // Byzantium switch block (nil = no fork, 0 = already on byzantium)
-		ConstantinopleBlock *big.Int `yaml:"CONSTANTINOPLE_FORK_BLOCK,omitempty"` // Constantinople switch block (nil = no fork, 0 = already activated)
-	}
 	if cfg.Chain.ElConfigPath == "" {
-		minimalCfg := MinimalELConfig{}
-		switch cfg.Chain.Name {
-		case "mainnet":
-			err = yaml.Unmarshal([]byte(config.MainnetChainYml), &minimalCfg)
-		case "prater":
-			err = yaml.Unmarshal([]byte(config.PraterChainYml), &minimalCfg)
-		case "ropsten":
-			err = yaml.Unmarshal([]byte(config.RopstenChainYml), &minimalCfg)
-		case "sepolia":
-			err = yaml.Unmarshal([]byte(config.SepoliaChainYml), &minimalCfg)
-		case "gnosis":
-			err = yaml.Unmarshal([]byte(config.GnosisChainYml), &minimalCfg)
-		case "holesky":
-			err = yaml.Unmarshal([]byte(config.HoleskyChainYml), &minimalCfg)
-		default:
-			return fmt.Errorf("tried to set known chain-config, but unknown chain-name: %v (path: %v)", cfg.Chain.Name, cfg.Chain.ElConfigPath)
-		}
-		if err != nil {
-			return err
-		}
-		if minimalCfg.ByzantiumBlock == nil {
-			minimalCfg.ByzantiumBlock = big.NewInt(0)
-		}
-		if minimalCfg.ConstantinopleBlock == nil {
-			minimalCfg.ConstantinopleBlock = big.NewInt(0)
-		}
 		cfg.Chain.ElConfig = &params.ChainConfig{
-			ChainID:             big.NewInt(int64(cfg.Chain.Id)),
-			ByzantiumBlock:      minimalCfg.ByzantiumBlock,
-			ConstantinopleBlock: minimalCfg.ConstantinopleBlock,
+			ChainID: big.NewInt(int64(cfg.Chain.Id)),
 		}
 	} else {
 		f, err := os.Open(cfg.Chain.ElConfigPath)
@@ -777,33 +741,34 @@ func IsApiRequest(r *http.Request) bool {
 	return ok && len(query) > 0 && query[0] == "json"
 }
 
-var eth1AddressRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{40}$")
+var zondAddressRE = regexp.MustCompile("^Z[0-9a-fA-F]{40}$")
 var withdrawalCredentialsRE = regexp.MustCompile("^(0x)?00[0-9a-fA-F]{62}$")
 var withdrawalCredentialsAddressRE = regexp.MustCompile("^(0x)?" + BeginningOfSetWithdrawalCredentials + "[0-9a-fA-F]{40}$")
-var eth1TxRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{64}$")
+var txHashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{64}$")
 var zeroHashRE = regexp.MustCompile("^(0x)?0+$")
 var hashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{96}$")
 
-// IsValidEth1Address verifies whether a string represents a valid eth1-address.
-func IsValidEth1Address(s string) bool {
-	return !zeroHashRE.MatchString(s) && eth1AddressRE.MatchString(s)
+// IsValidAddress verifies whether a string represents a valid zond address.
+func IsValidAddress(s string) bool {
+	return zondAddressRE.MatchString(s)
 }
 
-// IsEth1Address verifies whether a string represents an eth1-address.
-// In contrast to IsValidEth1Address, this also returns true for the 0x0 address
-func IsEth1Address(s string) bool {
-	return eth1AddressRE.MatchString(s)
+// TODO(rgeraldes24)
+// IsAddress verifies whether a string represents a zond address.
+// In contrast to IsValidAddress, this also returns true for the 0x0 address
+func IsAddress(s string) bool {
+	return zondAddressRE.MatchString(s)
 }
 
-// IsValidEth1Tx verifies whether a string represents a valid eth1-tx-hash.
-func IsValidEth1Tx(s string) bool {
-	return !zeroHashRE.MatchString(s) && eth1TxRE.MatchString(s)
+// IsValidTxHash verifies whether a string represents a valid zond tx-hash.
+func IsValidTxHash(s string) bool {
+	return !zeroHashRE.MatchString(s) && txHashRE.MatchString(s)
 }
 
-// IsEth1Tx verifies whether a string represents an eth1-tx-hash.
-// In contrast to IsValidEth1Tx, this also returns true for the 0x0 address
-func IsEth1Tx(s string) bool {
-	return eth1TxRE.MatchString(s)
+// IsTxHash verifies whether a string represents a zond tx-hash.
+// In contrast to IsValidTxHash, this also returns true for the 0x0 address
+func IsTxHash(s string) bool {
+	return txHashRE.MatchString(s)
 }
 
 // IsHash verifies whether a string represents a zond hash.
