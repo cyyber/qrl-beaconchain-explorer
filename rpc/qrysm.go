@@ -15,22 +15,22 @@ import (
 	"sync"
 	"time"
 
+	"github.com/theQRL/go-bitfield"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/donovanhide/eventsource"
-	gtypes "github.com/ethereum/go-ethereum/core/types"
+	gtypes "github.com/theQRL/go-zond/core/types"
 	"golang.org/x/sync/errgroup"
 
 	lru "github.com/hashicorp/golang-lru"
-	"github.com/prysmaticlabs/go-bitfield"
 )
 
-// LighthouseLatestHeadEpoch is used to cache the latest head epoch for participation requests
-var LighthouseLatestHeadEpoch uint64 = 0
+// QrysmLatestHeadEpoch is used to cache the latest head epoch for participation requests
+var QrysmLatestHeadEpoch uint64 = 0
 
-// LighthouseClient holds the Lighthouse client info
-type LighthouseClient struct {
+// QrysmClient holds the Qrysm client info
+type QrysmClient struct {
 	endpoint            string
 	assignmentsCache    *lru.Cache
 	assignmentsCacheMux *sync.Mutex
@@ -39,10 +39,10 @@ type LighthouseClient struct {
 	signer              gtypes.Signer
 }
 
-// NewLighthouseClient is used to create a new Lighthouse client
-func NewLighthouseClient(endpoint string, chainID *big.Int) (*LighthouseClient, error) {
-	signer := gtypes.NewCancunSigner(chainID)
-	client := &LighthouseClient{
+// NewQrysmClient is used to create a new Qrysm client
+func NewQrysmClient(endpoint string, chainID *big.Int) (*QrysmClient, error) {
+	signer := gtypes.NewShanghaiSigner(chainID)
+	client := &QrysmClient{
 		endpoint:            endpoint,
 		assignmentsCacheMux: &sync.Mutex{},
 		slotsCacheMux:       &sync.Mutex{},
@@ -54,9 +54,9 @@ func NewLighthouseClient(endpoint string, chainID *big.Int) (*LighthouseClient, 
 	return client, nil
 }
 
-func (lc *LighthouseClient) GetNewBlockChan() chan *types.Block {
+func (lc *QrysmClient) GetNewBlockChan() chan *types.Block {
 	blkCh := make(chan *types.Block, 10)
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/eth/v1/events?topics=head", lc.endpoint), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/zond/v1/events?topics=head", lc.endpoint), nil)
 	if err != nil {
 		logger.Fatal(err, "error initializing event sse request", 0)
 	}
@@ -75,7 +75,7 @@ func (lc *LighthouseClient) GetNewBlockChan() chan *types.Block {
 			select {
 			// It is important to register to Errors, otherwise the stream does not reconnect if the connection was lost
 			case err := <-stream.Errors:
-				utils.LogError(err, "Lighthouse connection error (will automatically retry to connect)", 0)
+				utils.LogError(err, "Qrysm connection error (will automatically retry to connect)", 0)
 			case e := <-stream.Events:
 				// logger.Infof("retrieved %v via event stream", e.Data())
 				var parsed StreamedBlockEventData
@@ -100,9 +100,9 @@ func (lc *LighthouseClient) GetNewBlockChan() chan *types.Block {
 	return blkCh
 }
 
-// GetChainHead gets the chain head from Lighthouse
-func (lc *LighthouseClient) GetChainHead() (*types.ChainHead, error) {
-	headResp, err := lc.get(fmt.Sprintf("%s/eth/v1/beacon/headers/head", lc.endpoint))
+// GetChainHead gets the chain head from Qrysm
+func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
+	headResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/head", lc.endpoint))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving chain head: %w", err)
 	}
@@ -117,7 +117,11 @@ func (lc *LighthouseClient) GetChainHead() (*types.ChainHead, error) {
 	if parsedHead.Data.Header.Message.Slot == 0 {
 		id = "genesis"
 	}
-	finalityResp, err := lc.get(fmt.Sprintf("%s/eth/v1/beacon/states/%s/finality_checkpoints", lc.endpoint, id))
+
+	// TODO(rgeraldes24)
+	time.Sleep(15 * time.Second)
+
+	finalityResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/finality_checkpoints", lc.endpoint, id))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving finality checkpoints of head: %w", err)
 	}
@@ -154,9 +158,9 @@ func (lc *LighthouseClient) GetChainHead() (*types.ChainHead, error) {
 	}, nil
 }
 
-func (lc *LighthouseClient) GetValidatorQueue() (*types.ValidatorQueue, error) {
+func (lc *QrysmClient) GetValidatorQueue() (*types.ValidatorQueue, error) {
 	// pre-filter the status, to return much less validators, thus much faster!
-	validatorsResp, err := lc.get(fmt.Sprintf("%s/eth/v1/beacon/states/head/validators?status=pending_queued,active_exiting,active_slashed", lc.endpoint))
+	validatorsResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/head/validators?status=pending_queued,active_exiting,active_slashed", lc.endpoint))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving validator for head valiqdator queue check: %w", err)
 	}
@@ -178,8 +182,8 @@ func (lc *LighthouseClient) GetValidatorQueue() (*types.ValidatorQueue, error) {
 	}, nil
 }
 
-// GetEpochAssignments will get the epoch assignments from Lighthouse RPC api
-func (lc *LighthouseClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignments, error) {
+// GetEpochAssignments will get the epoch assignments from Qrysm RPC api
+func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignments, error) {
 
 	var err error
 
@@ -191,7 +195,7 @@ func (lc *LighthouseClient) GetEpochAssignments(epoch uint64) (*types.EpochAssig
 	}
 	lc.assignmentsCacheMux.Unlock()
 
-	proposerResp, err := lc.get(fmt.Sprintf("%s/eth/v1/validator/duties/proposer/%d", lc.endpoint, epoch))
+	proposerResp, err := lc.get(fmt.Sprintf("%s/zond/v1/validator/duties/proposer/%d", lc.endpoint, epoch))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving proposer duties for epoch %v: %w", epoch, err)
 	}
@@ -1276,19 +1280,6 @@ func (lc *LighthouseClient) GetSyncCommittee(stateID string, epoch uint64) (*Sta
 	return &parsedSyncCommittees.Data, nil
 }
 
-func (lc *LighthouseClient) GetBlobSidecars(stateID string) (*StandardBlobSidecarsResponse, error) {
-	res, err := lc.get(fmt.Sprintf("%s/eth/v1/beacon/blob_sidecars/%s", lc.endpoint, stateID))
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving blob_sidecars for %v: %w", stateID, err)
-	}
-	var parsed StandardBlobSidecarsResponse
-	err = json.Unmarshal(res, &parsed)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing blob_sidecars for %v: %w", stateID, err)
-	}
-	return &parsed, nil
-}
-
 var errNotFound = errors.New("not found 404")
 
 func (lc *LighthouseClient) get(url string) ([]byte, error) {
@@ -1564,25 +1555,21 @@ type SyncAggregate struct {
 // https://ethereum.github.io/beacon-APIs/#/Beacon/getBlockV2
 // https://github.com/ethereum/consensus-specs/blob/v1.1.9/specs/bellatrix/beacon-chain.md#executionpayload
 type ExecutionPayload struct {
-	ParentHash    bytesHexStr   `json:"parent_hash"`
-	FeeRecipient  bytesHexStr   `json:"fee_recipient"`
-	StateRoot     bytesHexStr   `json:"state_root"`
-	ReceiptsRoot  bytesHexStr   `json:"receipts_root"`
-	LogsBloom     bytesHexStr   `json:"logs_bloom"`
-	PrevRandao    bytesHexStr   `json:"prev_randao"`
-	BlockNumber   uint64Str     `json:"block_number"`
-	GasLimit      uint64Str     `json:"gas_limit"`
-	GasUsed       uint64Str     `json:"gas_used"`
-	Timestamp     uint64Str     `json:"timestamp"`
-	ExtraData     bytesHexStr   `json:"extra_data"`
-	BaseFeePerGas uint64Str     `json:"base_fee_per_gas"`
-	BlockHash     bytesHexStr   `json:"block_hash"`
-	Transactions  []bytesHexStr `json:"transactions"`
-	// present only after capella
-	Withdrawals []WithdrawalPayload `json:"withdrawals"`
-	// present only after deneb
-	BlobGasUsed   uint64Str `json:"blob_gas_used"`
-	ExcessBlobGas uint64Str `json:"excess_blob_gas"`
+	ParentHash    bytesHexStr         `json:"parent_hash"`
+	FeeRecipient  bytesHexStr         `json:"fee_recipient"`
+	StateRoot     bytesHexStr         `json:"state_root"`
+	ReceiptsRoot  bytesHexStr         `json:"receipts_root"`
+	LogsBloom     bytesHexStr         `json:"logs_bloom"`
+	PrevRandao    bytesHexStr         `json:"prev_randao"`
+	BlockNumber   uint64Str           `json:"block_number"`
+	GasLimit      uint64Str           `json:"gas_limit"`
+	GasUsed       uint64Str           `json:"gas_used"`
+	Timestamp     uint64Str           `json:"timestamp"`
+	ExtraData     bytesHexStr         `json:"extra_data"`
+	BaseFeePerGas uint64Str           `json:"base_fee_per_gas"`
+	BlockHash     bytesHexStr         `json:"block_hash"`
+	Transactions  []bytesHexStr       `json:"transactions"`
+	Withdrawals   []WithdrawalPayload `json:"withdrawals"`
 }
 
 type WithdrawalPayload struct {
@@ -1592,11 +1579,11 @@ type WithdrawalPayload struct {
 	Amount         uint64Str   `json:"amount"`
 }
 
-type SignedBLSToExecutionChange struct {
+type SignedDilithiumToExecutionChange struct {
 	Message struct {
-		ValidatorIndex     uint64Str   `json:"validator_index"`
-		FromBlsPubkey      bytesHexStr `json:"from_bls_pubkey"`
-		ToExecutionAddress bytesHexStr `json:"to_execution_address"`
+		ValidatorIndex      uint64Str   `json:"validator_index"`
+		FromDilithiumPubkey bytesHexStr `json:"from_dilithium_pubkey"`
+		ToExecutionAddress  bytesHexStr `json:"to_execution_address"`
 	} `json:"message"`
 	Signature bytesHexStr `json:"signature"`
 }
@@ -1617,17 +1604,11 @@ type AnySignedBlock struct {
 			Deposits          []Deposit          `json:"deposits"`
 			VoluntaryExits    []VoluntaryExit    `json:"voluntary_exits"`
 
-			// not present in phase0 blocks
 			SyncAggregate *SyncAggregate `json:"sync_aggregate,omitempty"`
 
-			// not present in phase0/altair blocks
 			ExecutionPayload *ExecutionPayload `json:"execution_payload"`
 
-			// present only after capella
-			SignedBLSToExecutionChange []*SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
-
-			// present only after deneb
-			BlobKZGCommitments []bytesHexStr `json:"blob_kzg_commitments"`
+			SignedDilithiumToExecutionChange []*SignedDilithiumToExecutionChange `json:"dilithium_to_execution_changes"`
 		} `json:"body"`
 	} `json:"message"`
 	Signature bytesHexStr `json:"signature"`
@@ -1679,17 +1660,4 @@ type StandardValidatorBalancesResponse struct {
 		Index   uint64Str `json:"index"`
 		Balance uint64Str `json:"balance"`
 	} `json:"data"`
-}
-
-type StandardBlobSidecarsResponse struct {
-	Data []struct {
-		BlockRoot       bytesHexStr `json:"block_root"`
-		Index           uint64Str   `json:"index"`
-		Slot            uint64Str   `json:"slot"`
-		BlockParentRoot bytesHexStr `json:"block_parent_root"`
-		ProposerIndex   uint64Str   `json:"proposer_index"`
-		KzgCommitment   bytesHexStr `json:"kzg_commitment"`
-		KzgProof        bytesHexStr `json:"kzg_proof"`
-		// Blob            string `json:"blob"`
-	}
 }

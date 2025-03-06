@@ -419,7 +419,6 @@ func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, relaysData map
 		totalReward := utils.Eth1TotalReward(block)
 
 		baseFee := big.NewInt(0).SetBytes(block.GetBaseFee())
-		difficulty := big.NewInt(0).SetBytes(block.GetDifficulty())
 
 		posData, ok := beaconDataMap[block.GetNumber()]
 		var posDataPt *types.ExecBlockProposer = nil
@@ -462,13 +461,10 @@ func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, relaysData map
 			FeeRecipient:       fmt.Sprintf("0x%v", hex.EncodeToString(block.GetCoinbase())),
 			GasLimit:           block.GetGasLimit(),
 			GasUsed:            block.GetGasUsed(),
-			UncleCount:         block.GetUncleCount(),
 			BaseFee:            baseFee,
 			TxCount:            block.GetTransactionCount(),
 			InternalTxCount:    block.GetInternalTransactionCount(),
 			ParentHash:         fmt.Sprintf("0x%v", hex.EncodeToString(block.GetParentHash())),
-			UncleHash:          fmt.Sprintf("0x%v", hex.EncodeToString(block.GetUncleHash())),
-			Difficulty:         difficulty,
 			PoSData:            posDataPt,
 			RelayData:          relayDataResponse,
 			ConsensusAlgorithm: consensusAlgorithm,

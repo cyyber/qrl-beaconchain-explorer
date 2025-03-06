@@ -109,5 +109,5 @@ bash add_withdrawal_address.sh -a "ETH address" -m "mnemonic" -b "URL" -i valida
 Here is an example:
 ```
 cd ~/eth2-beaconchain-explorer/local-deployment/scripts
-bash add_withdrawal_addr.sh -a "0x0701BF988309bf45a6771afaa6B8802Ba3E24090" -m "giant issue aisle success illegal bike spike question tent bar rely arctic volcano long crawl hungry vocal artwork sniff fantasy very lucky have athlete" -b "http://localhost:32779" -i 42
+bash add_withdrawal_addr.sh -a "Z0701BF988309bf45a6771afaa6B8802Ba3E24090" -m "giant issue aisle success illegal bike spike question tent bar rely arctic volcano long crawl hungry vocal artwork sniff fantasy very lucky have athlete" -b "http://localhost:32779" -i 42
 ```

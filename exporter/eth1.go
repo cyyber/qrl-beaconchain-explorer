@@ -8,31 +8,31 @@ import (
 	"regexp"
 	"time"
 
+	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	gethTypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
-	gethRPC "github.com/ethereum/go-ethereum/rpc"
-	"github.com/prysmaticlabs/prysm/v3/contracts/deposit"
-	"github.com/prysmaticlabs/prysm/v3/crypto/hash"
-	"github.com/prysmaticlabs/prysm/v3/encoding/bytesutil"
-	ethpb "github.com/prysmaticlabs/prysm/v3/proto/prysm/v1alpha1"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/common/hexutil"
+	gzondTypes "github.com/theQRL/go-zond/core/types"
+	gzondRPC "github.com/theQRL/go-zond/rpc"
+	"github.com/theQRL/go-zond/zondclient"
+	"github.com/theQRL/qrysm/contracts/deposit"
+	"github.com/theQRL/qrysm/crypto/hash"
+	"github.com/theQRL/qrysm/encoding/bytesutil"
+	ethpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
 )
 
 var eth1LookBack = uint64(100)
 var eth1MaxFetch = uint64(1000)
 var eth1DepositEventSignature = hash.HashKeccak256([]byte("DepositEvent(bytes,bytes,bytes,bytes,bytes)"))
 var eth1DepositContractFirstBlock uint64
-var eth1DepositContractAddress common.Address
-var eth1Client *ethclient.Client
-var eth1RPCClient *gethRPC.Client
+var zondDepositContractAddress common.Address
+var eth1Client *zondclient.Client
+var eth1RPCClient *gzondRPC.Client
 var infuraToMuchResultsErrorRE = regexp.MustCompile("query returned more than [0-9]+ results")
 var gethRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too Large")
 
@@ -41,15 +41,19 @@ var gethRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too Lar
 // If a reorg of the eth1-chain happened within these 100 blocks it will delete
 // removed deposits.
 func eth1DepositsExporter() {
-	eth1DepositContractAddress = common.HexToAddress(utils.Config.Chain.ClConfig.DepositContractAddress)
+	var err error
+	zondDepositContractAddress, err = common.NewAddressFromString(utils.Config.Chain.ClConfig.DepositContractAddress)
+	if err != nil {
+		utils.LogFatal(err, "deposit contract address error", 0)
+	}
 	eth1DepositContractFirstBlock = utils.Config.Indexer.Eth1DepositContractFirstBlock
 
-	rpcClient, err := gethRPC.Dial(utils.Config.Eth1GethEndpoint)
+	rpcClient, err := gzondRPC.Dial(utils.Config.Eth1GzondEndpoint)
 	if err != nil {
-		utils.LogFatal(err, "new exporter geth client error", 0)
+		utils.LogFatal(err, "new exporter gzond client error", 0)
 	}
 	eth1RPCClient = rpcClient
-	client := ethclient.NewClient(rpcClient)
+	client := zondclient.NewClient(rpcClient)
 	eth1Client = client
 
 	lastFetchedBlock := uint64(0)
@@ -164,9 +168,9 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	topic := common.BytesToHash(eth1DepositEventSignature[:])
-	qry := ethereum.FilterQuery{
+	qry := zond.FilterQuery{
 		Addresses: []common.Address{
-			eth1DepositContractAddress,
+			zondDepositContractAddress,
 		},
 		FromBlock: new(big.Int).SetUint64(fromBlock),
 		ToBlock:   new(big.Int).SetUint64(toBlock),
@@ -240,7 +244,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 		if chainID == nil {
 			return depositsToSave, fmt.Errorf("error getting tx-chainId for eth1-deposit")
 		}
-		signer := gethTypes.NewCancunSigner(chainID)
+		signer := gzondTypes.NewShanghaiSigner(chainID)
 		sender, err := signer.Sender(tx)
 		if err != nil {
 			return depositsToSave, fmt.Errorf("error getting sender for eth1-deposit (txHash: %x, chainID: %v): %w", d.TxHash, chainID, err)
@@ -313,17 +317,17 @@ func saveEth1Deposits(depositsToSave []*types.Eth1Deposit) error {
 // eth1BatchRequestHeadersAndTxs requests the block range specified in the arguments.
 // Instead of requesting each block in one call, it batches all requests into a single rpc call.
 // This code is shamelessly stolen and adapted from https://github.com/prysmaticlabs/prysm/blob/2eac24c/beacon-chain/powchain/service.go#L473
-func eth1BatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) (map[uint64]*gethTypes.Header, map[string]*gethTypes.Transaction, error) {
-	elems := make([]gethRPC.BatchElem, 0, len(blocksToFetch)+len(txsToFetch))
-	headers := make(map[uint64]*gethTypes.Header, len(blocksToFetch))
-	txs := make(map[string]*gethTypes.Transaction, len(txsToFetch))
+func eth1BatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) (map[uint64]*gzondTypes.Header, map[string]*gzondTypes.Transaction, error) {
+	elems := make([]gzondRPC.BatchElem, 0, len(blocksToFetch)+len(txsToFetch))
+	headers := make(map[uint64]*gzondTypes.Header, len(blocksToFetch))
+	txs := make(map[string]*gzondTypes.Transaction, len(txsToFetch))
 	errors := make([]error, 0, len(blocksToFetch)+len(txsToFetch))
 
 	for _, b := range blocksToFetch {
-		header := &gethTypes.Header{}
+		header := &gzondTypes.Header{}
 		err := error(nil)
-		elems = append(elems, gethRPC.BatchElem{
-			Method: "eth_getBlockByNumber",
+		elems = append(elems, gzondRPC.BatchElem{
+			Method: "zond_getBlockByNumber",
 			Args:   []interface{}{hexutil.EncodeBig(big.NewInt(int64(b))), false},
 			Result: header,
 			Error:  err,
@@ -333,10 +337,10 @@ func eth1BatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) 
 	}
 
 	for _, txHashHex := range txsToFetch {
-		tx := &gethTypes.Transaction{}
+		tx := &gzondTypes.Transaction{}
 		err := error(nil)
-		elems = append(elems, gethRPC.BatchElem{
-			Method: "eth_getTransactionByHash",
+		elems = append(elems, gzondRPC.BatchElem{
+			Method: "zond_getTransactionByHash",
 			Args:   []interface{}{txHashHex},
 			Result: tx,
 			Error:  err,

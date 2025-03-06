@@ -17,6 +17,12 @@ To migrate/write such handlers, replace X with Y:
 	utils.SetFlash(); http.Redirect()  -> FlashRedirectOrJSONErrorResponse()
 	http.Redirect()                    -> RedirectOrJSONOKResponse()
 	w.WriteHeader(http.StatusOK)       -> OKResponse()
+
+	getUser() handles auth accordingly, you can use it either way without changes.
+
+Dont forget to register the route and set middleware accordingly:
+	web auth   -> UserAuthMiddleware        -> authRouter
+	api auth   -> AuthorizedAPIMiddleware   -> apiV1AuthRouter
 */
 
 // SetAutoContentType text/html for web OR application/json for API

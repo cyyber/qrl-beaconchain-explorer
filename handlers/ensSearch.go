@@ -1,5 +1,6 @@
 package handlers
 
+/*
 import (
 	"net/http"
 
@@ -37,3 +38,4 @@ func EnsSearch(w http.ResponseWriter, r *http.Request) {
 		return // an error has occurred and was processed
 	}
 }
+*/

@@ -6,7 +6,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 // StakingCalculator renders stakingCalculatorTemplate
@@ -24,7 +23,8 @@ func StakingCalculator(w http.ResponseWriter, r *http.Request) {
 	}
 
 	calculatorPageData.TotalStaked = total
-	calculatorPageData.EtherscanApiBaseUrl = utils.GetEtherscanAPIBaseUrl(true)
+	// TODO(rgeraldes24)
+	// calculatorPageData.EtherscanApiBaseUrl = utils.GetEtherscanAPIBaseUrl(true)
 
 	w.Header().Set("Content-Type", "text/html")
 

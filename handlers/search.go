@@ -38,9 +38,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ensData *types.EnsDomainResponse
-	if utils.IsValidEnsDomain(search) {
-		ensData, _ = GetEnsDomain(search)
-	}
+	// if utils.IsValidEnsDomain(search) {
+	// 	ensData, _ = GetEnsDomain(search)
+	// }
 	search = strings.Replace(search, "0x", "", -1)
 	if ensData != nil && len(ensData.Address) > 0 {
 		http.Redirect(w, r, "/address/"+ensData.Domain, http.StatusMovedPermanently)
@@ -182,17 +182,17 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			ORDER BY index LIMIT 10`, search+"%")
 		}
 	case "eth1_addresses":
-		if utils.IsValidEnsDomain(search) {
-			ensData, _ := GetEnsDomain(search)
-			if len(ensData.Address) > 0 {
-				result = []*types.Eth1AddressSearchItem{{
-					Address: ensData.Address,
-					Name:    ensData.Domain,
-					Token:   "",
-				}}
-				break
-			}
-		}
+		// if utils.IsValidEnsDomain(search) {
+		// 	ensData, _ := GetEnsDomain(search)
+		// 	if len(ensData.Address) > 0 {
+		// 		result = []*types.Eth1AddressSearchItem{{
+		// 			Address: ensData.Address,
+		// 			Name:    ensData.Domain,
+		// 			Token:   "",
+		// 		}}
+		// 		break
+		// 	}
+		// }
 		if !searchLikeRE.MatchString(strippedSearch) {
 			break
 		}

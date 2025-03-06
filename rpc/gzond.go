@@ -21,37 +21,37 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	geth_types "github.com/ethereum/go-ethereum/core/types"
+	gzond_types "github.com/theQRL/go-zond/core/types"
 )
 
-type GethClient struct {
+type GzondClient struct {
 	endpoint     string
-	rpcClient    *geth_rpc.Client
-	ethClient    *ethclient.Client
+	rpcClient    *gzond_rpc.Client
+	zondClient   *zondclient.Client
 	chainID      *big.Int
 	multiChecker *Balance
 }
 
 var CurrentGethClient *GethClient
 
-func NewGethClient(endpoint string) (*GethClient, error) {
-	logger.Infof("initializing geth client at %v", endpoint)
-	client := &GethClient{
+func NewGzondClient(endpoint string) (*GzondClient, error) {
+	logger.Infof("initializing gzond client at %v", endpoint)
+	client := &GzondClient{
 		endpoint: endpoint,
 	}
 
-	rpcClient, err := geth_rpc.Dial(client.endpoint)
+	rpcClient, err := gzond_rpc.Dial(client.endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("error dialing rpc node: %v", err)
 	}
 
 	client.rpcClient = rpcClient
 
-	ethClient, err := ethclient.Dial(client.endpoint)
+	zondClient, err := zondclient.Dial(client.endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("error dialing rpc node: %v", err)
 	}
-	client.ethClient = ethClient
+	client.zondClient = zondClient
 
 	client.multiChecker, err = NewBalance(common.HexToAddress(""), client.ethClient)
 	if err != nil {
@@ -69,20 +69,20 @@ func NewGethClient(endpoint string) (*GethClient, error) {
 	return client, nil
 }
 
-func (client *GethClient) Close() {
+func (client *GzondClient) Close() {
 	client.rpcClient.Close()
-	client.ethClient.Close()
+	client.zondClient.Close()
 }
 
-func (client *GethClient) GetChainID() *big.Int {
+func (client *GzondClient) GetChainID() *big.Int {
 	return client.chainID
 }
 
-func (client *GethClient) GetNativeClient() *ethclient.Client {
-	return client.ethClient
+func (client *GzondClient) GetNativeClient() *zondclient.Client {
+	return client.zondClient
 }
 
-func (client *GethClient) GetRPCClient() *geth_rpc.Client {
+func (client *GzondClient) GetRPCClient() *gzond_rpc.Client {
 	return client.rpcClient
 }
 
@@ -104,12 +104,10 @@ func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBl
 	c := &types.Eth1Block{
 		Hash:         block.Hash().Bytes(),
 		ParentHash:   block.ParentHash().Bytes(),
-		UncleHash:    block.UncleHash().Bytes(),
 		Coinbase:     block.Coinbase().Bytes(),
 		Root:         block.Root().Bytes(),
 		TxHash:       block.TxHash().Bytes(),
 		ReceiptHash:  block.ReceiptHash().Bytes(),
-		Difficulty:   block.Difficulty().Bytes(),
 		Number:       block.NumberU64(),
 		GasLimit:     block.GasLimit(),
 		GasUsed:      block.GasUsed(),
@@ -117,7 +115,6 @@ func (client *GethClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBl
 		Extra:        block.Extra(),
 		MixDigest:    block.MixDigest().Bytes(),
 		Bloom:        block.Bloom().Bytes(),
-		Uncles:       []*types.Eth1Block{},
 		Transactions: []*types.Eth1Transaction{},
 	}
 
@@ -273,31 +270,36 @@ func (client *GethClient) GetBalances(pairs []string) ([]*types.Eth1AddressBalan
 			logrus.Fatalf("%v has invalid balance update prefix", pair)
 		}
 
-		address := s[1]
-		token := s[2]
+func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*types.Eth1AddressBalance, error) {
+	batchElements := make([]gzond_rpc.BatchElem, 0, len(pairs))
+
+	ret := make([]*types.Eth1AddressBalance, len(pairs))
+
+	for i, pair := range pairs {
 		result := ""
 
 		ret[i] = &types.Eth1AddressBalance{
-			Address: common.FromHex(address),
-			Token:   common.FromHex(token),
+			Address: pair.Address,
+			Token:   pair.Token,
 		}
 
-		if token == "00" {
-			batchElements = append(batchElements, geth_rpc.BatchElem{
-				Method: "eth_getBalance",
-				Args:   []interface{}{common.HexToAddress(address), "latest"},
+		if len(pair.Token) < 20 {
+			addr := common.BytesToAddress(pair.Address)
+			batchElements = append(batchElements, gzond_rpc.BatchElem{
+				Method: "zond_getBalance",
+				Args:   []interface{}{addr, "latest"},
 				Result: &result,
 			})
 		} else {
-			to := common.HexToAddress(token)
-			msg := ethereum.CallMsg{
+			to := common.BytesToAddress(pair.Token)
+			msg := zond.CallMsg{
 				To:   &to,
 				Gas:  1000000,
-				Data: common.Hex2Bytes("70a08231000000000000000000000000" + address),
+				Data: common.Hex2Bytes(fmt.Sprintf("70a08231000000000000000000000000%x", pair.Address)),
 			}
 
-			batchElements = append(batchElements, geth_rpc.BatchElem{
-				Method: "eth_call",
+			batchElements = append(batchElements, gzond_rpc.BatchElem{
+				Method: "zond_call",
 				Args:   []interface{}{toCallArg(msg), "latest"},
 				Result: &result,
 			})
@@ -321,7 +323,7 @@ func (client *GethClient) GetBalances(pairs []string) ([]*types.Eth1AddressBalan
 	return ret, nil
 }
 
-func (client *GethClient) GetBalancesForAddresse(address string, tokenStr []string) ([]*types.Eth1AddressBalance, error) {
+func (client *GzondClient) GetBalancesForAddresses(address string, tokenStr []string) ([]*types.Eth1AddressBalance, error) {
 	opts := &bind.CallOpts{
 		BlockNumber: nil,
 	}
@@ -329,9 +331,17 @@ func (client *GethClient) GetBalancesForAddresse(address string, tokenStr []stri
 	tokens := make([]common.Address, 0, len(tokenStr))
 
 	for _, token := range tokenStr {
-		tokens = append(tokens, common.HexToAddress(token))
+		addr, err := common.NewAddressFromString(token)
+		if err != nil {
+			return nil, err
+		}
+		tokens = append(tokens, addr)
 	}
-	balancesInt, err := client.multiChecker.Balances(opts, []common.Address{common.HexToAddress(address)}, tokens)
+	addr, err := common.NewAddressFromString(address)
+	if err != nil {
+		return nil, err
+	}
+	balancesInt, err := client.multiChecker.Balances(opts, []common.Address{addr}, tokens)
 	if err != nil {
 		return nil, err
 	}
@@ -349,24 +359,30 @@ func (client *GethClient) GetBalancesForAddresse(address string, tokenStr []stri
 	return res, nil
 }
 
-func (client *GethClient) GetNativeBalance(address string) ([]byte, error) {
+func (client *GzondClient) GetNativeBalance(address string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	balance, err := client.ethClient.BalanceAt(ctx, common.HexToAddress(address), nil)
-
+	addr, err := common.NewAddressFromString(address)
+	if err != nil {
+		return nil, err
+	}
+	balance, err := client.zondClient.BalanceAt(ctx, addr, nil)
 	if err != nil {
 		return nil, err
 	}
 	return balance.Bytes(), nil
 }
 
-func (client *GethClient) GetERC20TokenBalance(address string, token string) ([]byte, error) {
+func (client *GzondClient) GetERC20TokenBalance(address string, token string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	to := common.HexToAddress(token)
-	balance, err := client.ethClient.CallContract(ctx, ethereum.CallMsg{
+	to, err := common.NewAddressFromString(token)
+	if err != nil {
+		return nil, err
+	}
+	balance, err := client.zondClient.CallContract(ctx, zond.CallMsg{
 		To:   &to,
 		Gas:  1000000,
 		Data: common.Hex2Bytes("70a08231000000000000000000000000" + address),
@@ -378,10 +394,10 @@ func (client *GethClient) GetERC20TokenBalance(address string, token string) ([]
 	return balance, nil
 }
 
-func (client *GethClient) GetERC20TokenMetadata(token []byte) (*types.ERC20Metadata, error) {
+func (client *GzondClient) GetERC20TokenMetadata(token []byte) (*types.ERC20Metadata, error) {
 	logger.Infof("retrieving metadata for token %x", token)
 
-	contract, err := erc20.NewErc20(common.BytesToAddress(token), client.ethClient)
+	contract, err := erc20.NewErc20(common.BytesToAddress(token), client.zondClient)
 	if err != nil {
 		return nil, fmt.Errorf("error getting token-contract: erc20.NewErc20: %w", err)
 	}
@@ -420,22 +436,6 @@ func (client *GethClient) GetERC20TokenMetadata(token []byte) (*types.ERC20Metad
 			return fmt.Errorf("error retrieving token decimals: %w", err)
 		}
 		ret.Decimals = big.NewInt(int64(decimals)).Bytes()
-		return nil
-	})
-
-	g.Go(func() error {
-		if !oneinchoracle.SupportedChainId(client.GetChainID()) {
-			return nil
-		}
-		oracle, err := oneinchoracle.NewOneInchOracleByChainID(client.GetChainID(), client.ethClient)
-		if err != nil {
-			return fmt.Errorf("error initializing oneinchoracle.NewOneInchOracleByChainID: %w", err)
-		}
-		rate, err := oracle.GetRateToEth(nil, common.BytesToAddress(token), false)
-		if err != nil {
-			return fmt.Errorf("error calling oneinchoracle.GetRateToEth: %w", err)
-		}
-		ret.Price = rate.Bytes()
 		return nil
 	})
 

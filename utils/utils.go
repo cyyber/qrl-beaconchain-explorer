@@ -42,19 +42,18 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/carlmjohnson/requests"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/params"
 	"github.com/kataras/i18n"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lib/pq"
 	"github.com/mvdan/xurls"
-	"github.com/prysmaticlabs/prysm/v3/beacon-chain/core/signing"
-	prysm_params "github.com/prysmaticlabs/prysm/v3/config/params"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/skip2/go-qrcode"
 	confusables "github.com/skygeario/go-confusable-homoglyphs"
+	"github.com/theQRL/go-zond/common/hexutil"
+	"github.com/theQRL/go-zond/params"
+	"github.com/theQRL/qrysm/beacon-chain/core/signing"
+	qrysm_params "github.com/theQRL/qrysm/config/params"
 )
 
 // Config is the globally accessible configuration
@@ -807,7 +806,7 @@ func IsEth1Tx(s string) bool {
 	return eth1TxRE.MatchString(s)
 }
 
-// IsHash verifies whether a string represents an eth1-hash.
+// IsHash verifies whether a string represents a zond hash.
 func IsHash(s string) bool {
 	return hashRE.MatchString(s)
 }
@@ -815,14 +814,6 @@ func IsHash(s string) bool {
 // IsValidWithdrawalCredentials verifies whether a string represents valid withdrawal credentials.
 func IsValidWithdrawalCredentials(s string) bool {
 	return withdrawalCredentialsRE.MatchString(s) || withdrawalCredentialsAddressRE.MatchString(s)
-}
-
-// https://github.com/badoux/checkmail/blob/f9f80cb795fa/checkmail.go#L37
-var emailRE = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-
-// IsValidEmail verifies whether a string represents a valid email-address.
-func IsValidEmail(s string) bool {
-	return emailRE.MatchString(s)
 }
 
 // IsValidUrl verifies whether a string represents a valid Url.
@@ -1081,9 +1072,11 @@ func ElementExists(arr []string, el string) bool {
 	return false
 }
 
+/*
 func TryFetchContractMetadata(address []byte) (*types.ContractMetadata, error) {
 	return getABIFromEtherscan(address)
 }
+*/
 
 // func getABIFromSourcify(address []byte) (*types.ContractMetadata, error) {
 // 	httpClient := http.Client{
@@ -1132,7 +1125,6 @@ func TryFetchContractMetadata(address []byte) (*types.ContractMetadata, error) {
 func GetEtherscanAPIBaseUrl(provideDefault bool) string {
 	const mainnetBaseUrl = "api.etherscan.io"
 	const goerliBaseUrl = "api-goerli.etherscan.io"
-	const sepoliaBaseUrl = "api-sepolia.etherscan.io"
 
 	// check config first
 	if len(Config.EtherscanAPIBaseURL) > 0 {
@@ -1145,8 +1137,6 @@ func GetEtherscanAPIBaseUrl(provideDefault bool) string {
 		return mainnetBaseUrl
 	case 5: // goerli
 		return goerliBaseUrl
-	case 11155111: // sepolia
-		return sepoliaBaseUrl
 	}
 
 	// use default

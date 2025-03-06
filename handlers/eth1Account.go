@@ -15,8 +15,8 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
+	"github.com/theQRL/go-zond/common"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -27,16 +27,16 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
 	address := template.HTMLEscapeString(vars["address"])
-	ensData, err := GetEnsDomain(address)
-	if err != nil && utils.IsValidEnsDomain(address) {
-		handleNotFoundHtml(w, r)
-		return
-	}
-	if len(ensData.Address) > 0 {
-		address = ensData.Address
-	}
+	// ensData, err := GetEnsDomain(address)
+	// if err != nil && utils.IsValidEnsDomain(address) {
+	// 	handleNotFoundHtml(w, r)
+	// 	return
+	// }
+	// if len(ensData.Address) > 0 {
+	// 	address = ensData.Address
+	// }
 
-	isValid := utils.IsEth1Address(address)
+	isValid := utils.IsAddress(address)
 	if !isValid {
 		handleNotFoundHtml(w, r)
 		return

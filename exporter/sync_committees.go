@@ -41,7 +41,7 @@ func exportSyncCommittees(rpcClient rpc.Client) error {
 		currEpoch = currEpoch - 1
 	}
 	lastPeriod := utils.SyncPeriodOfEpoch(uint64(currEpoch)) + 1 // we can look into the future
-	firstPeriod := utils.SyncPeriodOfEpoch(utils.Config.Chain.ClConfig.AltairForkEpoch)
+	firstPeriod := uint64(0)
 	for p := firstPeriod; p <= lastPeriod; p++ {
 		_, exists := dbPeriodsMap[p]
 		if !exists {
@@ -108,10 +108,6 @@ func GetSyncCommitteAtPeriod(rpcClient rpc.Client, p uint64) ([]SyncCommittee, e
 		stateID = utils.FirstEpochOfSyncPeriod(p-1) * utils.Config.Chain.ClConfig.SlotsPerEpoch
 	}
 	epoch := utils.FirstEpochOfSyncPeriod(p)
-	if stateID/utils.Config.Chain.ClConfig.SlotsPerEpoch <= utils.Config.Chain.ClConfig.AltairForkEpoch {
-		stateID = utils.Config.Chain.ClConfig.AltairForkEpoch * utils.Config.Chain.ClConfig.SlotsPerEpoch
-		epoch = utils.Config.Chain.ClConfig.AltairForkEpoch
-	}
 
 	firstEpoch := utils.FirstEpochOfSyncPeriod(p)
 	lastEpoch := firstEpoch + utils.Config.Chain.ClConfig.EpochsPerSyncCommitteePeriod - 1

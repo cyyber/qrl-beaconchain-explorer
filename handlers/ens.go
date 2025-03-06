@@ -1,5 +1,6 @@
 package handlers
 
+/*
 import (
 	"database/sql"
 	"encoding/json"
@@ -14,8 +15,8 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
+	"github.com/theQRL/go-zond/common"
 )
 
 // ApiEnsLookup godoc
@@ -107,3 +108,4 @@ func ReplaceEnsNameWithAddress(search string) string {
 	}
 	return search
 }
+*/

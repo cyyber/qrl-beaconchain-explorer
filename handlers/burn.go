@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -29,7 +28,8 @@ func Burn(w http.ResponseWriter, r *http.Request) {
 		currency = "USD"
 	}
 
-	latestBurn.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
+	// latestBurn.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
+	latestBurn.Price = 1.0
 	latestBurn.Currency = currency
 
 	data.Data = latestBurn
@@ -48,7 +48,8 @@ func BurnPageData(w http.ResponseWriter, r *http.Request) {
 		currency = "USD"
 	}
 
-	latestBurn.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
+	// latestBurn.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
+	latestBurn.Price = 1.0
 	latestBurn.Currency = currency
 
 	err := json.NewEncoder(w).Encode(latestBurn)

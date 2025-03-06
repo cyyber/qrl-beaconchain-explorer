@@ -332,21 +332,6 @@ type Eth2Deposit struct {
 	Signature             []byte `db:"signature"`
 }
 
-// EthStoreDay is a struct to hold performance data for a specific beaconchain-day.
-// All fields use Gwei unless specified otherwise by the field name
-type EthStoreDay struct {
-	Pool                   string          `db:"pool"`
-	Day                    uint64          `db:"day"`
-	EffectiveBalancesSum   decimal.Decimal `db:"effective_balances_sum_wei"`
-	StartBalancesSum       decimal.Decimal `db:"start_balances_sum_wei"`
-	EndBalancesSum         decimal.Decimal `db:"end_balances_sum_wei"`
-	DepositsSum            decimal.Decimal `db:"deposits_sum_wei"`
-	TxFeesSumWei           decimal.Decimal `db:"tx_fees_sum_wei"`
-	ConsensusRewardsSumWei decimal.Decimal `db:"consensus_rewards_sum_wei"`
-	TotalRewardsWei        decimal.Decimal `db:"total_rewards_wei"`
-	APR                    decimal.Decimal `db:"apr"`
-}
-
 type HistoricEthPrice struct {
 	MarketData struct {
 		CurrentPrice struct {

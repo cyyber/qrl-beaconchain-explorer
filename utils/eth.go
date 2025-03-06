@@ -12,14 +12,7 @@ import (
 	e2types "github.com/wealdtech/go-eth2-types/v2"
 )
 
-func init() {
-	err := e2types.InitBLS()
-	if err != nil {
-		logrus.Fatalf("error in e2types.InitBLS(): %v", err)
-	}
-}
-
-// VerifyBlsToExecutionChangeSignature verifies the signature of an bls_to_execution_change message
+// VerifyDilithiumToExecutionChangeSignature verifies the signature of an dilithium_to_execution_change message
 // see: https://github.com/wealdtech/ethdo/blob/master/cmd/validator/credentials/set/process.go
 // see: https://github.com/prysmaticlabs/prysm/blob/76ed634f7386609f0d1ee47b703eb0143c995464/beacon-chain/core/blocks/withdrawals.go
 func VerifyBlsToExecutionChangeSignature(op *capella.SignedBLSToExecutionChange) error {

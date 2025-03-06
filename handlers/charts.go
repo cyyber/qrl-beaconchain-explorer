@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
@@ -46,11 +45,6 @@ func Charts(w http.ResponseWriter, r *http.Request) {
 	disclaimer := ""
 	for _, chart := range cpd {
 		chart.Data.Series = nil
-
-		// If at least one chart shows info about ETH.STORE, then show the disclaimer
-		if disclaimer == "" && strings.Contains(chart.Data.Subtitle, "ETH.STORE®") {
-			disclaimer = services.EthStoreDisclaimer()
-		}
 	}
 
 	data.Data = &types.ChartsPageData{ChartsPageDataCharts: cpd, Disclaimer: disclaimer}

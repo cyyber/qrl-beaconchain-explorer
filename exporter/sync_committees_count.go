@@ -33,7 +33,7 @@ func exportSyncCommitteesCount() error {
 	}
 
 	currentPeriod := utils.SyncPeriodOfEpoch(latestFinalizedEpoch)
-	firstPeriod := utils.SyncPeriodOfEpoch(utils.Config.Chain.ClConfig.AltairForkEpoch)
+	firstPeriod := uint64(0)
 
 	dbPeriod := uint64(0)
 	countSoFar := float64(0)

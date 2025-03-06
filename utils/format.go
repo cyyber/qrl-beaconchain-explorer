@@ -19,16 +19,16 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 
-	"github.com/prysmaticlabs/go-bitfield"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	"github.com/theQRL/go-bitfield"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/common/hexutil"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
 const CalculatingHint = `Calculating…`
@@ -530,14 +530,8 @@ func FormatWithdrawalShort(slot uint64, amount uint64) template.HTML {
 
 func FormatTransactionType(txnType uint8) string {
 	switch txnType {
-	case 0:
-		return "0 (legacy)"
-	case 1:
-		return "1 (Access-list)"
 	case 2:
 		return "2 (EIP-1559)"
-	case 3:
-		return "3 (Blob, EIP-4844)"
 	default:
 		return fmt.Sprintf("%v (???)", txnType)
 	}
@@ -574,7 +568,7 @@ func FormatEth1AddressStringLowerCase(addr []byte) template.HTML {
 
 // FormatEth1Address will return the eth1-address formated as html
 func FormatEth1Address(addr []byte) template.HTML {
-	eth1Addr := FixAddressCasing(fmt.Sprintf("%x", addr))
+	eth1Addr := FixAddressCasing(fmt.Sprintf("Z%x", addr))
 	copyBtn := CopyButton(eth1Addr)
 	return template.HTML(fmt.Sprintf("<a href=\"/address/%s\" class=\"text-monospace\">%s…</a>%s", eth1Addr, eth1Addr[:8], copyBtn))
 }
@@ -699,13 +693,13 @@ func WithdrawalCredentialsToAddress(credentials []byte) ([]byte, error) {
 
 // AddressToWithdrawalCredentials converts a valid address to withdrawalCredentials
 func AddressToWithdrawalCredentials(address []byte) ([]byte, error) {
-	if IsValidEth1Address(fmt.Sprintf("%#x", address)) {
+	if IsValidAddress(fmt.Sprintf("%#x", address)) {
 		credentials := make([]byte, 12, 32)
 		credentials[0] = 0x01
 		credentials = append(credentials, address...)
 		return credentials, nil
 	}
-	return nil, fmt.Errorf("invalid eth1 address")
+	return nil, fmt.Errorf("invalid zond address")
 }
 
 func FormatHashWithCopy(hash []byte) template.HTML {
@@ -976,13 +970,6 @@ func FormatPublicKey(validator []byte) template.HTML {
 	return template.HTML(fmt.Sprintf(`<i class="fas fa-male mr-2"></i><a style="font-family: 'Roboto Mono'" href="/validator/0x%x">0x%v…</a>%v`, validator, hex.EncodeToString(validator)[:6], copyBtn))
 }
 
-func FormatMachineName(machineName string) template.HTML {
-	if machineName == "" {
-		machineName = "Default"
-	}
-	return template.HTML(fmt.Sprintf("<i class=\"fas fa-hdd\"></i> %v", machineName))
-}
-
 // FormatTimestamp will return a timestamp formated as html. This is supposed to be used together with client-side js
 func FormatTimestamp(ts int64) template.HTML {
 	return template.HTML(fmt.Sprintf("<span class=\"timestamp\" data-toggle=\"tooltip\" data-placement=\"top\" data-timestamp=\"%d\"></span>", ts))
@@ -1058,8 +1045,6 @@ func formatSpecialTag(tag string) string {
 func FormatValidatorTag(tag string) template.HTML {
 	var result string
 	switch tag {
-	case "rocketpool":
-		result = `<span style="background-color: rgba(240, 149, 45, .2); font-size: 18px;" class="badge-pill mr-1 font-weight-normal" data-toggle="tooltip" title="Rocket Pool Validator"><a style="color: var(--yellow);" href="/pools/rocketpool">Rocket Pool</a></span>`
 	case "ssv":
 		result = `<span style="background-color: rgba(238, 113, 18, .2); font-size: 18px;" class="badge-pill mr-1 font-weight-normal" data-toggle="tooltip" title="Secret Shared Validator"><a style="color: var(--orange);" href="https://github.com/bloxapp/ssv/">SSV</a></span>`
 	default:
@@ -1232,14 +1217,6 @@ func FormatFloat(num float64, precision int) string {
 	s := strings.TrimRight(strings.TrimRight(p.Sprintf(f, num), "0"), ".")
 	r := []rune(p.Sprintf(s, num))
 	return string(r)
-}
-
-func FormatNotificationChannel(ch types.NotificationChannel) template.HTML {
-	label, ok := types.NotificationChannelLabels[ch]
-	if !ok {
-		return ""
-	}
-	return label
 }
 
 func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {

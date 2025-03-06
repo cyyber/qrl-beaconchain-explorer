@@ -20,17 +20,15 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/lib/pq"
 	protomath "github.com/protolambda/zrnt/eth2/util/math"
+	"github.com/theQRL/go-zond/accounts"
+	"github.com/theQRL/go-zond/crypto"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/juliangruber/go-intersect"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
 var validatorEditFlash = "edit_validator_flash"
@@ -88,7 +86,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 
 	validatorPageData := types.ValidatorPageData{}
 
-	validatorPageData.CappellaHasHappened = latestEpoch >= (utils.Config.Chain.ClConfig.CappellaForkEpoch)
 	futureProposalEpoch := uint64(0)
 	futureSyncDutyEpoch := uint64(0)
 
@@ -124,7 +121,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 
 	data := InitPageData(w, r, "validators", "/validators", "", validatorTemplateFiles)
 	validatorPageData.NetworkStats = services.LatestIndexPageData()
-	validatorPageData.User = data.User
 
 	validatorPageData.FlashMessage, err = utils.GetFlash(w, r, validatorEditFlash)
 	if err != nil {
@@ -133,7 +129,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if strings.Contains(vars["index"], "0x") || len(vars["index"]) == 96 {
+	if strings.Contains(vars["index"], "0x") || len(vars["index"]) == 5184 {
 		// Request came with a hash
 		pubKey, err := hex.DecodeString(strings.Replace(vars["index"], "0x", "", -1))
 		if err != nil {
@@ -214,41 +210,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 				if !deposit.ValidSignature {
 					validatorPageData.Status = "deposited_invalid"
 					break
-				}
-			}
-
-			filter := db.WatchlistFilter{
-				UserId:         data.User.UserID,
-				Validators:     &pq.ByteaArray{validatorPageData.PublicKey},
-				Tag:            types.ValidatorTagsWatchlist,
-				JoinValidators: false,
-				Network:        utils.GetNetwork(),
-			}
-			watchlist, err := db.GetTaggedValidators(filter)
-			if err != nil {
-				errFields["userID"] = data.User.UserID
-				utils.LogError(err, "error getting tagged validators from db", 0, errFields)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-
-			validatorPageData.Watchlist = watchlist
-
-			if data.User.Authenticated {
-				events := make([]types.EventNameCheckbox, 0)
-				for _, ev := range types.AddWatchlistEvents {
-					events = append(events, types.EventNameCheckbox{
-						EventLabel: ev.Desc,
-						EventName:  ev.Event,
-						Active:     false,
-						Warning:    ev.Warning,
-						Info:       ev.Info,
-					})
-				}
-				validatorPageData.AddValidatorWatchlistModal = &types.AddValidatorWatchlistModal{
-					Events:         events,
-					ValidatorIndex: validatorPageData.Index,
-					CsrfField:      csrf.TemplateField(r),
 				}
 			}
 
@@ -342,24 +303,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 	validatorPageData.Epoch = latestEpoch
 	validatorPageData.Index = index
 
-	if data.User.Authenticated {
-		events := make([]types.EventNameCheckbox, 0)
-		for _, ev := range types.AddWatchlistEvents {
-			events = append(events, types.EventNameCheckbox{
-				EventLabel: ev.Desc,
-				EventName:  ev.Event,
-				Active:     false,
-				Warning:    ev.Warning,
-				Info:       ev.Info,
-			})
-		}
-		validatorPageData.AddValidatorWatchlistModal = &types.AddValidatorWatchlistModal{
-			Events:         events,
-			ValidatorIndex: validatorPageData.Index,
-			CsrfField:      csrf.TemplateField(r),
-		}
-	}
-
 	validatorPageData.ActivationEligibilityTs = utils.EpochToTime(validatorPageData.ActivationEligibilityEpoch)
 	validatorPageData.ActivationTs = utils.EpochToTime(validatorPageData.ActivationEpoch)
 	validatorPageData.ExitTs = utils.EpochToTime(validatorPageData.ExitEpoch)
@@ -440,100 +383,81 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 			validatorPageData.IsWithdrawableAddress = true
 		}
 
-		if validatorPageData.CappellaHasHappened {
-			// if we are currently past the cappella fork epoch, we can calculate the withdrawal information
+		// if we are currently past the cappella fork epoch, we can calculate the withdrawal information
 
-			validatorSlice := []uint64{index}
-			withdrawalsCount, err := db.GetTotalWithdrawalsCount(validatorSlice)
-			if err != nil {
-				return fmt.Errorf("error getting validator withdrawals count from db: %w", err)
-			}
-			validatorPageData.WithdrawalCount = withdrawalsCount
-			lastWithdrawalsEpochs, err := db.GetLastWithdrawalEpoch(validatorSlice)
-			if err != nil {
-				return fmt.Errorf("error getting validator last withdrawal epoch from db: %w", err)
-			}
-			lastWithdrawalsEpoch := lastWithdrawalsEpochs[index]
-
-			blsChange, err := db.GetValidatorBLSChange(validatorPageData.Index)
-			if err != nil {
-				return fmt.Errorf("error getting validator bls change from db: %w", err)
-			}
-			validatorPageData.BLSChange = blsChange
-
-			if bytes.Equal(validatorPageData.WithdrawCredentials[:1], []byte{0x00}) && blsChange != nil {
-				// blsChanges are only possible afters cappeala
-				validatorPageData.IsWithdrawableAddress = true
-			}
-
-			// only calculate the expected next withdrawal if the validator is eligible
-			isFullWithdrawal := validatorPageData.CurrentBalance > 0 && validatorPageData.WithdrawableEpoch <= validatorPageData.Epoch
-			isPartialWithdrawal := validatorPageData.EffectiveBalance == utils.Config.Chain.ClConfig.MaxEffectiveBalance && validatorPageData.CurrentBalance > utils.Config.Chain.ClConfig.MaxEffectiveBalance
-			if stats != nil && stats.LatestValidatorWithdrawalIndex != nil && stats.TotalValidatorCount != nil && validatorPageData.IsWithdrawableAddress && (isFullWithdrawal || isPartialWithdrawal) {
-				distance, err := GetWithdrawableCountFromCursor(validatorPageData.Epoch, validatorPageData.Index, *stats.LatestValidatorWithdrawalIndex)
-				if err != nil {
-					return fmt.Errorf("error getting withdrawable validator count from cursor: %w", err)
-				}
-
-				timeToWithdrawal := utils.GetTimeToNextWithdrawal(distance)
-
-				// it normally takes two epochs to finalize
-				if timeToWithdrawal.After(utils.EpochToTime(latestEpoch + (latestEpoch - lastFinalizedEpoch))) {
-					address, err := utils.WithdrawalCredentialsToAddress(validatorPageData.WithdrawCredentials)
-					if err != nil {
-						// warning only as "N/A" will be displayed
-						logger.Warn("invalid withdrawal credentials")
-					}
-
-					// create the table data
-					tableData := make([][]interface{}, 0, 1)
-					var withdrawalCredentialsTemplate template.HTML
-					if address != nil {
-						withdrawalCredentialsTemplate = template.HTML(fmt.Sprintf(`<a href="/address/0x%x"><span class="text-muted">%s</span></a>`, address, utils.FormatAddress(address, nil, "", false, false, true)))
-					} else {
-						withdrawalCredentialsTemplate = `<span class="text-muted">N/A</span>`
-					}
-
-					var withdrawalAmount uint64
-					if isFullWithdrawal {
-						withdrawalAmount = validatorPageData.CurrentBalance
-					} else {
-						withdrawalAmount = validatorPageData.CurrentBalance - utils.Config.Chain.ClConfig.MaxEffectiveBalance
-					}
-
-					if latestEpoch == lastWithdrawalsEpoch {
-						withdrawalAmount = 0
-					}
-					tableData = append(tableData, []interface{}{
-						template.HTML(fmt.Sprintf(`<span class="text-muted">~ %s</span>`, utils.FormatEpoch(uint64(utils.TimeToEpoch(timeToWithdrawal))))),
-						template.HTML(fmt.Sprintf(`<span class="text-muted">~ %s</span>`, utils.FormatBlockSlot(utils.TimeToSlot(uint64(timeToWithdrawal.Unix()))))),
-						template.HTML(fmt.Sprintf(`<span class="">~ %s</span>`, utils.FormatTimestamp(timeToWithdrawal.Unix()))),
-						withdrawalCredentialsTemplate,
-						template.HTML(fmt.Sprintf(`<span class="text-muted"><span data-toggle="tooltip" title="If the withdrawal were to be processed at this very moment, this amount would be withdrawn"><i class="far ml-1 fa-question-circle" style="margin-left: 0px !important;"></i></span> %s</span>`, utils.FormatClCurrency(withdrawalAmount, currency, 6, true, false, false, true))),
-					})
-
-					validatorPageData.NextWithdrawalRow = tableData
-				}
-			}
-		}
-		return nil
-	})
-
-	g.Go(func() error {
-		filter := db.WatchlistFilter{
-			UserId:         data.User.UserID,
-			Validators:     &pq.ByteaArray{validatorPageData.PublicKey},
-			Tag:            types.ValidatorTagsWatchlist,
-			JoinValidators: false,
-			Network:        utils.GetNetwork(),
-		}
-
-		watchlist, err := db.GetTaggedValidators(filter)
+		validatorSlice := []uint64{index}
+		withdrawalsCount, err := db.GetTotalWithdrawalsCount(validatorSlice)
 		if err != nil {
-			return fmt.Errorf("error getting tagged validators from db: %w", err)
+			return fmt.Errorf("error getting validator withdrawals count from db: %w", err)
+		}
+		validatorPageData.WithdrawalCount = withdrawalsCount
+		lastWithdrawalsEpochs, err := db.GetLastWithdrawalEpoch(validatorSlice)
+		if err != nil {
+			return fmt.Errorf("error getting validator last withdrawal epoch from db: %w", err)
+		}
+		lastWithdrawalsEpoch := lastWithdrawalsEpochs[index]
+
+		dilithiumChange, err := db.GetValidatorDilithiumChange(validatorPageData.Index)
+		if err != nil {
+			return fmt.Errorf("error getting validator dilithium change from db: %w", err)
+		}
+		validatorPageData.DilithiumChange = dilithiumChange
+
+		if bytes.Equal(validatorPageData.WithdrawCredentials[:1], []byte{0x00}) && dilithiumChange != nil {
+			// dilithiumChanges are only possible afters cappeala
+			validatorPageData.IsWithdrawableAddress = true
 		}
 
-		validatorPageData.Watchlist = watchlist
+		// only calculate the expected next withdrawal if the validator is eligible
+		isFullWithdrawal := validatorPageData.CurrentBalance > 0 && validatorPageData.WithdrawableEpoch <= validatorPageData.Epoch
+		isPartialWithdrawal := validatorPageData.EffectiveBalance == utils.Config.Chain.ClConfig.MaxEffectiveBalance && validatorPageData.CurrentBalance > utils.Config.Chain.ClConfig.MaxEffectiveBalance
+		if stats != nil && stats.LatestValidatorWithdrawalIndex != nil && stats.TotalValidatorCount != nil && validatorPageData.IsWithdrawableAddress && (isFullWithdrawal || isPartialWithdrawal) {
+			distance, err := GetWithdrawableCountFromCursor(validatorPageData.Epoch, validatorPageData.Index, *stats.LatestValidatorWithdrawalIndex)
+			if err != nil {
+				return fmt.Errorf("error getting withdrawable validator count from cursor: %w", err)
+			}
+
+			timeToWithdrawal := utils.GetTimeToNextWithdrawal(distance)
+
+			// it normally takes two epochs to finalize
+			if timeToWithdrawal.After(utils.EpochToTime(latestEpoch + (latestEpoch - lastFinalizedEpoch))) {
+				address, err := utils.WithdrawalCredentialsToAddress(validatorPageData.WithdrawCredentials)
+				if err != nil {
+					// warning only as "N/A" will be displayed
+					logger.Warn("invalid withdrawal credentials")
+				}
+
+				// create the table data
+				tableData := make([][]interface{}, 0, 1)
+				var withdrawalCredentialsTemplate template.HTML
+				if address != nil {
+					withdrawalCredentialsTemplate = template.HTML(fmt.Sprintf(`<a href="/address/0x%x"><span class="text-muted">%s</span></a>`, address, utils.FormatAddress(address, nil, "", false, false, true)))
+				} else {
+					withdrawalCredentialsTemplate = `<span class="text-muted">N/A</span>`
+				}
+
+				var withdrawalAmount uint64
+				if isFullWithdrawal {
+					withdrawalAmount = validatorPageData.CurrentBalance
+				} else {
+					withdrawalAmount = validatorPageData.CurrentBalance - utils.Config.Chain.ClConfig.MaxEffectiveBalance
+				}
+
+				if latestEpoch == lastWithdrawalsEpoch {
+					withdrawalAmount = 0
+				}
+				tableData = append(tableData, []interface{}{
+					template.HTML(fmt.Sprintf(`<span class="text-muted">~ %s</span>`, utils.FormatEpoch(uint64(utils.TimeToEpoch(timeToWithdrawal))))),
+					template.HTML(fmt.Sprintf(`<span class="text-muted">~ %s</span>`, utils.FormatBlockSlot(utils.TimeToSlot(uint64(timeToWithdrawal.Unix()))))),
+					template.HTML(fmt.Sprintf(`<span class="">~ %s</span>`, utils.FormatTimestamp(timeToWithdrawal.Unix()))),
+					withdrawalCredentialsTemplate,
+					template.HTML(fmt.Sprintf(`<span class="text-muted"><span data-toggle="tooltip" title="If the withdrawal were to be processed at this very moment, this amount would be withdrawn"><i class="far ml-1 fa-question-circle" style="margin-left: 0px !important;"></i></span> %s</span>`, utils.FormatClCurrency(withdrawalAmount, currency, 6, true, false, false, true))),
+				})
+
+				validatorPageData.NextWithdrawalRow = tableData
+			}
+		}
+
 		return nil
 	})
 
@@ -712,7 +636,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		SELECT period, GREATEST(period*$1, $2) AS firstepoch, ((period+1)*$1)-1 AS lastepoch
 		FROM sync_committees 
 		WHERE validatorindex = $3
-		ORDER BY period desc`, utils.Config.Chain.ClConfig.EpochsPerSyncCommitteePeriod, utils.Config.Chain.ClConfig.AltairForkEpoch, index)
+		ORDER BY period desc`, utils.Config.Chain.ClConfig.EpochsPerSyncCommitteePeriod, 0, index)
 		if err != nil {
 			return fmt.Errorf("error getting sync participation count data of sync-assignments: %w", err)
 		}
@@ -789,53 +713,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 			}
 			nextEstimate := utils.EpochToTime(utils.FirstEpochOfSyncPeriod(maxPeriod + avgSyncInterval))
 			validatorPageData.SyncEstimate = &nextEstimate
-		}
-		return nil
-	})
-
-	g.Go(func() error {
-		// add rocketpool-data if available
-		validatorPageData.Rocketpool = &types.RocketpoolValidatorPageData{}
-		err := db.ReaderDb.Get(validatorPageData.Rocketpool, `
-		SELECT
-			rplm.node_address      					AS node_address,
-			rplm.address           					AS minipool_address,
-			rplm.node_fee          					AS minipool_node_fee,
-			rplm.deposit_type      					AS minipool_deposit_type,
-			rplm.status            					AS minipool_status,
-			rplm.status_time       					AS minipool_status_time,
-			COALESCE(rplm.penalty_count,0) 			AS penalty_count,
-			rpln.timezone_location 					AS node_timezone_location,
-			rpln.rpl_stake 							AS node_rpl_stake,
-			rpln.max_rpl_stake 						AS node_max_rpl_stake,
-			rpln.min_rpl_stake 						AS node_min_rpl_stake,
-			rpln.rpl_cumulative_rewards 			AS rpl_cumulative_rewards,
-			rpln.claimed_smoothing_pool 			AS claimed_smoothing_pool,
-			rpln.unclaimed_smoothing_pool 			AS unclaimed_smoothing_pool,
-			rpln.unclaimed_rpl_rewards 				AS unclaimed_rpl_rewards,
-			COALESCE(node_deposit_balance, 0) 		AS node_deposit_balance,
-			COALESCE(node_refund_balance, 0) 		AS node_refund_balance,
-			COALESCE(user_deposit_balance, 0) 		AS user_deposit_balance,
-			COALESCE(rpln.effective_rpl_stake, 0) 	AS effective_rpl_stake,
-			COALESCE(deposit_credit, 0) 			AS deposit_credit,
-			COALESCE(is_vacant, false) 				AS is_vacant,
-			version,
-			COALESCE(rpln.smoothing_pool_opted_in, false) AS smoothing_pool_opted_in 
-		FROM validators
-		LEFT JOIN rocketpool_minipools rplm ON rplm.pubkey = validators.pubkey
-		LEFT JOIN rocketpool_nodes rpln ON rplm.node_address = rpln.address
-		WHERE validators.validatorindex = $1
-		ORDER BY rplm.status_time DESC 
-		LIMIT 1`, index)
-		if err == nil && (validatorPageData.Rocketpool.MinipoolAddress != nil || validatorPageData.Rocketpool.NodeAddress != nil) {
-			validatorPageData.IsRocketpool = true
-			if utils.Config.Chain.ClConfig.DepositChainID == 1 {
-				validatorPageData.Rocketpool.RocketscanUrl = "rocketscan.io"
-			} else if utils.Config.Chain.ClConfig.DepositChainID == 5 {
-				validatorPageData.Rocketpool.RocketscanUrl = "prater.rocketscan.io"
-			}
-		} else if err != nil && err != sql.ErrNoRows {
-			return fmt.Errorf("error getting rocketpool-data for validator for %v route: %w", r.URL.String(), err)
 		}
 		return nil
 	})
@@ -1455,9 +1332,10 @@ func sanitizeSignature(sig string) ([]byte, error) {
 	if len(decodedSig) != 65 {
 		return nil, fmt.Errorf("signature is less than 65 bytes (len = %v)", len(decodedSig))
 	}
-	if decodedSig[crypto.RecoveryIDOffset] == 27 || decodedSig[crypto.RecoveryIDOffset] == 28 {
-		decodedSig[crypto.RecoveryIDOffset] -= 27
-	}
+	// TODO(rgeraldes24)
+	// if decodedSig[crypto.RecoveryIDOffset] == 27 || decodedSig[crypto.RecoveryIDOffset] == 28 {
+	// 	decodedSig[crypto.RecoveryIDOffset] -= 27
+	// }
 	return []byte(decodedSig), nil
 }
 
@@ -2063,7 +1941,7 @@ func ValidatorSync(w http.ResponseWriter, r *http.Request) {
 		lastSlot := (lastEpoch+1)*utils.Config.Chain.ClConfig.SlotsPerEpoch - 1
 
 		for slot := lastSlot; slot >= firstSlot && (slot <= lastSlot /* guards against underflows */); slot-- {
-			if slot > latestProposedSlot || utils.EpochOfSlot(slot) < utils.Config.Chain.ClConfig.AltairForkEpoch {
+			if slot > latestProposedSlot {
 				continue
 			}
 			slots = append(slots, slot)

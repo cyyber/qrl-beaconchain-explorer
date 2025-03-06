@@ -24,8 +24,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/lib/pq"
+	"github.com/theQRL/go-zond/common"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -33,7 +33,9 @@ var ErrTooManyValidators = errors.New("too many validators")
 
 func handleValidatorsQuery(w http.ResponseWriter, r *http.Request, checkValidatorLimit bool) ([]uint64, [][]byte, bool, error) {
 	q := r.URL.Query()
+	// TODO(rgeraldes24)
 	validatorLimit := getUserPremium(r).MaxValidators
+	validatorLimit := 10
 
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
@@ -204,7 +206,9 @@ func Heatmap(w http.ResponseWriter, r *http.Request) {
 	var heatmapTemplate = templates.GetTemplate(templateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
-	validatorLimit := getUserPremium(r).MaxValidators
+	// TODO(rgeraldes24
+	// validatorLimit := getUserPremium(r).MaxValidators
+	validatorLimit := 10
 
 	heatmapData := types.HeatmapData{}
 	heatmapData.ValidatorLimit = validatorLimit
@@ -300,10 +304,9 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dashboardData := types.DashboardData{}
-	dashboardData.ValidatorLimit = getUserPremium(r).MaxValidators
-
-	epoch := services.LatestEpoch()
-	dashboardData.CappellaHasHappened = epoch >= (utils.Config.Chain.ClConfig.CappellaForkEpoch)
+	// TODO(rgeraldes24)
+	// dashboardData.ValidatorLimit = getUserPremium(r).MaxValidators
+	dashboardData.ValidatorLimit = 10
 
 	data := InitPageData(w, r, "dashboard", "/dashboard", "Dashboard", templateFiles)
 	data.Data = dashboardData
@@ -527,7 +530,9 @@ func DashboardDataBalance(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
-	validatorLimit := getUserPremium(r).MaxValidators
+	// TODO(rgeraldes24)
+	// validatorLimit := getUserPremium(r).MaxValidators
+	validatorLimit := 10
 	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), validatorLimit)
 	if err != nil || len(queryValidatorPubkeys) > 0 {
 		utils.LogError(err, "error parsing validators from query string", 0, errFieldMap)
@@ -714,7 +719,9 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	filter := pq.Array(validatorIndexArr)
-	validatorLimit := getUserPremium(r).MaxValidators
+	// TODO(rgeraldes24)
+	// validatorLimit := getUserPremium(r).MaxValidators
+	validatorLimit := 10
 
 	var validatorsByIndex []*types.ValidatorsData
 	err = db.ReaderDb.Select(&validatorsByIndex, `

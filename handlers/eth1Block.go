@@ -15,7 +15,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/consensus/misc/eip4844"
 	"github.com/gorilla/mux"
 )
 
@@ -32,18 +31,12 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 		"components/timestamp.html",
 		"slot/overview.html",
 		"slot/execTransactions.html",
-		"slot/blobs.html",
 		"slot/withdrawals.html")
 	var blockTemplate = templates.GetTemplate(
 		blockTemplateFiles...,
 	)
-	preMergeTemplateFiles := append(layoutTemplateFiles,
-		"execution/block.html",
-		"slot/execTransactions.html",
-		"components/timestamp.html")
 	notFountTemplateFiles := append(layoutTemplateFiles, "slotnotfound.html")
 	var blockNotFoundTemplate = templates.GetTemplate(notFountTemplateFiles...)
-	var preMergeBlockTemplate = templates.GetTemplate(preMergeTemplateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
@@ -53,7 +46,8 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 	var number uint64
 	var err error
 	if len(numberString) == 64 {
-		number, err = rpc.CurrentErigonClient.GetBlockNumberByHash(numberString)
+		// TODO(rgeraldes24)
+		// number, err := rpc.CurrentGzondClient.GetBlockNumberByHash(numberString)
 	} else {
 		number, err = strconv.ParseUint(numberString, 10, 64)
 	}
@@ -78,25 +72,17 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// special handling for networks that launch with PoS on block 0
-	isPosBlock0 := utils.IsPoSBlock0(number, eth1BlockPageData.Ts.Unix())
+	data := InitPageData(w, r, "blockchain", "/block", fmt.Sprintf("Block %d", number), blockTemplateFiles)
 
-	// execute template based on whether block is PoW or PoS
-	if eth1BlockPageData.Difficulty.Cmp(big.NewInt(0)) == 0 || isPosBlock0 {
-		// Post Merge PoS Block
-		data := InitPageData(w, r, "blockchain", "/block", fmt.Sprintf("Block %d", number), blockTemplateFiles)
+	// blockSlot := uint64(0)
+	blockSlot := utils.TimeToSlot(uint64(eth1BlockPageData.Ts.Unix()))
 
-		blockSlot := uint64(0)
-		if !isPosBlock0 {
-			blockSlot = utils.TimeToSlot(uint64(eth1BlockPageData.Ts.Unix()))
+	// retrieve consensus data
+	blockPageData, err := GetSlotPageData(blockSlot)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			logger.Errorf("error retrieving slot page data: %v", err)
 		}
-
-		// retrieve consensus data
-		blockPageData, err := GetSlotPageData(blockSlot)
-		if err != nil {
-			if err != sql.ErrNoRows {
-				logger.Errorf("error retrieving slot page data: %v", err)
-			}
 
 			data.Data = "block"
 			if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "GetSlotPageData", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
@@ -126,7 +112,7 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageData, error) {
 	block, err := db.BigtableClient.GetBlockFromBlocksTable(number)
 	if diffToHead := int64(services.LatestEth1BlockNumber()) - int64(number); err != nil && diffToHead < 0 && diffToHead >= -5 {
-		block, _, err = rpc.CurrentErigonClient.GetBlock(int64(number), "parity/geth")
+		block, _, err = rpc.CurrentGzondClient.GetBlock(int64(number) /*, "parity/geth"*/)
 	}
 	if err != nil {
 		return nil, err
@@ -139,9 +125,6 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		names[string(tx.From)] = ""
 		names[string(tx.To)] = ""
 	}
-	for _, uncle := range block.Uncles {
-		names[string(uncle.Coinbase)] = ""
-	}
 	names, _, err = db.BigtableClient.GetAddressesNamesArMetadata(&names, nil)
 	if err != nil {
 		return nil, err
@@ -151,8 +134,6 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 	txs := []types.Eth1BlockPageTransaction{}
 	txFees := new(big.Int)
 	lowestGasPrice := big.NewInt(1 << 62)
-	blobTxCount := 0
-	blobCount := 0
 
 	contractInteractionTypes, err := db.BigtableClient.GetAddressContractInteractionsAtBlock(block)
 	if err != nil {
@@ -160,10 +141,6 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 	}
 
 	for i, tx := range block.Transactions {
-		if tx.Type == 3 {
-			blobTxCount++
-			blobCount += len(tx.BlobVersionedHashes)
-		}
 
 		// sum txFees
 		txFee := db.CalculateTxFeeFromTransaction(tx, new(big.Int).SetBytes(block.BaseFee))
@@ -203,23 +180,9 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		})
 	}
 
-	blockReward := utils.Eth1BlockReward(block.Number, block.Difficulty)
-
-	uncleInclusionRewards := new(big.Int)
-	uncleInclusionRewards.Div(blockReward, big.NewInt(32)).Mul(uncleInclusionRewards, big.NewInt(int64(len(block.Uncles))))
-	uncles := []types.Eth1BlockPageData{}
-	for _, uncle := range block.Uncles {
-		reward := big.NewInt(int64(uncle.Number - block.Number + 8))
-		reward.Mul(reward, blockReward).Div(reward, big.NewInt(8))
-		uncles = append(uncles, types.Eth1BlockPageData{
-			Number:       uncle.Number,
-			MinerAddress: fmt.Sprintf("%#x", uncle.Coinbase),
-			//MinerFormatted: utils.FormatAddress(uncle.Coinbase, nil, names[string(uncle.Coinbase)], false, false, false),
-			MinerFormatted: utils.FormatAddressWithLimits(uncle.Coinbase, names[string(uncle.Coinbase)], false, "address", 42, 42, true),
-			Reward:         reward,
-			Extra:          string(uncle.Extra),
-		})
-	}
+	// TODO(rgeraldes24)
+	// blockReward := utils.Eth1BlockReward(block.Number, block.Difficulty)
+	blockReward := big.NewInt(0)
 
 	if limit > 0 {
 		if len(txs) > limit {
@@ -229,11 +192,9 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		}
 	}
 
-	blobGasPrice := eip4844.CalcBlobFee(block.ExcessBlobGas)
 	burnedTxFees := new(big.Int).Mul(new(big.Int).SetBytes(block.BaseFee), big.NewInt(int64(block.GasUsed)))
-	burnedBlobFees := new(big.Int).Mul(blobGasPrice, big.NewInt(int64(block.BlobGasUsed)))
-	burnedFees := new(big.Int).Add(burnedTxFees, burnedBlobFees)
-	blockReward.Add(blockReward, txFees).Add(blockReward, uncleInclusionRewards).Sub(blockReward, burnedTxFees)
+	burnedFees := burnedTxFees
+	blockReward.Add(blockReward, txFees).Sub(blockReward, burnedTxFees)
 	nextBlock := number + 1
 	if nextBlock > services.LatestEth1BlockNumber() {
 		nextBlock = 0
@@ -243,9 +204,6 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		PreviousBlock: number - 1,
 		NextBlock:     nextBlock,
 		TxCount:       uint64(len(block.Transactions)),
-		UncleCount:    uint64(len(block.Uncles)),
-		BlobTxCount:   uint64(blobTxCount),
-		BlobCount:     uint64(blobCount),
 		Hash:          fmt.Sprintf("%#x", block.Hash),
 		ParentHash:    fmt.Sprintf("%#x", block.ParentHash),
 		MinerAddress:  fmt.Sprintf("%#x", block.Coinbase),
@@ -259,17 +217,11 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		GasLimit:       block.GasLimit,
 		LowestGasPrice: lowestGasPrice,
 		Ts:             block.GetTime().AsTime(),
-		Difficulty:     new(big.Int).SetBytes(block.Difficulty),
 		BaseFeePerGas:  new(big.Int).SetBytes(block.BaseFee),
 		BurnedFees:     burnedFees,
 		BurnedTxFees:   burnedTxFees,
-		BurnedBlobFees: burnedBlobFees,
-		BlobGasUsed:    block.GetBlobGasUsed(),
-		ExcessBlobGas:  block.GetExcessBlobGas(),
-		BlobGasPrice:   blobGasPrice,
 		Extra:          fmt.Sprintf("%#x", block.Extra),
 		Txs:            txs,
-		Uncles:         uncles,
 	}
 
 	var relaysData struct {

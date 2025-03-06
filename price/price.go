@@ -100,35 +100,35 @@ func Init(chainId uint64, eth1Endpoint, clCurrencyParam, elCurrencyParam string)
 	switch chainId {
 	case 1:
 		// see: https://docs.chain.link/data-feeds/price-feeds/addresses/
-		feedAddrs["ETH/USD"] = "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419"
-		feedAddrs["EUR/USD"] = "0xb49f677943bc038e9857d61e7d053caa2c1734c1"
-		feedAddrs["CAD/USD"] = "0xa34317db73e77d453b1b8d04550c44d10e981c8e"
-		feedAddrs["CNY/USD"] = "0xef8a4af35cd47424672e3c590abd37fbb7a7759a"
-		feedAddrs["JPY/USD"] = "0xbce206cae7f0ec07b545edde332a47c2f75bbeb3"
-		feedAddrs["GBP/USD"] = "0x5c0ab2d9b5a7ed9f470386e82bb36a3613cdd4b5"
-		feedAddrs["AUD/USD"] = "0x77f9710e7d0a19669a13c055f62cd80d313df022"
+		feedAddrs["ETH/USD"] = "Z5f4ec3df9cbd43714fe2740f5e3616155c5b8419"
+		feedAddrs["EUR/USD"] = "Zb49f677943bc038e9857d61e7d053caa2c1734c1"
+		feedAddrs["CAD/USD"] = "Za34317db73e77d453b1b8d04550c44d10e981c8e"
+		feedAddrs["CNY/USD"] = "Zef8a4af35cd47424672e3c590abd37fbb7a7759a"
+		feedAddrs["JPY/USD"] = "Zbce206cae7f0ec07b545edde332a47c2f75bbeb3"
+		feedAddrs["GBP/USD"] = "Z5c0ab2d9b5a7ed9f470386e82bb36a3613cdd4b5"
+		feedAddrs["AUD/USD"] = "Z77f9710e7d0a19669a13c055f62cd80d313df022"
 
 		availableCurrencies = []string{"ETH", "USD", "EUR", "GBP", "CNY", "CAD", "AUD", "JPY"}
 	case 5:
 		// see: https://docs.chain.link/data-feeds/price-feeds/addresses/
-		feedAddrs["ETH/USD"] = "0x694AA1769357215DE4FAC081bf1f309aDC325306"
-		feedAddrs["EUR/USD"] = "0x1a81afB8146aeFfCFc5E50e8479e826E7D55b910"
+		feedAddrs["ETH/USD"] = "Z694AA1769357215DE4FAC081bf1f309aDC325306"
+		feedAddrs["EUR/USD"] = "Z1a81afB8146aeFfCFc5E50e8479e826E7D55b910"
 
 		availableCurrencies = []string{"ETH", "USD", "EUR"}
 	case 11155111:
 		// see: https://docs.chain.link/data-feeds/price-feeds/addresses/
-		feedAddrs["ETH/USD"] = "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e"
-		feedAddrs["EUR/USD"] = "0x44390589104C9164407A0E0562a9DBe6C24A0E05"
+		feedAddrs["ETH/USD"] = "ZD4a33860578De61DBAbDc8BFdb98FD742fA7028e"
+		feedAddrs["EUR/USD"] = "Z44390589104C9164407A0E0562a9DBe6C24A0E05"
 
 		availableCurrencies = []string{"ETH", "USD", "EUR"}
 	case 100:
 		// see: https://docs.chain.link/data-feeds/price-feeds/addresses/?network=gnosis-chain
-		feedAddrs["GNO/USD"] = "0x22441d81416430A54336aB28765abd31a792Ad37"
-		feedAddrs["DAI/USD"] = "0x678df3415fc31947dA4324eC63212874be5a82f8"
-		feedAddrs["EUR/USD"] = "0xab70BCB260073d036d1660201e9d5405F5829b7a"
-		feedAddrs["JPY/USD"] = "0x2AfB993C670C01e9dA1550c58e8039C1D8b8A317"
-		// feedAddrs["CHFUSD"] = "0xFb00261Af80ADb1629D3869E377ae1EEC7bE659F"
-		feedAddrs["ETH/USD"] = "0xa767f745331D267c7751297D982b050c93985627"
+		feedAddrs["GNO/USD"] = "Z22441d81416430A54336aB28765abd31a792Ad37"
+		feedAddrs["DAI/USD"] = "Z678df3415fc31947dA4324eC63212874be5a82f8"
+		feedAddrs["EUR/USD"] = "Zab70BCB260073d036d1660201e9d5405F5829b7a"
+		feedAddrs["JPY/USD"] = "Z2AfB993C670C01e9dA1550c58e8039C1D8b8A317"
+		// feedAddrs["CHFUSD"] = "ZFb00261Af80ADb1629D3869E377ae1EEC7bE659F"
+		feedAddrs["ETH/USD"] = "Za767f745331D267c7751297D982b050c93985627"
 
 		setPrice("mGNO", "GNO", float64(1)/float64(32))
 		setPrice("GNO", "mGNO", 32)

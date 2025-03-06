@@ -79,9 +79,6 @@ func Init() {
 	go gasNowUpdater(ready)
 
 	ready.Add(1)
-	go ethStoreStatisticsDataUpdater(ready)
-
-	ready.Add(1)
 	go startMonitoringService(ready)
 
 	ready.Add(1)
@@ -461,33 +458,6 @@ func poolsUpdater(wg *sync.WaitGroup) {
 	}
 }
 
-func getPoolsPageData() (*types.PoolsResp, error) {
-	var poolData types.PoolsResp
-	err := db.ReaderDb.Select(&poolData.PoolInfos, `
-	select pool as name, validators as count, apr * 100 as avg_performance_1d, (select avg(apr) from historical_pool_performance as hpp1 where hpp1.pool = hpp.pool AND hpp1.day > hpp.day - 7) * 100 as avg_performance_7d, (select avg(apr) from historical_pool_performance as hpp1 where hpp1.pool = hpp.pool AND hpp1.day > hpp.day - 31) * 100 as avg_performance_31d from historical_pool_performance hpp where day = (select max(day) from historical_pool_performance) order by validators desc;
-	`)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	ethstoreData := &types.PoolInfo{}
-	err = db.ReaderDb.Get(ethstoreData, `
-	select 'ETH.STORE' as name, -1 as count, apr * 100 as avg_performance_1d, (select avg(apr) from eth_store_stats as e1 where e1.validator = -1 AND e1.day > e.day - 7) * 100 as avg_performance_7d, (select avg(apr) from eth_store_stats as e1 where e1.validator = -1 AND e1.day > e.day - 31) * 100 as avg_performance_31d from eth_store_stats e where day = (select max(day) from eth_store_stats) LIMIT 1;
-	`)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	for _, pool := range poolData.PoolInfos {
-		pool.EthstoreComparison1d = pool.AvgPerformance1d*100/ethstoreData.AvgPerformance1d - 100
-		pool.EthstoreComparison7d = pool.AvgPerformance7d*100/ethstoreData.AvgPerformance7d - 100
-		pool.EthstoreComparison31d = pool.AvgPerformance31d*100/ethstoreData.AvgPerformance31d - 100
-	}
-	poolData.PoolInfos = append([]*types.PoolInfo{ethstoreData}, poolData.PoolInfos...)
-
-	return &poolData, nil
-}
-
 func latestProposedSlotUpdater(wg *sync.WaitGroup) {
 	firstRun := true
 
@@ -544,31 +514,6 @@ func indexPageDataUpdater(wg *sync.WaitGroup) {
 	}
 }
 
-func ethStoreStatisticsDataUpdater(wg *sync.WaitGroup) {
-	firstRun := true
-	for {
-		data, err := getEthStoreStatisticsData()
-		if err != nil {
-			logger.Errorf("error retrieving ETH.STORE statistics data: %v", err)
-			time.Sleep(time.Second * 10)
-			continue
-		}
-
-		cacheKey := fmt.Sprintf("%d:frontend:ethStoreStatistics", utils.Config.Chain.ClConfig.DepositChainID)
-		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
-		if err != nil {
-			logger.Errorf("error caching ETH.STORE statistics data: %v", err)
-		}
-		if firstRun {
-			firstRun = false
-			wg.Done()
-			logger.Info("initialized ETH.STORE statistics data updater")
-		}
-		ReportStatus("ethStoreStatistics", "Running", nil)
-		time.Sleep(time.Second * 90)
-	}
-}
-
 func slotVizUpdater(wg *sync.WaitGroup) {
 	firstRun := true
 
@@ -592,62 +537,6 @@ func slotVizUpdater(wg *sync.WaitGroup) {
 		ReportStatus("slotVizUpdater", "Running", nil)
 		time.Sleep(time.Second)
 	}
-}
-
-func getEthStoreStatisticsData() (*types.EthStoreStatistics, error) {
-	var ethStoreDays []types.EthStoreDay
-	err := db.ReaderDb.Select(&ethStoreDays, `
-		SELECT
-			day,
-			apr,
-			effective_balances_sum_wei,
-			total_rewards_wei
-		FROM eth_store_stats
-		WHERE validator = -1
-		ORDER BY DAY ASC`)
-	if err != nil {
-		return nil, fmt.Errorf("error getting eth store stats from db: %v", err)
-	}
-	daysLastIndex := len(ethStoreDays) - 1
-
-	if daysLastIndex < 0 {
-		return nil, fmt.Errorf("no eth store stats found in db")
-	}
-
-	effectiveBalances := [][]float64{}
-	totalRewards := [][]float64{}
-	aprs := [][]float64{}
-	for _, stat := range ethStoreDays {
-		ts := float64(utils.EpochToTime(stat.Day*utils.EpochsPerDay()).Unix()) * 1000
-
-		effectiveBalances = append(effectiveBalances, []float64{
-			ts,
-			stat.EffectiveBalancesSum.Div(decimal.NewFromInt(1e18)).Round(0).InexactFloat64(),
-		})
-
-		totalRewards = append(totalRewards, []float64{
-			ts,
-			stat.TotalRewardsWei.Div(decimal.NewFromInt(1e18)).Round(6).InexactFloat64(),
-		})
-
-		aprs = append(aprs, []float64{
-			ts,
-			stat.APR.Mul(decimal.NewFromInt(100)).Round(3).InexactFloat64(),
-		})
-	}
-
-	data := &types.EthStoreStatistics{
-		EffectiveBalances:         effectiveBalances,
-		TotalRewards:              totalRewards,
-		APRs:                      aprs,
-		ProjectedAPR:              ethStoreDays[daysLastIndex].APR.Mul(decimal.NewFromInt(100)).InexactFloat64(),
-		StartEpoch:                ethStoreDays[daysLastIndex].Day * utils.EpochsPerDay(),
-		YesterdayRewards:          ethStoreDays[daysLastIndex].TotalRewardsWei.Div(decimal.NewFromInt(1e18)).InexactFloat64(),
-		YesterdayEffectiveBalance: ethStoreDays[daysLastIndex].EffectiveBalancesSum.Div(decimal.NewFromInt(1e18)).InexactFloat64(),
-		YesterdayTs:               utils.EpochToTime(ethStoreDays[daysLastIndex].Day * utils.EpochsPerDay()).Unix(),
-	}
-
-	return data, nil
 }
 
 func getIndexPageData() (*types.IndexPageData, error) {
@@ -1048,21 +937,6 @@ func LatestBurnData() *types.BurnPageData {
 		logger.Errorf("error retrieving burn data from cache: %v", err)
 	}
 	return &types.BurnPageData{}
-}
-
-func LatestEthStoreStatistics() *types.EthStoreStatistics {
-	wanted := &types.EthStoreStatistics{}
-	cacheKey := fmt.Sprintf("%d:frontend:ethStoreStatistics", utils.Config.Chain.ClConfig.DepositChainID)
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Minute, wanted); err == nil {
-		return wanted.(*types.EthStoreStatistics)
-	} else {
-		logger.Errorf("error retrieving ETH.STORE statistics data from cache: %v", err)
-	}
-	return &types.EthStoreStatistics{}
-}
-
-func EthStoreDisclaimer() string {
-	return "ETH.STORE® is not made available for use as a benchmark, whether in relation to a financial instrument, financial contract or to measure the performance of an investment fund, or otherwise in a way that would require it to be administered by a benchmark administrator pursuant to the EU Benchmarks Regulation. Currently Bitfly does not grant any right to access or use ETH.STORE® for such purpose."
 }
 
 // LatestIndexPageData returns the latest index page data

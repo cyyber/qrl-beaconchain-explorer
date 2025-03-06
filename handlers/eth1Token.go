@@ -14,9 +14,9 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
 	"github.com/shopspring/decimal"
+	"github.com/theQRL/go-zond/common"
 	"golang.org/x/sync/errgroup"
 )
 
