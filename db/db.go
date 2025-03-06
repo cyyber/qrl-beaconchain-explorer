@@ -14,7 +14,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -1146,29 +1145,6 @@ func SaveValidators(epoch uint64, validators []*types.Validator, client rpc.Clie
 	logger.Infof("analyze of validators table completed, took %v", time.Since(s))
 
 	return nil
-}
-
-func GetRelayDataForIndexedBlocks(blocks []*types.Eth1BlockIndexed) (map[common.Hash]types.RelaysData, error) {
-	var execBlockHashes [][]byte
-	var relaysData []types.RelaysData
-
-	for _, block := range blocks {
-		execBlockHashes = append(execBlockHashes, block.Hash)
-	}
-	// try to get mev rewards from relys_blocks table
-	err := ReaderDb.Select(&relaysData,
-		`SELECT proposer_fee_recipient, value, exec_block_hash, tag_id, builder_pubkey FROM relays_blocks WHERE relays_blocks.exec_block_hash = ANY($1)`,
-		pq.ByteaArray(execBlockHashes),
-	)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-	var relaysDataMap = make(map[common.Hash]types.RelaysData)
-	for _, relayData := range relaysData {
-		relaysDataMap[common.BytesToHash(relayData.ExecBlockHash)] = relayData
-	}
-
-	return relaysDataMap, nil
 }
 
 func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlotUpdate bool) error {
@@ -2817,12 +2793,7 @@ func GetValidatorIncomePerformance(validators []uint64, incomePerformance *types
 			COALESCE(SUM(cl_performance_7d    ), 0)*1e9 AS cl_performance_wei_7d,
 			COALESCE(SUM(cl_performance_31d   ), 0)*1e9 AS cl_performance_wei_31d,
 			COALESCE(SUM(cl_performance_365d  ), 0)*1e9 AS cl_performance_wei_365d,
-			COALESCE(SUM(cl_performance_total ), 0)*1e9 AS cl_performance_wei_total,
-			COALESCE(SUM(mev_performance_1d   ), 0)     AS el_performance_wei_1d,
-			COALESCE(SUM(mev_performance_7d   ), 0)     AS el_performance_wei_7d,
-			COALESCE(SUM(mev_performance_31d  ), 0)     AS el_performance_wei_31d,
-			COALESCE(SUM(mev_performance_365d ), 0)     AS el_performance_wei_365d,
-			COALESCE(SUM(mev_performance_total), 0)     AS el_performance_wei_total
+			COALESCE(SUM(cl_performance_total ), 0)*1e9 AS cl_performance_wei_total
 		FROM validator_performance 
 		WHERE validatorindex = ANY($1)`, validatorsPQArray)
 }

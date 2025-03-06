@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/zond-beaconchain-explorer/cache"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
@@ -209,9 +208,6 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		// update el reward total
 		data.ElRewardsWeiTotal = previousDayData.ElRewardsWeiTotal.Add(data.ElRewardsWei)
 
-		// update mev reward total
-		data.MEVRewardsWeiTotal = previousDayData.MEVRewardsWeiTotal.Add(data.MEVRewardsWei)
-
 		// update withdrawal total
 		data.WithdrawalsTotal = previousDayData.WithdrawalsTotal + data.Withdrawals
 		data.WithdrawalsAmountTotal = previousDayData.WithdrawalsAmountTotal + data.WithdrawalsAmount
@@ -223,38 +219,30 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		if statisticsData1d != nil && len(statisticsData1d) > index {
 			data.ClPerformance1d = data.ClRewardsGWeiTotal - statisticsData1d[index].ClRewardsGWeiTotal
 			data.ElPerformance1d = data.ElRewardsWeiTotal.Sub(statisticsData1d[index].ElRewardsWeiTotal)
-			data.MEVPerformance1d = data.MEVRewardsWeiTotal.Sub(statisticsData1d[index].MEVRewardsWeiTotal)
 		} else {
 			data.ClPerformance1d = data.ClRewardsGWeiTotal
 			data.ElPerformance1d = data.ElRewardsWeiTotal
-			data.MEVPerformance1d = data.MEVRewardsWeiTotal
 		}
 		if statisticsData7d != nil && len(statisticsData7d) > index {
 			data.ClPerformance7d = data.ClRewardsGWeiTotal - statisticsData7d[index].ClRewardsGWeiTotal
 			data.ElPerformance7d = data.ElRewardsWeiTotal.Sub(statisticsData7d[index].ElRewardsWeiTotal)
-			data.MEVPerformance7d = data.MEVRewardsWeiTotal.Sub(statisticsData7d[index].MEVRewardsWeiTotal)
 		} else {
 			data.ClPerformance7d = data.ClRewardsGWeiTotal
 			data.ElPerformance7d = data.ElRewardsWeiTotal
-			data.MEVPerformance7d = data.MEVRewardsWeiTotal
 		}
 		if statisticsData31d != nil && len(statisticsData31d) > index {
 			data.ClPerformance31d = data.ClRewardsGWeiTotal - statisticsData31d[index].ClRewardsGWeiTotal
 			data.ElPerformance31d = data.ElRewardsWeiTotal.Sub(statisticsData31d[index].ElRewardsWeiTotal)
-			data.MEVPerformance31d = data.MEVRewardsWeiTotal.Sub(statisticsData31d[index].MEVRewardsWeiTotal)
 		} else {
 			data.ClPerformance31d = data.ClRewardsGWeiTotal
 			data.ElPerformance31d = data.ElRewardsWeiTotal
-			data.MEVPerformance31d = data.MEVRewardsWeiTotal
 		}
 		if statisticsData365d != nil && len(statisticsData365d) > index {
 			data.ClPerformance365d = data.ClRewardsGWeiTotal - statisticsData365d[index].ClRewardsGWeiTotal
 			data.ElPerformance365d = data.ElRewardsWeiTotal.Sub(statisticsData365d[index].ElRewardsWeiTotal)
-			data.MEVPerformance365d = data.MEVRewardsWeiTotal.Sub(statisticsData365d[index].MEVRewardsWeiTotal)
 		} else {
 			data.ClPerformance365d = data.ClRewardsGWeiTotal
 			data.ElPerformance365d = data.ElRewardsWeiTotal
-			data.MEVPerformance365d = data.MEVRewardsWeiTotal
 		}
 	}
 
@@ -319,8 +307,6 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 			"cl_rewards_gwei_total",
 			"el_rewards_wei",
 			"el_rewards_wei_total",
-			"mev_rewards_wei",
-			"mev_rewards_wei_total",
 		}, pgx.CopyFromSlice(len(validatorData), func(i int) ([]interface{}, error) {
 			return []interface{}{
 				validatorData[i].ValidatorIndex,
@@ -359,8 +345,6 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 				validatorData[i].ClRewardsGWeiTotal,
 				validatorData[i].ElRewardsWei,
 				validatorData[i].ElRewardsWeiTotal,
-				validatorData[i].MEVRewardsWei,
-				validatorData[i].MEVRewardsWeiTotal,
 			}, nil
 		}))
 
@@ -400,12 +384,6 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 				"el_performance_31d",
 				"el_performance_365d",
 				"el_performance_total",
-
-				"mev_performance_1d",
-				"mev_performance_7d",
-				"mev_performance_31d",
-				"mev_performance_365d",
-				"mev_performance_total",
 			}, pgx.CopyFromSlice(len(validatorData), func(i int) ([]interface{}, error) {
 				return []interface{}{
 					validatorData[i].ValidatorIndex,
@@ -423,12 +401,6 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 					validatorData[i].ElPerformance31d,
 					validatorData[i].ElPerformance365d,
 					validatorData[i].ElRewardsWeiTotal,
-
-					validatorData[i].MEVPerformance1d,
-					validatorData[i].MEVPerformance7d,
-					validatorData[i].MEVPerformance31d,
-					validatorData[i].MEVPerformance365d,
-					validatorData[i].MEVRewardsWeiTotal,
 				}, nil
 			}))
 
@@ -531,13 +503,7 @@ func WriteValidatorTotalPerformance(day uint64, tx pgx.Tx) error {
 				el_performance_7d,
 				el_performance_31d,
 				el_performance_365d,
-				el_performance_total,
-
-				mev_performance_1d,
-				mev_performance_7d,
-				mev_performance_31d,
-				mev_performance_365d,
-				mev_performance_total
+				el_performance_total
 				) (
 					select 
 					vs_now.validatorindex, 
@@ -554,13 +520,7 @@ func WriteValidatorTotalPerformance(day uint64, tx pgx.Tx) error {
 						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_7d.el_rewards_wei_total, 0) as el_performance_7d, 
 						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_31d.el_rewards_wei_total, 0) as el_performance_31d, 
 						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_365d.el_rewards_wei_total, 0) as el_performance_365d,
-						coalesce(vs_now.el_rewards_wei_total, 0) as el_performance_total, 
-						
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_1d.mev_rewards_wei_total, 0) as mev_performance_1d, 
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_7d.mev_rewards_wei_total, 0) as mev_performance_7d, 
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_31d.mev_rewards_wei_total, 0) as mev_performance_31d, 
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_365d.mev_rewards_wei_total, 0) as mev_performance_365d,
-						coalesce(vs_now.mev_rewards_wei_total, 0) as mev_performance_total
+						coalesce(vs_now.el_rewards_wei_total, 0) as el_performance_total
 					from validator_stats vs_now
 					left join validator_stats vs_1d on vs_1d.validatorindex = vs_now.validatorindex and vs_1d.day = $2
 					left join validator_stats vs_7d on vs_7d.validatorindex = vs_now.validatorindex and vs_7d.day = $3
@@ -582,13 +542,7 @@ func WriteValidatorTotalPerformance(day uint64, tx pgx.Tx) error {
 					el_performance_7d=excluded.el_performance_7d,
 					el_performance_31d=excluded.el_performance_31d,
 					el_performance_365d=excluded.el_performance_365d,
-					el_performance_total=excluded.el_performance_total,
-
-					mev_performance_1d=excluded.mev_performance_1d,
-					mev_performance_7d=excluded.mev_performance_7d,
-					mev_performance_31d=excluded.mev_performance_31d,
-					mev_performance_365d=excluded.mev_performance_365d,
-					mev_performance_total=excluded.mev_performance_total
+					el_performance_total=excluded.el_performance_total
 			;`, day, int64(day)-1, int64(day)-7, int64(day)-31, int64(day)-365)
 
 	if err != nil {
@@ -705,14 +659,13 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 		"lastEpoch":  lastEpoch,
 	})
 
-	logger.Infof("gathering mev & el rewards")
+	logger.Infof("gathering el rewards")
 
 	type Container struct {
 		Slot            uint64 `db:"slot"`
 		ExecBlockNumber uint64 `db:"exec_block_number"`
 		Proposer        uint64 `db:"proposer"`
 		TxFeeReward     *big.Int
-		MevReward       *big.Int
 	}
 
 	blocks := make([]*Container, 0)
@@ -735,11 +688,6 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 		return fmt.Errorf("error in GetBlocksIndexedMultiple: %w", err)
 	}
 
-	relaysData, err := GetRelayDataForIndexedBlocks(blocksData)
-	if err != nil {
-		return fmt.Errorf("error in GetRelayDataForIndexedBlocks: %w", err)
-	}
-
 	proposerRewards := make(map[uint64]*Container)
 
 	for _, b := range blocksData {
@@ -747,31 +695,21 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 
 		if proposerRewards[proposer] == nil {
 			proposerRewards[proposer] = &Container{
-				MevReward:   big.NewInt(0),
 				TxFeeReward: big.NewInt(0),
 			}
 		}
 
 		txFeeReward := new(big.Int).SetBytes(b.TxReward)
 		proposerRewards[proposer].TxFeeReward = new(big.Int).Add(txFeeReward, proposerRewards[proposer].TxFeeReward)
-
-		mevReward, ok := relaysData[common.BytesToHash(b.Hash)]
-
-		if ok {
-			proposerRewards[proposer].MevReward = new(big.Int).Add(mevReward.MevBribe.BigInt(), proposerRewards[proposer].MevReward)
-		} else {
-			proposerRewards[proposer].MevReward = new(big.Int).Add(txFeeReward, proposerRewards[proposer].MevReward)
-		}
 	}
 
 	mux.Lock()
 	for proposer, r := range proposerRewards {
 		data[proposer].ElRewardsWei = decimal.NewFromBigInt(r.TxFeeReward, 0)
-		data[proposer].MEVRewardsWei = decimal.NewFromBigInt(r.MevReward, 0)
 	}
 	mux.Unlock()
 
-	logger.Infof("gathering mev & el rewards statistics completed, took %v", time.Since(exportStart))
+	logger.Infof("gathering el rewards statistics completed, took %v", time.Since(exportStart))
 	return nil
 }
 
@@ -1161,9 +1099,7 @@ func GatherStatisticsForDay(day int64) ([]*types.ValidatorStatsTableDbRow, error
 		COALESCE(cl_rewards_gwei, 0) AS cl_rewards_gwei,
 		COALESCE(cl_rewards_gwei_total, 0) AS cl_rewards_gwei_total,
 		COALESCE(el_rewards_wei, 0) AS el_rewards_wei,
-		COALESCE(el_rewards_wei_total, 0) AS el_rewards_wei_total,
-		COALESCE(mev_rewards_wei, 0) AS mev_rewards_wei,
-		COALESCE(mev_rewards_wei_total, 0) AS mev_rewards_wei_total
+		COALESCE(el_rewards_wei_total, 0) AS el_rewards_wei_total
 	 from validator_stats WHERE day = $1 ORDER BY validatorindex
 	`, day)
 

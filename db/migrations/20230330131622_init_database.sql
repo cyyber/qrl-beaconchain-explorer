@@ -94,11 +94,6 @@ CREATE TABLE IF NOT EXISTS
         el_performance_31d BIGINT NOT NULL,
         el_performance_365d BIGINT NOT NULL,
         el_performance_total BIGINT NOT NULL,
-        mev_performance_1d BIGINT NOT NULL,
-        mev_performance_7d BIGINT NOT NULL,
-        mev_performance_31d BIGINT NOT NULL,
-        mev_performance_365d BIGINT NOT NULL,
-        mev_performance_total BIGINT NOT NULL,
         rank7d INT NOT NULL,
         PRIMARY KEY (validatorindex)
     );
@@ -178,8 +173,6 @@ CREATE TABLE IF NOT EXISTS
         cl_rewards_gwei_total BIGINT,
         el_rewards_wei DECIMAL,
         el_rewards_wei_total DECIMAL,
-        mev_rewards_wei DECIMAL,
-        mev_rewards_wei_total DECIMAL,
         PRIMARY KEY (validatorindex, DAY)
     );
 
@@ -599,41 +592,6 @@ CREATE TABLE IF NOT EXISTS
 CREATE INDEX IF NOT EXISTS idx_blocks_tags_slot ON blocks_tags (slot);
 
 CREATE INDEX IF NOT EXISTS idx_blocks_tags_tag_id ON blocks_tags (tag_id);
-
-CREATE TABLE IF NOT EXISTS
-    relays (
-        tag_id VARCHAR NOT NULL,
-        endpoint VARCHAR NOT NULL,
-        public_link VARCHAR NULL,
-        is_censoring bool NULL,
-        is_ethical bool NULL,
-        export_failure_count INT NOT NULL DEFAULT 0,
-        last_export_try_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-        last_export_success_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-        PRIMARY KEY (tag_id, endpoint),
-        FOREIGN KEY (tag_id) REFERENCES tags (id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    relays_blocks (
-        tag_id VARCHAR NOT NULL,
-        block_slot int4 NOT NULL,
-        block_root bytea NOT NULL,
-        exec_block_hash bytea NOT NULL,
-        builder_pubkey bytea NOT NULL,
-        proposer_pubkey bytea NOT NULL,
-        proposer_fee_recipient bytea NOT NULL,
-        VALUE NUMERIC NOT NULL,
-        PRIMARY KEY (block_slot, block_root, tag_id)
-    );
-
-CREATE INDEX IF NOT EXISTS relays_blocks_block_root_idx ON public.relays_blocks (block_root);
-
-CREATE INDEX IF NOT EXISTS relays_blocks_builder_pubkey_idx ON public.relays_blocks (builder_pubkey);
-
-CREATE INDEX IF NOT EXISTS relays_blocks_exec_block_hash_idx ON public.relays_blocks (exec_block_hash);
-
-CREATE INDEX IF NOT EXISTS relays_blocks_value_idx ON public.relays_blocks (VALUE);
 
 CREATE TABLE IF NOT EXISTS
     validator_queue_deposits (

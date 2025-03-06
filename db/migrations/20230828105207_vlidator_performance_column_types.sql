@@ -7,12 +7,7 @@ ALTER TABLE validator_performance
     ALTER COLUMN el_performance_7d TYPE NUMERIC,
     ALTER COLUMN el_performance_31d TYPE NUMERIC,
     ALTER COLUMN el_performance_365d TYPE NUMERIC,
-    ALTER COLUMN el_performance_total TYPE NUMERIC,
-    ALTER COLUMN mev_performance_1d TYPE NUMERIC,
-    ALTER COLUMN mev_performance_7d TYPE NUMERIC,
-    ALTER COLUMN mev_performance_31d TYPE NUMERIC,
-    ALTER COLUMN mev_performance_365d TYPE NUMERIC,
-    ALTER COLUMN mev_performance_total TYPE NUMERIC;
+    ALTER COLUMN el_performance_total TYPE NUMERIC;
 -- +goose StatementEnd
 
 -- +goose Down

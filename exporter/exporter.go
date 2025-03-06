@@ -26,10 +26,6 @@ func Start(client rpc.Client) {
 	if utils.Config.Indexer.PubKeyTagsExporter.Enabled {
 		go UpdatePubkeyTag()
 	}
-
-	if utils.Config.MevBoostRelayExporter.Enabled {
-		go mevBoostRelaysExporter()
-	}
 	// wait until the beacon-node is available
 	for {
 		head, err := client.GetChainHead()

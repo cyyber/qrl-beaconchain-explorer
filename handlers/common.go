@@ -15,7 +15,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
@@ -250,12 +249,6 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 			return nil, nil, fmt.Errorf("error retrieving execution blocks data from bigtable: %v", err)
 		}
 
-		// get mev data
-		relaysData, err := db.GetRelayDataForIndexedBlocks(execBlocks)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error retrieving mev bribe data: %v", err)
-		}
-
 		incomeTodayEl := new(big.Int)
 		for _, execBlock := range execBlocks {
 
@@ -263,12 +256,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 			if blockEpoch > int64(latestFinalizedEpoch) {
 				continue
 			}
-			// add mev bribe if present
-			if relaysDatum, hasMevBribes := relaysData[common.BytesToHash(execBlock.Hash)]; hasMevBribes {
-				incomeTodayEl = new(big.Int).Add(incomeTodayEl, relaysDatum.MevBribe.Int)
-			} else {
-				incomeTodayEl = new(big.Int).Add(incomeTodayEl, new(big.Int).SetBytes(execBlock.GetTxReward()))
-			}
+			incomeTodayEl = new(big.Int).Add(incomeTodayEl, new(big.Int).SetBytes(execBlock.GetTxReward()))
 		}
 		incomeToday.El = decimal.NewFromBigInt(incomeTodayEl, 0)
 		incomeToday.Total = incomeToday.Total.Add(incomeToday.El)
@@ -694,10 +682,6 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 	if err != nil {
 		return nil, err
 	}
-	relaysData, err := db.GetRelayDataForIndexedBlocks(blocks)
-	if err != nil {
-		return nil, err
-	}
 
 	var chartData = []*types.ChartDataPoint{}
 	epochsPerDay := utils.EpochsPerDay()
@@ -711,11 +695,7 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 		day := int64(consData.Epoch / epochsPerDay)
 
 		var totalReward float64
-		if relayData, ok := relaysData[common.BytesToHash(block.Hash)]; ok {
-			totalReward = utils.WeiToEther(relayData.MevBribe.BigInt()).InexactFloat64()
-		} else {
-			totalReward = utils.WeiToEther(utils.Eth1TotalReward(block)).InexactFloat64()
-		}
+		totalReward = utils.WeiToEther(utils.Eth1TotalReward(block)).InexactFloat64()
 
 		// Add the reward to the existing reward for the day or set it if not previously set
 		dayRewardMap[day] += totalReward

@@ -23,7 +23,7 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
 - Website
   - [Validator Dashboard](https://beaconcha.in/dashboard) with status, income, balance, attestations, proposals and charts
   - Overviews about [blocks](https://beaconcha.in/blocks), [slots](https://beaconcha.in/slots), [epochs](https://beaconcha.in/epochs), [transactions](https://beaconcha.in/transactions), [validators](https://beaconcha.in/validators), [slashings](https://beaconcha.in/validators/slashings) and the [mempool](https://beaconcha.in/mempool)
-  - Stats and info about [MEV relays](https://beaconcha.in/relays) and [Zond clients](https://beaconcha.in/user/ethClients)
+  - Stats and info about [Zond clients](https://beaconcha.in/user/zondClients)
   - Leaderboards about [validators](https://beaconcha.in/validators/leaderboard) and [deposits](https://beaconcha.in/validators/deposit-leaderboard)
   - [Charts](https://beaconcha.in/charts) about various stats
 

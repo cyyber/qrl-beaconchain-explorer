@@ -101,7 +101,6 @@ message Eth1BlockIndexed {
     google.protobuf.Timestamp time = 12;
     bytes base_fee = 18;
     uint64 transaction_count = 20;
-    bytes mev = 21;
     bytes lowest_gas_price = 22;
     bytes highest_gas_price = 23;
     // uint64 duration = 24;

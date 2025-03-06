@@ -863,8 +863,6 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 		idx.HighestGasPrice = maxGasPrice.Bytes()
 	}
 
-	idx.Mev = CalculateMevFromBlock(block).Bytes() // deprecated but we still write the value to keep all blocks consistent
-
 	// Mark Coinbase for balance update
 	bigtable.markBalanceUpdate(idx.Coinbase, []byte{0x0}, bulkMetadataUpdates, cache)
 
@@ -896,20 +894,6 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 	}
 
 	return bulkData, bulkMetadataUpdates, nil
-}
-
-func CalculateMevFromBlock(block *types.Eth1Block) *big.Int {
-	mevReward := big.NewInt(0)
-
-	for _, tx := range block.GetTransactions() {
-		for _, itx := range tx.GetItx() {
-			if common.BytesToAddress(itx.To) == common.BytesToAddress(block.GetCoinbase()) {
-				mevReward = new(big.Int).Add(mevReward, new(big.Int).SetBytes(itx.GetValue()))
-			}
-		}
-
-	}
-	return mevReward
 }
 
 func CalculateTxFeesFromBlock(block *types.Eth1Block) *big.Int {

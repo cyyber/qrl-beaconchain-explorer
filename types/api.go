@@ -65,42 +65,26 @@ type ExecutionAddressERC20Response struct {
 }
 
 type ExecutionBlockApiResponse struct {
-	Hash               string                `json:"blockHash"`
-	BlockNumber        uint64                `json:"blockNumber"`
-	Timestamp          uint64                `json:"timestamp"`
-	BlockReward        *big.Int              `json:"blockReward"`
-	BlockMevReward     *big.Int              `json:"blockMevReward"`
-	FeeRecipientReward *big.Int              `json:"producerReward"`
-	FeeRecipient       string                `json:"feeRecipient"`
-	GasLimit           uint64                `json:"gasLimit"`
-	GasUsed            uint64                `json:"gasUsed"`
-	BaseFee            *big.Int              `json:"baseFee"`
-	TxCount            uint64                `json:"txCount"`
-	InternalTxCount    uint64                `json:"internalTxCount"`
-	ParentHash         string                `json:"parentHash"`
-	PoSData            *ExecBlockProposer    `json:"posConsensus"`
-	RelayData          *RelayDataApiResponse `json:"relay"`
-	ConsensusAlgorithm string                `json:"consensusAlgorithm"`
-}
-
-type RelayDataApiResponse struct {
-	TagID                string `json:"tag"`
-	BuilderPubKey        string `json:"builderPubkey"`
-	ProposerFeeRecipient string `json:"producerFeeRecipient"`
+	Hash               string             `json:"blockHash"`
+	BlockNumber        uint64             `json:"blockNumber"`
+	Timestamp          uint64             `json:"timestamp"`
+	BlockReward        *big.Int           `json:"blockReward"`
+	FeeRecipientReward *big.Int           `json:"producerReward"`
+	FeeRecipient       string             `json:"feeRecipient"`
+	GasLimit           uint64             `json:"gasLimit"`
+	GasUsed            uint64             `json:"gasUsed"`
+	BaseFee            *big.Int           `json:"baseFee"`
+	TxCount            uint64             `json:"txCount"`
+	InternalTxCount    uint64             `json:"internalTxCount"`
+	ParentHash         string             `json:"parentHash"`
+	PoSData            *ExecBlockProposer `json:"posConsensus"`
+	ConsensusAlgorithm string             `json:"consensusAlgorithm"`
 }
 
 type AddressIndexOrPubkey struct {
 	Address []byte
 	Index   uint64
 	Pubkey  []byte
-}
-
-type RelaysData struct {
-	MevRecipient  []byte    `db:"proposer_fee_recipient"`
-	MevBribe      WeiString `db:"value"`
-	ExecBlockHash []byte    `db:"exec_block_hash"`
-	TagID         string    `db:"tag_id"`
-	BuilderPubKey []byte    `db:"builder_pubkey"`
 }
 
 type ExecBlockProposer struct {
@@ -159,7 +143,6 @@ type Eth1BlockParsed struct {
 	BaseFee                  string    `json:"base_fee,omitempty"`
 	TransactionCount         uint64    `json:"transaction_count,omitempty"`
 	InternalTransactionCount uint64    `json:"internal_transaction_count,omitempty"`
-	Mev                      string    `json:"mev,omitempty"`
 	LowestGasPrice           string    `json:"lowest_gas_price,omitempty"`
 	HighestGasPrice          string    `json:"highest_gas_price,omitempty"`
 	// Duration uint64 `json:"duration,omitempty"`

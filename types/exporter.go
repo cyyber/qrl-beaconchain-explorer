@@ -5,12 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
-	"time"
 
 	"github.com/jackc/pgtype"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
-	"github.com/sirupsen/logrus"
 )
 
 // ChainHead is a struct to hold chain head data
@@ -489,29 +487,6 @@ type HistoricEthPrice struct {
 	Symbol string `json:"symbol"`
 }
 
-type Relay struct {
-	ID                  string         `db:"tag_id"`
-	Endpoint            string         `db:"endpoint"`
-	Link                sql.NullString `db:"public_link"`
-	IsCensoring         sql.NullBool   `db:"is_censoring"`
-	IsEthical           sql.NullBool   `db:"is_ethical"`
-	ExportFailureCount  uint64         `db:"export_failure_count"`
-	LastExportTryTs     time.Time      `db:"last_export_try_ts"`
-	LastExportSuccessTs time.Time      `db:"last_export_success_ts"`
-	Logger              logrus.Entry
-}
-
-type RelayBlock struct {
-	ID                   string `db:"tag_id" json:"tag_id"`
-	BlockSlot            uint64 `db:"block_slot" json:"block_slot"`
-	BlockRoot            string `db:"block_root" json:"block_root"`
-	ExecBlockHash        string `db:"exec_block_hash"`
-	Value                uint64 `db:"value" json:"value"`
-	BuilderPubkey        string `db:"builder_pubkey" json:"builder_pubkey"`
-	ProposerPubkey       string `db:"proposer_pubkey" json:"proposer_pubkey"`
-	ProposerFeeRecipient string `db:"proposer_fee_recipient" json:"proposer_fee_recipient"`
-}
-
 type BlockTag struct {
 	ID        string `db:"tag_id"`
 	BlockSlot uint64 `db:"slot"`
@@ -643,12 +618,4 @@ type ValidatorStatsTableDbRow struct {
 	ElPerformance7d   decimal.Decimal `db:"-"`
 	ElPerformance31d  decimal.Decimal `db:"-"`
 	ElPerformance365d decimal.Decimal `db:"-"`
-
-	MEVRewardsWei      decimal.Decimal `db:"mev_rewards_wei"`
-	MEVRewardsWeiTotal decimal.Decimal `db:"mev_rewards_wei_total"`
-
-	MEVPerformance1d   decimal.Decimal `db:"-"`
-	MEVPerformance7d   decimal.Decimal `db:"-"`
-	MEVPerformance31d  decimal.Decimal `db:"-"`
-	MEVPerformance365d decimal.Decimal `db:"-"`
 }

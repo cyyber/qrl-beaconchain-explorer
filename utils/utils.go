@@ -141,7 +141,6 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatYesNo":                             FormatYesNo,
 		"formatAmountFormatted":                   FormatAmountFormatted,
 		"formatAddressAsLink":                     FormatAddressAsLink,
-		"formatBuilder":                           FormatBuilder,
 		"getCurrencyLabel":                        price.GetCurrencyLabel,
 		"config":                                  func() *types.Config { return Config },
 		"epochOfSlot":                             EpochOfSlot,

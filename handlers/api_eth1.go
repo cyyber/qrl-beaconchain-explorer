@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -96,19 +95,13 @@ func ApiETH1ExecBlocks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	relaysData, err := db.GetRelayDataForIndexedBlocks(blocks)
-	if err != nil {
-		logger.Errorf("can not load mev data %v", err)
-		SendBadRequestResponse(w, r.URL.String(), "can not retrieve mev data")
-		return
-	}
-
-	results := formatBlocksForApiResponse(blocks, relaysData, beaconDataMap, nil)
+	results := formatBlocksForApiResponse(blocks, beaconDataMap, nil)
 
 	j := json.NewEncoder(w)
 	SendOKResponse(j, r.URL.String(), []interface{}{results})
 }
 
+/*
 // ApiETH1AccountProposedBlocks godoc
 // @Summary Get proposed or mined blocks
 // @Tags Execution
@@ -225,23 +218,17 @@ func ApiETH1AccountProducedBlocks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	relaysData, err := db.GetRelayDataForIndexedBlocks(blocks)
-	if err != nil {
-		logger.Errorf("can not load mev data %v", err)
-		SendBadRequestResponse(w, r.URL.String(), "can not retrieve mev data")
-		return
-	}
-
 	var sortFunc func(i, j types.ExecutionBlockApiResponse) bool
 	if isSortAsc {
 		sortFunc = func(i, j types.ExecutionBlockApiResponse) bool { return i.BlockNumber < j.BlockNumber }
 	}
 
-	results := formatBlocksForApiResponse(blocks, relaysData, beaconDataMap, sortFunc)
+	results := formatBlocksForApiResponse(blocks, beaconDataMap, sortFunc)
 
 	j := json.NewEncoder(w)
 	SendOKResponse(j, r.URL.String(), []interface{}{results})
 }
+*/
 
 // ApiETH1GasNowData godoc
 // @Summary Gets the current estimation for gas prices in GWei.
@@ -413,7 +400,7 @@ func ApiEth1AddressERC20Tokens(w http.ResponseWriter, r *http.Request) {
 }
 */
 
-func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, relaysData map[common.Hash]types.RelaysData, beaconDataMap map[uint64]types.ExecBlockProposer, sortFunc func(i, j types.ExecutionBlockApiResponse) bool) []types.ExecutionBlockApiResponse {
+func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, beaconDataMap map[uint64]types.ExecBlockProposer, sortFunc func(i, j types.ExecutionBlockApiResponse) bool) []types.ExecutionBlockApiResponse {
 	results := []types.ExecutionBlockApiResponse{}
 
 	latestFinalized := services.LatestFinalizedEpoch()
@@ -432,31 +419,15 @@ func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, relaysData map
 		}
 
 		consensusAlgorithm := "pos"
-		var mevBribe *big.Int = big.NewInt(0)
-		relayData, ok := relaysData[common.BytesToHash(block.Hash)]
-		var relayDataResponse *types.RelayDataApiResponse = nil
-		if ok {
-			mevBribe = relayData.MevBribe.BigInt()
-			relayDataResponse = &types.RelayDataApiResponse{
-				TagID:                relayData.TagID,
-				BuilderPubKey:        fmt.Sprintf("0x%v", hex.EncodeToString(relayData.BuilderPubKey)),
-				ProposerFeeRecipient: fmt.Sprintf("0x%v", hex.EncodeToString(relayData.MevRecipient)),
-			}
-		}
 
 		var producerReward *big.Int
-		if mevBribe.Int64() == 0 {
-			producerReward = totalReward
-		} else {
-			producerReward = mevBribe
-		}
+		producerReward = totalReward
 
 		results = append(results, types.ExecutionBlockApiResponse{
 			Hash:               fmt.Sprintf("0x%v", hex.EncodeToString(block.GetHash())),
 			BlockNumber:        block.GetNumber(),
 			Timestamp:          uint64(block.GetTime().AsTime().Unix()),
 			BlockReward:        totalReward,
-			BlockMevReward:     mevBribe,
 			FeeRecipientReward: producerReward,
 			FeeRecipient:       fmt.Sprintf("0x%v", hex.EncodeToString(block.GetCoinbase())),
 			GasLimit:           block.GetGasLimit(),
@@ -466,7 +437,6 @@ func formatBlocksForApiResponse(blocks []*types.Eth1BlockIndexed, relaysData map
 			InternalTxCount:    block.GetInternalTransactionCount(),
 			ParentHash:         fmt.Sprintf("0x%v", hex.EncodeToString(block.GetParentHash())),
 			PoSData:            posDataPt,
-			RelayData:          relayDataResponse,
 			ConsensusAlgorithm: consensusAlgorithm,
 		})
 	}
@@ -515,11 +485,6 @@ func getValidatorExecutionPerformance(queryIndices []uint64) ([]types.ExecutionP
 	}
 
 	resultPerProposer := make(map[uint64]types.ExecutionPerformanceResponse)
-
-	relaysData, err := db.GetRelayDataForIndexedBlocks(blocks)
-	if err != nil {
-		return nil, fmt.Errorf("error can not get relays data: %w", err)
-	}
 
 	type LongPerformanceResponse struct {
 		Performance365d  string `db:"el_performance_365d" json:"performance365d"`
@@ -574,22 +539,10 @@ func getValidatorExecutionPerformance(queryIndices []uint64) ([]types.ExecutionP
 		}
 
 		txFees := big.NewInt(0).SetBytes(block.TxReward)
-		//mev := big.NewInt(0).SetBytes(block.Mev) // this handling has been deprecated
-		mev := big.NewInt(0)
-		income := big.NewInt(0).Add(txFees, mev)
-
-		var mevBribe *big.Int = big.NewInt(0)
-		relayData, ok := relaysData[common.BytesToHash(block.Hash)]
-		if ok {
-			mevBribe = relayData.MevBribe.BigInt()
-		}
+		income := txFees
 
 		var producerReward *big.Int
-		if mevBribe.Int64() == 0 {
-			producerReward = income
-		} else {
-			producerReward = mevBribe
-		}
+		producerReward = income
 
 		if block.Time.AsTime().Equal(firstEpochTime) || block.Time.AsTime().After(firstEpochTime) {
 			result.PerformanceTotal = result.PerformanceTotal.Add(result.PerformanceTotal, producerReward)
@@ -731,6 +684,7 @@ func resolveIndices(pubkeys [][]byte) ([]uint64, error) {
 	return indicesFromPubkeys, err
 }
 
+/*
 func getAddressesOrIndicesFromAddressIndexOrPubkey(search string, max int) ([][]byte, []uint64, error) {
 	individuals := strings.Split(search, ",")
 	if len(individuals) > max {
@@ -769,9 +723,11 @@ func getAddressesOrIndicesFromAddressIndexOrPubkey(search string, max int) ([][]
 
 	return resultAddresses, nil, nil
 }
+*/
 
+/*
 func parseFromAddressIndexOrPubkey(search string) (types.AddressIndexOrPubkey, error) {
-	// search = ReplaceEnsNameWithAddress(search)
+	search = ReplaceEnsNameWithAddress(search)
 	if strings.Contains(search, "0x") && len(search) == 42 {
 		address, err := hex.DecodeString(search[2:])
 		if err != nil {
@@ -805,3 +761,4 @@ func parseFromAddressIndexOrPubkey(search string) (types.AddressIndexOrPubkey, e
 		}, nil
 	}
 }
+*/

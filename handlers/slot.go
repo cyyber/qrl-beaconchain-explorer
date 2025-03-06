@@ -134,7 +134,6 @@ func Slot(w http.ResponseWriter, r *http.Request) {
 		// if err != nil, simply show slot view without block
 		if err == nil {
 			slotPageData.ExecutionData = eth1BlockPageData
-			slotPageData.ExecutionData.IsValidMev = slotPageData.IsValidMev
 		}
 	}
 	data := InitPageData(w, r, "blockchain", fmt.Sprintf("/slot/%v", slotPageData.Slot), fmt.Sprintf("Slot %v", slotOrHash), slotTemplateFiles)
@@ -241,7 +240,6 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			blocks.status,
 			exec_block_number,
 			jsonb_agg(tags.metadata) as tags,
-			COALESCE(not 'invalid-relay-reward'=ANY(array_agg(tags.id)), true) as is_valid_mev,
 			COALESCE(validator_names.name, '') AS name,
 			(SELECT count(*) from blocks_dilithium_change where block_slot = $1) as dilithium_change_count
 		FROM blocks 

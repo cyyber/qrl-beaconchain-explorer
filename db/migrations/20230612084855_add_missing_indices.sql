@@ -63,9 +63,6 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_proposer_epoch_exec_block_num
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_graffiti ON public.blocks USING btree (graffiti);
 -- +goose StatementEnd
 -- +goose StatementBegin
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_relays_blocks_tag_id ON public.relays_blocks USING btree (tag_id);
--- +goose StatementEnd
--- +goose StatementBegin
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_chart_series_indicator_time ON public.chart_series USING btree (indicator, "time");
 -- +goose StatementEnd
 -- +goose StatementBegin
@@ -148,9 +145,6 @@ DROP INDEX CONCURRENTLY idx_blocks_proposer_epoch_exec_block_number;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_blocks_graffiti;
--- +goose StatementEnd
--- +goose StatementBegin
-DROP INDEX CONCURRENTLY idx_relays_blocks_tag_id;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_chart_series_indicator_time;

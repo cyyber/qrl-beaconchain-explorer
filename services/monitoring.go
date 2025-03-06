@@ -259,7 +259,6 @@ func startServicesMonitoringService() {
 		"indexPageDataUpdater":      time.Minute * 15,
 		"latestBlockUpdater":        time.Minute * 15,
 		"headBlockRootHashUpdater":  time.Minute * 15,
-		"relaysUpdater":             time.Minute * 15,
 		"statsUpdater":              time.Minute * 30,
 		"slotExporter":              time.Minute * 15,
 		"statistics":                time.Minute * 90,

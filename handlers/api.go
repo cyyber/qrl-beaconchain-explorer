@@ -2122,7 +2122,7 @@ func ApiValidatorPerformance(w http.ResponseWriter, r *http.Request) {
 }
 
 // ApiValidatorExecutionPerformance godoc
-// @Summary Get the current execution reward performance of up to 100 validators. If block was produced via mev relayer, this endpoint will use the relayer data as block reward instead of the normal block reward.
+// @Summary Get the current execution reward performance of up to 100 validators.
 // @Tags Validator
 // @Produce  json
 // @Param  indexOrPubkey path string true "Up to 100 validator indicesOrPubkeys, comma separated"

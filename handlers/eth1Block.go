@@ -91,7 +91,6 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	blockPageData.ExecutionData = eth1BlockPageData
-	blockPageData.ExecutionData.IsValidMev = blockPageData.IsValidMev
 
 	data.Data = blockPageData
 
@@ -201,8 +200,6 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		//MinerFormatted: utils.FormatAddress(block.Coinbase, nil, names[string(block.Coinbase)], false, false, false),
 		MinerFormatted: utils.FormatAddressWithLimits(block.Coinbase, names[string(block.Coinbase)], false, "address", 42, 42, true),
 		Reward:         blockReward,
-		//MevReward:      db.CalculateMevFromBlock(block), // deprecated, don't show this value as mev
-		MevReward:      new(big.Int),
 		TxFees:         txFees,
 		GasUsage:       utils.FormatBlockUsage(block.GasUsed, block.GasLimit),
 		GasLimit:       block.GasLimit,
@@ -215,15 +212,5 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		Txs:            txs,
 	}
 
-	var relaysData struct {
-		MevRecipient []byte          `db:"proposer_fee_recipient"`
-		MevBribe     types.WeiString `db:"value"`
-	}
-	// try to get mev rewards from relays_blocks table
-	err = db.ReaderDb.Get(&relaysData, `SELECT proposer_fee_recipient, value FROM relays_blocks WHERE relays_blocks.exec_block_hash = $1 limit 1`, block.Hash)
-	if err == nil {
-		eth1BlockPageData.MevBribe = relaysData.MevBribe.BigInt()
-		eth1BlockPageData.MevRecipientFormatted = utils.FormatAddressWithLimits(relaysData.MevRecipient, names[string(relaysData.MevRecipient)], false, "address", 42, 42, true)
-	}
 	return &eth1BlockPageData, nil
 }

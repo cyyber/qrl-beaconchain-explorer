@@ -623,8 +623,7 @@ type BlockPageData struct {
 	ProposerSlashings []*BlockPageProposerSlashing
 	SyncCommittee     []uint64 // TODO: Setting it to contain the validator index
 
-	Tags       TagMetadataSlice `db:"tags"`
-	IsValidMev bool             `db:"is_valid_mev"`
+	Tags TagMetadataSlice `db:"tags"`
 	ValidatorProposalInfo
 }
 
@@ -1457,31 +1456,27 @@ type EtherscanContractMetadata struct {
 }
 
 type Eth1BlockPageData struct {
-	Number                uint64
-	PreviousBlock         uint64
-	NextBlock             uint64
-	TxCount               uint64
-	WithdrawalCount       uint64
-	Hash                  string
-	ParentHash            string
-	MinerAddress          string
-	MinerFormatted        template.HTML
-	Reward                *big.Int
-	MevReward             *big.Int
-	MevBribe              *big.Int
-	IsValidMev            bool
-	MevRecipientFormatted template.HTML
-	TxFees                *big.Int
-	GasUsage              template.HTML
-	GasLimit              uint64
-	LowestGasPrice        *big.Int
-	Ts                    time.Time
-	BaseFeePerGas         *big.Int
-	BurnedFees            *big.Int
-	BurnedTxFees          *big.Int
-	Extra                 string
-	Txs                   []Eth1BlockPageTransaction
-	State                 string
+	Number          uint64
+	PreviousBlock   uint64
+	NextBlock       uint64
+	TxCount         uint64
+	WithdrawalCount uint64
+	Hash            string
+	ParentHash      string
+	MinerAddress    string
+	MinerFormatted  template.HTML
+	Reward          *big.Int
+	TxFees          *big.Int
+	GasUsage        template.HTML
+	GasLimit        uint64
+	LowestGasPrice  *big.Int
+	Ts              time.Time
+	BaseFeePerGas   *big.Int
+	BurnedFees      *big.Int
+	BurnedTxFees    *big.Int
+	Extra           string
+	Txs             []Eth1BlockPageTransaction
+	State           string
 }
 
 type Eth1BlockPageTransaction struct {
@@ -1511,52 +1506,6 @@ type SlotVizEpochs struct {
 	Justifying     bool            `json:"justifying"`
 	Particicpation float64         `json:"participation"`
 	Slots          []*SlotVizSlots `json:"slots"`
-}
-
-type RelaysResp struct {
-	RelaysInfoContainers [3]RelayInfoContainer
-	RecentBlocks         []*RelaysRespBlock
-	TopBlocks            []*RelaysRespBlock
-	LastUpdated          time.Time
-	TopBuilders          []*struct {
-		Tags       TagMetadataSlice `db:"tags"`
-		Builder    []byte           `db:"builder_pubkey"`
-		BlockCount uint64           `db:"c"`
-		LatestSlot uint64           `db:"latest_slot"`
-		BlockPerc  float64
-	}
-}
-
-type RelaysRespBlock struct {
-	Tags                 TagMetadataSlice `db:"tags"`
-	Value                WeiString        `db:"value"`
-	Slot                 uint64           `db:"slot"`
-	Builder              []byte           `db:"builder_pubkey"`
-	ProposerFeeRecipient []byte           `db:"proposer_fee_recipient"`
-	Proposer             uint64           `db:"proposer"`
-	BlockExtraData       string           `db:"block_extra_data"`
-}
-
-type RelayInfoContainer struct {
-	Days                 uint64
-	IsFirst              bool
-	RelaysInfo           []*RelayInfo
-	NetworkParticipation float64 `db:"network_participation"`
-}
-
-type RelayInfo struct {
-	RelayID        string         `db:"relay_id"`
-	Name           sql.NullString `db:"name"`
-	Link           sql.NullString `db:"link"`
-	Censors        sql.NullBool   `db:"censors"`
-	Ethical        sql.NullBool   `db:"ethical"`
-	BlockCount     uint64         `db:"block_count"`
-	UniqueBuilders uint64         `db:"unique_builders"`
-	NetworkUsage   float64        `db:"network_usage"`
-	TotalValue     WeiString      `db:"total_value"`
-	AverageValue   WeiString      `db:"avg_value"`
-	MaxValue       WeiString      `db:"max_value"`
-	MaxValueSlot   uint64         `db:"max_value_slot"`
 }
 
 type BurnPageDataBlock struct {

@@ -684,15 +684,15 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 			if !opts.DryRun {
 				_, err = db.WriterDb.Exec(`
 					INSERT INTO ens (
-						name_hash, 
-						ens_name, 
+						name_hash,
+						ens_name,
 						address,
-						is_primary_name, 
+						is_primary_name,
 						valid_to)
-					VALUES ($1, $2, $3, $4, $5) 
-					ON CONFLICT 
-						(name_hash) 
-					DO UPDATE SET 
+					VALUES ($1, $2, $3, $4, $5)
+					ON CONFLICT
+						(name_hash)
+					DO UPDATE SET
 						ens_name = excluded.ens_name,
 						address = excluded.address,
 						is_primary_name = excluded.is_primary_name,
@@ -1462,7 +1462,6 @@ func exportStatsTotals(columns string, dayStart, dayEnd, concurrency uint64) {
 	validColumns := []string{
 		"cl_rewards_gwei_total",
 		"el_rewards_wei_total",
-		"mev_rewards_wei_total",
 		"missed_attestations_total",
 		"participated_sync_total",
 		"missed_sync_total",

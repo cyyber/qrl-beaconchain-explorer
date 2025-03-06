@@ -743,7 +743,6 @@ type Eth1BlockIndexed struct {
 	Time             *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=time,proto3" json:"time,omitempty"`
 	BaseFee          []byte                 `protobuf:"bytes,18,opt,name=base_fee,json=baseFee,proto3" json:"base_fee,omitempty"`
 	TransactionCount uint64                 `protobuf:"varint,20,opt,name=transaction_count,json=transactionCount,proto3" json:"transaction_count,omitempty"`
-	Mev              []byte                 `protobuf:"bytes,21,opt,name=mev,proto3" json:"mev,omitempty"`
 	LowestGasPrice   []byte                 `protobuf:"bytes,22,opt,name=lowest_gas_price,json=lowestGasPrice,proto3" json:"lowest_gas_price,omitempty"`
 	HighestGasPrice  []byte                 `protobuf:"bytes,23,opt,name=highest_gas_price,json=highestGasPrice,proto3" json:"highest_gas_price,omitempty"`
 	// uint64 duration = 24;
@@ -846,13 +845,6 @@ func (x *Eth1BlockIndexed) GetTransactionCount() uint64 {
 		return x.TransactionCount
 	}
 	return 0
-}
-
-func (x *Eth1BlockIndexed) GetMev() []byte {
-	if x != nil {
-		return x.Mev
-	}
-	return nil
 }
 
 func (x *Eth1BlockIndexed) GetLowestGasPrice() []byte {
