@@ -40,6 +40,7 @@ require (
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/skygeario/go-confusable-homoglyphs v0.0.0-20191212061114-e2b2a60df110
 	github.com/swaggo/http-swagger v1.3.0
+	github.com/swaggo/swag v1.8.3
 	github.com/theQRL/go-bitfield v0.0.0-20231204084259-f3b877be8f63
 	github.com/theQRL/go-zond v0.2.0
 	github.com/theQRL/qrysm v0.0.0-00010101000000-000000000000
@@ -104,7 +105,6 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/rs/cors v1.8.2 // indirect
-	github.com/swaggo/swag v1.8.3 // indirect
 	github.com/theQRL/go-qrllib v0.0.0-20230406170304-b7eb19c367e1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	golang.org/x/crypto v0.19.0 // indirect

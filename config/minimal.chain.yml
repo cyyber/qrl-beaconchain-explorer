@@ -56,7 +56,7 @@ PROPOSER_SCORE_BOOST: 40
 
 # Deposit contract
 # ---------------------------------------------------------------
-# Ethereum Goerli testnet
+# Zond testnet
 DEPOSIT_CHAIN_ID: 5
 DEPOSIT_NETWORK_ID: 5
 # Configured on a per testnet basis

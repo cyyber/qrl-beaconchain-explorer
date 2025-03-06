@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "github.com/theQRL/go-zond"
+	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
@@ -21,7 +21,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = ethereum.NotFound
+	_ = zond.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -38,29 +38,29 @@ var ENSNameWrapperMetaData = &bind.MetaData{
 // Deprecated: Use ENSNameWrapperMetaData.ABI instead.
 var ENSNameWrapperABI = ENSNameWrapperMetaData.ABI
 
-// ENSNameWrapper is an auto generated Go binding around an Ethereum contract.
+// ENSNameWrapper is an auto generated Go binding around a Zond contract.
 type ENSNameWrapper struct {
 	ENSNameWrapperCaller     // Read-only binding to the contract
 	ENSNameWrapperTransactor // Write-only binding to the contract
 	ENSNameWrapperFilterer   // Log filterer for contract events
 }
 
-// ENSNameWrapperCaller is an auto generated read-only Go binding around an Ethereum contract.
+// ENSNameWrapperCaller is an auto generated read-only Go binding around a Zond contract.
 type ENSNameWrapperCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSNameWrapperTransactor is an auto generated write-only Go binding around an Ethereum contract.
+// ENSNameWrapperTransactor is an auto generated write-only Go binding around a Zond contract.
 type ENSNameWrapperTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSNameWrapperFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+// ENSNameWrapperFilterer is an auto generated log filtering Go binding around a Zond contract events.
 type ENSNameWrapperFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSNameWrapperSession is an auto generated Go binding around an Ethereum contract,
+// ENSNameWrapperSession is an auto generated Go binding around a Zond contract,
 // with pre-set call and transact options.
 type ENSNameWrapperSession struct {
 	Contract     *ENSNameWrapper   // Generic contract binding to set the session for
@@ -68,31 +68,31 @@ type ENSNameWrapperSession struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// ENSNameWrapperCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// ENSNameWrapperCallerSession is an auto generated read-only Go binding around a Zond contract,
 // with pre-set call options.
 type ENSNameWrapperCallerSession struct {
 	Contract *ENSNameWrapperCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts         // Call options to use throughout this session
 }
 
-// ENSNameWrapperTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// ENSNameWrapperTransactorSession is an auto generated write-only Go binding around a Zond contract,
 // with pre-set transact options.
 type ENSNameWrapperTransactorSession struct {
 	Contract     *ENSNameWrapperTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts         // Transaction auth options to use throughout this session
 }
 
-// ENSNameWrapperRaw is an auto generated low-level Go binding around an Ethereum contract.
+// ENSNameWrapperRaw is an auto generated low-level Go binding around a Zond contract.
 type ENSNameWrapperRaw struct {
 	Contract *ENSNameWrapper // Generic contract binding to access the raw methods on
 }
 
-// ENSNameWrapperCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+// ENSNameWrapperCallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
 type ENSNameWrapperCallerRaw struct {
 	Contract *ENSNameWrapperCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ENSNameWrapperTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+// ENSNameWrapperTransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
 type ENSNameWrapperTransactorRaw struct {
 	Contract *ENSNameWrapperTransactor // Generic write-only contract binding to access the raw methods on
 }
@@ -1435,7 +1435,7 @@ type ENSNameWrapperApprovalIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -1597,7 +1597,7 @@ type ENSNameWrapperApprovalForAllIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -1751,7 +1751,7 @@ type ENSNameWrapperControllerChangedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -1896,7 +1896,7 @@ type ENSNameWrapperExpiryExtendedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -2041,7 +2041,7 @@ type ENSNameWrapperFusesSetIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -2186,7 +2186,7 @@ type ENSNameWrapperNameUnwrappedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -2331,7 +2331,7 @@ type ENSNameWrapperNameWrappedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -2479,7 +2479,7 @@ type ENSNameWrapperOwnershipTransferredIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -2632,7 +2632,7 @@ type ENSNameWrapperTransferBatchIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -2796,7 +2796,7 @@ type ENSNameWrapperTransferSingleIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -2960,7 +2960,7 @@ type ENSNameWrapperURIIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }

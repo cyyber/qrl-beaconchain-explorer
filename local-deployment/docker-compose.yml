@@ -2,6 +2,7 @@ version: '3'
 x-service: &default-service
   image: golang:1.22
   working_dir: /app
+  network_mode: "host"
   volumes:
     - ../.:/app
     - /tmp/go-cache:/go
@@ -35,8 +36,6 @@ services:
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
     environment:
       - FRONTEND_ENABLED=true
-    ports:
-      - "8070:8070"
   
   # ratelimits-updater:
   #   <<: *default-service
@@ -50,50 +49,7 @@ services:
     volumes:
       - redis-sessions:/data
     ports:
-      - 6379:6379
+      - "$REDIS_SESSIONS_PORT:6379"
   
-  littlebigtable:
-    image: gobitfly/little_bigtable:latest
-    volumes:
-      - littlebigtable:/app/data
-    ports:
-      - 9000:9000
-
-  littlebigtable-migration:
-    <<: *default-service
-    command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=initBigtableSchema
-    depends_on:
-      - littlebigtable
-
-  postgres:
-    image: postgres:14-alpine
-    ports:
-      - 5432:5432
-    volumes:
-      - pg-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=db
-
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - "8888:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: test@test.com
-      PGADMIN_DEFAULT_PASSWORD: pass
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-
-  postgres-migration:
-    <<: *default-service
-    command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=applyDbSchema
-    depends_on:
-      - postgres
-
 volumes:
   redis-sessions:
-  littlebigtable:
-  pgadmin-data:
-  pg-data:

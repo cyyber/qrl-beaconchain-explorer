@@ -638,10 +638,8 @@ func ReadConfig(cfg *types.Config, path string) error {
 
 	if cfg.Chain.Id != 0 {
 		switch cfg.Chain.Name {
-		case "mainnet", "ethereum":
+		case "mainnet", "zond":
 			cfg.Chain.Id = 1
-		case "goerli":
-			cfg.Chain.Id = 5
 		}
 	}
 
@@ -1088,7 +1086,6 @@ func TryFetchContractMetadata(address []byte) (*types.ContractMetadata, error) {
 /*
 func GetEtherscanAPIBaseUrl(provideDefault bool) string {
 	const mainnetBaseUrl = "api.etherscan.io"
-	const goerliBaseUrl = "api-goerli.etherscan.io"
 
 	// check config first
 	if len(Config.EtherscanAPIBaseURL) > 0 {
@@ -1099,8 +1096,6 @@ func GetEtherscanAPIBaseUrl(provideDefault bool) string {
 	switch Config.Chain.ClConfig.DepositChainID {
 	case 1: // mainnet
 		return mainnetBaseUrl
-	case 5: // goerli
-		return goerliBaseUrl
 	}
 
 	// use default

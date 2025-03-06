@@ -283,7 +283,7 @@ func main() {
 
 		// TODO(rgeraldes24): remove
 		// logrus.Infof("initializing prices")
-		// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.Eth1ErigonEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
+		// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.Eth1GzondEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
 
 		// logrus.Infof("prices initialized")
 		if !utils.Config.Frontend.Debug {

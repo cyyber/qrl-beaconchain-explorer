@@ -423,9 +423,9 @@ func main() {
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
 	// case "fix-ens":
-	// 	err = fixEns(erigonClient)
+	// 	err = fixEns(gzondClient)
 	// case "fix-ens-addresses":
-	// 	err = fixEnsAddresses(erigonClient)
+	// 	err = fixEnsAddresses(gzondClient)
 	case "fix-epochs":
 		err = fixEpochs()
 	default:
@@ -468,7 +468,7 @@ func fixEpoch(e uint64) error {
 }
 
 /*
-func fixEns(erigonClient *rpc.ErigonClient) error {
+func fixEns(gzondClient *rpc.GzondClient) error {
 	logrus.WithField("dry", opts.DryRun).Infof("command: fix-ens")
 	addrs := []struct {
 		Address []byte `db:"address"`
@@ -497,7 +497,7 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 		for _, addr := range batch {
 			addr := addr
 			g.Go(func() error {
-				ensAddr, err := go_ens.Resolve(erigonClient.GetNativeClient(), addr.EnsName)
+				ensAddr, err := go_ens.Resolve(gzondClient.GetNativeClient(), addr.EnsName)
 				if err != nil {
 					if err.Error() == "unregistered name" ||
 						err.Error() == "no address" ||
@@ -528,7 +528,7 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 					}
 				}
 
-				reverseName, err := go_ens.ReverseResolve(erigonClient.GetNativeClient(), dbAddr)
+				reverseName, err := go_ens.ReverseResolve(gzondClient.GetNativeClient(), dbAddr)
 				if err != nil {
 					if err.Error() == "not a resolver" || err.Error() == "no resolution" {
 						logrus.WithFields(logrus.Fields{"addr": dbAddr, "name": addr.EnsName, "reason": fmt.Sprintf("failed reverse-resolve: %v", err.Error())}).Warnf("updating ens entry: is_primary_name = false")
@@ -566,7 +566,7 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 	return nil
 }
 
-func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
+func fixEnsAddresses(gzondClient *rpc.GzondClient) error {
 	logrus.WithFields(logrus.Fields{"dry": opts.DryRun}).Infof("command: fix-ens-addresses")
 	if opts.Addresses == "" {
 		return errors.New("no addresses specified")
@@ -596,7 +596,7 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 			dbEntry = nil
 		}
 
-		name, err := go_ens.ReverseResolve(erigonClient.GetNativeClient(), addr)
+		name, err := go_ens.ReverseResolve(gzondClient.GetNativeClient(), addr)
 		if err != nil {
 			if err.Error() == "not a resolver" ||
 				err.Error() == "no resolution" {
@@ -621,7 +621,7 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 			name = name + ".eth"
 		}
 
-		resolvedAddr, err := go_ens.Resolve(erigonClient.GetNativeClient(), name)
+		resolvedAddr, err := go_ens.Resolve(gzondClient.GetNativeClient(), name)
 		if err != nil {
 			if err.Error() == "unregistered name" ||
 				err.Error() == "no address" ||
@@ -659,7 +659,7 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 		}
 		parts := strings.Split(name, ".")
 		mainName := strings.Join(parts[len(parts)-2:], ".")
-		ensName, err := go_ens.NewName(erigonClient.GetNativeClient(), mainName)
+		ensName, err := go_ens.NewName(gzondClient.GetNativeClient(), mainName)
 		if err != nil {
 			return fmt.Errorf("error could not create name via go_ens.NewName for [%v]: %w", name, err)
 		}

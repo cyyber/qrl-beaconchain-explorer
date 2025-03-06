@@ -186,8 +186,6 @@ type ConfigJsonResponse struct {
 	Data struct {
 		ConfigName                           string `json:"CONFIG_NAME"`
 		PresetBase                           string `json:"PRESET_BASE"`
-		TerminalBlockHash                    string `json:"TERMINAL_BLOCK_HASH"`
-		TerminalBlockHashActivationEpoch     string `json:"TERMINAL_BLOCK_HASH_ACTIVATION_EPOCH"`
 		SafeSlotsToImportOptimistically      string `json:"SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY"`
 		MinGenesisActiveValidatorCount       string `json:"MIN_GENESIS_ACTIVE_VALIDATOR_COUNT"`
 		MinGenesisTime                       string `json:"MIN_GENESIS_TIME"`

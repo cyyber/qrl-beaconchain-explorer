@@ -1075,7 +1075,7 @@ func (bigtable *Bigtable) TransformContract(blk *types.Eth1Block, cache *freecac
 				return nil, nil, fmt.Errorf("unexpected number of internal transactions in block expected at most %d but got: %v, tx: %x", ITX_PER_TX_LIMIT, j, tx.GetHash())
 			}
 
-			if itx.GetType() == "create" || itx.GetType() == "suicide" {
+			if itx.GetType() == "create" {
 				contractUpdate := &types.IsContractUpdate{
 					IsContract: itx.GetType() == "create",
 					// also use success status of enclosing transaction, as even successful sub-calls can still be reverted later in the tx
@@ -1086,9 +1086,6 @@ func (bigtable *Bigtable) TransformContract(blk *types.Eth1Block, cache *freecac
 					return nil, nil, err
 				}
 				address := itx.GetTo()
-				if itx.GetType() == "suicide" {
-					address = itx.GetFrom()
-				}
 
 				mutWrite := gcp_bigtable.NewMutation()
 				ts, err := encodeIsContractUpdateTs(blk.GetNumber(), uint64(i), uint64(j))
@@ -2381,11 +2378,6 @@ func (bigtable *Bigtable) GetAddressInternalTableData(address []byte, pageToken 
 			to_contractInteraction = contractInteractionTypes[i][1]
 		}
 
-		if t.Type == "suicide" {
-			// erigon's "suicide" might be misleading for users
-			t.Type = "selfdestruct"
-		}
-
 		tableData[i] = []interface{}{
 			utils.FormatTransactionHash(t.ParentHash, true),
 			utils.FormatBlockNumber(t.BlockNumber),
@@ -2433,10 +2425,6 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 	data := make([]types.ITransaction, 0, len(parityTrace)-1)
 	for i := 1; i < len(parityTrace); i++ {
 		from, to, value, tx_type := parityTrace[i].ConvertFields()
-		if tx_type == "suicide" {
-			// erigon's "suicide" might be misleading for users
-			tx_type = "selfdestruct"
-		}
 		input := make([]byte, 0)
 		if len(parityTrace[i].Action.Input) > 2 {
 			input, err = hex.DecodeString(parityTrace[i].Action.Input[2:])

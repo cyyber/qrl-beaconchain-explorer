@@ -28,9 +28,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// @title beaconcha.in Ethereum API Documentation
+// @title beaconcha.in Zond API Documentation
 // @version 1.1
-// @description High performance API for querying information about Ethereum
+// @description High performance API for querying information about Zond
 // @description The API is currently free to use. A fair use policy applies. Calls are rate limited to
 // @description 10 requests / 1 minute / IP. All API results are cached for 1 minute.
 // @description If you required a higher usage plan please checkout https://beaconcha.in/pricing.
@@ -50,7 +50,7 @@ import (
 // @tag.name Execution
 // @tag.description layer information about addresses, blocks and transactions
 // @tag.name ETH.STORE®
-// @tag.description is the transparent Ethereum staking reward reference rate.
+// @tag.description is the transparent Zond staking reward reference rate.
 // @tag.docs.url https://staking.ethermine.org/statistics
 // @tag.docs.description More info
 // @tag.name Rocketpool

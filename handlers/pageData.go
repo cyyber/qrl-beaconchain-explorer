@@ -50,7 +50,7 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 		FinalizationDelay:     services.FinalizationDelay(),
 		// Rates:                 services.GetRates(GetCurrency(r)),
 		Rates:               &types.Rates{},
-		Mainnet:             utils.Config.Chain.ClConfig.ConfigName == "mainnet" || utils.Config.Chain.ClConfig.ConfigName == "gnosis",
+		Mainnet:             utils.Config.Chain.ClConfig.ConfigName == "mainnet",
 		DepositContract:     utils.Config.Chain.ClConfig.DepositContractAddress,
 		ChainConfig:         utils.Config.Chain.ClConfig,
 		Lang:                "en-US",
@@ -90,10 +90,6 @@ func SetPageDataTitle(pageData *types.PageData, title string) {
 }
 
 func createMenuItems(active string, isMain bool) []types.MainMenuItem {
-	if utils.Config.Chain.Name == "gnosis" {
-		return createMenuItemsGnosis(active, isMain)
-	}
-
 	hiddenFor := []string{"confirmation", "login", "register"}
 
 	if utils.SliceContains(hiddenFor, active) {
@@ -269,163 +265,6 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 								Icon:  "fa-flag",
 							},
 						*/
-					},
-				},
-			},
-		},
-	}
-}
-
-func createMenuItemsGnosis(active string, isMain bool) []types.MainMenuItem {
-	hiddenFor := []string{"confirmation", "login", "register"}
-
-	if utils.SliceContains(hiddenFor, active) {
-		return []types.MainMenuItem{}
-	}
-	return []types.MainMenuItem{
-		{
-			Label:    "Blockchain",
-			IsActive: active == "blockchain",
-			Groups: []types.NavigationGroup{
-				{
-					Links: []types.NavigationLink{
-						{
-							Label: "Epochs",
-							Path:  "/epochs",
-							Icon:  "fa-history",
-						},
-						{
-							Label: "Slots",
-							Path:  "/slots",
-							Icon:  "fa-cube",
-						},
-					},
-				}, {
-					Links: []types.NavigationLink{
-						{
-							Label: "Blocks",
-							Path:  "/blocks",
-							Icon:  "fa-cubes",
-						},
-						{
-							Label: "Txs",
-							Path:  "/transactions",
-							Icon:  "fa-credit-card",
-						},
-						{
-							Label: "Mempool",
-							Path:  "/mempool",
-							Icon:  "fa-upload",
-						},
-					},
-				},
-			},
-		},
-		{
-			Label:    "Validators",
-			IsActive: active == "validators",
-			Groups: []types.NavigationGroup{
-				{
-					Links: []types.NavigationLink{
-						{
-							Label: "Overview",
-							Path:  "/validators",
-							Icon:  "fa-table",
-						},
-						{
-							Label: "Slashings",
-							Path:  "/validators/slashings",
-							Icon:  "fa-user-slash",
-						},
-					},
-				}, {
-					Links: []types.NavigationLink{
-						{
-							Label: "Validator Leaderboard",
-							Path:  "/validators/leaderboard",
-							Icon:  "fa-medal",
-						},
-						{
-							Label: "Deposit Leaderboard",
-							Path:  "/validators/deposit-leaderboard",
-							Icon:  "fa-file-import",
-						},
-					},
-				}, {
-					Links: []types.NavigationLink{
-						{
-							Label: "Deposits",
-							Path:  "/validators/deposits",
-							Icon:  "fa-file-signature",
-						},
-						{
-							Label: "Withdrawals",
-							Path:  "/validators/withdrawals",
-							Icon:  "fa-money-bill",
-						},
-					},
-				},
-			},
-		},
-		{
-			Label:    "Dashboard",
-			IsActive: active == "dashboard",
-			Path:     "/dashboard",
-		},
-		{
-			Label:        "More",
-			IsActive:     active == "more",
-			HasBigGroups: true,
-			Groups: []types.NavigationGroup{
-				{
-					Label: "Stats",
-					Links: []types.NavigationLink{
-						{
-							Label: "Charts",
-							Path:  "/charts",
-							Icon:  "fa-chart-bar",
-						},
-						{
-							Label: "Income History",
-							Path:  "/rewards",
-							Icon:  "fa-money-bill-alt",
-						},
-						{
-							Label: "Block Viz",
-							Path:  "/vis",
-							Icon:  "fa-project-diagram",
-						},
-						{
-							Label:    "Correlations",
-							Path:     "/correlations",
-							Icon:     "fa-chart-line",
-							IsHidden: !isMain,
-						},
-					},
-				},
-				{
-					Label: "Tools",
-					Links: []types.NavigationLink{
-						{
-							Label: "API Docs",
-							Path:  "/api/v1/docs/index.html",
-							Icon:  "fa-book-reader",
-						},
-						{
-							Label: "Broadcast Signed Messages",
-							Path:  "/tools/broadcast",
-							Icon:  "fa-bullhorn",
-						},
-					},
-				},
-				{
-					Label: "Services",
-					Links: []types.NavigationLink{
-						{
-							Label: "Knowledge Base",
-							Path:  "https://kb.beaconcha.in",
-							Icon:  "fa-external-link-alt",
-						},
 					},
 				},
 			},

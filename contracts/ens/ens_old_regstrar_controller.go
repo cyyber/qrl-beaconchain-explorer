@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "github.com/theQRL/go-zond"
+	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
@@ -21,7 +21,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = ethereum.NotFound
+	_ = zond.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -38,29 +38,29 @@ var ENSOldRegistrarControllerMetaData = &bind.MetaData{
 // Deprecated: Use ENSOldRegistrarControllerMetaData.ABI instead.
 var ENSOldRegistrarControllerABI = ENSOldRegistrarControllerMetaData.ABI
 
-// ENSOldRegistrarController is an auto generated Go binding around an Ethereum contract.
+// ENSOldRegistrarController is an auto generated Go binding around a Zond contract.
 type ENSOldRegistrarController struct {
 	ENSOldRegistrarControllerCaller     // Read-only binding to the contract
 	ENSOldRegistrarControllerTransactor // Write-only binding to the contract
 	ENSOldRegistrarControllerFilterer   // Log filterer for contract events
 }
 
-// ENSOldRegistrarControllerCaller is an auto generated read-only Go binding around an Ethereum contract.
+// ENSOldRegistrarControllerCaller is an auto generated read-only Go binding around a Zond contract.
 type ENSOldRegistrarControllerCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSOldRegistrarControllerTransactor is an auto generated write-only Go binding around an Ethereum contract.
+// ENSOldRegistrarControllerTransactor is an auto generated write-only Go binding around a Zond contract.
 type ENSOldRegistrarControllerTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSOldRegistrarControllerFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+// ENSOldRegistrarControllerFilterer is an auto generated log filtering Go binding around a Zond contract events.
 type ENSOldRegistrarControllerFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSOldRegistrarControllerSession is an auto generated Go binding around an Ethereum contract,
+// ENSOldRegistrarControllerSession is an auto generated Go binding around a Zond contract,
 // with pre-set call and transact options.
 type ENSOldRegistrarControllerSession struct {
 	Contract     *ENSOldRegistrarController // Generic contract binding to set the session for
@@ -68,31 +68,31 @@ type ENSOldRegistrarControllerSession struct {
 	TransactOpts bind.TransactOpts          // Transaction auth options to use throughout this session
 }
 
-// ENSOldRegistrarControllerCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// ENSOldRegistrarControllerCallerSession is an auto generated read-only Go binding around a Zond contract,
 // with pre-set call options.
 type ENSOldRegistrarControllerCallerSession struct {
 	Contract *ENSOldRegistrarControllerCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts                    // Call options to use throughout this session
 }
 
-// ENSOldRegistrarControllerTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// ENSOldRegistrarControllerTransactorSession is an auto generated write-only Go binding around a Zond contract,
 // with pre-set transact options.
 type ENSOldRegistrarControllerTransactorSession struct {
 	Contract     *ENSOldRegistrarControllerTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts                    // Transaction auth options to use throughout this session
 }
 
-// ENSOldRegistrarControllerRaw is an auto generated low-level Go binding around an Ethereum contract.
+// ENSOldRegistrarControllerRaw is an auto generated low-level Go binding around a Zond contract.
 type ENSOldRegistrarControllerRaw struct {
 	Contract *ENSOldRegistrarController // Generic contract binding to access the raw methods on
 }
 
-// ENSOldRegistrarControllerCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+// ENSOldRegistrarControllerCallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
 type ENSOldRegistrarControllerCallerRaw struct {
 	Contract *ENSOldRegistrarControllerCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ENSOldRegistrarControllerTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+// ENSOldRegistrarControllerTransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
 type ENSOldRegistrarControllerTransactorRaw struct {
 	Contract *ENSOldRegistrarControllerTransactor // Generic write-only contract binding to access the raw methods on
 }
@@ -749,7 +749,7 @@ type ENSOldRegistrarControllerNameRegisteredIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -905,7 +905,7 @@ type ENSOldRegistrarControllerNameRenewedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -1052,7 +1052,7 @@ type ENSOldRegistrarControllerNewPriceOracleIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -1196,7 +1196,7 @@ type ENSOldRegistrarControllerOwnershipTransferredIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }

@@ -4,7 +4,7 @@ The explorer provides a comprehensive and easy to use interface for the upcoming
 
 ## About
 
-The explorer is built using golang and utilizes a PostgreSQL database for storing and indexing data. In order to avoid the situation we currently have with the Ethereum chain where closed source block explorers dominate the market we decided to make our explorer open source and available for everybody.
+The explorer is built using golang and utilizes a PostgreSQL database for storing and indexing data. 
 
 ### Zond Testnet Explorers
 

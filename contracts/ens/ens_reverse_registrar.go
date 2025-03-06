@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "github.com/theQRL/go-zond"
+	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
@@ -21,7 +21,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = ethereum.NotFound
+	_ = zond.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -38,29 +38,29 @@ var ENSReverseRegistrarMetaData = &bind.MetaData{
 // Deprecated: Use ENSReverseRegistrarMetaData.ABI instead.
 var ENSReverseRegistrarABI = ENSReverseRegistrarMetaData.ABI
 
-// ENSReverseRegistrar is an auto generated Go binding around an Ethereum contract.
+// ENSReverseRegistrar is an auto generated Go binding around an Zond contract.
 type ENSReverseRegistrar struct {
 	ENSReverseRegistrarCaller     // Read-only binding to the contract
 	ENSReverseRegistrarTransactor // Write-only binding to the contract
 	ENSReverseRegistrarFilterer   // Log filterer for contract events
 }
 
-// ENSReverseRegistrarCaller is an auto generated read-only Go binding around an Ethereum contract.
+// ENSReverseRegistrarCaller is an auto generated read-only Go binding around an Zond contract.
 type ENSReverseRegistrarCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSReverseRegistrarTransactor is an auto generated write-only Go binding around an Ethereum contract.
+// ENSReverseRegistrarTransactor is an auto generated write-only Go binding around an Zond contract.
 type ENSReverseRegistrarTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSReverseRegistrarFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+// ENSReverseRegistrarFilterer is an auto generated log filtering Go binding around an Zond contract events.
 type ENSReverseRegistrarFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ENSReverseRegistrarSession is an auto generated Go binding around an Ethereum contract,
+// ENSReverseRegistrarSession is an auto generated Go binding around an Zond contract,
 // with pre-set call and transact options.
 type ENSReverseRegistrarSession struct {
 	Contract     *ENSReverseRegistrar // Generic contract binding to set the session for
@@ -68,31 +68,31 @@ type ENSReverseRegistrarSession struct {
 	TransactOpts bind.TransactOpts    // Transaction auth options to use throughout this session
 }
 
-// ENSReverseRegistrarCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// ENSReverseRegistrarCallerSession is an auto generated read-only Go binding around an Zond contract,
 // with pre-set call options.
 type ENSReverseRegistrarCallerSession struct {
 	Contract *ENSReverseRegistrarCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts              // Call options to use throughout this session
 }
 
-// ENSReverseRegistrarTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// ENSReverseRegistrarTransactorSession is an auto generated write-only Go binding around an Zond contract,
 // with pre-set transact options.
 type ENSReverseRegistrarTransactorSession struct {
 	Contract     *ENSReverseRegistrarTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts              // Transaction auth options to use throughout this session
 }
 
-// ENSReverseRegistrarRaw is an auto generated low-level Go binding around an Ethereum contract.
+// ENSReverseRegistrarRaw is an auto generated low-level Go binding around an Zond contract.
 type ENSReverseRegistrarRaw struct {
 	Contract *ENSReverseRegistrar // Generic contract binding to access the raw methods on
 }
 
-// ENSReverseRegistrarCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+// ENSReverseRegistrarCallerRaw is an auto generated low-level read-only Go binding around an Zond contract.
 type ENSReverseRegistrarCallerRaw struct {
 	Contract *ENSReverseRegistrarCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ENSReverseRegistrarTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+// ENSReverseRegistrarTransactorRaw is an auto generated low-level write-only Go binding around an Zond contract.
 type ENSReverseRegistrarTransactorRaw struct {
 	Contract *ENSReverseRegistrarTransactor // Generic write-only contract binding to access the raw methods on
 }
@@ -532,7 +532,7 @@ type ENSReverseRegistrarControllerChangedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -677,7 +677,7 @@ type ENSReverseRegistrarDefaultResolverChangedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -821,7 +821,7 @@ type ENSReverseRegistrarOwnershipTransferredIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
@@ -974,7 +974,7 @@ type ENSReverseRegistrarReverseClaimedIterator struct {
 	event    string              // Event name to use for unpacking event data
 
 	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	sub  zond.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }

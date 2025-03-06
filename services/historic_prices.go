@@ -108,11 +108,9 @@ func fetchHistoricPrice(ts time.Time) (*types.HistoricEthPrice, error) {
 	logger.Infof("fetching historic prices for day %v", ts)
 	client := &http.Client{Timeout: time.Second * 10}
 
+	// TODO(rgeraldes24)
 	chain := "ethereum"
 
-	if utils.Config.Chain.Name == "gnosis" {
-		chain = "gnosis"
-	}
 	resp, err := client.Get(fmt.Sprintf("https://api.coingecko.com/api/v3/coins/%s/history?date=%s", chain, ts.Truncate(utils.Day).Format("02-01-2006")))
 
 	if err != nil {

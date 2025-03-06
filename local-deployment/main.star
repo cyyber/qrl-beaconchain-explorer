@@ -1,8 +1,8 @@
-input_parser = import_module("github.com/kurtosis-tech/ethereum-package/src/package_io/input_parser.star")
-eth_network_module = import_module("github.com/kurtosis-tech/eth-network-package/main.star")
-transaction_spammer = import_module("github.com/kurtosis-tech/ethereum-package/src/transaction_spammer/transaction_spammer.star")
-genesis_constants = import_module("github.com/kurtosis-tech/eth-network-package/src/prelaunch_data_generator/genesis_constants/genesis_constants.star")
-shared_utils = import_module("github.com/kurtosis-tech/ethereum-package/src/shared_utils/shared_utils.star")
+input_parser = import_module("github.com/theQRL/zond-package/src/package_io/input_parser.star")
+zond_module = import_module("github.com/theQRL/zond-package/main.star")
+transaction_spammer = import_module("github.com/theQRL/zond-package/src/transaction_spammer/transaction_spammer.star")
+genesis_constants = import_module("github.com/theQRL/zond-package/src/prelaunch_data_generator/genesis_constants/genesis_constants.star")
+shared_utils = import_module("github.com/theQRL/zond-package/src/shared_utils/shared_utils.star")
 
 POSTGRES_PORT_ID = "postgres"
 POSTGRES_DB = "db"
@@ -50,8 +50,8 @@ def run(plan, args):
 		}
 	)
 
-	# Spin up a local ethereum testnet
-	all_participants, cl_genesis_timestamp, genesis_validators_root = eth_network_module.run(plan, args)
+	# Spin up a local zond testnet
+	all_participants, cl_genesis_timestamp, genesis_validators_root = zond_module.run(plan, args)
 
 	all_el_client_contexts = []
 	all_cl_client_contexts = []

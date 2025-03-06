@@ -143,7 +143,7 @@ func main() {
 	logrus.Infof("using gzond node at %v", *gzondEndpoint)
 	client, err := rpc.NewGzondClient(*gzondEndpoint)
 	if err != nil {
-		utils.LogFatal(err, "erigon client creation error", 0)
+		utils.LogFatal(err, "gzond client creation error", 0)
 	}
 
 	chainId := strconv.FormatUint(utils.Config.Chain.ClConfig.DepositChainID, 10)
@@ -457,6 +457,7 @@ func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath s
 		return err
 	}
 
+	// TODO(rgeraldes24)
 	tokenPrices := make([]*types.ERC20TokenPrice, 0, len(respParsed.Coins))
 	for address, data := range respParsed.Coins {
 		tokenPrices = append(tokenPrices, &types.ERC20TokenPrice{

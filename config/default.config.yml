@@ -20,7 +20,7 @@ chain:
 # Frontend config
 frontend:
   enabled: true # Enable or disable to web frontend
-  siteName: "Ethereum Block Chain Explorer" # Name of the site, displayed in the title tag
+  siteName: "Zond Block Chain Explorer" # Name of the site, displayed in the title tag
   siteSubtitle: "Showing the <a href='https://theqrl.org'>💎 Qrysm Zond Testnet</a>" # Subtitle shown on the main page
   server:
     host: "localhost" # Address to listen on
