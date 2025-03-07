@@ -119,7 +119,7 @@ func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
 	}
 
 	// TODO(rgeraldes24)
-	time.Sleep(15 * time.Second)
+	time.Sleep(60 * time.Second)
 
 	finalityResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/finality_checkpoints", lc.endpoint, id))
 	if err != nil {

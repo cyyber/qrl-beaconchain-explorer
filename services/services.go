@@ -15,7 +15,6 @@ import (
 
 	"github.com/theQRL/zond-beaconchain-explorer/cache"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/ratelimit"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
@@ -70,15 +69,15 @@ func Init() {
 	ready.Add(1)
 	go gasNowUpdater(ready)
 
-	// ready.Add(1)
-	// go startMonitoringService(ready)
+	ready.Add(1)
+	go startMonitoringService(ready)
 
 	ready.Add(1)
 	go latestExportedStatisticDayUpdater(ready)
 
-	if utils.Config.RatelimitUpdater.Enabled {
-		go ratelimit.DBUpdater()
-	}
+	// if utils.Config.RatelimitUpdater.Enabled {
+	// 	go ratelimit.DBUpdater()
+	// }
 
 	ready.Wait()
 }

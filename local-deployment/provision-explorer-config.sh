@@ -1,6 +1,6 @@
 #! /bin/bash
 
-CL_PORT=$(kurtosis enclave inspect my-testnet | grep 4000/tcp | tr -s ' ' | cut -d " " -f 6 | sed -e 's/http\:\/\/127.0.0.1\://' | head -n 1)
+CL_PORT=$(kurtosis enclave inspect my-testnet | grep 3500/tcp | tr -s ' ' | cut -d " " -f 6 | sed -e 's/http\:\/\/127.0.0.1\://' | head -n 1)
 echo "CL Node port is $CL_PORT"
 
 EL_PORT=$(kurtosis enclave inspect my-testnet | grep 8545/tcp | tr -s ' ' | cut -d " " -f 5 | sed -e 's/127.0.0.1\://' | head -n 1)
@@ -9,8 +9,8 @@ echo "EL Node port is $EL_PORT"
 REDIS_PORT=$(kurtosis enclave inspect my-testnet | grep 6379/tcp | tr -s ' ' | cut -d " " -f 6 | sed -e 's/tcp\:\/\/127.0.0.1\://' | head -n 1)
 echo "Redis port is $REDIS_PORT"
 
-REDIS_SESSIONS_PORT=$(comm -23 <(seq 49152 65535 | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
-echo "Redis sessions port is $REDIS_SESSIONS_PORT"
+# REDIS_SESSIONS_PORT=$(comm -23 <(seq 49152 65535 | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
+# echo "Redis sessions port is $REDIS_SESSIONS_PORT"
 
 POSTGRES_PORT=$(kurtosis enclave inspect my-testnet | grep 5432/tcp | tr -s ' ' | cut -d " " -f 6 | sed -e 's/postgresql\:\/\/127.0.0.1\://' | head -n 1)
 echo "Postgres port is $POSTGRES_PORT"
@@ -27,20 +27,21 @@ POSTGRES_PORT=$POSTGRES_PORT
 LBT_PORT=$LBT_PORT
 EOF
 
-touch elconfig.json
-cat >elconfig.json <<EOL
-{
-    "byzantiumBlock": 0,
-    "constantinopleBlock": 0
-}
-EOL
+# touch elconfig.json
+# cat >elconfig.json <<EOL
+# {
+#     "byzantiumBlock": 0,
+#     "constantinopleBlock": 0
+# }
+# EOL
 
 touch config.yml
 
-cat >config.yml <<EOL
+cat >config-host.yml <<EOL
 chain:
   clConfigPath: 'node'
-  elConfigPath: 'local-deployment/elconfig.json'
+  elConfigPath: ''
+  # elConfigPath: 'local-deployment/elconfig.json'
 readerDatabase:
   name: db
   host: 127.0.0.1
@@ -64,7 +65,7 @@ redisSessionStoreEndpoint: '127.0.0.1:$REDIS_SESSIONS_PORT'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"
-  siteName: 'Open Source Zond (ETH) Testnet Explorer' # Name of the site, displayed in the title tag
+  siteName: 'Open Source Zond Testnet Explorer' # Name of the site, displayed in the title tag
   siteSubtitle: "Showing a local testnet."
   server:
     host: '0.0.0.0' # Address to listen on
@@ -94,9 +95,73 @@ indexer:
   node:
     host: 127.0.0.1
     port: '$CL_PORT'
-    type: lighthouse
+    type: qrysm
   eth1DepositContractFirstBlock: 0
 EOL
+
+cat >config.yml <<EOL
+chain:
+  clConfigPath: 'node'
+  elConfigPath: ''
+  # elConfigPath: 'local-deployment/elconfig.json'
+readerDatabase:
+  name: db
+  host: host.docker.internal
+  port: "$POSTGRES_PORT"
+  user: postgres
+  password: "pass"
+writerDatabase:
+  name: db
+  host: host.docker.internal
+  port: "$POSTGRES_PORT"
+  user: postgres
+  password: "pass"
+bigtable:
+  project: explorer
+  instance: explorer
+  emulator: true
+  emulatorPort: $LBT_PORT
+  emulatorHost: host.docker.internal
+eth1GzondEndpoint: 'http://host.docker.internal:$EL_PORT'
+redisCacheEndpoint: 'host.docker.internal:$REDIS_PORT'
+redisSessionStoreEndpoint: 'host.docker.internal:$REDIS_SESSIONS_PORT'
+tieredCacheProvider: 'redis'
+frontend:
+  siteDomain: "localhost:8080"
+  siteName: 'Open Source Zond Testnet Explorer' # Name of the site, displayed in the title tag
+  siteSubtitle: "Showing a local testnet."
+  server:
+    host: '0.0.0.0' # Address to listen on
+    port: '8080' # Port to listen on
+  readerDatabase:
+    name: db
+    host: host.docker.internal
+    port: "$POSTGRES_PORT"
+    user: postgres
+    password: "pass"
+  writerDatabase:
+    name: db
+    host: host.docker.internal
+    port: "$POSTGRES_PORT"
+    user: postgres
+    password: "pass"
+  sessionSecret: "11111111111111111111111111111111"
+  legal:
+    termsOfServiceUrl: "tos.pdf"
+    privacyPolicyUrl: "privacy.pdf"
+    imprintTemplate: '{{ define "js" }}{{ end }}{{ define "css" }}{{ end }}{{ define "content" }}Imprint{{ end }}'
+  ratelimitUpdateInterval: 1s
+
+indexer:
+  # fullIndexOnStartup: false # Perform a one time full db index on startup
+  # indexMissingEpochsOnStartup: true # Check for missing epochs and export them after startup
+  node:
+    host: host.docker.internal
+    port: '$CL_PORT'
+    type: qrysm
+  eth1DepositContractFirstBlock: 0
+EOL
+
 
 echo "generated config written to config.yml"
 
@@ -105,10 +170,10 @@ PROJECT="explorer"
 INSTANCE="explorer"
 HOST="127.0.0.1:$LBT_PORT"
 cd ..
-go run ./cmd/misc/main.go -config local-deployment/config.yml -command initBigtableSchema
+go run ./cmd/misc/main.go -config local-deployment/config-host.yml -command initBigtableSchema
 
 echo "bigtable schema initialization completed"
 
 echo "provisioning postgres db schema"
-go run ./cmd/misc/main.go -config local-deployment/config.yml -command applyDbSchema
+go run ./cmd/misc/main.go -config local-deployment/config-host.yml -command applyDbSchema
 echo "postgres db schema initialization completed"

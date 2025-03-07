@@ -21,8 +21,8 @@ func startMonitoringService(wg *sync.WaitGroup) {
 	go startClDataMonitoringService()
 	go startElDataMonitoringService()
 	go startRedisMonitoringService()
-	go startApiMonitoringService()
-	go startAppMonitoringService()
+	// go startApiMonitoringService()
+	// go startAppMonitoringService()
 	go startServicesMonitoringService()
 }
 
@@ -249,7 +249,7 @@ func startServicesMonitoringService() {
 	firstRun := true
 
 	servicesToCheck := map[string]time.Duration{
-		"eth1indexer":               time.Minute * 15,
+		"elIndexer":                 time.Minute * 15,
 		"slotVizUpdater":            time.Minute * 15,
 		"slotUpdater":               time.Minute * 15,
 		"latestProposedSlotUpdater": time.Minute * 15,

@@ -1,8 +1,8 @@
-version: '3'
+version: '3.7'
 x-service: &default-service
-  image: golang:1.22
+  image: golang:1.24
+  # network_mode: host
   working_dir: /app
-  network_mode: "host"
   volumes:
     - ../.:/app
     - /tmp/go-cache:/go
@@ -18,9 +18,9 @@ services:
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
     environment:
       - INDEXER_ENABLED=true
-  eth1indexer:
+  el-indexer:
     <<: *default-service
-    command: go run ./cmd/eth1indexer -config /app/local-deployment/config.yml -blocks.concurrency 1 -blocks.tracemode 'gzond' -data.concurrency 1 --balances.enabled
+    command: go run ./cmd/el-indexer -config /app/local-deployment/config.yml -blocks.concurrency 1 -blocks.tracemode 'gzond' -data.concurrency 1 --balances.enabled
   
   rewards-exporter:
     <<: *default-service
@@ -36,10 +36,8 @@ services:
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
     environment:
       - FRONTEND_ENABLED=true
-  
-  # ratelimits-updater:
-  #   <<: *default-service
-  #   command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=update-ratelimits
+    ports:
+      - "8080:8080"
   
   misc:
     <<: *default-service

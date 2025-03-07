@@ -1,5 +1,5 @@
 # The dockerfile is currently still WIP and might be broken
-FROM golang:1.22 AS build-env
+FROM golang:1.24 AS build-env
 COPY go.mod go.sum /src/
 WORKDIR /src
 RUN go mod download

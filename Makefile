@@ -7,7 +7,7 @@ LDFLAGS="-X ${PACKAGE}/version.Version=${VERSION} -X ${PACKAGE}/version.BuildDat
 CGO_CFLAGS=""
 CGO_CFLAGS_ALLOW=""
 
-all: explorer stats frontend-data-updater eth1indexer rewards-exporter node-jobs-processor signatures misc
+all: explorer stats frontend-data-updater el-indexer rewards-exporter node-jobs-processor signatures misc
 
 lint:
 	echo 
@@ -32,8 +32,8 @@ frontend-data-updater:
 rewards-exporter:
 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/rewards-exporter cmd/rewards-exporter/main.go
 
-eth1indexer:
-	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/eth1indexer cmd/eth1indexer/main.go
+el-indexer:
+	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/el-indexer cmd/el-indexer/main.go
 
 node-jobs-processor:
 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/node-jobs-processor cmd/node-jobs-processor/main.go

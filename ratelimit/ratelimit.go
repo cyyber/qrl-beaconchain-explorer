@@ -1,5 +1,6 @@
 package ratelimit
 
+/*
 import (
 	"context"
 	"database/sql"
@@ -212,7 +213,7 @@ func Init() {
 	// initializedWg.Add(3)
 	initializedWg.Add(1)
 
-	/*
+
 		go func() {
 			firstRun := true
 			for {
@@ -229,9 +230,7 @@ func Init() {
 				time.Sleep(updateInterval)
 			}
 		}()
-	*/
 	// TODO(rgeraldes24)
-	/*
 		go func() {
 			firstRun := true
 			for {
@@ -248,7 +247,6 @@ func Init() {
 				time.Sleep(updateInterval)
 			}
 		}()
-	*/
 	go func() {
 		firstRun := true
 		for {
@@ -1042,6 +1040,7 @@ func DBGetUserApiRateLimit(userId int64) (*RateLimit, error) {
 	return rl, err
 }
 
+/*
 func DBUpdater() {
 	iv := utils.Config.RatelimitUpdater.UpdateInterval
 	if iv < time.Second {
@@ -1116,44 +1115,17 @@ func DBUpdate(redisClient *redis.Client) {
 	wg.Wait()
 }
 
-// DBInvalidateApiKeys invalidates api_keys that are not associated with a user. This func is only needed until api-key-mgmt is fully implemented - where users.apikey column is not used anymore.
-func DBInvalidateApiKeys() (sql.Result, error) {
-	return db.FrontendWriterDB.Exec(`
-        update api_keys 
-        set changed_at = now(), valid_until = now() 
-        where valid_until > now() and not exists (select id from users where id = api_keys.user_id)`)
-}
-
-// DBUpdateApiKeys updates the api_keys table with the api_keys from the users table. This func is only needed until api-key-mgmt is fully implemented - where users.apikey column is not used anymore.
-func DBUpdateApiKeys() (sql.Result, error) {
-	return db.FrontendWriterDB.Exec(
-		`insert into api_keys (user_id, api_key, valid_until, changed_at)
-        select 
-            id as user_id, 
-            api_key,
-            to_timestamp('9999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS') as valid_until,
-            now() as changed_at
-        from users 
-        where api_key is not null and not exists (select user_id from api_keys where api_keys.user_id = users.id)
-        on conflict (api_key) do update set
-			user_id = excluded.user_id,
-            valid_until = excluded.valid_until,
-            changed_at = excluded.changed_at
-        where api_keys.valid_until != excluded.valid_until`,
-	)
-}
-
 func DBUpdateApiRatelimits() (sql.Result, error) {
 	return db.FrontendWriterDB.Exec(
-		`with 
+		`with
 			current_api_products as (
-				select distinct on (name, bucket) name, bucket, stripe_price_id, second, hour, month, valid_from 
-				from api_products 
+				select distinct on (name, bucket) name, bucket, stripe_price_id, second, hour, month, valid_from
+				from api_products
 				where valid_from <= now()
 				order by name, bucket, valid_from desc
 			)
 		insert into api_ratelimits (user_id, bucket, second, hour, month, valid_until, changed_at)
-		select 
+		select
 			user_id,
 			bucket,
 			case when min(second) = 0 then 0 else max(second) end as second,
@@ -1194,7 +1166,8 @@ func DBUpdateApiRatelimits() (sql.Result, error) {
 			valid_until = excluded.valid_until,
 			changed_at = now()
 		where
-			api_ratelimits.second != excluded.second 
-			or api_ratelimits.hour != excluded.hour 
+			api_ratelimits.second != excluded.second
+			or api_ratelimits.hour != excluded.hour
 			or api_ratelimits.month != excluded.month`)
 }
+*/

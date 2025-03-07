@@ -1,8 +1,6 @@
 module github.com/theQRL/zond-beaconchain-explorer
 
-go 1.22
-
-toolchain go1.22.6
+go 1.24
 
 require (
 	cloud.google.com/go/bigtable v1.16.0

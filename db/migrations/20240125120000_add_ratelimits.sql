@@ -14,18 +14,6 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE INDEX IF NOT EXISTS idx_api_ratelimits_changed_at_valid_until ON api_ratelimits (changed_at, valid_until);
 
-SELECT 'up SQL query - add table api_keys';
-CREATE TABLE IF NOT EXISTS
-    api_keys (
-        api_key VARCHAR(256) NOT NULL UNIQUE,
-        user_id INT NOT NULL,
-        valid_until TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT '9999-12-31 23:59:59',
-        changed_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (api_key)
-    );
-
-CREATE INDEX IF NOT EXISTS idx_api_keys_changed_at_valid_until ON api_keys (changed_at, valid_until);
-
 SELECT 'up SQL query - add table api_weights';
 CREATE TABLE IF NOT EXISTS
     api_weights (
@@ -50,10 +38,6 @@ SELECT 'down SQL query - drop table api_ratelimits';
 DROP TABLE IF EXISTS api_ratelimits;
 SELECT 'down SQL query - drop index idx_api_ratelimits_changed_at';
 DROP INDEX IF EXISTS idx_api_ratelimits_changed_at;
-SELECT 'down SQL query - drop table api_keys';
-DROP TABLE IF EXISTS api_keys;
-SELECT 'down SQL query - drop index idx_api_keys_changed_at';
-DROP INDEX IF EXISTS idx_api_keys_changed_at;
 SELECT 'down SQL query - drop table api_weights';
 DROP TABLE IF EXISTS api_weights;
 SELECT 'down SQL query - drop column api_statistics.endpoint';

@@ -17,10 +17,6 @@ import (
 
 var logger = logrus.New().WithField("module", "zondClients")
 
-type ethernodesAPIStruct struct {
-	Client string `json:"client"`
-	Value  int    `json:"value"`
-}
 type gitAPIResponse struct {
 	URL           string        `json:"url"`
 	AssetsURL     string        `json:"assets_url"`
@@ -104,29 +100,6 @@ func fetchClientData(repo string) *gitAPIResponse {
 
 	return gitAPI
 }
-
-/*
-var ethernodesAPI []ethernodesAPIStruct
-
-func fetchClientNetworkShare() []ethernodesAPIStruct {
-	resp, err := http.Get("https://ethernodes.org/api/clients")
-
-	if err != nil {
-		logger.Errorf("error retrieving ETH Clients Network Share Data: %v", err)
-		return ethernodesAPI
-	}
-
-	defer resp.Body.Close()
-
-	err = json.NewDecoder(resp.Body).Decode(&ethernodesAPI)
-
-	if err != nil {
-		logger.Errorf("error decoding ETH Clients Network Share json response to struct: %v", err)
-	}
-
-	return ethernodesAPI
-}
-*/
 
 func getRepoTime(date string, dTime string) (time.Time, error) {
 	var year, month, day, hour, min int64

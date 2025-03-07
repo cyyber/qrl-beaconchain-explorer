@@ -387,7 +387,7 @@ func main() {
 		*/
 
 		logrus.Infof("index run completed")
-		services.ReportStatus("eth1indexer", "Running", nil) // TODO(rgeraldes24)
+		services.ReportStatus("elIndexer", "Running", nil) // TODO(rgeraldes24)
 	}
 
 	// utils.WaitForCtrlC()

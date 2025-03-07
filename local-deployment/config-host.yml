@@ -1,26 +1,27 @@
 chain:
   clConfigPath: 'node'
-  elConfigPath: '' # Works for well known public networks like mainnet. Specify a file for custom chains
+  elConfigPath: ''
+  # elConfigPath: 'local-deployment/elconfig.json'
 readerDatabase:
   name: db
-  host: {{.DBHost}}
-  port: {{.DBPort}}
+  host: 127.0.0.1
+  port: "61422"
   user: postgres
   password: "pass"
 writerDatabase:
   name: db
-  host: {{.DBHost}}
-  port: {{.DBPort}}
+  host: 127.0.0.1
+  port: "61422"
   user: postgres
   password: "pass"
 bigtable:
   project: explorer
   instance: explorer
   emulator: true
-  emulatorHost: {{.LBTHost}}
-  emulatorPort: {{.LBTPort}}
-eth1GzondEndpoint: '{{.ELNodeEndpoint}}'
-redisCacheEndpoint: '{{.RedisEndpoint}}'
+  emulatorPort: 61425
+eth1GzondEndpoint: 'http://127.0.0.1:61481'
+redisCacheEndpoint: '127.0.0.1:61424'
+redisSessionStoreEndpoint: '127.0.0.1:'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"
@@ -31,22 +32,28 @@ frontend:
     port: '8080' # Port to listen on
   readerDatabase:
     name: db
-    host: {{.DBHost}}
-    port: {{.DBPort}}
+    host: 127.0.0.1
+    port: "61422"
     user: postgres
     password: "pass"
   writerDatabase:
     name: db
-    host: {{.DBHost}}
-    port: {{.DBPort}}
+    host: 127.0.0.1
+    port: "61422"
     user: postgres
     password: "pass"
   sessionSecret: "11111111111111111111111111111111"
+  legal:
+    termsOfServiceUrl: "tos.pdf"
+    privacyPolicyUrl: "privacy.pdf"
+    imprintTemplate: '{{ define "js" }}{{ end }}{{ define "css" }}{{ end }}{{ define "content" }}Imprint{{ end }}'
+  ratelimitUpdateInterval: 1s
+
 indexer:
   # fullIndexOnStartup: false # Perform a one time full db index on startup
   # indexMissingEpochsOnStartup: true # Check for missing epochs and export them after startup
   node:
-    host: '{{.CLNodeHost}}'
-    port: '{{.CLNodePort}}'
+    host: 127.0.0.1
+    port: '61507'
     type: qrysm
   eth1DepositContractFirstBlock: 0

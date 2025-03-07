@@ -1,24 +1,17 @@
-input_parser = import_module("github.com/theQRL/zond-package/src/package_io/input_parser.star")
 zond_module = import_module("github.com/theQRL/zond-package/main.star")
-transaction_spammer = import_module("github.com/theQRL/zond-package/src/transaction_spammer/transaction_spammer.star")
-genesis_constants = import_module("github.com/theQRL/zond-package/src/prelaunch_data_generator/genesis_constants/genesis_constants.star")
-shared_utils = import_module("github.com/theQRL/zond-package/src/shared_utils/shared_utils.star")
 
 POSTGRES_PORT_ID = "postgres"
 POSTGRES_DB = "db"
 POSTGRES_USER = "postgres"
 POSTGRES_PASSWORD = "pass"
 
+POSTGRESADM_PORT_ID = "postgresadm"
+
 REDIS_PORT_ID = "redis"
 
 LITTLE_BIGTABLE_PORT_ID = "littlebigtable"
 
-EXPLORER_CONFIG_FILENAME = "config.yml"
-
 def run(plan, args):
-	args_with_right_defaults = input_parser.input_parser(plan, args)
-	network_params = args_with_right_defaults.network_params
-
 	db_services = plan.add_services(
 		configs={
 			# Add a Postgres server
@@ -31,6 +24,17 @@ def run(plan, args):
 					"POSTGRES_DB": POSTGRES_DB,
 					"POSTGRES_USER": POSTGRES_USER,
 					"POSTGRES_PASSWORD": POSTGRES_PASSWORD,
+				},
+			),
+			# Add Postgres Admin
+			"postgresadm": ServiceConfig(
+				image = "dpage/pgadmin4",
+				ports = {
+					POSTGRESADM_PORT_ID: PortSpec(80, application_protocol = "tcp"),
+				},
+				env_vars = {
+					"PGADMIN_DEFAULT_EMAIL": "test@test.com",
+					"PGADMIN_DEFAULT_PASSWORD": "pass",
 				},
 			),
 			# Add a Redis server
@@ -49,35 +53,6 @@ def run(plan, args):
 			),
 		}
 	)
-
+	
 	# Spin up a local zond testnet
-	all_participants, cl_genesis_timestamp, genesis_validators_root = zond_module.run(plan, args)
-
-	all_el_client_contexts = []
-	all_cl_client_contexts = []
-	for participant in all_participants:
-		all_el_client_contexts.append(participant.el_client_context)
-		all_cl_client_contexts.append(participant.cl_client_context)
-
-	fuzz_target = "http://{0}:{1}".format(
-		all_el_client_contexts[0].ip_addr,
-		all_el_client_contexts[0].rpc_port_num,
-	)
-
-	if args["start_tx_spammer"]:
-		plan.print("Launching transaction spammer")
-		transaction_spammer.launch_transaction_spammer(plan, genesis_constants.PRE_FUNDED_ACCOUNTS, fuzz_target, args_with_right_defaults.tx_spammer_params, network_params.electra_fork_epoch)
-		plan.print("Succesfully launched transaction spammer")
-
-def new_config_template_data(cl_node_info, el_uri, lbt_host, lbt_port, db_host, db_port, redis_uri):
-	return {
-		"CLNodeHost": cl_node_info.ip_addr,
-		"CLNodePort": cl_node_info.http_port_num,
-		"ELNodeEndpoint": el_uri,
-		"LBTHost": lbt_host,
-		"LBTPort": lbt_port,
-		"DBHost": db_host,
-		"DBPort": db_port,
-		"RedisEndpoint": redis_uri,
-
-	}
+	zond_module.run(plan, args)
