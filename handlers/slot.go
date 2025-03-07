@@ -34,7 +34,6 @@ const MaxSlotValue = 137438953503 // we only render a page for blocks up to this
 func Slot(w http.ResponseWriter, r *http.Request) {
 	slotTemplateFiles := append(layoutTemplateFiles,
 		"slot/slot.html",
-		"slot/transactions.html",
 		"slot/withdrawals.html",
 		"slot/attestations.html",
 		"slot/deposits.html",
