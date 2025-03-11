@@ -305,7 +305,7 @@ func main() {
 	case "index-old-eth1-blocks":
 		indexOldEth1Blocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, gzondClient)
 	case "update-aggregation-bits":
-		updateAggreationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
+		updateAggregationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
 	case "update-block-finalization-sequentially":
 		err = updateBlockFinalizationSequentially()
 	case "historic-prices-export":
@@ -975,7 +975,7 @@ func migrateLastAttestationSlotToBigtable() {
 	}
 }
 
-func updateAggreationBits(rpcClient *rpc.QrysmClient, startEpoch uint64, endEpoch uint64, concurency uint64) {
+func updateAggregationBits(rpcClient *rpc.QrysmClient, startEpoch uint64, endEpoch uint64, concurency uint64) {
 	logrus.Infof("update-aggregation-bits epochs %v - %v", startEpoch, endEpoch)
 	for epoch := startEpoch; epoch <= endEpoch; epoch++ {
 		logrus.Infof("Getting data from the node for epoch %v", epoch)

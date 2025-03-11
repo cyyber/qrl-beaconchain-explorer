@@ -619,7 +619,6 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 	processedBlocks := int64(0)
 
 	for i := start; i <= end; i++ {
-
 		i := i
 		g.Go(func() error {
 			select {
@@ -647,7 +646,6 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 			err = bt.SaveBlock(bc)
 			if err != nil {
 				return fmt.Errorf("error saving block: %v to bigtable: %w", i, err)
-
 			}
 			current := atomic.AddInt64(&processedBlocks, 1)
 			if current%100 == 0 {

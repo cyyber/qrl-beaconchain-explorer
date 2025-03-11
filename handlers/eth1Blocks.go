@@ -180,6 +180,7 @@ func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.Da
 
 	tableData := make([][]interface{}, len(blocks))
 	for i, b := range blocks {
+		fmt.Println(b)
 		blockNumber := b.GetNumber()
 		ts := b.GetTime().AsTime().Unix()
 
@@ -200,6 +201,9 @@ func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.Da
 		proposer := template.HTML("-")
 		if sData != nil {
 			status = utils.FormatBlockStatus(sData.Status, sData.Slot)
+			if blockNumber != 0 {
+				proposer = utils.FormatValidatorWithName(sData.Proposer, sData.ProposerName)
+			}
 			slotText = template.HTML(fmt.Sprintf(`<a href="slot/%d">%s</a>`, sData.Slot, utils.FormatAddCommas(sData.Slot)))
 			epochText = template.HTML(fmt.Sprintf(`<a href="epoch/%d">%s</a>`, sData.Epoch, utils.FormatAddCommas(sData.Epoch)))
 		}

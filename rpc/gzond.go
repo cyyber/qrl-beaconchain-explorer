@@ -318,9 +318,8 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 		}
 
 		pbTx := &types.Eth1Transaction{
-			Type:  uint32(tx.Type()),
-			Nonce: tx.Nonce(),
-			// GasPrice:             tx.GasPrice().Bytes(),
+			Type:                 uint32(tx.Type()),
+			Nonce:                tx.Nonce(),
 			MaxPriorityFeePerGas: tx.GasTipCap().Bytes(),
 			MaxFeePerGas:         tx.GasFeeCap().Bytes(),
 			Gas:                  tx.Gas(),

@@ -36,14 +36,15 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var ensData *types.EnsDomainResponse
+	// var ensData *types.EnsDomainResponse
 	// if utils.IsValidEnsDomain(search) {
 	// 	ensData, _ = GetEnsDomain(search)
 	// }
 	search = strings.Replace(search, "0x", "", -1)
-	if ensData != nil && len(ensData.Address) > 0 {
-		http.Redirect(w, r, "/address/"+ensData.Domain, http.StatusMovedPermanently)
-	} else if utils.IsValidWithdrawalCredentials(search) {
+	// if ensData != nil && len(ensData.Address) > 0 {
+	// 	http.Redirect(w, r, "/address/"+ensData.Domain, http.StatusMovedPermanently)
+	// } else if utils.IsValidWithdrawalCredentials(search) {
+	if utils.IsValidWithdrawalCredentials(search) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
 	} else if utils.IsValidTxHash(search) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)

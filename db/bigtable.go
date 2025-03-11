@@ -1538,7 +1538,7 @@ func (bigtable *Bigtable) GetValidatorEffectiveness(validators []uint64, epoch u
 				aggEffectiveness[validator].Sum += 1.0 / float64(attestation.InclusionSlot-attestation.AttesterSlot)
 				aggEffectiveness[validator].Count++
 			} else {
-				aggEffectiveness[validator].Sum += 0 // missed attestations get a penalty of 32 slots
+				aggEffectiveness[validator].Sum += 0 // missed attestations get a penalty of 32 slots // TODO(rgeraldes24)
 				aggEffectiveness[validator].Count++
 			}
 		}

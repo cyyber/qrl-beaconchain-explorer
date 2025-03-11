@@ -334,12 +334,14 @@
                       {{ .Data.Metadata.EthBalance | formatAddressEthBalance }}
                     </span>
                   </div>
+                  <!--
                   <div class="overview-col">
                     <span> {{ config.Frontend.ElCurrency }} Value</span>
                   </div>
                   <div class="overview-col">
                     <span class=""> {{ .Data.EtherValue }}</span>
                   </div>
+                  -->
                   <div class="overview-col">
                     <span>ERC20 Tokens</span>
                   </div>
@@ -403,7 +405,7 @@
             <div class="tab-pane fade" id="blocksTabPanel" role="tabpanel" aria-labelledby="blocks-tab">
               {{ template "AddressBlocksMinedGrid" .Data.BlocksMinedTable }}
             </div>
-          {{ end }}}
+          {{ end }}
           {{ if len .Data.Erc20Table.Data }}
             <div class="tab-pane fade" id="erc20TxnsTabPanel" role="tabpanel" aria-labelledby="erc20Txns-tab">
               {{ template "AddressErc20TransactionsGrid" .Data.Erc20Table }}
@@ -473,9 +475,11 @@
     {{ else }}
       <div style="grid-column: 1 / 9;" id="transactions-table-inf-scroll" class="d-flex justify-content-center p-2">
         <div class="d-flex justify-content-center align-items-center flex-column">
+          <!--
           <div class="my-3 mt-5 p-2 pt-5">
             {{ template "UndrawTree" }}
           </div>
+          -->
           <div>
             <h5>No entries found.</h5>
           </div>
@@ -513,9 +517,11 @@
     {{ else }}
       <div style="grid-column: 1 / 8;" id="internalTxns-table-inf-scroll" class="d-flex justify-content-center p-2">
         <div class="d-flex justify-content-center align-items-center flex-column">
+          <!--
           <div class="my-3 mt-5 p-2 pt-5">
             {{ template "UndrawTree" }}
           </div>
+          -->
           <div>
             <h5>No entries found.</h5>
           </div>
@@ -548,9 +554,11 @@
     {{ else }}
       <div style="grid-column: 1 / 5;" id="blocksMined-table-inf-scroll" class="d-flex justify-content-center p-2">
         <div class="d-flex justify-content-center align-items-center flex-column">
+          <!--
           <div class="my-3 mt-5 p-2 pt-5">
             {{ template "UndrawTree" }}
           </div>
+          -->
           <div>
             <h5>No entries found.</h5>
           </div>
@@ -587,9 +595,11 @@
     {{ else }}
       <div style="grid-column: 1 / 8;" id="erc20-table-inf-scroll" class="d-flex justify-content-center p-2">
         <div class="d-flex justify-content-center align-items-center flex-column">
+          <!--
           <div class="my-3 mt-5 p-2 pt-5">
             {{ template "UndrawTree" }}
           </div>
+          -->
           <div>
             <h5>No entries found.</h5>
           </div>
@@ -625,9 +635,11 @@
     {{ else }}
       <div style="grid-column: 1 / 7;" id="erc721-table-inf-scroll" class="d-flex justify-content-center p-2">
         <div class="d-flex justify-content-center align-items-center flex-column">
+          <!--
           <div class="my-5 p-2 pt-5">
             {{ template "UndrawTree" }}
           </div>
+          -->
           <div>
             <h5>No entries found.</h5>
           </div>
@@ -664,9 +676,11 @@
     {{ else }}
       <div style="grid-column: 1 / 8;" id="erc1155-table-inf-scroll" class="d-flex justify-content-center p-2">
         <div class="d-flex justify-content-center align-items-center flex-column">
+          <!--
           <div class="my-3 mt-5 p-2 pt-5">
             {{ template "UndrawTree" }}
           </div>
+          -->
           <div>
             <h5>No entries found.</h5>
           </div>
@@ -699,9 +713,11 @@
     {{ else }}
       <div style="grid-column: 1 / 6;" id="withdrawals-table-inf-scroll" class="d-flex justify-content-center p-2">
         <div class="d-flex justify-content-center align-items-center flex-column">
+          <!--
           <div class="my-3 mt-5 p-2 pt-5">
             {{ template "UndrawTree" }}
           </div>
+          -->
           <div>
             <h5>No entries found.</h5>
           </div>
@@ -748,15 +764,18 @@
           {{ end }}
         {{ else }}
           <div class="p-2" style="grid-column: 1 / 3; text-align: center;">No ERC20 tokens found</div>
+          <!--
           <div class="p-2" style="grid-column: 1 / 3; text-align: center;">
             {{ template "UndrawFeelings" }}
           </div>
+          -->
         {{ end }}
       </div>
     </div>
   </div>
 {{ end }}
 
+<!--
 {{ define "UndrawTree" }}
   <svg data-name="Layer 1" style="width: auto; height: 400px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1004.62295 807.97421" xmlns:xlink="http://www.w3.org/1999/xlink">
     <path d="M1077.33148,122.86911l-62.14606,101.64454c-15.07467,24.65574,2.18845,50.76774,23.90846,41.15137s39.04719-40.98829,42.91251-67.1477S1079.65543,150.29066,1077.33148,122.86911Z" transform="translate(-128.60929 -32.55217)" fill="#ee7112" />
@@ -871,3 +890,4 @@
     <path d="M693.75213,497.49281c-5.70637,1.54658-5.29111,8.37251-5.6648,13.24346-6.26239.89866-8.32282,9.58493-3.69473,13.71282,7.56468,5.8565,18.422,6.33618,27.52305,4.58723a47.97174,47.97174,0,0,1-19.39035-5.08658c-1.56315-.76425-6.52659-2.9025-5.0245-6.26379,1.27711-1.65444,2.03822-.5105,3.72877-1.25466,4.96644-2.13265,2.27922-8.91582,3.71047-12.83245.35954-1.53054,3.08983.83945,4.12154,1.83,5.39647,5.73651,8.33367,11.94563,11.24789,19.65028.63466,1.84428.70771,2.15692.45715-.04478C709.89742,516.31408,705.21732,496.20865,693.75213,497.49281Z" transform="translate(-154.17374 -359.71386)" />
   </svg>
 {{ end }}
+-->
