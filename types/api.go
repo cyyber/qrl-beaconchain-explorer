@@ -60,7 +60,7 @@ type ExecutionPerformanceResponse struct {
 	ValidatorIndex   uint64   `json:"validatorindex"`
 }
 
-type ExecutionAddressERC20Response struct {
+type ExecutionAddressZRC20Response struct {
 	Address string `json:"address"`
 }
 
@@ -95,7 +95,7 @@ type ExecBlockProposer struct {
 	Finalized bool   `json:"finalized"`
 }
 
-type ApiEth1AddressERC20TokenResponse struct {
+type ApiEth1AddressZRC20TokenResponse struct {
 	Address string `json:"address"`
 	Balance string `json:"balance"`
 	Symbol  string `json:"symbol"`
@@ -104,7 +104,7 @@ type ApiEth1AddressERC20TokenResponse struct {
 type ApiEth1AddressResponse struct {
 	Address string                             `json:"address"`
 	Ether   string                             `json:"ether"`
-	Tokens  []ApiEth1AddressERC20TokenResponse `json:"tokens"`
+	Tokens  []ApiEth1AddressZRC20TokenResponse `json:"tokens"`
 }
 
 type Eth1TransactionParsed struct {

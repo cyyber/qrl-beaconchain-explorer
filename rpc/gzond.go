@@ -12,9 +12,9 @@ import (
 	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common/hexutil"
 	"github.com/theQRL/go-zond/zondclient"
-	"github.com/theQRL/zond-beaconchain-explorer/erc20"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
 
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
@@ -512,7 +512,7 @@ func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*ty
 
 	for i, el := range batchElements {
 		if el.Error != nil {
-			logrus.Warnf("error in batch call: %v", el.Error) // PPR: are smart contracts that pretend to implement the erc20 standard but are somehow buggy
+			logrus.Warnf("error in batch call: %v", el.Error) // PPR: are smart contracts that pretend to implement the zrc20 standard but are somehow buggy
 		}
 
 		res := strings.TrimPrefix(*el.Result.(*string), "0x")
@@ -573,7 +573,7 @@ func (client *GzondClient) GetNativeBalance(address string) ([]byte, error) {
 	return balance.Bytes(), nil
 }
 
-func (client *GzondClient) GetERC20TokenBalance(address string, token string) ([]byte, error) {
+func (client *GzondClient) GetZRC20TokenBalance(address string, token string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
@@ -593,17 +593,17 @@ func (client *GzondClient) GetERC20TokenBalance(address string, token string) ([
 	return balance, nil
 }
 
-func (client *GzondClient) GetERC20TokenMetadata(token []byte) (*types.ERC20Metadata, error) {
+func (client *GzondClient) GetZRC20TokenMetadata(token []byte) (*types.ZRC20Metadata, error) {
 	logger.Infof("retrieving metadata for token %x", token)
 
-	contract, err := erc20.NewErc20(common.BytesToAddress(token), client.zondClient)
+	contract, err := zrc20.NewZrc20(common.BytesToAddress(token), client.zondClient)
 	if err != nil {
-		return nil, fmt.Errorf("error getting token-contract: erc20.NewErc20: %w", err)
+		return nil, fmt.Errorf("error getting token-contract: zrc20.NewZrc20: %w", err)
 	}
 
 	g := new(errgroup.Group)
 
-	ret := &types.ERC20Metadata{}
+	ret := &types.ZRC20Metadata{}
 
 	g.Go(func() error {
 		symbol, err := contract.Symbol(nil)
@@ -644,8 +644,8 @@ func (client *GzondClient) GetERC20TokenMetadata(token []byte) (*types.ERC20Meta
 	}
 
 	if err == nil && len(ret.Decimals) == 0 && ret.Symbol == "" && len(ret.TotalSupply) == 0 {
-		// it's possible that a token contract implements the ERC20 interfaces but does not return any values; we use a backup in this case
-		ret = &types.ERC20Metadata{
+		// it's possible that a token contract implements the ZRC20 interfaces but does not return any values; we use a backup in this case
+		ret = &types.ZRC20Metadata{
 			Decimals:    []byte{0x0},
 			Symbol:      "UNKNOWN",
 			TotalSupply: []byte{0x0}}

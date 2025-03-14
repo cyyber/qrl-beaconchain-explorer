@@ -145,7 +145,7 @@ message Eth1InternalTransactionIndexed {
     bytes value = 7;
 }
 
-message Eth1ERC20Indexed {
+message Eth1ZRC20Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;
@@ -155,7 +155,7 @@ message Eth1ERC20Indexed {
     bytes value = 7;
 }
 
-message Eth1ERC721Indexed {
+message Eth1ZRC721Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;
@@ -166,7 +166,7 @@ message Eth1ERC721Indexed {
 }
 
 // https://eips.ethereum.org/EIPS/eip-1155
-message ETh1ERC1155Indexed {
+message ETh1ZRC1155Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;

@@ -1351,7 +1351,7 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 	logrus.Infof("transformerFlag: %v", transformerFlag)
 	transformerList := strings.Split(transformerFlag, ",")
 	if transformerFlag == "all" {
-		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformERC20", "TransformERC721", "TransformERC1155", "TransformWithdrawals", "TransformEnsNameRegistered", "TransformContract"}
+		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformZRC20", "TransformZRC721", "TransformZRC1155", "TransformWithdrawals", "TransformEnsNameRegistered", "TransformContract"}
 	} else if len(transformerList) == 0 {
 		utils.LogError(nil, "no transformer functions provided", 0)
 		return
@@ -1369,12 +1369,12 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformTx)
 		case "TransformItx":
 			transforms = append(transforms, bt.TransformItx)
-		case "TransformERC20":
-			transforms = append(transforms, bt.TransformERC20)
-		case "TransformERC721":
-			transforms = append(transforms, bt.TransformERC721)
-		case "TransformERC1155":
-			transforms = append(transforms, bt.TransformERC1155)
+		case "TransformZRC20":
+			transforms = append(transforms, bt.TransformZRC20)
+		case "TransformZRC721":
+			transforms = append(transforms, bt.TransformZRC721)
+		case "TransformZRC1155":
+			transforms = append(transforms, bt.TransformZRC1155)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
 		// case "TransformEnsNameRegistered":

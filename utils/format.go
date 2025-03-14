@@ -1300,7 +1300,7 @@ func FormatTokenValue(balance *types.Eth1AddressBalance, fullAmountTooltip bool)
 	return template.HTML(p.Sprintf("<span%s>%s</span>", tooltip, tokenValueFormatted))
 }
 
-func FormatErc20Decimals(balance []byte, metadata *types.ERC20Metadata) decimal.Decimal {
+func FormatZrc20Decimals(balance []byte, metadata *types.ZRC20Metadata) decimal.Decimal {
 	decimals := new(big.Int).SetBytes(metadata.Decimals)
 	mul := decimal.NewFromFloat(float64(10)).Pow(decimal.NewFromBigInt(decimals, 0))
 	num := decimal.NewFromBigInt(new(big.Int).SetBytes(balance), 0)

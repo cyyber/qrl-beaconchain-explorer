@@ -268,7 +268,7 @@ func ApiEth1GasNowData(w http.ResponseWriter, r *http.Request) {
 // ApiEth1Address godoc
 // @Summary Gets information about an Zond address.
 // @Tags Execution
-// @Description Returns the ether balance and any token balances for a given Zond address. Amount of different ECR20 tokens is limited to 200. If you need more, use the /execution/address/{address}/erc20tokens endpoint.
+// @Description Returns the ether balance and any token balances for a given Zond address. Amount of different ECR20 tokens is limited to 200. If you need more, use the /execution/address/{address}/zrc20tokens endpoint.
 // @Produce json
 // @Param address path string true "provide an Zond address consists of an optional 0x prefix followed by 40 hexadecimal characters". It can also be a valid ENS name.
 // @Param token query string false "filter for a specific token by providing a ethereum token contract address"
@@ -318,7 +318,7 @@ func ApiEth1Address(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		response.Tokens = append(response.Tokens, types.ApiEth1AddressERC20TokenResponse{
+		response.Tokens = append(response.Tokens, types.ApiEth1AddressZRC20TokenResponse{
 			Address: fmt.Sprintf("0x%x", m.Token),
 			Balance: decimal.NewFromBigInt(new(big.Int).SetBytes(m.Balance), 0).Div(decimal.NewFromBigInt(big.NewInt(1), int32(new(big.Int).SetBytes(m.Metadata.Decimals).Int64()))).String(),
 			Symbol:  m.Metadata.Symbol,
@@ -330,18 +330,18 @@ func ApiEth1Address(w http.ResponseWriter, r *http.Request) {
 */
 
 /*
-// ApiEth1AddressERC20Tokens godoc
-// @Summary Returns the ERC20 token balances for a given Ethereum address.
+// ApiEth1AddressZRC20Tokens godoc
+// @Summary Returns the ZRC20 token balances for a given Ethereum address.
 // @Tags Execution
-// @Description Returns the ERC20 token balances for a given Ethereum address. Supports pagination.
+// @Description Returns the ZRC20 token balances for a given Ethereum address. Supports pagination.
 // @Produce json
 // @Param address path string true "provide an Ethereum address consists of an optional 0x prefix followed by 40 hexadecimal characters". It can also be a valid ENS name.
 // @Param offset query int false "data offset" default(0)
 // @Param limit query int false "data limit (ranging from 1 to 200)" default(200)
 // @Success 200 {object} types.ApiResponse
 // @Failure 400 {object} types.ApiResponse
-// @Router /api/v1/execution/address/{address}/erc20tokens [get]
-func ApiEth1AddressERC20Tokens(w http.ResponseWriter, r *http.Request) {
+// @Router /api/v1/execution/address/{address}/zrc20tokens [get]
+func ApiEth1AddressZRC20Tokens(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	errFields := map[string]interface{}{
@@ -387,9 +387,9 @@ func ApiEth1AddressERC20Tokens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := make([]types.ApiEth1AddressERC20TokenResponse, 0, len(metadata.Balances))
+	response := make([]types.ApiEth1AddressZRC20TokenResponse, 0, len(metadata.Balances))
 	for _, m := range metadata.Balances {
-		response = append(response, types.ApiEth1AddressERC20TokenResponse{
+		response = append(response, types.ApiEth1AddressZRC20TokenResponse{
 			Address: fmt.Sprintf("0x%x", m.Token),
 			Balance: decimal.NewFromBigInt(new(big.Int).SetBytes(m.Balance), 0).Div(decimal.NewFromBigInt(big.NewInt(1), int32(new(big.Int).SetBytes(m.Metadata.Decimals).Int64()))).String(),
 			Symbol:  m.Metadata.Symbol,

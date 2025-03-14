@@ -17,13 +17,13 @@ import (
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/erc20"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/version"
+	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
 
 	"github.com/coocood/freecache"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -188,9 +188,9 @@ func main() {
 		bt.TransformBlock,
 		bt.TransformTx,
 		bt.TransformItx,
-		bt.TransformERC20,
-		bt.TransformERC721,
-		bt.TransformERC1155,
+		bt.TransformZRC20,
+		bt.TransformZRC721,
+		bt.TransformZRC1155,
 		bt.TransformWithdrawals,
 		// bt.TransformEnsNameRegistered,
 		bt.TransformContract)
@@ -400,7 +400,7 @@ func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath s
 		return err
 	}
 
-	tokenList := &erc20.ERC20TokenList{}
+	tokenList := &zrc20.ZRC20TokenList{}
 
 	err = json.Unmarshal(tokenListContent, tokenList)
 	if err != nil {
@@ -458,9 +458,9 @@ func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath s
 	}
 
 	// TODO(rgeraldes24)
-	tokenPrices := make([]*types.ERC20TokenPrice, 0, len(respParsed.Coins))
+	tokenPrices := make([]*types.ZRC20TokenPrice, 0, len(respParsed.Coins))
 	for address, data := range respParsed.Coins {
-		tokenPrices = append(tokenPrices, &types.ERC20TokenPrice{
+		tokenPrices = append(tokenPrices, &types.ZRC20TokenPrice{
 			Token: common.FromHex(strings.TrimPrefix(address, "ethereum:0x")),
 			Price: []byte(data.Price.String()),
 		})
@@ -472,7 +472,7 @@ func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath s
 		i := i
 		g.Go(func() error {
 
-			metadata, err := client.GetERC20TokenMetadata(tokenPrices[i].Token)
+			metadata, err := client.GetZRC20TokenMetadata(tokenPrices[i].Token)
 			if err != nil {
 				return err
 			}
@@ -486,7 +486,7 @@ func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath s
 		return err
 	}
 
-	return bt.SaveERC20TokenPrices(tokenPrices)
+	return bt.SaveZRC20TokenPrices(tokenPrices)
 }
 
 func HandleChainReorgs(bt *db.Bigtable, client *rpc.GzondClient, depth int) error {
@@ -687,7 +687,7 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 	return nil
 }
 
-func ImportMainnetERC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
+func ImportMainnetZRC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
 
 	client := &http.Client{Timeout: time.Second * 10}
 
@@ -700,7 +700,7 @@ func ImportMainnetERC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
 	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		utils.LogFatal(err, "reading body for ERC20 tokens error", 0)
+		utils.LogFatal(err, "reading body for ZRC20 tokens error", 0)
 	}
 
 	type TokenDirectory struct {
@@ -743,7 +743,7 @@ func ImportMainnetERC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
 		}
 		logrus.Infof("processing token %v at address %x", token.Name, address)
 
-		meta := &types.ERC20Metadata{}
+		meta := &types.ZRC20Metadata{}
 		meta.Decimals = big.NewInt(token.Decimals).Bytes()
 		meta.Description = token.Extensions.Description
 		if len(token.LogoURI) > 0 {
@@ -753,7 +753,7 @@ func ImportMainnetERC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
 				body, err := io.ReadAll(resp.Body)
 
 				if err != nil {
-					utils.LogFatal(err, "reading body for ERC20 token logo URI error", 0)
+					utils.LogFatal(err, "reading body for ZRC20 token logo URI error", 0)
 				}
 
 				meta.Logo = body
@@ -764,9 +764,9 @@ func ImportMainnetERC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
 		meta.OfficialSite = token.Extensions.Link
 		meta.Symbol = token.Symbol
 
-		err = bt.SaveERC20Metadata(address, meta)
+		err = bt.SaveZRC20Metadata(address, meta)
 		if err != nil {
-			utils.LogFatal(err, "error while saving ERC20 metadata", 0)
+			utils.LogFatal(err, "error while saving ZRC20 metadata", 0)
 		}
 		time.Sleep(time.Millisecond * 250)
 	}

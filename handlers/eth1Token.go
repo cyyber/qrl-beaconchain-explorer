@@ -37,7 +37,7 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 	g.SetLimit(3)
 
 	var txns *types.DataTableResponse
-	var metadata *types.ERC20Metadata
+	var metadata *types.ZRC20Metadata
 	var balance *types.Eth1AddressBalance
 	// var holders *types.DataTableResponse
 
@@ -49,7 +49,7 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		metadata, err = db.BigtableClient.GetERC20MetadataForAddress(token)
+		metadata, err = db.BigtableClient.GetZRC20MetadataForAddress(token)
 		return err
 	})
 

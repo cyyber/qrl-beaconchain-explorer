@@ -36,9 +36,9 @@ func InitBigtableSchema() error {
 	tables["metadata"] = map[string]gcp_bigtable.GCPolicy{
 		ACCOUNT_METADATA_FAMILY:  nil,
 		CONTRACT_METADATA_FAMILY: nil,
-		ERC20_METADATA_FAMILY:    nil,
-		ERC721_METADATA_FAMILY:   nil,
-		ERC1155_METADATA_FAMILY:  nil,
+		ZRC20_METADATA_FAMILY:    nil,
+		ZRC721_METADATA_FAMILY:   nil,
+		ZRC1155_METADATA_FAMILY:  nil,
 		SERIES_FAMILY:            gcp_bigtable.MaxVersionsGCPolicy(1),
 	}
 	tables["metadata_updates"] = map[string]gcp_bigtable.GCPolicy{

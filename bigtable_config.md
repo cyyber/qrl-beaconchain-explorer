@@ -85,17 +85,17 @@ cbt -project $PROJECT -instance $INSTANCE createtable metadata
 Column families:
 * Name: `a` | GC Policy: None
 * Name: `c` | GC Policy: None
-* Name: `erc1155` | GC Policy: None
-* Name: `erc20` | GC Policy: None
-* Name: `erc721` | GC Policy: None
+* Name: `zrc1155` | GC Policy: None
+* Name: `zrc20` | GC Policy: None
+* Name: `zrc721` | GC Policy: None
 * Name: `series` | GC Policy: Version based policy with a maximum of 1 versions
 
 ```
 cbt -project $PROJECT -instance $INSTANCE createfamily metadata a
 cbt -project $PROJECT -instance $INSTANCE createfamily metadata c
-cbt -project $PROJECT -instance $INSTANCE createfamily metadata erc1155
-cbt -project $PROJECT -instance $INSTANCE createfamily metadata erc20
-cbt -project $PROJECT -instance $INSTANCE createfamily metadata erc721
+cbt -project $PROJECT -instance $INSTANCE createfamily metadata zrc1155
+cbt -project $PROJECT -instance $INSTANCE createfamily metadata zrc20
+cbt -project $PROJECT -instance $INSTANCE createfamily metadata zrc721
 cbt -project $PROJECT -instance $INSTANCE createfamily metadata series
 
 cbt -project $PROJECT -instance $INSTANCE setgcpolicy metadata series maxversions=1

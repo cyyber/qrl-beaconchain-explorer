@@ -30,7 +30,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	search := r.FormValue("search")
 
 	_, err := strconv.Atoi(search)
-
 	if err == nil {
 		http.Redirect(w, r, "/block/"+search, http.StatusMovedPermanently)
 		return

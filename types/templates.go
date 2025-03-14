@@ -1234,9 +1234,9 @@ type Eth1AddressPageTabs struct {
 
 type Eth1AddressMetadata struct {
 	Balances                []*Eth1AddressBalance
-	ERC20TokenLimit         uint64
-	ERC20TokenLimitExceeded bool
-	ERC20                   *ERC20Metadata
+	ZRC20TokenLimit         uint64
+	ZRC20TokenLimitExceeded bool
+	ZRC20                   *ZRC20Metadata
 	Name                    string
 	Tags                    []template.HTML
 	EthBalance              *Eth1AddressBalance
@@ -1246,16 +1246,16 @@ type Eth1AddressBalance struct {
 	Address  []byte
 	Token    []byte
 	Balance  []byte
-	Metadata *ERC20Metadata
+	Metadata *ZRC20Metadata
 }
 
-type ERC20TokenPrice struct {
+type ZRC20TokenPrice struct {
 	Token       []byte
 	Price       []byte
 	TotalSupply []byte
 }
 
-type ERC20Metadata struct {
+type ZRC20Metadata struct {
 	Decimals     []byte
 	Symbol       string
 	Name         string
@@ -1267,11 +1267,11 @@ type ERC20Metadata struct {
 	Price        []byte
 }
 
-func (metadata ERC20Metadata) MarshalBinary() ([]byte, error) {
+func (metadata ZRC20Metadata) MarshalBinary() ([]byte, error) {
 	return json.Marshal(metadata)
 }
 
-func (metadata ERC20Metadata) UnmarshalBinary(data []byte) error {
+func (metadata ZRC20Metadata) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, &metadata)
 }
 
@@ -1286,7 +1286,7 @@ type Eth1TokenPageData struct {
 	Address          string `json:"address"`
 	QRCode           string `json:"qr_code_base64"`
 	QRCodeInverse    string
-	Metadata         *ERC20Metadata
+	Metadata         *ZRC20Metadata
 	Balance          *Eth1AddressBalance
 	Holders          template.HTML `json:"holders"`
 	Transfers        template.HTML `json:"transfers"`

@@ -15,13 +15,13 @@ import (
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/erc1155"
-	"github.com/theQRL/zond-beaconchain-explorer/erc20"
-	"github.com/theQRL/zond-beaconchain-explorer/erc721"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/zrc1155"
+	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
+	"github.com/theQRL/zond-beaconchain-explorer/zrc721"
 
 	"strconv"
 
@@ -67,9 +67,9 @@ const (
 	METADATA_UPDATES_FAMILY_BLOCKS = "blocks"
 	ACCOUNT_METADATA_FAMILY        = "a"
 	CONTRACT_METADATA_FAMILY       = "c"
-	ERC20_METADATA_FAMILY          = "erc20"
-	ERC721_METADATA_FAMILY         = "erc721"
-	ERC1155_METADATA_FAMILY        = "erc1155"
+	ZRC20_METADATA_FAMILY          = "zrc20"
+	ZRC721_METADATA_FAMILY         = "zrc721"
+	ZRC1155_METADATA_FAMILY        = "zrc1155"
 	TX_PER_BLOCK_LIMIT             = 10_000
 	ITX_PER_TX_LIMIT               = 100_000
 	MAX_INT                        = 9223372036854775807
@@ -83,19 +83,19 @@ const (
 	CONTRACT_NAME = "CONTRACTNAME"
 	CONTRACT_ABI  = "ABI"
 
-	ERC20_COLUMN_DECIMALS    = "DECIMALS"
-	ERC20_COLUMN_TOTALSUPPLY = "TOTALSUPPLY"
-	ERC20_COLUMN_SYMBOL      = "SYMBOL"
+	ZRC20_COLUMN_DECIMALS    = "DECIMALS"
+	ZRC20_COLUMN_TOTALSUPPLY = "TOTALSUPPLY"
+	ZRC20_COLUMN_SYMBOL      = "SYMBOL"
 
-	ERC20_COLUMN_PRICE = "PRICE"
+	ZRC20_COLUMN_PRICE = "PRICE"
 
-	ERC20_COLUMN_NAME           = "NAME"
-	ERC20_COLUMN_DESCRIPTION    = "DESCRIPTION"
-	ERC20_COLUMN_LOGO           = "LOGO"
-	ERC20_COLUMN_LOGO_FORMAT    = "LOGOFORMAT"
-	ERC20_COLUMN_LINK           = "LINK"
-	ERC20_COLUMN_OGIMAGE        = "OGIMAGE"
-	ERC20_COLUMN_OGIMAGE_FORMAT = "OGIMAGEFORMAT"
+	ZRC20_COLUMN_NAME           = "NAME"
+	ZRC20_COLUMN_DESCRIPTION    = "DESCRIPTION"
+	ZRC20_COLUMN_LOGO           = "LOGO"
+	ZRC20_COLUMN_LOGO_FORMAT    = "LOGOFORMAT"
+	ZRC20_COLUMN_LINK           = "LINK"
+	ZRC20_COLUMN_OGIMAGE        = "OGIMAGE"
+	ZRC20_COLUMN_OGIMAGE_FORMAT = "OGIMAGEFORMAT"
 )
 
 const (
@@ -113,9 +113,9 @@ const (
 var ZERO_ADDRESS []byte = []byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
 var (
-	ERC20TOPIC   []byte
-	ERC721TOPIC  []byte
-	ERC1155Topic []byte
+	ZRC20TOPIC   []byte
+	ZRC721TOPIC  []byte
+	ZRC1155Topic []byte
 )
 
 func (bigtable *Bigtable) SaveBlock(block *types.Eth1Block) error {
@@ -1218,60 +1218,60 @@ func (bigtable *Bigtable) TransformItx(blk *types.Eth1Block, cache *freecache.Ca
 }
 
 // https://etherscan.io/tx/0xb10588bde42cb8eb14e72d24088bd71ad3903857d23d50b3ba4187c0cb7d3646#eventlog
-// TransformERC20 accepts an eth1 block and creates bigtable mutations for ERC20 transfer events.
+// TransformZRC20 accepts an eth1 block and creates bigtable mutations for ZRC20 transfer events.
 // It transforms the logs contained within a block and writes the transformed logs to bigtable
-// It writes ERC20 events to the table data:
-// Row:    <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// It writes ZRC20 events to the table data:
+// Row:    <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Family: f
 // Column: data
-// Cell:   Proto<Eth1ERC20Indexed>
-// Example scan: "1:ERC20:b10588bde42cb8eb14e72d24088bd71ad3903857d23d50b3ba4187c0cb7d3646" returns mainnet ERC20 event(s) for transaction 0xb10588bde42cb8eb14e72d24088bd71ad3903857d23d50b3ba4187c0cb7d3646
+// Cell:   Proto<Eth1ZRC20Indexed>
+// Example scan: "1:ZRC20:b10588bde42cb8eb14e72d24088bd71ad3903857d23d50b3ba4187c0cb7d3646" returns mainnet ZRC20 event(s) for transaction 0xb10588bde42cb8eb14e72d24088bd71ad3903857d23d50b3ba4187c0cb7d3646
 //
-// It indexes ERC20 events by:
-// Row:    <chainID>:I:ERC20:<TOKEN_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// It indexes ZRC20 events by:
+// Row:    <chainID>:I:ZRC20:<TOKEN_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC20:<FROM_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC20:<FROM_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC20:<TO_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC20:<TO_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC20:<FROM_ADDRESS>:TO:<TO_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC20:<FROM_ADDRESS>:TO:<TO_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC20:<TO_ADDRESS>:FROM:<FROM_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC20:<TO_ADDRESS>:FROM:<FROM_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC20:<FROM_ADDRESS>:TOKEN_SENT:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC20:<FROM_ADDRESS>:TOKEN_SENT:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC20:<TO_ADDRESS>:TOKEN_RECEIVED:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC20:<TO_ADDRESS>:TOKEN_RECEIVED:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC20:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC20:<txHash>:<paddedLogIndex>
 // Cell:   nil
-func (bigtable *Bigtable) TransformERC20(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
+func (bigtable *Bigtable) TransformZRC20(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
 	startTime := time.Now()
 	defer func() {
-		metrics.TaskDuration.WithLabelValues("bt_transform_erc20").Observe(time.Since(startTime).Seconds())
+		metrics.TaskDuration.WithLabelValues("bt_transform_zrc20").Observe(time.Since(startTime).Seconds())
 	}()
 
 	bulkData = &types.BulkMutations{}
 	bulkMetadataUpdates = &types.BulkMutations{}
 
-	filterer, err := erc20.NewErc20Filterer(common.Address{}, nil)
+	filterer, err := zrc20.NewZrc20Filterer(common.Address{}, nil)
 	if err != nil {
 		log.Printf("error creating filterer: %v", err)
 	}
@@ -1286,7 +1286,7 @@ func (bigtable *Bigtable) TransformERC20(blk *types.Eth1Block, cache *freecache.
 				return nil, nil, fmt.Errorf("unexpected number of logs in block expected at most %d but got: %v tx: %x", ITX_PER_TX_LIMIT-1, j, tx.GetHash())
 			}
 			jReversed := reversePaddedIndex(j, ITX_PER_TX_LIMIT)
-			if len(log.GetTopics()) != 3 || !bytes.Equal(log.GetTopics()[0], erc20.TransferTopic) {
+			if len(log.GetTopics()) != 3 || !bytes.Equal(log.GetTopics()[0], zrc20.TransferTopic) {
 				continue
 			}
 
@@ -1318,8 +1318,8 @@ func (bigtable *Bigtable) TransformERC20(blk *types.Eth1Block, cache *freecache.
 				value = transfer.Value.Bytes()
 			}
 
-			key := fmt.Sprintf("%s:ERC20:%x:%s", bigtable.chainId, tx.GetHash(), jReversed)
-			indexedLog := &types.Eth1ERC20Indexed{
+			key := fmt.Sprintf("%s:ZRC20:%x:%s", bigtable.chainId, tx.GetHash(), jReversed)
+			indexedLog := &types.Eth1ZRC20Indexed{
 				ParentHash:   tx.GetHash(),
 				BlockNumber:  blk.GetNumber(),
 				Time:         blk.GetTime(),
@@ -1343,17 +1343,17 @@ func (bigtable *Bigtable) TransformERC20(blk *types.Eth1Block, cache *freecache.
 			bulkData.Muts = append(bulkData.Muts, mut)
 
 			indexes := []string{
-				fmt.Sprintf("%s:I:ERC20:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC20:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 
-				fmt.Sprintf("%s:I:ERC20:%x:ALL:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC20:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC20:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:ALL:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 
-				fmt.Sprintf("%s:I:ERC20:%x:TO:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC20:%x:FROM:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC20:%x:TOKEN_SENT:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC20:%x:TOKEN_RECEIVED:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:TO:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:FROM:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:TOKEN_SENT:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC20:%x:TOKEN_RECEIVED:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 			}
 
 			for _, idx := range indexes {
@@ -1374,60 +1374,60 @@ func (bigtable *Bigtable) TransformERC20(blk *types.Eth1Block, cache *freecache.
 }
 
 // example: https://etherscan.io/tx/0x4d3a6c56cecb40637c070601c275df9cc7b599b5dc1d5ac2473c92c7a9e62c64#eventlog
-// TransformERC721 accepts an eth1 block and creates bigtable mutations for erc721 transfer events.
+// TransformZRC721 accepts an eth1 block and creates bigtable mutations for zrc721 transfer events.
 // It transforms the logs contained within a block and writes the transformed logs to bigtable
-// It writes erc721 events to the table data:
-// Row:    <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// It writes zrc721 events to the table data:
+// Row:    <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Family: f
 // Column: data
-// Cell:   Proto<Eth1ERC721Indexed>
-// Example scan: "1:ERC721:4d3a6c56cecb40637c070601c275df9cc7b599b5dc1d5ac2473c92c7a9e62c64" returns mainnet ERC721 event(s) for transaction 0x4d3a6c56cecb40637c070601c275df9cc7b599b5dc1d5ac2473c92c7a9e62c64
+// Cell:   Proto<Eth1ZRC721Indexed>
+// Example scan: "1:ZRC721:4d3a6c56cecb40637c070601c275df9cc7b599b5dc1d5ac2473c92c7a9e62c64" returns mainnet ZRC721 event(s) for transaction 0x4d3a6c56cecb40637c070601c275df9cc7b599b5dc1d5ac2473c92c7a9e62c64
 //
-// It indexes ERC721 events by:
-// Row:    <chainID>:I:ERC721:<FROM_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// It indexes ZRC721 events by:
+// Row:    <chainID>:I:ZRC721:<FROM_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC721:<TO_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC721:<TO_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC721:<TOKEN_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC721:<TOKEN_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC721:<FROM_ADDRESS>:TO:<TO_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC721:<FROM_ADDRESS>:TO:<TO_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC721:<TO_ADDRESS>:FROM:<FROM_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC721:<TO_ADDRESS>:FROM:<FROM_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC721:<FROM_ADDRESS>:TOKEN_SENT:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC721:<FROM_ADDRESS>:TOKEN_SENT:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC721:<TO_ADDRESS>:TOKEN_RECEIVED:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC721:<TO_ADDRESS>:TOKEN_RECEIVED:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC721:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC721:<txHash>:<paddedLogIndex>
 // Cell:   nil
-func (bigtable *Bigtable) TransformERC721(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
+func (bigtable *Bigtable) TransformZRC721(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
 	startTime := time.Now()
 	defer func() {
-		metrics.TaskDuration.WithLabelValues("bt_transform_erc721").Observe(time.Since(startTime).Seconds())
+		metrics.TaskDuration.WithLabelValues("bt_transform_zrc721").Observe(time.Since(startTime).Seconds())
 	}()
 
 	bulkData = &types.BulkMutations{}
 	bulkMetadataUpdates = &types.BulkMutations{}
 
-	filterer, err := erc721.NewErc721Filterer(common.Address{}, nil)
+	filterer, err := zrc721.NewZrc721Filterer(common.Address{}, nil)
 	if err != nil {
 		log.Printf("error creating filterer: %v", err)
 	}
@@ -1441,7 +1441,7 @@ func (bigtable *Bigtable) TransformERC721(blk *types.Eth1Block, cache *freecache
 			if j >= ITX_PER_TX_LIMIT {
 				return nil, nil, fmt.Errorf("unexpected number of logs in block expected at most %d but got: %v tx: %x", ITX_PER_TX_LIMIT-1, j, tx.GetHash())
 			}
-			if len(log.GetTopics()) != 4 || !bytes.Equal(log.GetTopics()[0], erc721.TransferTopic) {
+			if len(log.GetTopics()) != 4 || !bytes.Equal(log.GetTopics()[0], zrc721.TransferTopic) {
 				continue
 			}
 			jReversed := reversePaddedIndex(j, ITX_PER_TX_LIMIT)
@@ -1474,8 +1474,8 @@ func (bigtable *Bigtable) TransformERC721(blk *types.Eth1Block, cache *freecache
 				tokenId = transfer.TokenId
 			}
 
-			key := fmt.Sprintf("%s:ERC721:%x:%s", bigtable.chainId, tx.GetHash(), jReversed)
-			indexedLog := &types.Eth1ERC721Indexed{
+			key := fmt.Sprintf("%s:ZRC721:%x:%s", bigtable.chainId, tx.GetHash(), jReversed)
+			indexedLog := &types.Eth1ZRC721Indexed{
 				ParentHash:   tx.GetHash(),
 				BlockNumber:  blk.GetNumber(),
 				Time:         blk.GetTime(),
@@ -1497,18 +1497,18 @@ func (bigtable *Bigtable) TransformERC721(blk *types.Eth1Block, cache *freecache
 			bulkData.Muts = append(bulkData.Muts, mut)
 
 			indexes := []string{
-				// fmt.Sprintf("%s:I:ERC721:%s:%s:%s", bigtable.chainId, reversePaddedBigtableTimestamp(blk.GetTime()), fmt.Sprintf("%04d", i), fmt.Sprintf("%05d", j)),
-				fmt.Sprintf("%s:I:ERC721:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC721:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				// fmt.Sprintf("%s:I:ZRC721:%s:%s:%s", bigtable.chainId, reversePaddedBigtableTimestamp(blk.GetTime()), fmt.Sprintf("%04d", i), fmt.Sprintf("%05d", j)),
+				fmt.Sprintf("%s:I:ZRC721:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 
-				fmt.Sprintf("%s:I:ERC721:%x:ALL:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC721:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC721:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:ALL:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 
-				fmt.Sprintf("%s:I:ERC721:%x:TO:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC721:%x:FROM:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC721:%x:TOKEN_SENT:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC721:%x:TOKEN_RECEIVED:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:TO:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:FROM:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:TOKEN_SENT:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC721:%x:TOKEN_RECEIVED:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 			}
 
 			for _, idx := range indexes {
@@ -1528,61 +1528,61 @@ func (bigtable *Bigtable) TransformERC721(blk *types.Eth1Block, cache *freecache
 	return bulkData, bulkMetadataUpdates, nil
 }
 
-// TransformERC1155 accepts an eth1 block and creates bigtable mutations for erc1155 transfer events.
+// TransformZRC1155 accepts an eth1 block and creates bigtable mutations for zrc1155 transfer events.
 // Example: https://etherscan.io/tx/0xcffdd4b44ba9361a769a559c360293333d09efffeab79c36125bb4b20bd04270#eventlog
 // It transforms the logs contained within a block and writes the transformed logs to bigtable
-// It writes erc1155 events to the table data:
-// Row:    <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// It writes zrc1155 events to the table data:
+// Row:    <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Family: f
 // Column: data
-// Cell:   Proto<Eth1ERC1155Indexed>
-// Example scan: "1:ERC1155:cffdd4b44ba9361a769a559c360293333d09efffeab79c36125bb4b20bd04270" returns mainnet erc1155 event(s) for transaction 0xcffdd4b44ba9361a769a559c360293333d09efffeab79c36125bb4b20bd04270
+// Cell:   Proto<Eth1ZRC1155Indexed>
+// Example scan: "1:ZRC1155:cffdd4b44ba9361a769a559c360293333d09efffeab79c36125bb4b20bd04270" returns mainnet zrc1155 event(s) for transaction 0xcffdd4b44ba9361a769a559c360293333d09efffeab79c36125bb4b20bd04270
 //
-// It indexes erc1155 events by:
-// Row:    <chainID>:I:ERC1155:<FROM_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// It indexes zrc1155 events by:
+// Row:    <chainID>:I:ZRC1155:<FROM_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC1155:<TO_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC1155:<TO_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC1155:<TOKEN_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC1155:<TOKEN_ADDRESS>:TIME:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC1155:<TO_ADDRESS>:TO:<FROM_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC1155:<TO_ADDRESS>:TO:<FROM_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC1155:<FROM_ADDRESS>:FROM:<TO_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC1155:<FROM_ADDRESS>:FROM:<TO_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC1155:<FROM_ADDRESS>:TOKEN_SENT:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC1155:<FROM_ADDRESS>:TOKEN_SENT:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Cell:   nil
 //
-// Row:    <chainID>:I:ERC1155:<TO_ADDRESS>:TOKEN_RECEIVED:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
+// Row:    <chainID>:I:ZRC1155:<TO_ADDRESS>:TOKEN_RECEIVED:<TOKEN_ADDRESS>:<reversePaddedBigtableTimestamp>:<paddedTxIndex>:<PaddedLogIndex>
 // Family: f
-// Column: <chainID>:ERC1155:<txHash>:<paddedLogIndex>
+// Column: <chainID>:ZRC1155:<txHash>:<paddedLogIndex>
 // Cell:   nil
-func (bigtable *Bigtable) TransformERC1155(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
+func (bigtable *Bigtable) TransformZRC1155(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
 	startTime := time.Now()
 	defer func() {
-		metrics.TaskDuration.WithLabelValues("bt_transform_erc1155").Observe(time.Since(startTime).Seconds())
+		metrics.TaskDuration.WithLabelValues("bt_transform_zrc1155").Observe(time.Since(startTime).Seconds())
 	}()
 
 	bulkData = &types.BulkMutations{}
 	bulkMetadataUpdates = &types.BulkMutations{}
 
-	filterer, err := erc1155.NewErc1155Filterer(common.Address{}, nil)
+	filterer, err := zrc1155.NewZrc1155Filterer(common.Address{}, nil)
 	if err != nil {
 		log.Printf("error creating filterer: %v", err)
 	}
@@ -1598,10 +1598,10 @@ func (bigtable *Bigtable) TransformERC1155(blk *types.Eth1Block, cache *freecach
 			}
 			jReversed := reversePaddedIndex(j, ITX_PER_TX_LIMIT)
 
-			key := fmt.Sprintf("%s:ERC1155:%x:%s", bigtable.chainId, tx.GetHash(), jReversed)
+			key := fmt.Sprintf("%s:ZRC1155:%x:%s", bigtable.chainId, tx.GetHash(), jReversed)
 
 			// no events emitted continue
-			if len(log.GetTopics()) != 4 || (!bytes.Equal(log.GetTopics()[0], erc1155.TransferBulkTopic) && !bytes.Equal(log.GetTopics()[0], erc1155.TransferSingleTopic)) {
+			if len(log.GetTopics()) != 4 || (!bytes.Equal(log.GetTopics()[0], zrc1155.TransferBulkTopic) && !bytes.Equal(log.GetTopics()[0], zrc1155.TransferSingleTopic)) {
 				continue
 			}
 
@@ -1623,7 +1623,7 @@ func (bigtable *Bigtable) TransformERC1155(blk *types.Eth1Block, cache *freecach
 				Removed:     log.GetRemoved(),
 			}
 
-			indexedLog := &types.ETh1ERC1155Indexed{}
+			indexedLog := &types.ETh1ZRC1155Indexed{}
 			transferBatch, _ := filterer.ParseTransferBatch(ethLog)
 			transferSingle, _ := filterer.ParseTransferSingle(ethLog)
 			if transferBatch == nil && transferSingle == nil {
@@ -1643,7 +1643,7 @@ func (bigtable *Bigtable) TransformERC1155(blk *types.Eth1Block, cache *freecach
 				}
 
 				if len(ids) != len(values) {
-					logrus.Errorf("error parsing erc1155 batch transfer logs. Expected len(ids): %v len(values): %v to be the same", len(ids), len(values))
+					logrus.Errorf("error parsing zrc1155 batch transfer logs. Expected len(ids): %v len(values): %v to be the same", len(ids), len(values))
 					continue
 				}
 				for ti := range ids {
@@ -1681,18 +1681,18 @@ func (bigtable *Bigtable) TransformERC1155(blk *types.Eth1Block, cache *freecach
 			bulkData.Muts = append(bulkData.Muts, mut)
 
 			indexes := []string{
-				// fmt.Sprintf("%s:I:ERC1155:%s:%s:%s", bigtable.chainId, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC1155:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC1155:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				// fmt.Sprintf("%s:I:ZRC1155:%s:%s:%s", bigtable.chainId, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 
-				fmt.Sprintf("%s:I:ERC1155:%x:ALL:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC1155:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC1155:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:ALL:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:%x:TIME:%s:%s:%s", bigtable.chainId, indexedLog.TokenAddress, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 
-				fmt.Sprintf("%s:I:ERC1155:%x:TO:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC1155:%x:FROM:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC1155:%x:TOKEN_SENT:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
-				fmt.Sprintf("%s:I:ERC1155:%x:TOKEN_RECEIVED:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:TO:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.To, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:FROM:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.From, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:TOKEN_SENT:%x:%s:%s:%s", bigtable.chainId, indexedLog.From, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
+				fmt.Sprintf("%s:I:ZRC1155:%x:TOKEN_RECEIVED:%x:%s:%s:%s", bigtable.chainId, indexedLog.To, indexedLog.TokenAddress, reversePaddedBigtableTimestamp(blk.GetTime()), iReversed, jReversed),
 			}
 
 			for _, idx := range indexes {
@@ -1978,7 +1978,7 @@ func (bigtable *Bigtable) GetEth1TxsForAddress(prefix string, limit int64) ([]*t
 	return data, indexes, nil
 }
 
-func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, inputMetadata *map[string]*types.ERC20Metadata) (map[string]string, map[string]*types.ERC20Metadata, error) {
+func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, inputMetadata *map[string]*types.ZRC20Metadata) (map[string]string, map[string]*types.ZRC20Metadata, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -1988,7 +1988,7 @@ func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, 
 	})
 	defer tmr.Stop()
 
-	outputMetadata := make(map[string]*types.ERC20Metadata)
+	outputMetadata := make(map[string]*types.ZRC20Metadata)
 
 	g := new(errgroup.Group)
 	g.SetLimit(25)
@@ -2008,7 +2008,7 @@ func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, 
 		for address := range *inputMetadata {
 			address := address
 			g.Go(func() error {
-				metadata, err := bigtable.GetERC20MetadataForAddress([]byte(address))
+				metadata, err := bigtable.GetZRC20MetadataForAddress([]byte(address))
 				if err != nil {
 					return err
 				}
@@ -2464,7 +2464,7 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 	return data, nil
 }
 
-// currently only erc20
+// currently only zrc20
 func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction []byte) ([]*types.Transfer, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -2477,14 +2477,14 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
 	defer cancel()
 	// uses a more standard transfer in-between type so multiple token types can be handle before the final table response is generated
-	transfers := map[int]*types.Eth1ERC20Indexed{}
+	transfers := map[int]*types.Eth1ZRC20Indexed{}
 	mux := sync.Mutex{}
 
-	// get erc20 rows
-	prefix := fmt.Sprintf("%s:ERC20:%x:", bigtable.chainId, transaction)
+	// get zrc20 rows
+	prefix := fmt.Sprintf("%s:ZRC20:%x:", bigtable.chainId, transaction)
 	rowRange := gcp_bigtable.NewRange(prefix+"\x00", prefixSuccessor(prefix, 3))
 	err := bigtable.tableData.ReadRows(ctx, rowRange, func(row gcp_bigtable.Row) bool {
-		b := &types.Eth1ERC20Indexed{}
+		b := &types.Eth1ZRC20Indexed{}
 		row_ := row[DEFAULT_FAMILY][0]
 		err := proto.Unmarshal(row_.Value, b)
 		if err != nil {
@@ -2507,8 +2507,8 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	}
 
 	names := make(map[string]string)
-	tokens := make(map[string]*types.ERC20Metadata)
-	tokensToAdd := make(map[string]*types.ERC20Metadata)
+	tokens := make(map[string]*types.ZRC20Metadata)
+	tokensToAdd := make(map[string]*types.ZRC20Metadata)
 	// init
 	for _, t := range transfers {
 		names[string(t.From)] = ""
@@ -2528,7 +2528,7 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	for address := range tokens {
 		address := address
 		g.Go(func() error {
-			metadata, err := bigtable.GetERC20MetadataForAddress([]byte(address))
+			metadata, err := bigtable.GetZRC20MetadataForAddress([]byte(address))
 			if err != nil {
 				return err
 			}
@@ -2582,7 +2582,7 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	return data, nil
 }
 
-func (bigtable *Bigtable) GetEth1ERC20ForAddress(prefix string, limit int64) ([]*types.Eth1ERC20Indexed, string, error) {
+func (bigtable *Bigtable) GetEth1ZRC20ForAddress(prefix string, limit int64) ([]*types.Eth1ZRC20Indexed, string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -2597,11 +2597,11 @@ func (bigtable *Bigtable) GetEth1ERC20ForAddress(prefix string, limit int64) ([]
 
 	// add \x00 to the row range such that we skip the previous value
 	rowRange := gcp_bigtable.NewRange(prefix+"\x00", prefixSuccessor(prefix, 5))
-	data := make([]*types.Eth1ERC20Indexed, 0, limit)
+	data := make([]*types.Eth1ZRC20Indexed, 0, limit)
 	keys := make([]string, 0, limit)
 	indexes := make([]string, 0, limit)
 
-	keysMap := make(map[string]*types.Eth1ERC20Indexed, limit)
+	keysMap := make(map[string]*types.Eth1ZRC20Indexed, limit)
 	err := bigtable.tableData.ReadRows(ctx, rowRange, func(row gcp_bigtable.Row) bool {
 		keys = append(keys, strings.TrimPrefix(row[DEFAULT_FAMILY][0].Column, "f:"))
 		indexes = append(indexes, row.Key())
@@ -2617,17 +2617,17 @@ func (bigtable *Bigtable) GetEth1ERC20ForAddress(prefix string, limit int64) ([]
 	indexes, keys = bigtable.rearrangeReversePaddedIndexZero(ctx, indexes, keys)
 
 	err = bigtable.tableData.ReadRows(ctx, gcp_bigtable.RowList(keys), func(row gcp_bigtable.Row) bool {
-		b := &types.Eth1ERC20Indexed{}
+		b := &types.Eth1ZRC20Indexed{}
 		err := proto.Unmarshal(row[DEFAULT_FAMILY][0].Value, b)
 
 		if err != nil {
-			logrus.Fatalf("error parsing Eth1ERC20Indexed data: %v", err)
+			logrus.Fatalf("error parsing Eth1ZRC20Indexed data: %v", err)
 		}
 		keysMap[row.Key()] = b
 		return true
 	})
 	if err != nil {
-		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1ERC20ForAddress")
+		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1ZRC20ForAddress")
 		return nil, "", err
 	}
 
@@ -2640,7 +2640,7 @@ func (bigtable *Bigtable) GetEth1ERC20ForAddress(prefix string, limit int64) ([]
 	return data, skipBlockIfLastTxIndex(indexes[len(indexes)-1]), nil
 }
 
-func (bigtable *Bigtable) GetAddressErc20TableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
+func (bigtable *Bigtable) GetAddressZrc20TableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -2650,20 +2650,20 @@ func (bigtable *Bigtable) GetAddressErc20TableData(address []byte, pageToken str
 	})
 	defer tmr.Stop()
 
-	defaultPageToken := fmt.Sprintf("%s:I:ERC20:%x:%s:", bigtable.chainId, address, FILTER_TIME)
+	defaultPageToken := fmt.Sprintf("%s:I:ZRC20:%x:%s:", bigtable.chainId, address, FILTER_TIME)
 	if pageToken == "" {
 		pageToken = defaultPageToken
 	} else if !strings.HasPrefix(pageToken, defaultPageToken) {
-		return nil, fmt.Errorf("invalid pageToken for function GetAddressErc20TableData: %s", pageToken)
+		return nil, fmt.Errorf("invalid pageToken for function GetAddressZrc20TableData: %s", pageToken)
 	}
 
-	transactions, lastKey, err := bigtable.GetEth1ERC20ForAddress(pageToken, DefaultInfScrollRows)
+	transactions, lastKey, err := bigtable.GetEth1ZRC20ForAddress(pageToken, DefaultInfScrollRows)
 	if err != nil {
 		return nil, err
 	}
 
 	names := make(map[string]string)
-	tokens := make(map[string]*types.ERC20Metadata)
+	tokens := make(map[string]*types.ZRC20Metadata)
 	for _, t := range transactions {
 		names[string(t.From)] = ""
 		names[string(t.To)] = ""
@@ -2709,7 +2709,7 @@ func (bigtable *Bigtable) GetAddressErc20TableData(address []byte, pageToken str
 	return data, nil
 }
 
-func (bigtable *Bigtable) GetEth1ERC721ForAddress(prefix string, limit int64) ([]*types.Eth1ERC721Indexed, string, error) {
+func (bigtable *Bigtable) GetEth1ZRC721ForAddress(prefix string, limit int64) ([]*types.Eth1ZRC721Indexed, string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -2723,16 +2723,16 @@ func (bigtable *Bigtable) GetEth1ERC721ForAddress(prefix string, limit int64) ([
 	defer cancel()
 
 	// add \x00 to the row range such that we don't include the prefix itself in the response. Converts range to open interval (start, end).
-	// "1:I:ERC721:81d98c8fda0410ee3e9d7586cb949cd19fa4cf38:TIME;"
+	// "1:I:ZRC721:81d98c8fda0410ee3e9d7586cb949cd19fa4cf38:TIME;"
 	rowRange := gcp_bigtable.NewRange(prefix+"\x00", prefixSuccessor(prefix, 5))
 
-	data := make([]*types.Eth1ERC721Indexed, 0, limit)
+	data := make([]*types.Eth1ZRC721Indexed, 0, limit)
 
 	keys := make([]string, 0, limit)
-	keysMap := make(map[string]*types.Eth1ERC721Indexed, limit)
+	keysMap := make(map[string]*types.Eth1ZRC721Indexed, limit)
 	indexes := make([]string, 0, limit)
 
-	//  1:I:ERC721:81d98c8fda0410ee3e9d7586cb949cd19fa4cf38:TIME:9223372035220135322:0052:00000
+	//  1:I:ZRC721:81d98c8fda0410ee3e9d7586cb949cd19fa4cf38:TIME:9223372035220135322:0052:00000
 	err := bigtable.tableData.ReadRows(ctx, rowRange, func(row gcp_bigtable.Row) bool {
 		keys = append(keys, strings.TrimPrefix(row[DEFAULT_FAMILY][0].Column, "f:"))
 		indexes = append(indexes, row.Key())
@@ -2749,17 +2749,17 @@ func (bigtable *Bigtable) GetEth1ERC721ForAddress(prefix string, limit int64) ([
 	indexes, keys = bigtable.rearrangeReversePaddedIndexZero(ctx, indexes, keys)
 
 	err = bigtable.tableData.ReadRows(ctx, gcp_bigtable.RowList(keys), func(row gcp_bigtable.Row) bool {
-		b := &types.Eth1ERC721Indexed{}
+		b := &types.Eth1ZRC721Indexed{}
 		err := proto.Unmarshal(row[DEFAULT_FAMILY][0].Value, b)
 
 		if err != nil {
-			logrus.Fatalf("error parsing Eth1ERC721Indexed data: %v", err)
+			logrus.Fatalf("error parsing Eth1ZRC721Indexed data: %v", err)
 		}
 		keysMap[row.Key()] = b
 		return true
 	})
 	if err != nil {
-		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1ERC721ForAddress")
+		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1ZRC721ForAddress")
 		return nil, "", err
 	}
 
@@ -2771,7 +2771,7 @@ func (bigtable *Bigtable) GetEth1ERC721ForAddress(prefix string, limit int64) ([
 	return data, skipBlockIfLastTxIndex(indexes[len(indexes)-1]), nil
 }
 
-func (bigtable *Bigtable) GetAddressErc721TableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
+func (bigtable *Bigtable) GetAddressZrc721TableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -2781,14 +2781,14 @@ func (bigtable *Bigtable) GetAddressErc721TableData(address []byte, pageToken st
 	})
 	defer tmr.Stop()
 
-	defaultPageToken := fmt.Sprintf("%s:I:ERC721:%x:%s:", bigtable.chainId, address, FILTER_TIME)
+	defaultPageToken := fmt.Sprintf("%s:I:ZRC721:%x:%s:", bigtable.chainId, address, FILTER_TIME)
 	if pageToken == "" {
 		pageToken = defaultPageToken
 	} else if !strings.HasPrefix(pageToken, defaultPageToken) {
-		return nil, fmt.Errorf("invalid pageToken for function GetAddressErc721TableData: %s", pageToken)
+		return nil, fmt.Errorf("invalid pageToken for function GetAddressZrc721TableData: %s", pageToken)
 	}
 
-	transactions, lastKey, err := bigtable.GetEth1ERC721ForAddress(pageToken, DefaultInfScrollRows)
+	transactions, lastKey, err := bigtable.GetEth1ZRC721ForAddress(pageToken, DefaultInfScrollRows)
 	if err != nil {
 		return nil, err
 	}
@@ -2827,7 +2827,7 @@ func (bigtable *Bigtable) GetAddressErc721TableData(address []byte, pageToken st
 	return data, nil
 }
 
-func (bigtable *Bigtable) GetEth1ERC1155ForAddress(prefix string, limit int64) ([]*types.ETh1ERC1155Indexed, string, error) {
+func (bigtable *Bigtable) GetEth1ZRC1155ForAddress(prefix string, limit int64) ([]*types.ETh1ZRC1155Indexed, string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -2842,10 +2842,10 @@ func (bigtable *Bigtable) GetEth1ERC1155ForAddress(prefix string, limit int64) (
 
 	rowRange := gcp_bigtable.NewRange(prefix+"\x00", prefixSuccessor(prefix, 5))
 
-	data := make([]*types.ETh1ERC1155Indexed, 0, limit)
+	data := make([]*types.ETh1ZRC1155Indexed, 0, limit)
 
 	keys := make([]string, 0, limit)
-	keysMap := make(map[string]*types.ETh1ERC1155Indexed, limit)
+	keysMap := make(map[string]*types.ETh1ZRC1155Indexed, limit)
 	indexes := make([]string, 0, limit)
 
 	err := bigtable.tableData.ReadRows(ctx, rowRange, func(row gcp_bigtable.Row) bool {
@@ -2864,17 +2864,17 @@ func (bigtable *Bigtable) GetEth1ERC1155ForAddress(prefix string, limit int64) (
 	indexes, keys = bigtable.rearrangeReversePaddedIndexZero(ctx, indexes, keys)
 
 	err = bigtable.tableData.ReadRows(ctx, gcp_bigtable.RowList(keys), func(row gcp_bigtable.Row) bool {
-		b := &types.ETh1ERC1155Indexed{}
+		b := &types.ETh1ZRC1155Indexed{}
 		err := proto.Unmarshal(row[DEFAULT_FAMILY][0].Value, b)
 
 		if err != nil {
-			logrus.Fatalf("error parsing ETh1ERC1155Indexed data: %v", err)
+			logrus.Fatalf("error parsing ETh1ZRC1155Indexed data: %v", err)
 		}
 		keysMap[row.Key()] = b
 		return true
 	})
 	if err != nil {
-		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1ERC1155ForAddress")
+		logger.WithError(err).WithField("prefix", prefix).WithField("limit", limit).Errorf("error reading rows in bigtable_eth1 / GetEth1ZRC1155ForAddress")
 		return nil, "", err
 	}
 
@@ -2886,7 +2886,7 @@ func (bigtable *Bigtable) GetEth1ERC1155ForAddress(prefix string, limit int64) (
 	return data, skipBlockIfLastTxIndex(indexes[len(indexes)-1]), nil
 }
 
-func (bigtable *Bigtable) GetAddressErc1155TableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
+func (bigtable *Bigtable) GetAddressZrc1155TableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -2896,14 +2896,14 @@ func (bigtable *Bigtable) GetAddressErc1155TableData(address []byte, pageToken s
 	})
 	defer tmr.Stop()
 
-	defaultPageToken := fmt.Sprintf("%s:I:ERC1155:%x:%s:", bigtable.chainId, address, FILTER_TIME)
+	defaultPageToken := fmt.Sprintf("%s:I:ZRC1155:%x:%s:", bigtable.chainId, address, FILTER_TIME)
 	if pageToken == "" {
 		pageToken = defaultPageToken
 	} else if !strings.HasPrefix(pageToken, defaultPageToken) {
-		return nil, fmt.Errorf("invalid pageToken for function GetAddressErc1155TableData: %s", pageToken)
+		return nil, fmt.Errorf("invalid pageToken for function GetAddressZrc1155TableData: %s", pageToken)
 	}
 
-	transactions, lastKey, err := bigtable.GetEth1ERC1155ForAddress(pageToken, DefaultInfScrollRows)
+	transactions, lastKey, err := bigtable.GetEth1ZRC1155ForAddress(pageToken, DefaultInfScrollRows)
 	if err != nil {
 		return nil, err
 	}
@@ -3043,12 +3043,12 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 
 	ret := &types.Eth1AddressMetadata{
 		Balances: []*types.Eth1AddressBalance{},
-		ERC20:    &types.ERC20Metadata{},
+		ZRC20:    &types.ZRC20Metadata{},
 		Name:     "",
 		EthBalance: &types.Eth1AddressBalance{
-			Metadata: &types.ERC20Metadata{},
+			Metadata: &types.ZRC20Metadata{},
 		},
-		ERC20TokenLimit: ECR20TokensPerAddressLimit,
+		ZRC20TokenLimit: ECR20TokensPerAddressLimit,
 	}
 
 	if limit == 0 || limit > ECR20TokensPerAddressLimit {
@@ -3077,7 +3077,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 				if !isNativeEth {
 					// token is not ETH, check if token limit is reached
 					if tokenCount >= limit {
-						ret.ERC20TokenLimitExceeded = true
+						ret.ZRC20TokenLimitExceeded = true
 						continue
 					}
 
@@ -3103,7 +3103,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 						Balance: column.Value,
 					}
 
-					metadata, err := bigtable.GetERC20MetadataForAddress(token)
+					metadata, err := bigtable.GetZRC20MetadataForAddress(token)
 					if err != nil {
 						return err
 					}
@@ -3172,7 +3172,7 @@ func (bigtable *Bigtable) GetBalanceForAddress(address []byte, token []byte) (*t
 			Balance: row[ACCOUNT_METADATA_FAMILY][0].Value,
 		}
 
-		metadata, err := bigtable.GetERC20MetadataForAddress(token)
+		metadata, err := bigtable.GetZRC20MetadataForAddress(token)
 		if err != nil {
 			return nil, err
 		}
@@ -3184,7 +3184,7 @@ func (bigtable *Bigtable) GetBalanceForAddress(address []byte, token []byte) (*t
 	return nil, fmt.Errorf("ACCOUNT_METADATA_FAMILY is not a valid index in row map")
 }
 
-func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC20Metadata, error) {
+func (bigtable *Bigtable) GetZRC20MetadataForAddress(address []byte) (*types.ZRC20Metadata, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -3194,16 +3194,16 @@ func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC
 	defer tmr.Stop()
 
 	if len(address) == 1 {
-		return &types.ERC20Metadata{
+		return &types.ZRC20Metadata{
 			Decimals:    big.NewInt(18).Bytes(),
 			Symbol:      utils.Config.Frontend.ElCurrency,
 			TotalSupply: []byte{},
 		}, nil
 	}
 
-	cacheKey := fmt.Sprintf("%s:ERC20:%#x", bigtable.chainId, address)
-	if cached, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour*1, new(types.ERC20Metadata)); err == nil {
-		return cached.(*types.ERC20Metadata), nil
+	cacheKey := fmt.Sprintf("%s:ZRC20:%#x", bigtable.chainId, address)
+	if cached, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour*1, new(types.ZRC20Metadata)); err == nil {
+		return cached.(*types.ZRC20Metadata), nil
 	}
 
 	// this function actually does not use bigtable right now, but it will in the future (see BIDS-1846, BIDS-1234)
@@ -3214,7 +3214,7 @@ func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC
 	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	// defer cancel()
 	// rowKey := fmt.Sprintf("%s:%x", bigtable.chainId, address)
-	// filter := gcp_bigtable.FamilyFilter(ERC20_METADATA_FAMILY)
+	// filter := gcp_bigtable.FamilyFilter(ZRC20_METADATA_FAMILY)
 	// row, err = bigtable.tableMetadata.ReadRow(ctx, rowKey, gcp_bigtable.RowFilter(filter))
 	// if err != nil {
 	// 	 return nil, err
@@ -3223,10 +3223,10 @@ func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC
 	if row == nil { // Retrieve token metadata from Ethplorer and store it for later usage
 		logger.Infof("retrieving metadata for token %x via rpc", address)
 
-		metadata, err := rpc.CurrentGzondClient.GetERC20TokenMetadata(address)
+		metadata, err := rpc.CurrentGzondClient.GetZRC20TokenMetadata(address)
 		if err != nil {
 			logger.Warnf("error retrieving metadata for token %x: %v", address, err)
-			metadata = &types.ERC20Metadata{
+			metadata = &types.ZRC20Metadata{
 				Decimals:    []byte{0x0},
 				Symbol:      "UNKNOWN",
 				TotalSupply: []byte{0x0}}
@@ -3238,7 +3238,7 @@ func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC
 			return metadata, nil
 		}
 
-		// err = bigtable.SaveERC20Metadata(address, metadata)
+		// err = bigtable.SaveZRC20Metadata(address, metadata)
 		// if err != nil {
 		// 	return nil, err
 		// }
@@ -3252,24 +3252,24 @@ func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC
 	}
 
 	// logger.Infof("retrieving metadata for token %x via bigtable", address)
-	ret := &types.ERC20Metadata{}
+	ret := &types.ZRC20Metadata{}
 	for _, ri := range row {
 		for _, item := range ri {
-			if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_DECIMALS {
+			if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_DECIMALS {
 				ret.Decimals = item.Value
-			} else if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_TOTALSUPPLY {
+			} else if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_TOTALSUPPLY {
 				ret.TotalSupply = item.Value
-			} else if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_SYMBOL {
+			} else if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_SYMBOL {
 				ret.Symbol = string(item.Value)
-			} else if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_DESCRIPTION {
+			} else if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_DESCRIPTION {
 				ret.Description = string(item.Value)
-			} else if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_NAME {
+			} else if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_NAME {
 				ret.Name = string(item.Value)
-			} else if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_LOGO {
+			} else if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_LOGO {
 				ret.Logo = item.Value
-			} else if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_LOGO_FORMAT {
+			} else if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_LOGO_FORMAT {
 				ret.LogoFormat = string(item.Value)
-			} else if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_PRICE {
+			} else if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_PRICE {
 				ret.Price = item.Value
 			}
 		}
@@ -3282,7 +3282,7 @@ func (bigtable *Bigtable) GetERC20MetadataForAddress(address []byte) (*types.ERC
 	return ret, nil
 }
 
-func (bigtable *Bigtable) SaveERC20Metadata(address []byte, metadata *types.ERC20Metadata) error {
+func (bigtable *Bigtable) SaveZRC20Metadata(address []byte, metadata *types.ZRC20Metadata) error {
 	rowKey := fmt.Sprintf("%s:%x", bigtable.chainId, address)
 
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
@@ -3290,32 +3290,32 @@ func (bigtable *Bigtable) SaveERC20Metadata(address []byte, metadata *types.ERC2
 
 	mut := gcp_bigtable.NewMutation()
 	if len(metadata.Decimals) > 0 {
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_DECIMALS, gcp_bigtable.Timestamp(0), metadata.Decimals)
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_DECIMALS, gcp_bigtable.Timestamp(0), metadata.Decimals)
 	}
 
 	if len(metadata.TotalSupply) > 0 {
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_TOTALSUPPLY, gcp_bigtable.Timestamp(0), metadata.TotalSupply)
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_TOTALSUPPLY, gcp_bigtable.Timestamp(0), metadata.TotalSupply)
 	}
 
 	if len(metadata.Symbol) > 0 {
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_SYMBOL, gcp_bigtable.Timestamp(0), []byte(metadata.Symbol))
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_SYMBOL, gcp_bigtable.Timestamp(0), []byte(metadata.Symbol))
 	}
 
 	if len(metadata.Name) > 0 {
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_NAME, gcp_bigtable.Timestamp(0), []byte(metadata.Name))
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_NAME, gcp_bigtable.Timestamp(0), []byte(metadata.Name))
 	}
 
 	if len(metadata.Description) > 0 {
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_DESCRIPTION, gcp_bigtable.Timestamp(0), []byte(metadata.Description))
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_DESCRIPTION, gcp_bigtable.Timestamp(0), []byte(metadata.Description))
 	}
 
 	if len(metadata.Price) > 0 {
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_PRICE, gcp_bigtable.Timestamp(0), []byte(metadata.Price))
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_PRICE, gcp_bigtable.Timestamp(0), []byte(metadata.Price))
 	}
 
 	if len(metadata.Logo) > 0 && len(metadata.LogoFormat) > 0 {
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_LOGO, gcp_bigtable.Timestamp(0), metadata.Logo)
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_LOGO_FORMAT, gcp_bigtable.Timestamp(0), []byte(metadata.LogoFormat))
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_LOGO, gcp_bigtable.Timestamp(0), metadata.Logo)
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_LOGO_FORMAT, gcp_bigtable.Timestamp(0), []byte(metadata.LogoFormat))
 	}
 
 	return bigtable.tableMetadata.Apply(ctx, rowKey, mut)
@@ -3794,7 +3794,7 @@ func (bigtable *Bigtable) SaveBalances(balances []*types.Eth1AddressBalance, del
 	return nil
 }
 
-func (bigtable *Bigtable) SaveERC20TokenPrices(prices []*types.ERC20TokenPrice) error {
+func (bigtable *Bigtable) SaveZRC20TokenPrices(prices []*types.ZRC20TokenPrice) error {
 	if len(prices) == 0 {
 		return nil
 	}
@@ -3807,8 +3807,8 @@ func (bigtable *Bigtable) SaveERC20TokenPrices(prices []*types.ERC20TokenPrice) 
 	for _, price := range prices {
 		rowKey := fmt.Sprintf("%s:%x", bigtable.chainId, price.Token)
 		mut := gcp_bigtable.NewMutation()
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_PRICE, gcp_bigtable.Timestamp(0), price.Price)
-		mut.Set(ERC20_METADATA_FAMILY, ERC20_COLUMN_TOTALSUPPLY, gcp_bigtable.Timestamp(0), price.TotalSupply)
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_PRICE, gcp_bigtable.Timestamp(0), price.Price)
+		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_TOTALSUPPLY, gcp_bigtable.Timestamp(0), price.TotalSupply)
 		mutsWrite.Keys = append(mutsWrite.Keys, rowKey)
 		mutsWrite.Muts = append(mutsWrite.Muts, mut)
 	}
@@ -3955,7 +3955,7 @@ func (bigtable *Bigtable) DeleteBlock(blockNumber uint64, blockHash []byte) erro
 	return nil
 }
 
-func (bigtable *Bigtable) GetEth1TxForToken(prefix string, limit int64) ([]*types.Eth1ERC20Indexed, string, error) {
+func (bigtable *Bigtable) GetEth1TxForToken(prefix string, limit int64) ([]*types.Eth1ZRC20Indexed, string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
@@ -3970,10 +3970,10 @@ func (bigtable *Bigtable) GetEth1TxForToken(prefix string, limit int64) ([]*type
 
 	// add \x00 to the row range such that we skip the previous value
 	rowRange := gcp_bigtable.NewRange(prefix+"\x00", prefixSuccessor(prefix, 5))
-	data := make([]*types.Eth1ERC20Indexed, 0, limit)
+	data := make([]*types.Eth1ZRC20Indexed, 0, limit)
 	keys := make([]string, 0, limit)
 	indexes := make([]string, 0, limit)
-	keysMap := make(map[string]*types.Eth1ERC20Indexed, limit)
+	keysMap := make(map[string]*types.Eth1ZRC20Indexed, limit)
 
 	err := bigtable.tableData.ReadRows(ctx, rowRange, func(row gcp_bigtable.Row) bool {
 		keys = append(keys, strings.TrimPrefix(row[DEFAULT_FAMILY][0].Column, "f:"))
@@ -3989,11 +3989,11 @@ func (bigtable *Bigtable) GetEth1TxForToken(prefix string, limit int64) ([]*type
 	}
 
 	err = bigtable.tableData.ReadRows(ctx, gcp_bigtable.RowList(keys), func(row gcp_bigtable.Row) bool {
-		b := &types.Eth1ERC20Indexed{}
+		b := &types.Eth1ZRC20Indexed{}
 		err := proto.Unmarshal(row[DEFAULT_FAMILY][0].Value, b)
 
 		if err != nil {
-			logrus.Fatalf("error parsing Eth1ERC20Indexed data: %v", err)
+			logrus.Fatalf("error parsing Eth1ZRC20Indexed data: %v", err)
 		}
 		keysMap[row.Key()] = b
 
@@ -4017,9 +4017,9 @@ func (bigtable *Bigtable) GetTokenTransactionsTableData(token []byte, address []
 
 	defaultPageToken := ""
 	if len(address) == 0 {
-		defaultPageToken = fmt.Sprintf("%s:I:ERC20:%x:ALL:%s", bigtable.chainId, token, FILTER_TIME)
+		defaultPageToken = fmt.Sprintf("%s:I:ZRC20:%x:ALL:%s", bigtable.chainId, token, FILTER_TIME)
 	} else {
-		defaultPageToken = fmt.Sprintf("%s:I:ERC20:%x:%x:%s", bigtable.chainId, token, address, FILTER_TIME)
+		defaultPageToken = fmt.Sprintf("%s:I:ZRC20:%x:%x:%s", bigtable.chainId, token, address, FILTER_TIME)
 	}
 
 	if pageToken == "" {
@@ -4036,7 +4036,7 @@ func (bigtable *Bigtable) GetTokenTransactionsTableData(token []byte, address []
 	}
 
 	names := make(map[string]string)
-	tokens := make(map[string]*types.ERC20Metadata)
+	tokens := make(map[string]*types.ZRC20Metadata)
 	for _, t := range transactions {
 		names[string(t.From)] = ""
 		names[string(t.To)] = ""
@@ -4111,8 +4111,8 @@ func (bigtable *Bigtable) SearchForAddress(addressPrefix []byte, limit int) ([]*
 					si.Name = string(item.Value)
 				}
 
-				if item.Column == ERC20_METADATA_FAMILY+":"+ERC20_COLUMN_SYMBOL {
-					si.Token = "ERC20"
+				if item.Column == ZRC20_METADATA_FAMILY+":"+ZRC20_COLUMN_SYMBOL {
+					si.Token = "ZRC20"
 				}
 			}
 		}

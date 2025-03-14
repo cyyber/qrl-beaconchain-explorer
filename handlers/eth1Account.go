@@ -62,9 +62,9 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	isContract := false
 	txns := &types.DataTableResponse{}
 	internal := &types.DataTableResponse{}
-	erc20 := &types.DataTableResponse{}
-	erc721 := &types.DataTableResponse{}
-	erc1155 := &types.DataTableResponse{}
+	zrc20 := &types.DataTableResponse{}
+	zrc721 := &types.DataTableResponse{}
+	zrc1155 := &types.DataTableResponse{}
 	blocksMined := &types.DataTableResponse{}
 	withdrawals := &types.DataTableResponse{}
 	withdrawalSummary := template.HTML("0")
@@ -98,25 +98,25 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	})
 	g.Go(func() error {
 		var err error
-		erc20, err = db.BigtableClient.GetAddressErc20TableData(addressBytes, "")
+		zrc20, err = db.BigtableClient.GetAddressZrc20TableData(addressBytes, "")
 		if err != nil {
-			return fmt.Errorf("GetAddressErc20TableData: %w", err)
+			return fmt.Errorf("GetAddressZrc20TableData: %w", err)
 		}
 		return nil
 	})
 	g.Go(func() error {
 		var err error
-		erc721, err = db.BigtableClient.GetAddressErc721TableData(addressBytes, "")
+		zrc721, err = db.BigtableClient.GetAddressZrc721TableData(addressBytes, "")
 		if err != nil {
-			return fmt.Errorf("GetAddressErc721TableData: %w", err)
+			return fmt.Errorf("GetAddressZrc721TableData: %w", err)
 		}
 		return nil
 	})
 	g.Go(func() error {
 		var err error
-		erc1155, err = db.BigtableClient.GetAddressErc1155TableData(addressBytes, "")
+		zrc1155, err = db.BigtableClient.GetAddressZrc1155TableData(addressBytes, "")
 		if err != nil {
-			return fmt.Errorf("GetAddressErc1155TableData: %w", err)
+			return fmt.Errorf("GetAddressZrc1155TableData: %w", err)
 		}
 		return nil
 	})
@@ -167,20 +167,20 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 			Data: internal,
 		})
 	}
-	if erc20 != nil && len(erc20.Data) != 0 {
+	if zrc20 != nil && len(zrc20.Data) != 0 {
 		tabs = append(tabs, types.Eth1AddressPageTabs{
-			Id:   "erc20Txns",
-			Href: "#erc20Txns",
-			Text: "Erc20 Token Txns",
-			Data: erc20,
+			Id:   "zrc20Txns",
+			Href: "#zrc20Txns",
+			Text: "Zrc20 Token Txns",
+			Data: zrc20,
 		})
 	}
-	if erc721 != nil && len(erc721.Data) != 0 {
+	if zrc721 != nil && len(zrc721.Data) != 0 {
 		tabs = append(tabs, types.Eth1AddressPageTabs{
-			Id:   "erc721Txns",
-			Href: "#erc721Txns",
-			Text: "Erc721 Token Txns",
-			Data: erc721,
+			Id:   "zrc721Txns",
+			Href: "#zrc721Txns",
+			Text: "Zrc721 Token Txns",
+			Data: zrc721,
 		})
 	}
 	if blocksMined != nil && len(blocksMined.Data) != 0 {
@@ -191,12 +191,12 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 			Data: blocksMined,
 		})
 	}
-	if erc1155 != nil && len(erc1155.Data) != 0 {
+	if zrc1155 != nil && len(zrc1155.Data) != 0 {
 		tabs = append(tabs, types.Eth1AddressPageTabs{
-			Id:   "erc1155Txns",
-			Href: "#erc1155Txns",
-			Text: "Erc1155 Token Txns",
-			Data: erc1155,
+			Id:   "zrc1155Txns",
+			Href: "#zrc1155Txns",
+			Text: "Zrc1155 Token Txns",
+			Data: zrc1155,
 		})
 	}
 	if withdrawals != nil && len(withdrawals.Data) != 0 {
@@ -218,9 +218,9 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		WithdrawalsSummary: withdrawalSummary,
 		TransactionsTable:  txns,
 		InternalTxnsTable:  internal,
-		Erc20Table:         erc20,
-		Erc721Table:        erc721,
-		Erc1155Table:       erc1155,
+		Zrc20Table:         zrc20,
+		Zrc721Table:        zrc721,
+		Zrc1155Table:       zrc1155,
 		WithdrawalsTable:   withdrawals,
 		BlocksMinedTable:   blocksMined,
 		EtherValue:         utils.FormatPricedValue(utils.WeiBytesToEther(metadata.EthBalance.Balance), utils.Config.Frontend.ElCurrency, currency),
@@ -347,7 +347,7 @@ func Eth1AddressInternalTransactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressErc20Transactions(w http.ResponseWriter, r *http.Request) {
+func Eth1AddressZrc20Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -361,9 +361,9 @@ func Eth1AddressErc20Transactions(w http.ResponseWriter, r *http.Request) {
 		"route": r.URL.String()}
 
 	pageToken := q.Get("pageToken")
-	data, err := db.BigtableClient.GetAddressErc20TableData(addressBytes, pageToken)
+	data, err := db.BigtableClient.GetAddressZrc20TableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 ERC20 transactions table data", 0, errFields)
+		utils.LogError(err, "error getting eth1 ZRC20 transactions table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -374,7 +374,7 @@ func Eth1AddressErc20Transactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressErc721Transactions(w http.ResponseWriter, r *http.Request) {
+func Eth1AddressZrc721Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -388,9 +388,9 @@ func Eth1AddressErc721Transactions(w http.ResponseWriter, r *http.Request) {
 		"route": r.URL.String()}
 
 	pageToken := q.Get("pageToken")
-	data, err := db.BigtableClient.GetAddressErc721TableData(addressBytes, pageToken)
+	data, err := db.BigtableClient.GetAddressZrc721TableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 ERC721 transactions table data", 0, errFields)
+		utils.LogError(err, "error getting eth1 ZRC721 transactions table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -401,7 +401,7 @@ func Eth1AddressErc721Transactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressErc1155Transactions(w http.ResponseWriter, r *http.Request) {
+func Eth1AddressZrc1155Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -415,9 +415,9 @@ func Eth1AddressErc1155Transactions(w http.ResponseWriter, r *http.Request) {
 		"route": r.URL.String()}
 
 	pageToken := q.Get("pageToken")
-	data, err := db.BigtableClient.GetAddressErc1155TableData(addressBytes, pageToken)
+	data, err := db.BigtableClient.GetAddressZrc1155TableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 ERC1155 transactions table data", 0, errFields)
+		utils.LogError(err, "error getting eth1 ZRC1155 transactions table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
