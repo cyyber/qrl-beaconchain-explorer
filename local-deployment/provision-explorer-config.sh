@@ -65,7 +65,7 @@ redisSessionStoreEndpoint: '127.0.0.1:$REDIS_SESSIONS_PORT'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"
-  siteName: 'Open Source Zond Testnet Explorer' # Name of the site, displayed in the title tag
+  siteName: 'Zond Testnet Explorer' # Name of the site, displayed in the title tag
   siteSubtitle: "Showing a local testnet."
   server:
     host: '0.0.0.0' # Address to listen on
@@ -128,7 +128,7 @@ redisSessionStoreEndpoint: 'host.docker.internal:$REDIS_SESSIONS_PORT'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"
-  siteName: 'Open Source Zond Testnet Explorer' # Name of the site, displayed in the title tag
+  siteName: 'Zond Testnet Explorer' # Name of the site, displayed in the title tag
   siteSubtitle: "Showing a local testnet."
   server:
     host: '0.0.0.0' # Address to listen on

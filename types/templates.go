@@ -1208,9 +1208,9 @@ type Eth1AddressPageData struct {
 	BlocksMinedTable   *DataTableResponse
 	TransactionsTable  *DataTableResponse
 	InternalTxnsTable  *DataTableResponse
-	Erc20Table         *DataTableResponse
-	Erc721Table        *DataTableResponse
-	Erc1155Table       *DataTableResponse
+	Zrc20Table         *DataTableResponse
+	Zrc721Table        *DataTableResponse
+	Zrc1155Table       *DataTableResponse
 	WithdrawalsTable   *DataTableResponse
 	EtherValue         template.HTML
 	Tabs               []Eth1AddressPageTabs

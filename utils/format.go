@@ -803,7 +803,6 @@ func formatBitvectorValidators(bits []byte, validators []uint64) template.HTML {
 	fmt.Println(len(validators))
 	fmt.Println(validators)
 	if len(bits)*8 != len(validators) {
-		fmt.Println("AQUI")
 		invalidLen = true
 	}
 	var buf strings.Builder

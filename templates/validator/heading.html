@@ -15,11 +15,6 @@
               <i class="fa fa-edit"></i>
             </button>
           </span>
-          <span class="mx-1" data-toggle="tooltip" title="You need to login to follow a validator">
-            <button class="btn btn-dark text-white btn-sm disabled" id="follow-button">
-              <i class="far fa-bookmark"></i>
-            </button>
-          </span>
           {{ if (and (ne .Status "deposited") (ne .Status "deposited_invalid") (ne .Status "pending")) }}
             <span class="mx-1" data-toggle="tooltip" title="View daily statistics">
               <a class="btn btn-dark text-white btn-sm" href="/validator/{{ .Index }}/stats">

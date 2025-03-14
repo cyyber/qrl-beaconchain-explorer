@@ -68,6 +68,7 @@ func (nj *NodeJob) ParseData() error {
 		return CreateNodeJobUserError{Message: "data is empty"}
 	}
 	{
+		// TODO(rgeraldes24)
 		// d := []*capella.SignedDilithiumToExecutionChange{}
 		// err := json.Unmarshal(nj.RawData, &d)
 		// if err == nil {

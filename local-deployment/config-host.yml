@@ -5,27 +5,27 @@ chain:
 readerDatabase:
   name: db
   host: 127.0.0.1
-  port: "57781"
+  port: "49260"
   user: postgres
   password: "pass"
 writerDatabase:
   name: db
   host: 127.0.0.1
-  port: "57781"
+  port: "49260"
   user: postgres
   password: "pass"
 bigtable:
   project: explorer
   instance: explorer
   emulator: true
-  emulatorPort: 57782
-eth1GzondEndpoint: 'http://127.0.0.1:57889'
-redisCacheEndpoint: '127.0.0.1:57783'
+  emulatorPort: 49257
+eth1GzondEndpoint: 'http://127.0.0.1:49310'
+redisCacheEndpoint: '127.0.0.1:49259'
 redisSessionStoreEndpoint: '127.0.0.1:'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"
-  siteName: 'Open Source Zond Testnet Explorer' # Name of the site, displayed in the title tag
+  siteName: 'Zond Testnet Explorer' # Name of the site, displayed in the title tag
   siteSubtitle: "Showing a local testnet."
   server:
     host: '0.0.0.0' # Address to listen on
@@ -33,13 +33,13 @@ frontend:
   readerDatabase:
     name: db
     host: 127.0.0.1
-    port: "57781"
+    port: "49260"
     user: postgres
     password: "pass"
   writerDatabase:
     name: db
     host: 127.0.0.1
-    port: "57781"
+    port: "49260"
     user: postgres
     password: "pass"
   sessionSecret: "11111111111111111111111111111111"
@@ -54,6 +54,6 @@ indexer:
   # indexMissingEpochsOnStartup: true # Check for missing epochs and export them after startup
   node:
     host: 127.0.0.1
-    port: '57908'
+    port: '49326'
     type: qrysm
   eth1DepositContractFirstBlock: 0

@@ -625,11 +625,11 @@ func ReadConfig(cfg *types.Config, path string) error {
 	}
 
 	if cfg.Frontend.SiteTitle == "" {
-		cfg.Frontend.SiteTitle = "Open Source Zond Explorer"
+		cfg.Frontend.SiteTitle = "Zond Explorer"
 	}
 
 	if cfg.Frontend.Keywords == "" {
-		cfg.Frontend.Keywords = "open source zond block explorer, zond block explorer, beacon chain explorer, zond blockchain explorer"
+		cfg.Frontend.Keywords = "zond block explorer, zond block explorer, beacon chain explorer, zond blockchain explorer"
 	}
 
 	if cfg.Chain.Id != 0 {

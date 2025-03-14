@@ -46,7 +46,6 @@ type clientUpdateInfo struct {
 type ZondClients struct {
 	ClientReleaseVersion string
 	ClientReleaseDate    template.HTML
-	NetworkShare         string
 	IsUserSubscribed     bool
 }
 
@@ -66,8 +65,7 @@ var httpClient = &http.Client{Timeout: time.Second * 10}
 
 // Init starts a go routine to update the Zond Clients Info
 func Init() {
-	// TODO(rgeraldes24)
-	// go update()
+	go update()
 }
 
 func fetchClientData(repo string) *gitAPIResponse {
@@ -158,26 +156,6 @@ func prepareZondClientData(repo string, name string, curTime time.Time) (string,
 	return "Github", "searching" // If API limit is exceeded
 }
 
-func updateZondClientNetShare() {
-	/*
-		nShare := fetchClientNetworkShare()
-		total := 0
-		for _, item := range nShare {
-			total += item.Value
-		}
-
-		for _, item := range nShare {
-			share := fmt.Sprintf("%.1f%%", (float64(item.Value)/float64(total))*100.0)
-			switch item.Client {
-			case "gzond":
-				zondClients.Gzond.NetworkShare = share
-			default:
-				continue
-			}
-		}
-	*/
-}
-
 func updateZondClient() {
 	curTime := time.Now()
 	// sending 8 requests to github per call
@@ -192,7 +170,6 @@ func updateZondClient() {
 	bannerClientsMux.Lock()
 	defer bannerClientsMux.Unlock()
 	bannerClients = []clientUpdateInfo{}
-	updateZondClientNetShare()
 	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareZondClientData("/theQRL/go-zond", "Gzond", curTime)
 
 	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareZondClientData("/theQRL/qrysm", "Qrysm", curTime)

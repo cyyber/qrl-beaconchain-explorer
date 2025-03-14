@@ -99,9 +99,9 @@ To enable withdrawals for specific validators in your local network, we provide 
 The script needs some arguments: 
 ```
 cd ~/zond-beaconchain-explorer/local-deployment/scripts
-bash add_withdrawal_address.sh -a "ETH address" -m "mnemonic" -b "URL" -i validator_index
+bash add_withdrawal_address.sh -a "Zond address" -m "mnemonic" -b "URL" -i validator_index
 ```
-- `-a`: Followed by a `string` representing an ETH address prefixed with "0x" (for example an address that you generated with an online tool – for safety reasons, never use online generators for real applications).
+- `-a`: Followed by a `string` representing an Zond address prefixed with "0x" (for example an address that you generated with an online tool – for safety reasons, never use online generators for real applications).
 - `-m`: Followed by a `string` representing the validator mnemonic. The one used to create the initial set of validators can be found in the _network-params.json_ file, see `preregistered_validator_keys_mnemonic`.
 - `-b`: Followed by a `string` representing the URL to the consensus client. The URL is logged by Kurtosis when it starts. Once everything is running, search for `cl-1-lighthouse-geth` on your console and look for something like `http: 4000/tcp -> http://127.0.0.1:32779`. The end of the line shows the URL that the parameter `-b` needs.
 - `-i`: Followed by a `number` representing the index of the validator you want to activate withdrawals for. The amount of validators created can be also found in the _network-params.json_ file, see `num_validator_keys_per_node`. For 64 validators, the indexes range from 0 to 63.

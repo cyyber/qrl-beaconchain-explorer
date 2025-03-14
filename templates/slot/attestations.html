@@ -46,6 +46,7 @@
           <div class="col-md-10 text-monospace text-break">
             {{ range $sig := $attestation.Signatures }}
               {{ formatHash $sig }}
+              <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" $sig }}"></i>
             {{ end }}
           </div>
         </div>

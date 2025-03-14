@@ -394,7 +394,7 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// search can either be a valid ETH address or an ENS name mapping to one
+// search can either be a valid Zond address or an ENS name mapping to one
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
 	// search = strings.ToLower(strings.Replace(ReplaceEnsNameWithAddress(search), "0x", "", -1))
 	search = strings.ToLower(search)
