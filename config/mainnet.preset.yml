@@ -1,16 +1,6 @@
 # content of this file is concated files of https://github.com/ethereum/consensus-specs/tree/ef434e8/presets/mainnet
 
-# Mainnet preset - Altair
-
-# Updated penalty values
-# ---------------------------------------------------------------
-# 3 * 2**24 (= 50,331,648)
-INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648
-# 2**6 (= 64)
-MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64
-# 2
-PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2
-
+# Mainnet preset
 
 # Sync committee
 # ---------------------------------------------------------------
@@ -26,16 +16,6 @@ EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 256
 MIN_SYNC_COMMITTEE_PARTICIPANTS: 1
 # SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD (= 32 * 256)
 UPDATE_TIMEOUT: 8192
-# Mainnet preset - Bellatrix
-
-# Updated penalty values
-# ---------------------------------------------------------------
-# 2**24 (= 16,777,216)
-INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216
-# 2**5 (= 32)
-MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32
-# 3
-PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3
 
 # Execution
 # ---------------------------------------------------------------
@@ -173,12 +153,12 @@ BASE_REWARD_FACTOR: 64
 WHISTLEBLOWER_REWARD_QUOTIENT: 512
 # 2**3 (= 8)
 PROPOSER_REWARD_QUOTIENT: 8
-# 2**26 (= 67,108,864)
-INACTIVITY_PENALTY_QUOTIENT: 67108864
-# 2**7 (= 128) (lower safety margin at Phase 0 genesis)
-MIN_SLASHING_PENALTY_QUOTIENT: 128
-# 1 (lower safety margin at Phase 0 genesis)
-PROPORTIONAL_SLASHING_MULTIPLIER: 1
+# 2**24 (= 16,777,216)
+INACTIVITY_PENALTY_QUOTIENT: 16777216
+# 2**5 (= 32)
+MIN_SLASHING_PENALTY_QUOTIENT: 32
+# 3
+PROPORTIONAL_SLASHING_MULTIPLIER: 3
 
 
 # Max operations per block

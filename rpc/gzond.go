@@ -142,6 +142,22 @@ func (client *GzondClient) GetRPCClient() *gzond_rpc.Client {
 	return client.rpcClient
 }
 
+func (client *GzondClient) GetBlockNumberByHash(hash string) (uint64, error) {
+	// startTime := time.Now()
+	// defer func() {
+	// 	metrics.TaskDuration.WithLabelValues("rpc_el_get_block_number_by_hash").Observe(time.Since(startTime).Seconds())
+	// }()
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	block, err := client.zondClient.BlockByHash(ctx, common.HexToHash(hash))
+	if err != nil {
+		return 0, err
+	}
+	return block.NumberU64(), nil
+}
+
 func (client *GzondClient) GetBlockByHash(hash common.Hash) (*types.Eth1Block, *types.GetBlockTimings, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()

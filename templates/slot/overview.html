@@ -102,11 +102,11 @@
         {{ if ne .Slot 0 }}
           <div class="row border-bottom p-3 mx-0">
             <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="The Dilithium signature obtained by using the BeaconState, BeaconBlock and private key">Signature:</span></div>
-            <div class="col-md-10 text-monospace text-break">0x{{ printf "%x" .Signature }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .Signature }}"></i></div>
+            <div class="col-md-10 text-monospace text-break">{{ formatHash .Signature }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .Signature }}"></i></div>
           </div>
           <div class="row border-bottom p-3 mx-0">
             <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="RANDAO entropy contribution">RANDAO Reveal:</span></div>
-            <div class="col-md-10 text-monospace text-break">0x{{ printf "%x" .RandaoReveal }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .RandaoReveal }}"></i></div>
+            <div class="col-md-10 text-monospace text-break">{{ formatHash .RandaoReveal }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .RandaoReveal }}"></i></div>
           </div>
           <div class="row border-bottom p-3 mx-0">
             <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="32 byte long message included by the block proposer">Graffiti:</span></div>
@@ -139,7 +139,7 @@
           </div>
           {{ if .SyncAggregateSignatures }}
             <div class="row border-bottom p-3 mx-0">
-              <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Aggregate (Altair Light-Client support)">Sync Aggregate:</span></div>
+              <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Aggregate (Light-Client support)">Sync Aggregate:</span></div>
               <div class="col-md-10">
                 <div class="row p-1">
                   <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Aggregate Participation">Participation:</span></div>
@@ -155,7 +155,8 @@
                   <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Sync Committee Signatures">Signatures:</span></div>
                   <div class="col-md-10 text-monospace text-break">
                     {{ range $sig := .SyncAggregateSignatures }}
-                    <span>0x{{ printf "%x" $sig }}</span>
+                      {{ formatHash $sig }}
+                      <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" $sig }}"></i>
                     {{ end }}
                   </div>
                 </div>

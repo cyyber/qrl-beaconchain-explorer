@@ -1088,6 +1088,9 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 	}
 
 	for i, attestation := range parsedBlock.Message.Body.Attestations {
+		fmt.Println("blockFromResponse")
+		fmt.Println(attestation.AggregationBits)
+		fmt.Println(len(attestation.Signatures))
 		a := &types.Attestation{
 			AggregationBits: utils.MustParseHex(attestation.AggregationBits),
 			Attesters:       []uint64{},
@@ -1111,6 +1114,7 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 		}
 
 		aggregationBits := bitfield.Bitlist(a.AggregationBits)
+		fmt.Println(aggregationBits)
 		assignments, err := lc.GetEpochAssignments(a.Data.Slot / utils.Config.Chain.ClConfig.SlotsPerEpoch)
 		if err != nil {
 			return nil, fmt.Errorf("error receiving epoch assignment for epoch %v: %w", a.Data.Slot/utils.Config.Chain.ClConfig.SlotsPerEpoch, err)

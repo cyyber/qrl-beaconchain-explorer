@@ -45,8 +45,7 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 	var number uint64
 	var err error
 	if len(numberString) == 64 {
-		// TODO(rgeraldes24)
-		// number, err := rpc.CurrentGzondClient.GetBlockNumberByHash(numberString)
+		number, err = rpc.CurrentGzondClient.GetBlockNumberByHash(numberString)
 	} else {
 		number, err = strconv.ParseUint(numberString, 10, 64)
 	}
@@ -170,9 +169,6 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		})
 	}
 
-	// TODO(rgeraldes24): remove
-	blockReward := big.NewInt(0)
-
 	if limit > 0 {
 		if len(txs) > limit {
 			txs = txs[:limit]
@@ -183,22 +179,22 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 
 	burnedTxFees := new(big.Int).Mul(new(big.Int).SetBytes(block.BaseFee), big.NewInt(int64(block.GasUsed)))
 	burnedFees := burnedTxFees
-	blockReward.Add(blockReward, txFees).Sub(blockReward, burnedTxFees)
+	reward := big.NewInt(0)
+	reward.Add(reward, txFees).Sub(reward, burnedTxFees)
 	nextBlock := number + 1
 	if nextBlock > services.LatestEth1BlockNumber() {
 		nextBlock = 0
 	}
 	eth1BlockPageData := types.Eth1BlockPageData{
-		Number:        number,
-		PreviousBlock: number - 1,
-		NextBlock:     nextBlock,
-		TxCount:       uint64(len(block.Transactions)),
-		Hash:          fmt.Sprintf("%#x", block.Hash),
-		ParentHash:    fmt.Sprintf("%#x", block.ParentHash),
-		MinerAddress:  fmt.Sprintf("%#x", block.Coinbase),
-		//MinerFormatted: utils.FormatAddress(block.Coinbase, nil, names[string(block.Coinbase)], false, false, false),
+		Number:         number,
+		PreviousBlock:  number - 1,
+		NextBlock:      nextBlock,
+		TxCount:        uint64(len(block.Transactions)),
+		Hash:           fmt.Sprintf("%#x", block.Hash),
+		ParentHash:     fmt.Sprintf("%#x", block.ParentHash),
+		MinerAddress:   fmt.Sprintf("%#x", block.Coinbase),
 		MinerFormatted: utils.FormatAddressWithLimits(block.Coinbase, names[string(block.Coinbase)], false, "address", 42, 42, true),
-		Reward:         blockReward,
+		Reward:         reward,
 		TxFees:         txFees,
 		GasUsage:       utils.FormatBlockUsage(block.GasUsed, block.GasLimit),
 		GasLimit:       block.GasLimit,

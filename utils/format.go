@@ -674,7 +674,7 @@ func FormatHash(hash []byte, trunc_opt ...bool) template.HTML {
 */
 func FormatHashRaw(hash []byte, trunc_opt ...bool) string {
 	s := fmt.Sprintf("%#x", hash)
-	if len(s) == 42 { // if it's an address, we checksum it (0x + 40)
+	if len(s) == 42 { // if it's an address, we checksum it (Z + 40)
 		s = common.BytesToAddress(hash).Hex()
 	}
 	if len(s) >= 10 && (len(trunc_opt) < 1 || trunc_opt[0]) {
@@ -799,7 +799,11 @@ func formatBits(b []byte, length int) template.HTML {
 
 func formatBitvectorValidators(bits []byte, validators []uint64) template.HTML {
 	invalidLen := false
+	fmt.Println(len(bits) * 8)
+	fmt.Println(len(validators))
+	fmt.Println(validators)
 	if len(bits)*8 != len(validators) {
+		fmt.Println("AQUI")
 		invalidLen = true
 	}
 	var buf strings.Builder

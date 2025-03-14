@@ -180,7 +180,6 @@ func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.Da
 
 	tableData := make([][]interface{}, len(blocks))
 	for i, b := range blocks {
-		fmt.Println(b)
 		blockNumber := b.GetNumber()
 		ts := b.GetTime().AsTime().Unix()
 

@@ -297,10 +297,6 @@ func SyncPeriodOfEpoch(epoch uint64) uint64 {
 
 // FirstEpochOfSyncPeriod returns the first epoch of a given sync period.
 //
-// Please note that it will return the calculated first epoch of the sync period even if it is pre ALTAIR.
-//
-// Furthermore, for the very first actual sync period, it may return an epoch pre ALTAIR even though that is inccorect.
-//
 // For more information: https://eth2book.info/capella/annotated-spec/#sync-committee-updates
 func FirstEpochOfSyncPeriod(syncPeriod uint64) uint64 {
 	return syncPeriod * Config.Chain.ClConfig.EpochsPerSyncCommitteePeriod

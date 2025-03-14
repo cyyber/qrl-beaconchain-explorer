@@ -85,6 +85,7 @@ func ExportSyncCommitteeAtPeriod(rpcClient rpc.Client, p uint64, providedTx *sql
 		valueArgs[i*nArgs+2] = entry.CommitteeIndex
 		valueIds[i] = fmt.Sprintf("($%d,$%d,$%d)", i*nArgs+1, i*nArgs+2, i*nArgs+3)
 	}
+	fmt.Println(valueArgs...)
 	_, err = tx.Exec(
 		fmt.Sprintf(`
 			INSERT INTO sync_committees (period, validatorindex, committeeindex) 
@@ -120,6 +121,8 @@ func GetSyncCommitteAtPeriod(rpcClient rpc.Client, p uint64) ([]SyncCommittee, e
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("GetSyncCommitteAtPeriod")
+	fmt.Println(c.Validators)
 
 	result := make([]SyncCommittee, len(c.Validators))
 	for i, idxStr := range c.Validators {
@@ -127,11 +130,11 @@ func GetSyncCommitteAtPeriod(rpcClient rpc.Client, p uint64) ([]SyncCommittee, e
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, SyncCommittee{
+		result[i] = SyncCommittee{
 			Period:         p,
 			ValidatorIndex: idxU64,
 			CommitteeIndex: uint64(i),
-		})
+		}
 	}
 
 	return result, nil
