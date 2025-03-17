@@ -38,7 +38,7 @@ type ValidatorEpochIncome struct {
 	SyncCommitteePenalty               uint64 `protobuf:"varint,12,opt,name=sync_committee_penalty,json=syncCommitteePenalty,proto3" json:"sync_committee_penalty,omitempty"`
 	SlashingReward                     uint64 `protobuf:"varint,13,opt,name=slashing_reward,json=slashingReward,proto3" json:"slashing_reward,omitempty"`
 	SlashingPenalty                    uint64 `protobuf:"varint,14,opt,name=slashing_penalty,json=slashingPenalty,proto3" json:"slashing_penalty,omitempty"`
-	TxFeeRewardWei                     []byte `protobuf:"bytes,15,opt,name=tx_fee_reward_wei,json=txFeeRewardWei,proto3" json:"tx_fee_reward_wei,omitempty"`
+	TxFeeRewardPlanck                     []byte `protobuf:"bytes,15,opt,name=tx_fee_reward_planck,json=txFeeRewardPlanck,proto3" json:"tx_fee_reward_planck,omitempty"`
 	ProposalsMissed                    uint64 `protobuf:"varint,16,opt,name=proposals_missed,json=proposalsMissed,proto3" json:"proposals_missed,omitempty"`
 }
 
@@ -165,9 +165,9 @@ func (x *ValidatorEpochIncome) GetSlashingPenalty() uint64 {
 	return 0
 }
 
-func (x *ValidatorEpochIncome) GetTxFeeRewardWei() []byte {
+func (x *ValidatorEpochIncome) GetTxFeeRewardPlanck() []byte {
 	if x != nil {
-		return x.TxFeeRewardWei
+		return x.TxFeeRewardPlanck
 	}
 	return nil
 }

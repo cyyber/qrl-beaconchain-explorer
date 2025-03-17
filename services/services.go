@@ -389,7 +389,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 
 	latestFinalizedEpoch := LatestFinalizedEpoch()
 	var epochs []*types.IndexPageDataEpochs
-	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligibleether, globalparticipationrate, votedether FROM epochs ORDER BY epochs DESC LIMIT 15`)
+	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligibleznd, globalparticipationrate, votedznd FROM epochs ORDER BY epochs DESC LIMIT 15`)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving index epoch data: %v", err)
 	}
@@ -397,9 +397,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 	for _, epoch := range epochs {
 		epoch.Ts = utils.EpochToTime(epoch.Epoch)
 		epoch.FinalizedFormatted = utils.FormatYesNo(epoch.Finalized)
-		epoch.VotedEtherFormatted = utils.FormatBalance(epoch.VotedEther, currency)
-		epoch.EligibleEtherFormatted = utils.FormatEligibleBalance(epoch.EligibleEther, currency)
-		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedEther, epoch.GlobalParticipationRate, currency)
+		epoch.VotedZNDFormatted = utils.FormatBalance(epoch.VotedZND, currency)
+		epoch.EligibleZNDFormatted = utils.FormatEligibleBalance(epoch.EligibleZND, currency)
+		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZND, epoch.GlobalParticipationRate, currency)
 		epochsMap[epoch.Epoch] = true
 	}
 
@@ -459,12 +459,12 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				Ts:                               utils.EpochToTime(block.Epoch),
 				Finalized:                        false,
 				FinalizedFormatted:               utils.FormatYesNo(false),
-				EligibleEther:                    0,
-				EligibleEtherFormatted:           utils.FormatEligibleBalance(0, currency),
+				EligibleZND:                      0,
+				EligibleZNDFormatted:             utils.FormatEligibleBalance(0, currency),
 				GlobalParticipationRate:          0,
 				GlobalParticipationRateFormatted: utils.FormatGlobalParticipationRate(0, 1, ""),
-				VotedEther:                       0,
-				VotedEtherFormatted:              "",
+				VotedZND:                         0,
+				VotedZNDFormatted:                "",
 			})
 			epochsMap[block.Epoch] = true
 		}
@@ -502,9 +502,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		epochLowerBound = epoch - 1600
 	}
 	var epochHistory []*types.IndexPageEpochHistory
-	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligibleether, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
+	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligibleznd, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving staked ether history: %v", err)
+		return nil, fmt.Errorf("error retrieving staked ZND history: %v", err)
 	}
 
 	if len(epochHistory) > 0 {
@@ -517,14 +517,14 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			}
 		}
 
-		data.StakedEther = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleEther, currency))
+		data.StakedZND = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZND, currency))
 		data.ActiveValidators = epochHistory[len(epochHistory)-1].ValidatorsCount
 	}
 
-	data.StakedEtherChartData = make([][]float64, len(epochHistory))
+	data.StakedZNDChartData = make([][]float64, len(epochHistory))
 	data.ActiveValidatorsChartData = make([][]float64, len(epochHistory))
 	for i, history := range epochHistory {
-		data.StakedEtherChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleEther).InexactFloat64()}
+		data.StakedZNDChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleZND).InexactFloat64()}
 		data.ActiveValidatorsChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), float64(history.ValidatorsCount)}
 	}
 
@@ -684,7 +684,9 @@ func LatestState() *types.LatestState {
 	data.LastProposedSlot = LatestProposedSlot()
 	data.FinalityDelay = FinalizationDelay()
 	data.IsSyncing = IsSyncing()
+	// TODO(rgeraldes24)
 	// data.Rates = GetRates(utils.Config.Frontend.MainCurrency)
+	data.Rates = &types.Rates{SelectedCurrency: "ZND"}
 
 	return data
 }
@@ -836,7 +838,7 @@ func getGasNowData() (*types.GasNowPageData, error) {
 	gpoData.Code = 200
 	gpoData.Data.Timestamp = time.Now().UnixNano() / 1e6
 
-	client, err := gzond_rpc.Dial(utils.Config.Eth1GzondEndpoint)
+	client, err := gzond_rpc.Dial(utils.Config.ELNodeEndpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -934,14 +936,14 @@ func getGasNowData() (*types.GasNowPageData, error) {
 		logrus.WithError(err).Error("error updating gas now history")
 	}
 
-	// TODO(rgeraldes24)
+	// TODO(rgeraldes24): params.Ether
 	// gpoData.Data.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
 	// gpoData.Data.Currency = "USD"
 
-	// gpoData.RapidUSD = gpoData.Rapid * 21000 * params.GWei / params.Ether * usd
-	// gpoData.FastUSD = gpoData.Fast * 21000 * params.GWei / params.Ether * usd
-	// gpoData.StandardUSD = gpoData.Standard * 21000 * params.GWei / params.Ether * usd
-	// gpoData.SlowUSD = gpoData.Slow * 21000 * params.GWei / params.Ether * usd
+	// gpoData.RapidUSD = gpoData.Rapid * 21000 * params.GPlanck / params.Ether * usd
+	// gpoData.FastUSD = gpoData.Fast * 21000 * params.GPlanck / params.Ether * usd
+	// gpoData.StandardUSD = gpoData.Standard * 21000 * params.GPlanck / params.Ether * usd
+	// gpoData.SlowUSD = gpoData.Slow * 21000 * params.GPlanck / params.Ether * usd
 	return gpoData, nil
 }
 
@@ -1011,7 +1013,7 @@ func mempoolUpdater(wg *sync.WaitGroup) {
 		var err error
 
 		if client == nil {
-			client, err = gzond_rpc.Dial(utils.Config.Eth1GzondEndpoint)
+			client, err = gzond_rpc.Dial(utils.Config.ELNodeEndpoint)
 			if err != nil {
 				utils.LogError(err, "can't connect to gzond node", 0)
 				time.Sleep(time.Second * 30)
@@ -1177,10 +1179,10 @@ func getBurnPageData() (*types.BurnPageData, error) {
 		total.SyncCommitteePenalty += details.SyncCommitteePenalty
 		total.SlashingReward += details.SlashingReward
 		total.SlashingPenalty += details.SlashingPenalty
-		total.TxFeeRewardWei = utils.AddBigInts(total.TxFeeRewardWei, details.TxFeeRewardWei)
+		total.TxFeeRewardPlanck = utils.AddBigInts(total.TxFeeRewardPlanck, details.TxFeeRewardPlanck)
 	}
 
-	rewards := decimal.NewFromBigInt(new(big.Int).SetBytes(total.TxFeeRewardWei), 0)
+	rewards := decimal.NewFromBigInt(new(big.Int).SetBytes(total.TxFeeRewardPlanck), 0)
 
 	rewards = rewards.Add(decimal.NewFromBigInt(new(big.Int).SetUint64(total.AttestationHeadReward), 0))
 	rewards = rewards.Add(decimal.NewFromBigInt(new(big.Int).SetUint64(total.AttestationSourceReward), 0))

@@ -42,13 +42,13 @@ func FormatMessageToHtml(message string) template.HTML {
 // FormatSyncParticipationStatus will return a user-friendly format for an sync-participation-status number
 func FormatSyncParticipationStatus(status, blockSlot uint64) template.HTML {
 	if status == 0 {
-		return `<span class="badge badge-pill bg-danger text-white" style="font-size: 12px; font-weight: 500;">Missed</span>`
+		return `<span class="badge badge-pill bg-danger text-white" style="font-size: 12px; font-planckght: 500;">Missed</span>`
 	} else if status == 1 {
-		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">Participated</span>`
+		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">Participated</span>`
 	} else if status == 2 {
-		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Scheduled</span>`
+		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Scheduled</span>`
 	} else if status == 3 {
-		return template.HTML(fmt.Sprintf(`<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;" data-toggle="tooltip" data-html="true" data-placement="top" title='Slot %v was missed, it does not contain a block'>Missed</span>`, FormatAddCommas(blockSlot)))
+		return template.HTML(fmt.Sprintf(`<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;" data-toggle="tooltip" data-html="true" data-placement="top" title='Slot %v was missed, it does not contain a block'>Missed</span>`, FormatAddCommas(blockSlot)))
 	} else {
 		return "Unknown"
 	}
@@ -62,13 +62,13 @@ func FormatSyncParticipations(participants uint64) template.HTML {
 // FormatAttestationStatus will return a user-friendly attestation for an attestation status number
 func FormatAttestationStatus(status uint64) template.HTML {
 	if status == 0 {
-		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Scheduled</span>`
+		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Scheduled</span>`
 	} else if status == 1 {
-		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">Attested</span>`
+		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">Attested</span>`
 	} else if status == 2 {
-		return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">Missed</span>`
+		return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">Missed</span>`
 	} else if status == 3 {
-		return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">Missed (Orphaned)</span>`
+		return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">Missed (Orphaned)</span>`
 	} else {
 		return "Unknown"
 	}
@@ -77,17 +77,17 @@ func FormatAttestationStatus(status uint64) template.HTML {
 // FormatAttestationStatusShort will return a user-friendly attestation for an attestation status number
 func FormatAttestationStatusShort(status uint64) template.HTML {
 	if status == 0 {
-		return `<span title="Scheduled Attestation" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Sche.</span>`
+		return `<span title="Scheduled Attestation" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Sche.</span>`
 	} else if status == 1 {
-		return `<span title="Attested" data-toggle="tooltip" class="mx-1 badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">Att.</span>`
+		return `<span title="Attested" data-toggle="tooltip" class="mx-1 badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">Att.</span>`
 	} else if status == 2 {
-		return `<span title="Missed Attestation" data-toggle="tooltip" class="mx-1 badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">Miss.</span>`
+		return `<span title="Missed Attestation" data-toggle="tooltip" class="mx-1 badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">Miss.</span>`
 	} else if status == 3 {
-		return `<span title="Missed Attestation (Orphaned)" data-toggle="tooltip" class="mx-1 badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">Orph.</span>`
+		return `<span title="Missed Attestation (Orphaned)" data-toggle="tooltip" class="mx-1 badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">Orph.</span>`
 	} else if status == 4 {
-		return `<span title="Inactivity Leak" data-toggle="tooltip" class="mx-1 badge badge-pill bg-danger text-white" style="font-size: 12px; font-weight: 500;">Leak</span>`
+		return `<span title="Inactivity Leak" data-toggle="tooltip" class="mx-1 badge badge-pill bg-danger text-white" style="font-size: 12px; font-planckght: 500;">Leak</span>`
 	} else if status == 5 {
-		return `<span title="Inactive" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Inac.</span>`
+		return `<span title="Inactive" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Inac.</span>`
 	} else {
 		return "Unknown"
 	}
@@ -127,7 +127,7 @@ func FormatBalanceSql(balanceInt sql.NullInt64, currency string) template.HTML {
 	return template.HTML(balance + " " + currency)
 }
 
-func FormatBalanceGwei(balance *int64, currency string) template.HTML {
+func FormatBalanceGplanck(balance *int64, currency string) template.HTML {
 	if currency == Config.Frontend.ClCurrency {
 		if balance == nil {
 			return template.HTML("<span> 0.00000 " + currency + "</span>")
@@ -137,9 +137,9 @@ func FormatBalanceGwei(balance *int64, currency string) template.HTML {
 
 		balanceF := float64(*balance)
 		if balanceF < 0 {
-			return template.HTML(fmt.Sprintf("<span class=\"text-danger\">%.0f GWei</span>", balanceF))
+			return template.HTML(fmt.Sprintf("<span class=\"text-danger\">%.0f GPlanck</span>", balanceF))
 		}
-		return template.HTML(fmt.Sprintf("<span class=\"text-success\">+%.0f GWei</span>", balanceF))
+		return template.HTML(fmt.Sprintf("<span class=\"text-success\">+%.0f GPlanck</span>", balanceF))
 	}
 	return FormatBalanceChange(balance, currency)
 }
@@ -180,7 +180,7 @@ func ElToCurrency(valIf interface{}, currency string) decimal.Decimal {
 	return res.Mul(decimal.NewFromFloat(price.GetPrice(Config.Frontend.ElCurrency, currency)))
 }
 
-func ClToCurrencyGwei(valIf interface{}, currency string) decimal.Decimal {
+func ClToCurrencyGplanck(valIf interface{}, currency string) decimal.Decimal {
 	val := IfToDec(valIf)
 	if currency == Config.Frontend.ClCurrency {
 		return val
@@ -298,8 +298,8 @@ func IfToDec(valIf interface{}) decimal.Decimal {
 }
 
 func FormatBalanceChangeFormatted(balance *int64, currencyName string, details *itypes.ValidatorEpochIncome) template.HTML {
-	currencySymbol := "GWei"
-	currencyFunc := ClToCurrencyGwei
+	currencySymbol := "GPlanck"
+	currencyFunc := ClToCurrencyGplanck
 	if currencyName != Config.Frontend.MainCurrency {
 		currencySymbol = currencyName
 		currencyFunc = ClToCurrency
@@ -365,9 +365,9 @@ func FormatBalanceChange(balance *int64, currency string) template.HTML {
 			return template.HTML("<span> 0 " + currency + "</span>")
 		}
 		if *balance < 0 {
-			return template.HTML(fmt.Sprintf("<span class=\"text-danger float-right\">%s GWei</span>", FormatAddCommasFormatted(ClToCurrencyGwei(*balance, currency).InexactFloat64(), 0)))
+			return template.HTML(fmt.Sprintf("<span class=\"text-danger float-right\">%s GPlanck</span>", FormatAddCommasFormatted(ClToCurrencyGplanck(*balance, currency).InexactFloat64(), 0)))
 		}
-		return template.HTML(fmt.Sprintf("<span class=\"text-success float-right\">+%s GWei</span>", FormatAddCommasFormatted(ClToCurrencyGwei(*balance, currency).InexactFloat64(), 0)))
+		return template.HTML(fmt.Sprintf("<span class=\"text-success float-right\">+%s GPlanck</span>", FormatAddCommasFormatted(ClToCurrencyGplanck(*balance, currency).InexactFloat64(), 0)))
 	}
 	if balance == nil {
 		return template.HTML("<span> 0 " + currency + "</span>")
@@ -489,17 +489,17 @@ func FormatSlotToTimestamp(blockSlot uint64) template.HTML {
 // FormatBlockStatus will return an html status for a block.
 func FormatBlockStatus(status, slot uint64) template.HTML {
 	if slot == 0 {
-		return `<span class="badge badge-pill text-dark" style="background: rgba(179, 159, 70, 0.8); font-size: 12px; font-weight: 500;">Genesis</span>`
+		return `<span class="badge badge-pill text-dark" style="background: rgba(179, 159, 70, 0.8); font-size: 12px; font-planckght: 500;">Genesis</span>`
 	} else if status == 0 && SlotToTime(slot).Before(time.Now().Add(time.Minute*-1)) {
-		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Missed</span>`
+		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Missed</span>`
 	} else if status == 0 {
-		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Scheduled</span>`
+		return `<span class="badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Scheduled</span>`
 	} else if status == 1 {
-		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">Proposed</span>`
+		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">Proposed</span>`
 	} else if status == 2 {
-		return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">Missed</span>`
+		return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">Missed</span>`
 	} else if status == 3 {
-		return `<span class="badge badge-pill bg-secondary text-white" style="font-size: 12px; font-weight: 500;">Missed (Orphaned)</span>`
+		return `<span class="badge badge-pill bg-secondary text-white" style="font-size: 12px; font-planckght: 500;">Missed (Orphaned)</span>`
 	} else {
 		return "Unknown"
 	}
@@ -509,15 +509,15 @@ func FormatBlockStatus(status, slot uint64) template.HTML {
 func FormatBlockStatusShort(status, slot uint64) template.HTML {
 	// genesis <span class="badge text-dark" style="background: rgba(179, 159, 70, 0.8) none repeat scroll 0% 0%;">Genesis</span>
 	if status == 0 && SlotToTime(slot).Before(time.Now().Add(time.Minute*-1)) {
-		return `<span title="Scheduled Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Miss.</span>`
+		return `<span title="Scheduled Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Miss.</span>`
 	} else if status == 0 {
-		return `<span title="Scheduled Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-weight: 500;">Sche.</span>`
+		return `<span title="Scheduled Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-light text-dark" style="font-size: 12px; font-planckght: 500;">Sche.</span>`
 	} else if status == 1 {
-		return `<span title="Proposed Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">Prop.</span>`
+		return `<span title="Proposed Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">Prop.</span>`
 	} else if status == 2 {
-		return `<span title="Missed Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">Miss.</span>`
+		return `<span title="Missed Block" data-toggle="tooltip" class="mx-1 badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">Miss.</span>`
 	} else if status == 3 {
-		return `<span title="Missed Block (Orphaned)" data-toggle="tooltip" class="mx-1 badge badge-pill bg-secondary text-white" style="font-size: 12px; font-weight: 500;">Orph.</span>`
+		return `<span title="Missed Block (Orphaned)" data-toggle="tooltip" class="mx-1 badge badge-pill bg-secondary text-white" style="font-size: 12px; font-planckght: 500;">Orph.</span>`
 	} else {
 		return "Unknown"
 	}
@@ -525,7 +525,7 @@ func FormatBlockStatusShort(status, slot uint64) template.HTML {
 
 // FormatBlockStatusShort will return an html status for a block.
 func FormatWithdrawalShort(slot uint64, amount uint64) template.HTML {
-	return template.HTML(fmt.Sprintf("<span title=\"Withdrawal processed in epoch %v during slot %v for %v\" data-toggle=\"tooltip\" class=\"mx-1 badge badge-pill bg-success text-white\" style=\"font-size: 12px; font-weight: 500;\"><i class=\"fas fa-money-bill\"></i></span>", EpochOfSlot(slot), slot, FormatCurrentBalance(amount, Config.Frontend.ClCurrency)))
+	return template.HTML(fmt.Sprintf("<span title=\"Withdrawal processed in epoch %v during slot %v for %v\" data-toggle=\"tooltip\" class=\"mx-1 badge badge-pill bg-success text-white\" style=\"font-size: 12px; font-planckght: 500;\"><i class=\"fas fa-money-bill\"></i></span>", EpochOfSlot(slot), slot, FormatCurrentBalance(amount, Config.Frontend.ClCurrency)))
 }
 
 func FormatTransactionType(txnType uint8) string {
@@ -537,7 +537,7 @@ func FormatTransactionType(txnType uint8) string {
 	}
 }
 
-// FormatCurrentBalance will return the current balance formated as string with 9 digits after the comma (1 gwei = 1e9 eth)
+// FormatCurrentBalance will return the current balance formated as string with 9 digits after the comma (1 gplanck = 1e9 eth)
 func FormatCurrentBalance(balanceInt uint64, currency string) template.HTML {
 	return template.HTML(fmt.Sprintf(`%s %v`, exchangeAndTrim(Config.Frontend.ClCurrency, currency, float64(balanceInt), false), currency))
 }
@@ -619,7 +619,7 @@ func FormatCount(count uint64, finalized bool, shortenCalcHint bool) template.HT
 	return template.HTML(CalculatingHint)
 }
 
-func FormatEtherValue(currency string, ethPrice decimal.Decimal, currentPrice template.HTML) template.HTML {
+func FormatZNDValue(currency string, ethPrice decimal.Decimal, currentPrice template.HTML) template.HTML {
 	p := message.NewPrinter(language.English)
 	currencySymbol := price.GetCurrencySymbol(currency)
 	return template.HTML(p.Sprintf(`<span>%[1]s %[2]s</span> <span class="text-muted">@ %[1]s%[3]s/%[4]s</span>`, currencySymbol, ethPrice.StringFixed(2), currentPrice, Config.Frontend.ElCurrency))
@@ -799,9 +799,6 @@ func formatBits(b []byte, length int) template.HTML {
 
 func formatBitvectorValidators(bits []byte, validators []uint64) template.HTML {
 	invalidLen := false
-	fmt.Println(len(bits) * 8)
-	fmt.Println(len(validators))
-	fmt.Println(validators)
 	if len(bits)*8 != len(validators) {
 		invalidLen = true
 	}
@@ -879,7 +876,7 @@ func FormatIncomeClElInt64(income types.ClElInt64, currency string) template.HTM
 		</span>`,
 			className,
 			FormatClCurrency(income.Cl, currency, 5, true, true, false, false),
-			FormatClCurrency(income.El, currency, 5, true, true, false, false), // we use FormatClCurrency here because all values in income-struct are in Gwei
+			FormatClCurrency(income.El, currency, 5, true, true, false, false), // we use FormatClCurrency here because all values in income-struct are in Gplanck
 			incomeTrimmed,
 			currency))
 	} else {
@@ -1049,7 +1046,7 @@ func FormatValidatorTag(tag string) template.HTML {
 	var result string
 	switch tag {
 	case "ssv":
-		result = `<span style="background-color: rgba(238, 113, 18, .2); font-size: 18px;" class="badge-pill mr-1 font-weight-normal" data-toggle="tooltip" title="Secret Shared Validator"><a style="color: var(--orange);" href="https://github.com/bloxapp/ssv/">SSV</a></span>`
+		result = `<span style="background-color: rgba(238, 113, 18, .2); font-size: 18px;" class="badge-pill mr-1 font-planckght-normal" data-toggle="tooltip" title="Secret Shared Validator"><a style="color: var(--orange);" href="https://github.com/bloxapp/ssv/">SSV</a></span>`
 	default:
 		result = formatSpecialTag(tag)
 	}
@@ -1140,9 +1137,9 @@ func FormatSlashedValidatorsWithName(validators []uint64, nameMap map[uint64]str
 // FormatYesNo will return yes or no formated as html
 func FormatYesNo(yes bool) template.HTML {
 	if yes {
-		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">Yes</span>`
+		return `<span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">Yes</span>`
 	}
-	return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">No</span>`
+	return `<span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">No</span>`
 }
 
 func FormatValidatorName(name string) template.HTML {
@@ -1271,8 +1268,8 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
 	e := new(big.Int).SetBytes(balance.Metadata.Decimals)
 	d := new(big.Int).Exp(big.NewInt(10), e, nil)
-	balWei := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0)
-	balEth := balWei.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
+	balPlanck := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0)
+	balZND := balPlanck.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
 
 	p := message.NewPrinter(language.English)
 	return template.HTML(p.Sprintf(`
@@ -1281,7 +1278,7 @@ func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
 				<use xlink:href="#ethereum-diamond-logo"/>
 			</svg> 
 			<span class="token-holdings">%v %v</span>
-		</div>`, balEth, Config.Frontend.ElCurrency))
+		</div>`, balZND, Config.Frontend.ElCurrency))
 }
 
 func FormatTokenValue(balance *types.Eth1AddressBalance, fullAmountTooltip bool) template.HTML {

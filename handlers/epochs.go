@@ -91,9 +91,9 @@ func EpochsData(w http.ResponseWriter, r *http.Request) {
 				validatorscount, 
 				averagevalidatorbalance, 
 				(epoch <= $3) AS finalized,
-				eligibleether,
+				eligibleznd,
 				globalparticipationrate,
-				votedether
+				votedznd
 			FROM epochs 
 			WHERE epoch >= $1 AND epoch <= $2
 			ORDER BY epoch DESC`, endEpoch, startEpoch, latestFinalizedEpoch)
@@ -109,9 +109,9 @@ func EpochsData(w http.ResponseWriter, r *http.Request) {
 				validatorscount, 
 				averagevalidatorbalance, 
 				(epoch <= $2) AS finalized,
-				eligibleether,
+				eligibleznd,
 				globalparticipationrate,
-				votedether
+				votedznd
 			FROM epochs 
 			WHERE epoch = $1
 			ORDER BY epoch DESC`, search, latestFinalizedEpoch)
@@ -124,7 +124,7 @@ func EpochsData(w http.ResponseWriter, r *http.Request) {
 
 	tableData := make([][]interface{}, len(epochs))
 	for i, b := range epochs {
-		// logger.Info("debug", b.Epoch, b.EligibleEther, b.VotedEther, b.GlobalParticipationRate, currency, utils.FormatBalance(b.EligibleEther, currency))
+		// logger.Info("debug", b.Epoch, b.EligibleZND, b.VotedZND, b.GlobalParticipationRate, currency, utils.FormatBalance(b.EligibleZND, currency))
 		tableData[i] = []interface{}{
 			utils.FormatEpoch(b.Epoch),
 			utils.FormatTimestamp(utils.EpochToTime(b.Epoch).Unix()),
@@ -132,8 +132,8 @@ func EpochsData(w http.ResponseWriter, r *http.Request) {
 			fmt.Sprintf("%v / %v", utils.FormatCount(b.DepositsCount, b.Finalized, true), utils.FormatCount(b.WithdrawalCount, b.Finalized, true)),
 			fmt.Sprintf("%v / %v", utils.FormatCount(b.ProposerSlashingsCount, b.Finalized, true), utils.FormatCount(b.AttesterSlashingsCount, b.Finalized, true)),
 			utils.FormatYesNo(b.Finalized),
-			utils.FormatBalance(b.EligibleEther, currency),
-			utils.FormatGlobalParticipationRate(b.VotedEther, b.GlobalParticipationRate, currency),
+			utils.FormatBalance(b.EligibleZND, currency),
+			utils.FormatGlobalParticipationRate(b.VotedZND, b.GlobalParticipationRate, currency),
 		}
 	}
 

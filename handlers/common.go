@@ -137,7 +137,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		totalDeposits = utils.Config.Chain.ClConfig.MaxEffectiveBalance * uint64(len(validators))
 	}
 
-	clApr7d := income.ClIncomeWei7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
+	clApr7d := income.ClIncomePlanck7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
 	if clApr7d < float64(-1) {
 		clApr7d = float64(-1)
 	}
@@ -145,7 +145,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		clApr7d = float64(0)
 	}
 
-	elApr7d := income.ElIncomeWei7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
+	elApr7d := income.ElIncomePlanck7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
 	if elApr7d < float64(-1) {
 		elApr7d = float64(-1)
 	}
@@ -153,7 +153,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		elApr7d = float64(0)
 	}
 
-	clApr31d := income.ClIncomeWei31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
+	clApr31d := income.ClIncomePlanck31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
 	if clApr31d < float64(-1) {
 		clApr31d = float64(-1)
 	}
@@ -161,7 +161,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		clApr31d = float64(0)
 	}
 
-	elApr31d := income.ElIncomeWei31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
+	elApr31d := income.ElIncomePlanck31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
 	if elApr31d < float64(-1) {
 		elApr31d = float64(-1)
 	}
@@ -169,7 +169,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		elApr31d = float64(0)
 	}
 
-	clApr365d := income.ClIncomeWei365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
+	clApr365d := income.ClIncomePlanck365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
 	if clApr365d < float64(-1) {
 		clApr365d = float64(-1)
 	}
@@ -177,7 +177,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		clApr365d = float64(0)
 	}
 
-	elApr365d := income.ElIncomeWei365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
+	elApr365d := income.ElIncomePlanck365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
 	if elApr365d < float64(-1) {
 		elApr365d = float64(-1)
 	}
@@ -265,24 +265,24 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 	earnings := &types.ValidatorEarnings{
 		IncomeToday: incomeToday,
 		Income1d: types.ClEl{
-			El:    income.ElIncomeWei1d,
-			Cl:    income.ClIncomeWei1d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWei1d.Add(income.ClIncomeWei1d.Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanck1d,
+			Cl:    income.ClIncomePlanck1d.Mul(decimal.NewFromFloat(clElPrice)),
+			Total: income.ElIncomePlanck1d.Add(income.ClIncomePlanck1d.Mul(decimal.NewFromFloat(clElPrice))),
 		},
 		Income7d: types.ClEl{
-			El:    income.ElIncomeWei7d,
-			Cl:    income.ClIncomeWei7d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWei7d.Add(income.ClIncomeWei7d.Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanck7d,
+			Cl:    income.ClIncomePlanck7d.Mul(decimal.NewFromFloat(clElPrice)),
+			Total: income.ElIncomePlanck7d.Add(income.ClIncomePlanck7d.Mul(decimal.NewFromFloat(clElPrice))),
 		},
 		Income31d: types.ClEl{
-			El:    income.ElIncomeWei31d,
-			Cl:    income.ClIncomeWei31d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWei31d.Add(income.ClIncomeWei31d.Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanck31d,
+			Cl:    income.ClIncomePlanck31d.Mul(decimal.NewFromFloat(clElPrice)),
+			Total: income.ElIncomePlanck31d.Add(income.ClIncomePlanck31d.Mul(decimal.NewFromFloat(clElPrice))),
 		},
 		IncomeTotal: types.ClEl{
-			El:    income.ElIncomeWeiTotal.Add(incomeToday.El),
-			Cl:    income.ClIncomeWeiTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWeiTotal.Add(incomeToday.El).Add(income.ClIncomeWeiTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanckTotal.Add(incomeToday.El),
+			Cl:    income.ClIncomePlanckTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice)),
+			Total: income.ElIncomePlanckTotal.Add(incomeToday.El).Add(income.ClIncomePlanckTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice))),
 		},
 		Apr7d: types.ClElFloat64{
 			El:    elApr7d,
@@ -695,7 +695,7 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 		day := int64(consData.Epoch / epochsPerDay)
 
 		var totalReward float64
-		totalReward = utils.WeiToEther(utils.Eth1TotalReward(block)).InexactFloat64()
+		totalReward = utils.PlanckToZND(utils.Eth1TotalReward(block)).InexactFloat64()
 
 		// Add the reward to the existing reward for the day or set it if not previously set
 		dayRewardMap[day] += totalReward

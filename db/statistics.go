@@ -202,11 +202,11 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		data.OrphanedSyncTotal = previousDayData.OrphanedSyncTotal + data.OrphanedSync
 
 		// calculate cl reward & update totals
-		data.ClRewardsGWei = data.EndBalance - previousDayData.EndBalance + data.WithdrawalsAmount - data.DepositsAmount
-		data.ClRewardsGWeiTotal = previousDayData.ClRewardsGWeiTotal + data.ClRewardsGWei
+		data.ClRewardsGPlanck = data.EndBalance - previousDayData.EndBalance + data.WithdrawalsAmount - data.DepositsAmount
+		data.ClRewardsGPlanckTotal = previousDayData.ClRewardsGPlanckTotal + data.ClRewardsGPlanck
 
 		// update el reward total
-		data.ElRewardsWeiTotal = previousDayData.ElRewardsWeiTotal.Add(data.ElRewardsWei)
+		data.ElRewardsPlanckTotal = previousDayData.ElRewardsPlanckTotal.Add(data.ElRewardsPlanck)
 
 		// update withdrawal total
 		data.WithdrawalsTotal = previousDayData.WithdrawalsTotal + data.Withdrawals
@@ -217,32 +217,32 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		data.DepositsAmountTotal = previousDayData.DepositsAmountTotal + data.DepositsAmount
 
 		if statisticsData1d != nil && len(statisticsData1d) > index {
-			data.ClPerformance1d = data.ClRewardsGWeiTotal - statisticsData1d[index].ClRewardsGWeiTotal
-			data.ElPerformance1d = data.ElRewardsWeiTotal.Sub(statisticsData1d[index].ElRewardsWeiTotal)
+			data.ClPerformance1d = data.ClRewardsGPlanckTotal - statisticsData1d[index].ClRewardsGPlanckTotal
+			data.ElPerformance1d = data.ElRewardsPlanckTotal.Sub(statisticsData1d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance1d = data.ClRewardsGWeiTotal
-			data.ElPerformance1d = data.ElRewardsWeiTotal
+			data.ClPerformance1d = data.ClRewardsGPlanckTotal
+			data.ElPerformance1d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData7d != nil && len(statisticsData7d) > index {
-			data.ClPerformance7d = data.ClRewardsGWeiTotal - statisticsData7d[index].ClRewardsGWeiTotal
-			data.ElPerformance7d = data.ElRewardsWeiTotal.Sub(statisticsData7d[index].ElRewardsWeiTotal)
+			data.ClPerformance7d = data.ClRewardsGPlanckTotal - statisticsData7d[index].ClRewardsGPlanckTotal
+			data.ElPerformance7d = data.ElRewardsPlanckTotal.Sub(statisticsData7d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance7d = data.ClRewardsGWeiTotal
-			data.ElPerformance7d = data.ElRewardsWeiTotal
+			data.ClPerformance7d = data.ClRewardsGPlanckTotal
+			data.ElPerformance7d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData31d != nil && len(statisticsData31d) > index {
-			data.ClPerformance31d = data.ClRewardsGWeiTotal - statisticsData31d[index].ClRewardsGWeiTotal
-			data.ElPerformance31d = data.ElRewardsWeiTotal.Sub(statisticsData31d[index].ElRewardsWeiTotal)
+			data.ClPerformance31d = data.ClRewardsGPlanckTotal - statisticsData31d[index].ClRewardsGPlanckTotal
+			data.ElPerformance31d = data.ElRewardsPlanckTotal.Sub(statisticsData31d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance31d = data.ClRewardsGWeiTotal
-			data.ElPerformance31d = data.ElRewardsWeiTotal
+			data.ClPerformance31d = data.ClRewardsGPlanckTotal
+			data.ElPerformance31d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData365d != nil && len(statisticsData365d) > index {
-			data.ClPerformance365d = data.ClRewardsGWeiTotal - statisticsData365d[index].ClRewardsGWeiTotal
-			data.ElPerformance365d = data.ElRewardsWeiTotal.Sub(statisticsData365d[index].ElRewardsWeiTotal)
+			data.ClPerformance365d = data.ClRewardsGPlanckTotal - statisticsData365d[index].ClRewardsGPlanckTotal
+			data.ElPerformance365d = data.ElRewardsPlanckTotal.Sub(statisticsData365d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance365d = data.ClRewardsGWeiTotal
-			data.ElPerformance365d = data.ElRewardsWeiTotal
+			data.ClPerformance365d = data.ClRewardsGPlanckTotal
+			data.ElPerformance365d = data.ElRewardsPlanckTotal
 		}
 	}
 
@@ -303,10 +303,10 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 			"withdrawals_total",
 			"withdrawals_amount",
 			"withdrawals_amount_total",
-			"cl_rewards_gwei",
-			"cl_rewards_gwei_total",
-			"el_rewards_wei",
-			"el_rewards_wei_total",
+			"cl_rewards_gplanck",
+			"cl_rewards_gplanck_total",
+			"el_rewards_planck",
+			"el_rewards_planck_total",
 		}, pgx.CopyFromSlice(len(validatorData), func(i int) ([]interface{}, error) {
 			return []interface{}{
 				validatorData[i].ValidatorIndex,
@@ -341,10 +341,10 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 				validatorData[i].WithdrawalsTotal,
 				validatorData[i].WithdrawalsAmount,
 				validatorData[i].WithdrawalsAmountTotal,
-				validatorData[i].ClRewardsGWei,
-				validatorData[i].ClRewardsGWeiTotal,
-				validatorData[i].ElRewardsWei,
-				validatorData[i].ElRewardsWeiTotal,
+				validatorData[i].ClRewardsGPlanck,
+				validatorData[i].ClRewardsGPlanckTotal,
+				validatorData[i].ElRewardsPlanck,
+				validatorData[i].ElRewardsPlanckTotal,
 			}, nil
 		}))
 
@@ -394,13 +394,13 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 					validatorData[i].ClPerformance7d,
 					validatorData[i].ClPerformance31d,
 					validatorData[i].ClPerformance365d,
-					validatorData[i].ClRewardsGWeiTotal,
+					validatorData[i].ClRewardsGPlanckTotal,
 
 					validatorData[i].ElPerformance1d,
 					validatorData[i].ElPerformance7d,
 					validatorData[i].ElPerformance31d,
 					validatorData[i].ElPerformance365d,
-					validatorData[i].ElRewardsWeiTotal,
+					validatorData[i].ElRewardsPlanckTotal,
 				}, nil
 			}))
 
@@ -510,17 +510,17 @@ func WriteValidatorTotalPerformance(day uint64, tx pgx.Tx) error {
 						COALESCE(vs_now.end_balance, 0) as balance,
 						0 as rank7d,
 
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_1d.cl_rewards_gwei_total, 0) as cl_performance_1d, 
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_7d.cl_rewards_gwei_total, 0) as cl_performance_7d, 
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_31d.cl_rewards_gwei_total, 0) as cl_performance_31d, 
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_365d.cl_rewards_gwei_total, 0) as cl_performance_365d,
-						coalesce(vs_now.cl_rewards_gwei_total, 0) as cl_performance_total, 
+						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_1d.cl_rewards_gplanck_total, 0) as cl_performance_1d, 
+						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_7d.cl_rewards_gplanck_total, 0) as cl_performance_7d, 
+						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_31d.cl_rewards_gplanck_total, 0) as cl_performance_31d, 
+						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_365d.cl_rewards_gplanck_total, 0) as cl_performance_365d,
+						coalesce(vs_now.cl_rewards_gplanck_total, 0) as cl_performance_total, 
 						
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_1d.el_rewards_wei_total, 0) as el_performance_1d, 
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_7d.el_rewards_wei_total, 0) as el_performance_7d, 
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_31d.el_rewards_wei_total, 0) as el_performance_31d, 
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_365d.el_rewards_wei_total, 0) as el_performance_365d,
-						coalesce(vs_now.el_rewards_wei_total, 0) as el_performance_total
+						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_1d.el_rewards_planck_total, 0) as el_performance_1d, 
+						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_7d.el_rewards_planck_total, 0) as el_performance_7d, 
+						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_31d.el_rewards_planck_total, 0) as el_performance_31d, 
+						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_365d.el_rewards_planck_total, 0) as el_performance_365d,
+						coalesce(vs_now.el_rewards_planck_total, 0) as el_performance_total
 					from validator_stats vs_now
 					left join validator_stats vs_1d on vs_1d.validatorindex = vs_now.validatorindex and vs_1d.day = $2
 					left join validator_stats vs_7d on vs_7d.validatorindex = vs_now.validatorindex and vs_7d.day = $3
@@ -705,7 +705,7 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 
 	mux.Lock()
 	for proposer, r := range proposerRewards {
-		data[proposer].ElRewardsWei = decimal.NewFromBigInt(r.TxFeeReward, 0)
+		data[proposer].ElRewardsPlanck = decimal.NewFromBigInt(r.TxFeeReward, 0)
 	}
 	mux.Unlock()
 
@@ -1096,10 +1096,10 @@ func GatherStatisticsForDay(day int64) ([]*types.ValidatorStatsTableDbRow, error
 		COALESCE(withdrawals_total, 0) AS withdrawals_total,
 		COALESCE(withdrawals_amount, 0) AS withdrawals_amount,
 		COALESCE(withdrawals_amount_total, 0) AS withdrawals_amount_total,
-		COALESCE(cl_rewards_gwei, 0) AS cl_rewards_gwei,
-		COALESCE(cl_rewards_gwei_total, 0) AS cl_rewards_gwei_total,
-		COALESCE(el_rewards_wei, 0) AS el_rewards_wei,
-		COALESCE(el_rewards_wei_total, 0) AS el_rewards_wei_total
+		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck,
+		COALESCE(cl_rewards_gplanck_total, 0) AS cl_rewards_gplanck_total,
+		COALESCE(el_rewards_planck, 0) AS el_rewards_planck,
+		COALESCE(el_rewards_planck_total, 0) AS el_rewards_planck_total
 	 from validator_stats WHERE day = $1 ORDER BY validatorindex
 	`, day)
 
@@ -1161,7 +1161,7 @@ func GetValidatorIncomeHistory(validatorIndices []uint64, lowerBoundDay uint64, 
 	err := ReaderDb.Select(&result, `
 		SELECT 
 			day, 
-			SUM(COALESCE(cl_rewards_gwei, 0)) AS cl_rewards_gwei,
+			SUM(COALESCE(cl_rewards_gplanck, 0)) AS cl_rewards_gplanck,
 			SUM(COALESCE(end_balance, 0)) AS end_balance
 		FROM validator_stats 
 		WHERE validatorindex = ANY($1) AND day BETWEEN $2 AND $3 
@@ -1336,9 +1336,9 @@ func WriteConsensusChartSeriesForDay(day int64) error {
 
 	var err error
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'STAKED_ETH' as indicator, eligibleether/1e9 as value from epochs where epoch = $2 limit 1 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, lastEpoch-1)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'STAKED_ZND' as indicator, eligibleznd/1e9 as value from epochs where epoch = $2 limit 1 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, lastEpoch-1)
 	if err != nil {
-		return fmt.Errorf("error inserting STAKED_ETH into chart_series: %w", err)
+		return fmt.Errorf("error inserting STAKED_ZND into chart_series: %w", err)
 	}
 
 	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_VALIDATOR_BALANCE_ETH' as indicator, avg(averagevalidatorbalance)/1e9 as value from epochs where epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
@@ -1351,7 +1351,7 @@ func WriteConsensusChartSeriesForDay(day int64) error {
 		return fmt.Errorf("error inserting AVG_PARTICIPATION_RATE into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_STAKE_EFFECTIVENESS' as indicator, coalesce(avg(eligibleether) / avg(totalvalidatorbalance), 0) as value from epochs where totalvalidatorbalance != 0 AND eligibleether != 0 and epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_STAKE_EFFECTIVENESS' as indicator, coalesce(avg(eligibleznd) / avg(totalvalidatorbalance), 0) as value from epochs where totalvalidatorbalance != 0 AND eligibleznd != 0 and epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
 	if err != nil {
 		return fmt.Errorf("error inserting AVG_STAKE_EFFECTIVENESS into chart_series: %w", err)
 	}
@@ -1560,10 +1560,10 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 
 	logger.Infof("exporting consensus rewards from %v to %v", firstEpoch, lastEpoch)
 
-	// consensus rewards are in Gwei
+	// consensus rewards are in Gplanck
 	totalConsensusRewards := int64(0)
 
-	err = WriterDb.Get(&totalConsensusRewards, "SELECT SUM(COALESCE(cl_rewards_gwei, 0)) FROM validator_stats WHERE day = $1", day)
+	err = WriterDb.Get(&totalConsensusRewards, "SELECT SUM(COALESCE(cl_rewards_gplanck, 0)) FROM validator_stats WHERE day = $1", day)
 	if err != nil {
 		return fmt.Errorf("error calculating totalConsensusRewards: %w", err)
 	}
@@ -1593,7 +1593,7 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	if err != nil {
 		return fmt.Errorf("error calculating BLOCK_TIME_AVG chart_series: %w", err)
 	}
-	// convert consensus rewards to gwei
+	// convert consensus rewards to gplanck
 	emission := (totalBaseBlockReward.Add(decimal.NewFromInt(totalConsensusRewards).Mul(decimal.NewFromInt(1000000000))).Add(totalTips)).Sub(totalBurned)
 	logger.Infof("Exporting TOTAL_EMISSION %v day emission", emission)
 

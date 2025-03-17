@@ -679,7 +679,7 @@ func BlockTransactionsData(w http.ResponseWriter, r *http.Request) {
 			ToFormatted:   v.ToFormatted,
 			Value:         utils.FormatAmountFormatted(v.Value, utils.Config.Frontend.ElCurrency, 5, 0, true, true, false),
 			Fee:           utils.FormatAmountFormatted(v.Fee, utils.Config.Frontend.ElCurrency, 5, 0, true, true, false),
-			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GWei", 5, 0, true, true, false),
+			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GPlanck", 5, 0, true, true, false),
 		}
 	}
 
@@ -835,19 +835,19 @@ func SlotDilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ToWei converts the big.Int wei to its gwei string representation.
-func ToWei(wei *big.Int) string {
-	return wei.String()
+// ToPlanck converts the big.Int planck to its gplanck string representation.
+func ToPlanck(planck *big.Int) string {
+	return planck.String()
 }
 
-// ToGWei converts the big.Int wei to its gwei string representation.
-func ToGWei(wei *big.Int) string {
-	return ToEth(new(big.Int).Mul(wei, big.NewInt(1e9)))
+// ToGPlanck converts the big.Int planck to its gplanck string representation.
+func ToGPlanck(planck *big.Int) string {
+	return ToZND(new(big.Int).Mul(planck, big.NewInt(1e9)))
 }
 
-// ToEth converts the big.Int wei to its ether string representation.
-func ToEth(wei *big.Int) string {
-	z, m := new(big.Int).DivMod(wei, big.NewInt(1e18), new(big.Int))
+// ToZND converts the big.Int planck to its ZND string representation.
+func ToZND(planck *big.Int) string {
+	z, m := new(big.Int).DivMod(planck, big.NewInt(1e18), new(big.Int))
 	if m.Cmp(new(big.Int)) == 0 {
 		return z.String()
 	}

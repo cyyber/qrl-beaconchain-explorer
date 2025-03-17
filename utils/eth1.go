@@ -30,10 +30,6 @@ func StripPrefix(hexStr string) string {
 	return strings.Replace(hexStr, "0x", "", 1)
 }
 
-func EthBytesToFloat(b []byte) float64 {
-	return WeiBytesToEther(b).InexactFloat64()
-}
-
 func FormatBlockNumber(number uint64) template.HTML {
 	return template.HTML(fmt.Sprintf("<a href=\"/block/%[1]d\">%[2]s</a>", number, FormatAddCommas(number)))
 }
@@ -81,12 +77,12 @@ func FormatInOutSelf(address, from, to []byte) template.HTML {
 	}
 	if !bytes.Equal(to, from) {
 		if bytes.Equal(address, from) {
-			return template.HTML(`<span style="width: 45px;" class="font-weight-bold badge badge-warning text-white text-monospace">OUT</span>`)
+			return template.HTML(`<span style="width: 45px;" class="font-planckght-bold badge badge-warning text-white text-monospace">OUT</span>`)
 		} else {
-			return template.HTML(`<span style="width: 45px;" class="font-weight-bold badge badge-success text-white text-monospace">IN</span>`)
+			return template.HTML(`<span style="width: 45px;" class="font-planckght-bold badge badge-success text-white text-monospace">IN</span>`)
 		}
 	} else {
-		return template.HTML(`<span style="width: 45px;" class="font-weight-bold badge badge-info text-white text-monospace">SELF</span>`)
+		return template.HTML(`<span style="width: 45px;" class="font-planckght-bold badge badge-info text-white text-monospace">SELF</span>`)
 	}
 }
 
@@ -358,9 +354,9 @@ func formatAmount(amount *big.Int, unit string, digits int, maxPreCommaDigitsBef
 	// define display unit & digits used per unit max
 	displayUnit := " " + unit
 	var unitDigits int
-	if unit == "ETH" || unit == "Ether" || unit == "xDAI" || unit == "GNO" {
+	if unit == "ZND" || unit == "xDAI" || unit == "GNO" {
 		unitDigits = 18
-	} else if unit == "GWei" {
+	} else if unit == "GPlanck" {
 		unitDigits = 9
 	} else {
 		displayUnit = " ?"

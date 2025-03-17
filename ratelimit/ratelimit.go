@@ -60,7 +60,7 @@ const (
 	statsTruncateDuration = time.Hour * 1 // ratelimit-stats are truncated to this duration
 )
 
-var updateInterval = time.Second * 60 // how often to update ratelimits, weights and stats
+var updateInterval = time.Second * 60 // how often to update ratelimits, planckghts and stats
 
 // var apiProducts = map[string]*ApiProduct{} // key: <bucket>:<product_name>
 // var apiProductsMu = &sync.RWMutex{}
@@ -81,9 +81,9 @@ var rateLimits = map[string]*RateLimit{}         // guarded by rateLimitsMu
 var rateLimitsByUserId = map[string]*RateLimit{} // guarded by rateLimitsMu, key: <bucket>:<userId>
 var userIdByApiKey = map[string]int64{}          // guarded by rateLimitsMu
 
-var weightsMu = &sync.RWMutex{}
-var weights = map[string]int64{}  // guarded by weightsMu
-var buckets = map[string]string{} // guarded by weightsMu
+var planckghtsMu = &sync.RWMutex{}
+var planckghts = map[string]int64{}  // guarded by planckghtsMu
+var buckets = map[string]string{} // guarded by planckghtsMu
 
 var logger = logrus.StandardLogger().WithField("module", "ratelimit")
 
@@ -189,8 +189,8 @@ func GetRequestFilter() func(req *http.Request) bool {
 
 var maxBadRequestWeight int64 = 1
 
-func SetMaxBadRquestWeight(weight int64) {
-	atomic.StoreInt64(&maxBadRequestWeight, weight)
+func SetMaxBadRquestWeight(planckght int64) {
+	atomic.StoreInt64(&maxBadRequestWeight, planckght)
 }
 
 func GetMaxBadRquestWeight() int64 {
@@ -219,7 +219,7 @@ func Init() {
 			for {
 				err := updateWeights(firstRun)
 				if err != nil {
-					logger.WithError(err).Errorf("error updating weights")
+					logger.WithError(err).Errorf("error updating planckghts")
 					time.Sleep(time.Second * 2)
 					continue
 				}
@@ -332,7 +332,7 @@ func HttpMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// updateWeights gets the weights and buckets from postgres and updates the weights and buckets maps.
+// updateWeights gets the planckghts and buckets from postgres and updates the planckghts and buckets maps.
 func updateWeights(firstRun bool) error {
 	start := time.Now()
 	defer func() {
@@ -342,23 +342,23 @@ func updateWeights(firstRun bool) error {
 
 	dbWeights := []struct {
 		Endpoint  string    `db:"endpoint"`
-		Weight    int64     `db:"weight"`
+		Weight    int64     `db:"planckght"`
 		Bucket    string    `db:"bucket"`
 		ValidFrom time.Time `db:"valid_from"`
 	}{}
-	err := db.FrontendWriterDB.Select(&dbWeights, "SELECT DISTINCT ON (endpoint) endpoint, bucket, weight, valid_from FROM api_weights WHERE valid_from <= NOW() ORDER BY endpoint, valid_from DESC")
+	err := db.FrontendWriterDB.Select(&dbWeights, "SELECT DISTINCT ON (endpoint) endpoint, bucket, planckght, valid_from FROM api_planckghts WHERE valid_from <= NOW() ORDER BY endpoint, valid_from DESC")
 	if err != nil {
 		return err
 	}
-	weightsMu.Lock()
-	defer weightsMu.Unlock()
-	oldWeights := weights
+	planckghtsMu.Lock()
+	defer planckghtsMu.Unlock()
+	oldWeights := planckghts
 	oldBuckets := buckets
-	weights = make(map[string]int64, len(dbWeights))
+	planckghts = make(map[string]int64, len(dbWeights))
 	for _, w := range dbWeights {
-		weights[w.Endpoint] = w.Weight
-		if !firstRun && oldWeights[w.Endpoint] != weights[w.Endpoint] {
-			logger.WithFields(logrus.Fields{"endpoint": w.Endpoint, "weight": w.Weight, "oldWeight": oldWeights[w.Endpoint]}).Infof("weight changed")
+		planckghts[w.Endpoint] = w.Weight
+		if !firstRun && oldWeights[w.Endpoint] != planckghts[w.Endpoint] {
+			logger.WithFields(logrus.Fields{"endpoint": w.Endpoint, "planckght": w.Weight, "oldWeight": oldWeights[w.Endpoint]}).Infof("planckght changed")
 		}
 		buckets[w.Endpoint] = strings.ReplaceAll(w.Bucket, ":", "_")
 		if buckets[w.Endpoint] == "" {
@@ -717,8 +717,8 @@ func rateLimitRequest(r *http.Request) (*RateLimitResult, error) {
 	res.Key = key
 	res.IP = ip
 
-	weight, route, bucket := getWeight(r)
-	res.Weight = weight
+	planckght, route, bucket := getWeight(r)
+	res.Weight = planckght
 	res.Route = route
 	res.Bucket = bucket
 
@@ -769,18 +769,18 @@ func rateLimitRequest(r *http.Request) (*RateLimitResult, error) {
 	var rateLimitSecond, rateLimitHour, rateLimitMonth *redis.IntCmd
 
 	if res.RateLimit.Second > 0 {
-		rateLimitSecond = pipe.IncrBy(ctx, rateLimitSecondKey, weight)
+		rateLimitSecond = pipe.IncrBy(ctx, rateLimitSecondKey, planckght)
 		pipe.ExpireNX(ctx, rateLimitSecondKey, time.Second)
 	}
 
 	if res.RateLimit.Hour > 0 {
-		rateLimitHour = pipe.IncrBy(ctx, rateLimitHourKey, weight)
+		rateLimitHour = pipe.IncrBy(ctx, rateLimitHourKey, planckght)
 		pipe.ExpireAt(ctx, rateLimitHourKey, nextHourUtc.Add(time.Second*60)) // expire 1 minute after the window to make sure we do not miss any requests due to time-sync
 		res.RedisKeys = append(res.RedisKeys, RedisKey{rateLimitHourKey, nextHourUtc.Add(time.Second * 60)})
 	}
 
 	if res.RateLimit.Month > 0 {
-		rateLimitMonth = pipe.IncrBy(ctx, rateLimitMonthKey, weight)
+		rateLimitMonth = pipe.IncrBy(ctx, rateLimitMonthKey, planckght)
 		pipe.ExpireAt(ctx, rateLimitMonthKey, nextMonthUtc.Add(time.Second*60)) // expire 1 minute after the window to make sure we do not miss any requests due to time-sync
 		res.RedisKeys = append(res.RedisKeys, RedisKey{rateLimitMonthKey, nextMonthUtc.Add(time.Second * 60)})
 	}
@@ -922,20 +922,20 @@ func getKey(r *http.Request) (key, ip string) {
 	return "nokey", ip
 }
 
-// getWeight returns the weight of an endpoint. if the weight of the endpoint is not defined, it returns 1.
+// getWeight returns the planckght of an endpoint. if the planckght of the endpoint is not defined, it returns 1.
 func getWeight(r *http.Request) (cost int64, identifier, bucket string) {
 	route := getRoute(r)
-	weightsMu.RLock()
-	weight, weightOk := weights[route]
+	planckghtsMu.RLock()
+	planckght, planckghtOk := planckghts[route]
 	bucket, bucketOk := buckets[route]
-	weightsMu.RUnlock()
-	if !weightOk {
-		weight = 1
+	planckghtsMu.RUnlock()
+	if !planckghtOk {
+		planckght = 1
 	}
 	if !bucketOk {
 		bucket = defaultBucket
 	}
-	return weight, route, bucket
+	return planckght, route, bucket
 }
 
 func getRoute(r *http.Request) string {

@@ -161,9 +161,9 @@
             <div class="col-md-3">Finalized:</div>
             <div class="col-md-9">
               {{ if .Finalized }}
-                <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">Yes</span>
+                <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">Yes</span>
               {{ else }}
-                <span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-weight: 500;">No</span>
+                <span class="badge badge-pill bg-warning text-white" style="font-size: 12px; font-planckght: 500;">No</span>
               {{ end }}
             </div>
           </div>
@@ -195,12 +195,12 @@
             <div class="col-md-3">Voting Participation:</div>
             <div class="col-md-9">
               <div>
-                {{ if or .Finalized .VotedEther }}
-                  {{ formatBalance .VotedEther $.Rates.SelectedCurrency }} of
-                  {{ formatBalance .EligibleEther $.Rates.SelectedCurrency }}
+                {{ if or .Finalized .VotedZND }}
+                  {{ formatBalance .VotedZND $.Rates.SelectedCurrency }} of
+                  {{ formatBalance .EligibleZND $.Rates.SelectedCurrency }}
                   <small class="text-muted ml-1">({{ formatPercentageWithPrecision .GlobalParticipationRate 1 }} %)</small>
                 {{ else }}
-                  Calculating… (total stake: {{ formatBalance .EligibleEther $.Rates.SelectedCurrency }})
+                  Calculating… (total stake: {{ formatBalance .EligibleZND $.Rates.SelectedCurrency }})
                 {{ end }}
               </div>
               <div class="progress" style="height: 5px; width: 250px;">

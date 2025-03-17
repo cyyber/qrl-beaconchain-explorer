@@ -170,7 +170,7 @@ type IndexPageData struct {
 	ActiveValidators          uint64                 `json:"active_validators"`
 	EnteringValidators        uint64                 `json:"entering_validators"`
 	ExitingValidators         uint64                 `json:"exiting_validators"`
-	StakedEther               string                 `json:"staked_ether"`
+	StakedZND                 string                 `json:"staked_znd"`
 	AverageBalance            string                 `json:"average_balance"`
 	DepositedTotal            float64                `json:"deposit_total"`
 	DepositThreshold          float64                `json:"deposit_threshold"`
@@ -179,7 +179,7 @@ type IndexPageData struct {
 	MinGenesisTime            int64                  `json:"minGenesisTime"`
 	Blocks                    []*IndexPageDataBlocks `json:"blocks"`
 	Epochs                    []*IndexPageDataEpochs `json:"epochs"`
-	StakedEtherChartData      [][]float64            `json:"staked_ether_chart_data"`
+	StakedZNDChartData        [][]float64            `json:"staked_znd_chart_data"`
 	ActiveValidatorsChartData [][]float64            `json:"active_validators_chart_data"`
 	Title                     template.HTML          `json:"title"`
 	Subtitle                  template.HTML          `json:"subtitle"`
@@ -205,12 +205,12 @@ type IndexPageDataEpochs struct {
 	Ts                               time.Time     `json:"ts"`
 	Finalized                        bool          `json:"finalized"`
 	FinalizedFormatted               template.HTML `json:"finalized_formatted"`
-	EligibleEther                    uint64        `json:"eligibleether"`
-	EligibleEtherFormatted           template.HTML `json:"eligibleether_formatted"`
+	EligibleZND                      uint64        `json:"eligibleznd"`
+	EligibleZNDFormatted             template.HTML `json:"eligibleznd_formatted"`
 	GlobalParticipationRate          float64       `json:"globalparticipationrate"`
 	GlobalParticipationRateFormatted template.HTML `json:"globalparticipationrate_formatted"`
-	VotedEther                       uint64        `json:"votedether"`
-	VotedEtherFormatted              template.HTML `json:"votedether_formatted"`
+	VotedZND                         uint64        `json:"votedznd"`
+	VotedZNDFormatted                template.HTML `json:"votedznd_formatted"`
 }
 
 // IndexPageDataBlocks is a struct to hold detail data for the main web page
@@ -242,7 +242,7 @@ type IndexPageDataBlocks struct {
 type IndexPageEpochHistory struct {
 	Epoch                   uint64 `db:"epoch"`
 	ValidatorsCount         uint64 `db:"validatorscount"`
-	EligibleEther           uint64 `db:"eligibleether"`
+	EligibleZND             uint64 `db:"eligibleznd"`
 	Finalized               bool   `db:"finalized"`
 	AverageValidatorBalance uint64 `db:"averagevalidatorbalance"`
 }
@@ -414,7 +414,7 @@ type ValidatorStatsTableRow struct {
 	Day                    int64         `db:"day"`
 	StartBalance           sql.NullInt64 `db:"start_balance"`
 	EndBalance             sql.NullInt64 `db:"end_balance"`
-	Income                 int64         `db:"cl_rewards_gwei"`
+	Income                 int64         `db:"cl_rewards_gplanck"`
 	IncomeExchangeRate     float64       `db:"-"`
 	IncomeExchangeCurrency string        `db:"-"`
 	IncomeExchanged        float64       `db:"-"`
@@ -466,7 +466,7 @@ type ValidatorBalanceHistory struct {
 // ValidatorBalanceHistory is a struct for the validator income history data
 type ValidatorIncomeHistory struct {
 	Day              int64         `db:"day"` // day can be -1 which is pre-genesis
-	ClRewards        int64         `db:"cl_rewards_gwei"`
+	ClRewards        int64         `db:"cl_rewards_gplanck"`
 	EndBalance       sql.NullInt64 `db:"end_balance"`
 	StartBalance     sql.NullInt64 `db:"start_balance"`
 	DepositAmount    sql.NullInt64 `db:"deposits_amount"`
@@ -773,9 +773,9 @@ type EpochsPageData struct {
 	ValidatorsCount         uint64  `db:"validatorscount"`
 	AverageValidatorBalance uint64  `db:"averagevalidatorbalance"`
 	Finalized               bool    `db:"finalized"`
-	EligibleEther           uint64  `db:"eligibleether"`
+	EligibleZND             uint64  `db:"eligibleznd"`
 	GlobalParticipationRate float64 `db:"globalparticipationrate"`
-	VotedEther              uint64  `db:"votedether"`
+	VotedZND                uint64  `db:"votedznd"`
 }
 
 // EpochPageData is a struct to hold detailed epoch data for the epoch page
@@ -793,9 +793,9 @@ type EpochPageData struct {
 	ValidatorsCount         uint64        `db:"validatorscount"`
 	AverageValidatorBalance uint64        `db:"averagevalidatorbalance"`
 	Finalized               bool          `db:"finalized"`
-	EligibleEther           uint64        `db:"eligibleether"`
+	EligibleZND             uint64        `db:"eligibleznd"`
 	GlobalParticipationRate float64       `db:"globalparticipationrate"`
-	VotedEther              uint64        `db:"votedether"`
+	VotedZND                uint64        `db:"votedznd"`
 
 	Blocks []*IndexPageDataBlocks
 
@@ -1212,7 +1212,7 @@ type Eth1AddressPageData struct {
 	Zrc721Table        *DataTableResponse
 	Zrc1155Table       *DataTableResponse
 	WithdrawalsTable   *DataTableResponse
-	EtherValue         template.HTML
+	ZNDValue           template.HTML
 	Tabs               []Eth1AddressPageTabs
 }
 
@@ -1368,8 +1368,8 @@ type Eth1TxData struct {
 	Events                      []*Eth1EventData
 	Transfers                   []*Transfer
 	DepositContractInteractions []DepositContractInteraction
-	CurrentEtherPrice           template.HTML
-	HistoricalEtherPrice        template.HTML
+	CurrentZNDPrice             template.HTML
+	HistoricalZNDPrice          template.HTML
 }
 
 type Eth1EventData struct {
@@ -1641,16 +1641,16 @@ type BroadcastStatusPageData struct {
 }
 
 type ValidatorIncomePerformance struct {
-	ClIncomeWei1d    decimal.Decimal `db:"cl_performance_wei_1d"`
-	ClIncomeWei7d    decimal.Decimal `db:"cl_performance_wei_7d"`
-	ClIncomeWei31d   decimal.Decimal `db:"cl_performance_wei_31d"`
-	ClIncomeWei365d  decimal.Decimal `db:"cl_performance_wei_365d"`
-	ClIncomeWeiTotal decimal.Decimal `db:"cl_performance_wei_total"`
-	ElIncomeWei1d    decimal.Decimal `db:"el_performance_wei_1d"`
-	ElIncomeWei7d    decimal.Decimal `db:"el_performance_wei_7d"`
-	ElIncomeWei31d   decimal.Decimal `db:"el_performance_wei_31d"`
-	ElIncomeWei365d  decimal.Decimal `db:"el_performance_wei_365d"`
-	ElIncomeWeiTotal decimal.Decimal `db:"el_performance_wei_total"`
+	ClIncomePlanck1d    decimal.Decimal `db:"cl_performance_planck_1d"`
+	ClIncomePlanck7d    decimal.Decimal `db:"cl_performance_planck_7d"`
+	ClIncomePlanck31d   decimal.Decimal `db:"cl_performance_planck_31d"`
+	ClIncomePlanck365d  decimal.Decimal `db:"cl_performance_planck_365d"`
+	ClIncomePlanckTotal decimal.Decimal `db:"cl_performance_planck_total"`
+	ElIncomePlanck1d    decimal.Decimal `db:"el_performance_planck_1d"`
+	ElIncomePlanck7d    decimal.Decimal `db:"el_performance_planck_7d"`
+	ElIncomePlanck31d   decimal.Decimal `db:"el_performance_planck_31d"`
+	ElIncomePlanck365d  decimal.Decimal `db:"el_performance_planck_365d"`
+	ElIncomePlanckTotal decimal.Decimal `db:"el_performance_planck_total"`
 }
 
 type ValidatorProposalInfo struct {

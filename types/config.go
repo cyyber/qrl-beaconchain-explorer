@@ -49,7 +49,7 @@ type Config struct {
 		ClConfig                         ClChainConfig
 		ElConfig                         *params.ChainConfig
 	} `yaml:"chain"`
-	Eth1GzondEndpoint string `yaml:"eth1GzondEndpoint" envconfig:"ETH1_GZOND_ENDPOINT"`
+	ELNodeEndpoint string `yaml:"elNodeEndpoint" envconfig:"EL_NODE_ENDPOINT"`
 	// EtherscanAPIKey           string `yaml:"etherscanApiKey" envconfig:"ETHERSCAN_API_KEY"`
 	// EtherscanAPIBaseURL       string `yaml:"etherscanApiBaseUrl" envconfig:"ETHERSCAN_API_BASEURL"`
 	RedisCacheEndpoint        string `yaml:"redisCacheEndpoint" envconfig:"REDIS_CACHE_ENDPOINT"`
@@ -64,8 +64,8 @@ type Config struct {
 			Type     string `yaml:"type" envconfig:"INDEXER_NODE_TYPE"`
 			PageSize int32  `yaml:"pageSize" envconfig:"INDEXER_NODE_PAGE_SIZE"`
 		} `yaml:"node"`
-		Eth1DepositContractFirstBlock uint64 `yaml:"eth1DepositContractFirstBlock" envconfig:"INDEXER_ETH1_DEPOSIT_CONTRACT_FIRST_BLOCK"`
-		PubKeyTagsExporter            struct {
+		DepositContractFirstBlock uint64 `yaml:"depositContractFirstBlock" envconfig:"INDEXER_DEPOSIT_CONTRACT_FIRST_BLOCK"`
+		PubKeyTagsExporter        struct {
 			Enabled bool `yaml:"enabled" envconfig:"PUBKEY_TAGS_EXPORTER_ENABLED"`
 		} `yaml:"pubkeyTagsExporter"`
 		// EnsTransformer struct {

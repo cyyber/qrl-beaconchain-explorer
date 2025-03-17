@@ -781,9 +781,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount, 
 			averagevalidatorbalance, 
 			totalvalidatorbalance,
-			eligibleether, 
+			eligibleznd, 
 			globalparticipationrate, 
-			votedether,
+			votedznd,
 			finalized
 		)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
@@ -798,9 +798,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount         = excluded.validatorscount,
 			averagevalidatorbalance = excluded.averagevalidatorbalance,
 			totalvalidatorbalance   = excluded.totalvalidatorbalance,
-			eligibleether           = excluded.eligibleether,
+			eligibleznd             = excluded.eligibleznd,
 			globalparticipationrate = excluded.globalparticipationrate,
-			votedether              = excluded.votedether,
+			votedznd                = excluded.votedznd,
 			finalized               = excluded.finalized`,
 		epoch,
 		0,
@@ -1486,9 +1486,9 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 
 	_, err := tx.Exec(`
 		UPDATE epochs SET
-			eligibleether = $1,
+			eligibleznd = $1,
 			globalparticipationrate = $2,
-			votedether = $3,
+			votedznd = $3,
 			finalized = $4,
 			blockscount = (SELECT COUNT(*) FROM blocks WHERE epoch = $5 AND status = '1'),
 			proposerslashingscount = (SELECT COALESCE(SUM(proposerslashingscount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
@@ -1498,7 +1498,7 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 			withdrawalcount = (SELECT COALESCE(SUM(withdrawalcount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
 			voluntaryexitscount = (SELECT COALESCE(SUM(voluntaryexitscount),0) FROM blocks WHERE epoch = $5 AND status = '1')
 		WHERE epoch = $5`,
-		stats.EligibleEther, stats.GlobalParticipationRate, stats.VotedEther, stats.Finalized, stats.Epoch)
+		stats.EligibleZND, stats.GlobalParticipationRate, stats.VotedZND, stats.Finalized, stats.Epoch)
 
 	return err
 }
@@ -1685,11 +1685,11 @@ func GetPendingValidatorCount() (uint64, error) {
 	return count, nil
 }
 
-func GetTotalEligibleEther() (uint64, error) {
+func GetTotalEligibleZND() (uint64, error) {
 	var total uint64
 
 	err := ReaderDb.Get(&total, `
-		SELECT eligibleether FROM epochs ORDER BY epoch DESC LIMIT 1
+		SELECT eligibleznd FROM epochs ORDER BY epoch DESC LIMIT 1
 	`)
 	if err == sql.ErrNoRows {
 		return 0, nil
@@ -2784,16 +2784,16 @@ func GetLastExportedStatisticDay() (uint64, error) {
 	return uint64(lastStatsDay.Int64), nil
 }
 
-// GetValidatorIncomePerformance gets all rewards of a validator in WEI for 1d, 7d, 365d and total
+// GetValidatorIncomePerformance gets all rewards of a validator in PLANCK for 1d, 7d, 365d and total
 func GetValidatorIncomePerformance(validators []uint64, incomePerformance *types.ValidatorIncomePerformance) error {
 	validatorsPQArray := pq.Array(validators)
 	return ReaderDb.Get(incomePerformance, `
 		SELECT 
-			COALESCE(SUM(cl_performance_1d    ), 0)*1e9 AS cl_performance_wei_1d,
-			COALESCE(SUM(cl_performance_7d    ), 0)*1e9 AS cl_performance_wei_7d,
-			COALESCE(SUM(cl_performance_31d   ), 0)*1e9 AS cl_performance_wei_31d,
-			COALESCE(SUM(cl_performance_365d  ), 0)*1e9 AS cl_performance_wei_365d,
-			COALESCE(SUM(cl_performance_total ), 0)*1e9 AS cl_performance_wei_total
+			COALESCE(SUM(cl_performance_1d    ), 0)*1e9 AS cl_performance_planck_1d,
+			COALESCE(SUM(cl_performance_7d    ), 0)*1e9 AS cl_performance_planck_7d,
+			COALESCE(SUM(cl_performance_31d   ), 0)*1e9 AS cl_performance_planck_31d,
+			COALESCE(SUM(cl_performance_365d  ), 0)*1e9 AS cl_performance_planck_365d,
+			COALESCE(SUM(cl_performance_total ), 0)*1e9 AS cl_performance_planck_total
 		FROM validator_performance 
 		WHERE validatorindex = ANY($1)`, validatorsPQArray)
 }

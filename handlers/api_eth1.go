@@ -231,7 +231,7 @@ func ApiETH1AccountProducedBlocks(w http.ResponseWriter, r *http.Request) {
 */
 
 // ApiETH1GasNowData godoc
-// @Summary Gets the current estimation for gas prices in GWei.
+// @Summary Gets the current estimation for gas prices in GPlanck.
 // @Tags Execution
 // @Description The response is split into four estimated inclusion speeds rapid (15 seconds), fast (1 minute), standard (3 minutes) and slow (> 10 minutes).
 // @Produce json
@@ -310,7 +310,7 @@ func ApiEth1Address(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Ether = utils.WeiBytesToEther(metadata.EthBalance.Balance).String()
+	response.Ether = utils.PlanckBytesToZND(metadata.EthBalance.Balance).String()
 	response.Address = fmt.Sprintf("0x%x", metadata.EthBalance.Address)
 	for _, m := range metadata.Balances {
 		// if there is a token filter and we are currently not on the right value, skip to the next loop iteration

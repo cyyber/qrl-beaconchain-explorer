@@ -94,7 +94,7 @@ func main() {
 
 	// TODO(rgeraldes24): remove
 	// logrus.Infof("initializing prices")
-	// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.Eth1GzondEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
+	// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.ELNodeEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
 
 	chainID := new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID)
 	rpcClient, err := rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainID)

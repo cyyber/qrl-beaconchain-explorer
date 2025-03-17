@@ -141,7 +141,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		var err error
-		gzondClient, err = rpc.NewGzondClient(utils.Config.Eth1GzondEndpoint)
+		gzondClient, err = rpc.NewGzondClient(utils.Config.ELNodeEndpoint)
 		if err != nil {
 			logrus.Fatalf("error initializing gzond client: %v", err)
 		}
@@ -849,7 +849,7 @@ func updateBlockFinalizationSequentially() error {
 }
 
 func debugBlocks() error {
-	elClient, err := rpc.NewGzondClient(utils.Config.Eth1GzondEndpoint)
+	elClient, err := rpc.NewGzondClient(utils.Config.ELNodeEndpoint)
 	if err != nil {
 		return err
 	}
@@ -1211,10 +1211,10 @@ func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Big
 		var dbRewards *int64
 		err = db.ReaderDb.Get(&dbRewards, `
 		SELECT 
-		COALESCE(cl_rewards_gwei, 0) AS cl_rewards_gwei
+		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck
 		FROM validator_stats WHERE validatorindex = $2 AND day = $1`, day, validator)
 		if err != nil {
-			logrus.Fatalf("error getting cl_rewards_gwei from db: %v", err)
+			logrus.Fatalf("error getting cl_rewards_gplanck from db: %v", err)
 			return
 		}
 		if tot != *dbRewards {
@@ -1460,8 +1460,8 @@ func exportStatsTotals(columns string, dayStart, dayEnd, concurrency uint64) {
 	// validate columns input
 	columnsSlice := strings.Split(columns, ",")
 	validColumns := []string{
-		"cl_rewards_gwei_total",
-		"el_rewards_wei_total",
+		"cl_rewards_gplanck_total",
+		"el_rewards_planck_total",
 		"missed_attestations_total",
 		"participated_sync_total",
 		"missed_sync_total",

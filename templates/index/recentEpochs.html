@@ -23,7 +23,7 @@
               <td><a v-bind:href="'/epoch/' + epoch.epoch" v-html="addCommas(epoch.epoch)"></a></td>
               <td><span data-toggle="tooltip" data-placement="top" v-bind:data-original-title="epoch.ts | timestampTooltip">${epoch.ts | fromNow}</span></td>
               <td v-html="epoch.finalized_formatted"></td>
-              <td v-html="epoch.eligibleether_formatted"></td>
+              <td v-html="epoch.eligibleznd_formatted"></td>
               <td v-html="epoch.globalparticipationrate_formatted"></td>
             </tr>
           </tbody>

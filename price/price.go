@@ -20,8 +20,8 @@ var didInit = uint64(0)
 
 // var feeds = map[string]*chainlink_feed.Feed{}
 var calcPairs = map[string]bool{}
-var clCurrency = "ETH"
-var elCurrency = "ETH"
+var clCurrency = "ZND"
+var elCurrency = "ZND"
 
 var currencies = map[string]struct {
 	Symbol string
@@ -32,7 +32,7 @@ var currencies = map[string]struct {
 	"CNY":  {"¥", "Chinese Yuan"},
 	"DAI":  {"DAI", "DAI stablecoin"},
 	"xDAI": {"xDAI", "xDAI stablecoin"},
-	"ETH":  {"ETH", "Ether"},
+	"ZND":  {"ZND", "Zond ZND"},
 	"EUR":  {"€", "Euro"},
 	"GBP":  {"£", "Pound Sterling"},
 	"GNO":  {"GNO", "Gnosis"},

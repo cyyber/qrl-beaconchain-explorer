@@ -169,10 +169,10 @@ CREATE TABLE IF NOT EXISTS
         deposits_amount BIGINT,
         withdrawals INT,
         withdrawals_amount BIGINT,
-        cl_rewards_gwei BIGINT,
-        cl_rewards_gwei_total BIGINT,
-        el_rewards_wei DECIMAL,
-        el_rewards_wei_total DECIMAL,
+        cl_rewards_gplanck BIGINT,
+        cl_rewards_gplanck_total BIGINT,
+        el_rewards_planck DECIMAL,
+        el_rewards_planck_total DECIMAL,
         PRIMARY KEY (validatorindex, DAY)
     );
 
@@ -247,9 +247,9 @@ CREATE TABLE IF NOT EXISTS
         averagevalidatorbalance BIGINT NOT NULL,
         totalvalidatorbalance BIGINT NOT NULL,
         finalized bool,
-        eligibleether BIGINT,
+        eligibleznd BIGINT,
         globalparticipationrate FLOAT,
-        votedether BIGINT,
+        votedznd BIGINT,
         rewards_exported bool NOT NULL DEFAULT FALSE,
         PRIMARY KEY (epoch)
     );
@@ -317,7 +317,7 @@ CREATE TABLE IF NOT EXISTS
         validatorindex INT NOT NULL,
         address bytea NOT NULL,
         amount BIGINT NOT NULL,
-        -- in GWei
+        -- in GPlanck
         PRIMARY KEY (block_slot, block_root, withdrawalindex)
     );
 
@@ -559,13 +559,13 @@ CREATE TABLE IF NOT EXISTS
         DAY INT NOT NULL,
         pool VARCHAR(40) NOT NULL,
         validators INT NOT NULL,
-        effective_balances_sum_wei NUMERIC NOT NULL,
-        start_balances_sum_wei NUMERIC NOT NULL,
-        end_balances_sum_wei NUMERIC NOT NULL,
-        deposits_sum_wei NUMERIC NOT NULL,
-        tx_fees_sum_wei NUMERIC NOT NULL,
-        consensus_rewards_sum_wei NUMERIC NOT NULL,
-        total_rewards_wei NUMERIC NOT NULL,
+        effective_balances_sum_planck NUMERIC NOT NULL,
+        start_balances_sum_planck NUMERIC NOT NULL,
+        end_balances_sum_planck NUMERIC NOT NULL,
+        deposits_sum_planck NUMERIC NOT NULL,
+        tx_fees_sum_planck NUMERIC NOT NULL,
+        consensus_rewards_sum_planck NUMERIC NOT NULL,
+        total_rewards_planck NUMERIC NOT NULL,
         apr FLOAT NOT NULL,
         PRIMARY KEY (DAY, pool)
     );

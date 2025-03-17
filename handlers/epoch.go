@@ -65,9 +65,9 @@ func Epoch(w http.ResponseWriter, r *http.Request) {
 			validatorscount, 
 			averagevalidatorbalance, 
 			(epoch <= $2) AS finalized,
-			eligibleether,
+			eligibleznd,
 			globalparticipationrate,
-			votedether
+			votedznd
 		FROM epochs 
 		WHERE epoch = $1`, epoch, latestFinalizedEpoch)
 	if err != nil {

@@ -1835,7 +1835,7 @@ func ValidatorStatsTable(w http.ResponseWriter, r *http.Request) {
 		COALESCE(participated_sync, 0) AS participated_sync,
 		COALESCE(missed_sync, 0) AS missed_sync,
 		COALESCE(orphaned_sync, 0) AS orphaned_sync,
-		COALESCE(cl_rewards_gwei, 0) AS cl_rewards_gwei
+		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck
 	FROM validator_stats
 	WHERE validatorindex = $1
 	ORDER BY day DESC`, index)

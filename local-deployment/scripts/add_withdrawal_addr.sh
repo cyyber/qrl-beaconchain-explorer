@@ -14,13 +14,32 @@ do
         a) el_address=${OPTARG};;
         b) bn_endpoint=${OPTARG};;
         i) index=${OPTARG};;
-        m) mnemonic=${OPTARG};;
+        m) seed=${OPTARG};;
     esac
 done
 echo "Validator Index: $index";
-echo "Mnemonic: $mnemonic";
+echo "Seed: $seed";
 echo "BN Endpoint: $bn_endpoint";
 echo "EL Withdrawal Address: $el_address";
+
+
+mkdir -p /tmp/set_withdrawal_addr
+deposit_contract_address=$(curl --silent $bn_endpoint/zond/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
+
+staking-deposit-cli generate-dilithium-to-execution-change \
+    --chain=mainnet \
+    --seed="$seed" \
+    --dilithium-withdrawal-credentials-list="<Your old Dilithium withdrawal credentials>" \
+    --validator-start-index=0 \
+    --validator_indices="<Your validator indices>" \
+    --execution_address="<The execution address for withdrawals>"
+
+curl -X POST $bn_endpoint/zond/v1/beacon/pool/dilithium_to_execution_changes \
+    -H "Content-Type: application/json" \
+    --data-binary "@/tmp/set_withdrawal_addr/change_operations.json"
+
+rm -rf /tmp/set_withdrawal_addr
+
 
 mkdir -p /tmp/set_withdrawal_addr
 echo "retrieving metadata"

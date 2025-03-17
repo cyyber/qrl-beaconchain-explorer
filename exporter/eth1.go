@@ -29,7 +29,7 @@ import (
 var eth1LookBack = uint64(100)
 var eth1MaxFetch = uint64(1000)
 var eth1DepositEventSignature = hash.HashKeccak256([]byte("DepositEvent(bytes,bytes,bytes,bytes,bytes)"))
-var eth1DepositContractFirstBlock uint64
+var depositContractFirstBlock uint64
 var zondDepositContractAddress common.Address
 var eth1Client *zondclient.Client
 var eth1RPCClient *gzondRPC.Client
@@ -46,9 +46,9 @@ func eth1DepositsExporter() {
 	if err != nil {
 		utils.LogFatal(err, "deposit contract address error", 0)
 	}
-	eth1DepositContractFirstBlock = utils.Config.Indexer.Eth1DepositContractFirstBlock
+	depositContractFirstBlock = utils.Config.Indexer.DepositContractFirstBlock
 
-	rpcClient, err := gzondRPC.Dial(utils.Config.Eth1GzondEndpoint)
+	rpcClient, err := gzondRPC.Dial(utils.Config.ELNodeEndpoint)
 	if err != nil {
 		utils.LogFatal(err, "new exporter gzond client error", 0)
 	}
@@ -85,8 +85,8 @@ func eth1DepositsExporter() {
 		toBlock := blockHeight
 
 		// start from the first block
-		if fromBlock < eth1DepositContractFirstBlock {
-			fromBlock = eth1DepositContractFirstBlock
+		if fromBlock < depositContractFirstBlock {
+			fromBlock = depositContractFirstBlock
 		}
 		// make sure we are progressing even if there are no deposits in the last batch
 		if fromBlock < lastFetchedBlock+1 {

@@ -59,7 +59,7 @@ bigtable:
   instance: explorer
   emulator: true
   emulatorPort: $LBT_PORT
-eth1GzondEndpoint: 'http://127.0.0.1:$EL_PORT'
+elNodeEndpoint: 'http://127.0.0.1:$EL_PORT'
 redisCacheEndpoint: '127.0.0.1:$REDIS_PORT'
 redisSessionStoreEndpoint: '127.0.0.1:$REDIS_SESSIONS_PORT'
 tieredCacheProvider: 'redis'
@@ -96,7 +96,7 @@ indexer:
     host: 127.0.0.1
     port: '$CL_PORT'
     type: qrysm
-  eth1DepositContractFirstBlock: 0
+  depositContractFirstBlock: 0
 EOL
 
 cat >config.yml <<EOL
@@ -122,7 +122,7 @@ bigtable:
   emulator: true
   emulatorPort: $LBT_PORT
   emulatorHost: host.docker.internal
-eth1GzondEndpoint: 'http://host.docker.internal:$EL_PORT'
+elNodeEndpoint: 'http://host.docker.internal:$EL_PORT'
 redisCacheEndpoint: 'host.docker.internal:$REDIS_PORT'
 redisSessionStoreEndpoint: 'host.docker.internal:$REDIS_SESSIONS_PORT'
 tieredCacheProvider: 'redis'
@@ -159,7 +159,7 @@ indexer:
     host: host.docker.internal
     port: '$CL_PORT'
     type: qrysm
-  eth1DepositContractFirstBlock: 0
+  depositContractFirstBlock: 0
 EOL
 
 

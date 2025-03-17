@@ -25,7 +25,7 @@
     .overview-header-col {
       background-color: var(--bg-color-light);
       font-style: normal;
-      font-weight: 500;
+      font-planckght: 500;
       font-size: 1rem;
       line-height: 23px;
       backdrop-filter: blur(2px);
@@ -58,7 +58,7 @@
     .overview-col,
     .token-balance-col,
     .address-tabs {
-      font-weight: 400;
+      font-planckght: 400;
       font-size: 0.85rem;
       line-height: 23px;
       font-style: normal;
@@ -70,7 +70,7 @@
       .token-balance-col,
       .addres-tabs {
         font-size: 1rem;
-        font-weight: 300;
+        font-planckght: 300;
       }
     }
 
@@ -284,7 +284,7 @@
   <div class="container mt-2">
     <div class="py-2 my-md-1">
       <div class="mb-1 mb-md-0 mt-md-3 d-flex justify-content-between">
-        <h1 class="font-weight-bold header-address">
+        <h1 class="font-planckght-bold header-address">
           <span class="mr-1">{{ if .Data.IsContract }}Contract{{ else }}Address{{ end }}</span>
           {{ if len .Data.EnsName }}<span class="badge badge-pill badge-ens">{{ .Data.EnsName }}</span>{{ end }}
         </h1>
@@ -737,7 +737,7 @@
     <div class="modal-dialog modal-dialog-centered" style="width: 95%; max-width: 400px; height: 375px; margin: 1.75rem auto;">
       <div class="modal-content">
         <div class="modal-header justify-content-center text-truncate">
-          <span class="text-monospace text-truncate text-center font-weight-bold" style="font-size: 85%; width: 100%;">{{ fixAddressCasing .Data.Address }}</span>
+          <span class="text-monospace text-truncate text-center font-planckght-bold" style="font-size: 85%; width: 100%;">{{ fixAddressCasing .Data.Address }}</span>
         </div>
         <div class="modal-body d-flex justify-content-center">
           <img style="visibility: hidden;" class="qrcode-light" src="data:image/png;base64,{{ .Data.QRCode }}" alt="QR code for address {{ fixAddressCasing .Data.Address }}" />

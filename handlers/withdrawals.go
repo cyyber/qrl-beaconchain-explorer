@@ -183,8 +183,9 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 	}
 
 	formatCurrency := currency
-	if currency == "ETH" {
-		formatCurrency = "Ether"
+	// TODO(rgeraldes24)
+	if currency == "ZND" {
+		formatCurrency = "ZND"
 	}
 
 	var err error

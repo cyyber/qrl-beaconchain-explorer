@@ -127,7 +127,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 
-		rpc.CurrentGzondClient, err = rpc.NewGzondClient(utils.Config.Eth1GzondEndpoint)
+		rpc.CurrentGzondClient, err = rpc.NewGzondClient(utils.Config.ELNodeEndpoint)
 		if err != nil {
 			logrus.Fatalf("error initializing gzond client: %v", err)
 		}
@@ -219,7 +219,7 @@ func main() {
 
 		// TODO(rgeraldes24): remove
 		// logrus.Infof("initializing prices")
-		// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.Eth1GzondEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
+		// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.ELNodeEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
 
 		// logrus.Infof("prices initialized")
 		if !utils.Config.Frontend.Debug {

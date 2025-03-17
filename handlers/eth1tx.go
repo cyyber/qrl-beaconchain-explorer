@@ -51,7 +51,7 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 		data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)
 		txTemplate = txNotFoundTemplate
 	} else {
-		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "ETH")
+		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "ZND")
 		if err != nil {
 			mempool := services.LatestMempoolTransactions()
 			mempoolTx := mempool.FindTxByHash(txHashString)
@@ -78,13 +78,13 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 			p := message.NewPrinter(language.English)
 
 			symbol := GetCurrencySymbol(r)
-			etherValue := utils.WeiBytesToEther(txData.Value)
+			zndValue := utils.PlanckBytesToZND(txData.Value)
 
 			currentPrice := GetCurrentPrice(r)
-			currentEthPrice := etherValue.Mul(decimal.NewFromInt(int64(currentPrice)))
-			txData.CurrentEtherPrice = template.HTML(p.Sprintf(`<span>%s%.2f</span>`, symbol, currentEthPrice.InexactFloat64()))
+			currentZNDPrice := zndValue.Mul(decimal.NewFromInt(int64(currentPrice)))
+			txData.CurrentZNDPrice = template.HTML(p.Sprintf(`<span>%s%.2f</span>`, symbol, currentZNDPrice.InexactFloat64()))
 
-			txData.HistoricalEtherPrice = ""
+			txData.HistoricalZNDPrice = ""
 			if txData.Timestamp.Unix() >= int64(utils.Config.Chain.GenesisTimestamp) {
 				txDay := utils.TimeToDay(uint64(txData.Timestamp.Unix()))
 				errFields["txDay"] = txDay
@@ -103,8 +103,8 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 						errFields["currency"] = currency
 						utils.LogError(err, "error retrieving historical prices", 0, errFields)
 					} else {
-						historicalEthPrice := etherValue.Mul(decimal.NewFromFloat(price))
-						txData.HistoricalEtherPrice = template.HTML(p.Sprintf(`<span>%s%.2f <i class="far fa-clock"></i></span>`, symbol, historicalEthPrice.InexactFloat64()))
+						historicalEthPrice := zndValue.Mul(decimal.NewFromFloat(price))
+						txData.HistoricalZNDPrice = template.HTML(p.Sprintf(`<span>%s%.2f <i class="far fa-clock"></i></span>`, symbol, historicalEthPrice.InexactFloat64()))
 					}
 				}
 			}

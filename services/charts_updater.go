@@ -26,7 +26,7 @@ type chartHandler struct {
 var ChartHandlers = map[string]chartHandler{
 	"blocks":             {1, blocksChartData},
 	"validators":         {2, activeValidatorsChartData},
-	"staked_ether":       {3, stakedEtherChartData},
+	"staked_znd":         {3, stakedZNDChartData},
 	"average_balance":    {4, averageBalanceChartData},
 	"network_liveness":   {5, networkLivenessChartData},
 	"participation_rate": {6, participationRateChartData},
@@ -218,7 +218,7 @@ func blocksChartData() (*types.GenericChartData, error) {
 		TooltipUseHTML:       true,
 		TooltipFollowPointer: true,
 		TooltipFormatter: `function(tooltip){
-	let header = '<div style="font-weight:bold; text-align:center;">' + Highcharts.dateFormat("%Y-%m-%d %H:%M", this.x) + '</div><table>'
+	let header = '<div style="font-planckght:bold; text-align:center;">' + Highcharts.dateFormat("%Y-%m-%d %H:%M", this.x) + '</div><table>'
 	this.points.sort((a, b) => b.y - a.y)
 	let total = 0
 	return this.points.reduce(function (s, point) {
@@ -226,12 +226,12 @@ func blocksChartData() (*types.GenericChartData, error) {
 		return s +
 			'<tr><td>' +
 			'<span style="color:' + point.series.color + ';">\u25CF </span>' +
-			'<span style="font-weight:bold;">' + point.series.name + ':</span></td><td>' +
+			'<span style="font-planckght:bold;">' + point.series.name + ':</span></td><td>' +
 			point.percentage.toFixed(2)+'% ('+point.y+' blocks)'
 			'</td></tr>'
 	}, header) + 
 	'<tr><td>' + 
-	'<span>\u25CF </span><span style="font-weight:bold;">Total:</span></td><td>' + total + ' blocks'
+	'<span>\u25CF </span><span style="font-planckght:bold;">Total:</span></td><td>' + total + ' blocks'
 	'</td></tr>' +
 	'</table>'
 }`,
@@ -301,7 +301,7 @@ func activeValidatorsChartData() (*types.GenericChartData, error) {
 	return chartData, nil
 }
 
-func stakedEtherChartData() (*types.GenericChartData, error) {
+func stakedZNDChartData() (*types.GenericChartData, error) {
 	if LatestEpoch() == 0 {
 		return nil, fmt.Errorf("chart-data not available pre-genesis")
 	}
@@ -312,7 +312,7 @@ func stakedEtherChartData() (*types.GenericChartData, error) {
 		Value     float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'STAKED_ETH' ORDER BY time")
+	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'STAKED_ZND' ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -786,11 +786,11 @@ func graffitiCloudChartData() (*types.GenericChartData, error) {
 
 	rows := []struct {
 		Name       string `json:"name"`
-		Weight     uint64 `json:"weight"`
+		Weight     uint64 `json:"planckght"`
 		Validators uint64 `json:"validators"`
 	}{}
 
-	err := db.ReaderDb.Select(&rows, `select graffiti_text as name, count(*) as weight, sum(proposer_count) as validators from graffiti_stats group by graffiti_text order by weight desc limit 25`)
+	err := db.ReaderDb.Select(&rows, `select graffiti_text as name, count(*) as planckght, sum(proposer_count) as validators from graffiti_stats group by graffiti_text order by planckght desc limit 25`)
 	if err != nil {
 		return nil, fmt.Errorf("error getting graffiti-occurrences: %w", err)
 	}
@@ -804,7 +804,7 @@ func graffitiCloudChartData() (*types.GenericChartData, error) {
 		Type:                         "wordcloud",
 		Title:                        "Graffiti Word Cloud",
 		Subtitle:                     "Word Cloud of the 25 most occurring graffities.",
-		TooltipFormatter:             `function(){ return '<b>'+this.point.name+'</b><br\>Occurrences: '+this.point.weight+'<br\>Validators: '+this.point.validators }`,
+		TooltipFormatter:             `function(){ return '<b>'+this.point.name+'</b><br\>Occurrences: '+this.point.planckght+'<br\>Validators: '+this.point.validators }`,
 		PlotOptionsSeriesEventsClick: `function(event){ window.location.href = '/slots?q='+encodeURIComponent(event.point.name) }`,
 		PlotOptionsSeriesCursor:      "pointer",
 		Series: []*types.GenericChartDataSeries{
@@ -1097,7 +1097,7 @@ func AvgGasPrice() (*types.GenericChartData, error) {
 		Title:                           "Average Gas Price",
 		Subtitle:                        "The average gas price for non-EIP1559 transaction.",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Gas Price [GWei]",
+		YAxisTitle:                      "Gas Price [GPlanck]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",

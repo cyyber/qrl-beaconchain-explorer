@@ -67,7 +67,7 @@ func GetRewardsForEpoch(epoch uint64, client *beacon.Client, elEndpoint string) 
 				}
 
 				rewardsMux.Lock()
-				rewards[proposer].TxFeeRewardWei = txFeeIncome.Bytes()
+				rewards[proposer].TxFeeRewardPlanck = txFeeIncome.Bytes()
 				rewardsMux.Unlock()
 			}
 

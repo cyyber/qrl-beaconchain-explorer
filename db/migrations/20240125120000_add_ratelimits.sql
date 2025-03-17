@@ -14,14 +14,14 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE INDEX IF NOT EXISTS idx_api_ratelimits_changed_at_valid_until ON api_ratelimits (changed_at, valid_until);
 
-SELECT 'up SQL query - add table api_weights';
+SELECT 'up SQL query - add table api_planckghts';
 CREATE TABLE IF NOT EXISTS
-    api_weights (
+    api_planckghts (
         bucket VARCHAR(20) NOT NULL,
         endpoint TEXT NOT NULL,
         method TEXT NOT NULL,
         params TEXT NOT NULL,
-        weight INT NOT NULL DEFAULT 1,
+        planckght INT NOT NULL DEFAULT 1,
         valid_from TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT TO_TIMESTAMP(0),
         PRIMARY KEY (endpoint, valid_from)
     );
@@ -38,8 +38,8 @@ SELECT 'down SQL query - drop table api_ratelimits';
 DROP TABLE IF EXISTS api_ratelimits;
 SELECT 'down SQL query - drop index idx_api_ratelimits_changed_at';
 DROP INDEX IF EXISTS idx_api_ratelimits_changed_at;
-SELECT 'down SQL query - drop table api_weights';
-DROP TABLE IF EXISTS api_weights;
+SELECT 'down SQL query - drop table api_planckghts';
+DROP TABLE IF EXISTS api_planckghts;
 SELECT 'down SQL query - drop column api_statistics.endpoint';
 ALTER TABLE api_statistics DROP COLUMN IF EXISTS endpoint;
 ALTER TABLE api_statistics DROP CONSTRAINT IF EXISTS api_statistics_pkey;

@@ -427,8 +427,8 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 				data.EpochParticipationStats = &types.ValidatorParticipation{
 					Epoch:                   epoch,
 					GlobalParticipationRate: 0.0,
-					VotedEther:              0,
-					EligibleEther:           0,
+					VotedZND:                0,
+					EligibleZND:             0,
 				}
 			}
 			return nil
@@ -437,8 +437,8 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 		data.EpochParticipationStats = &types.ValidatorParticipation{
 			Epoch:                   epoch,
 			GlobalParticipationRate: 0.0,
-			VotedEther:              0,
-			EligibleEther:           0,
+			VotedZND:                0,
+			EligibleZND:             0,
 		}
 	}
 
@@ -1088,9 +1088,6 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 	}
 
 	for i, attestation := range parsedBlock.Message.Body.Attestations {
-		fmt.Println("blockFromResponse")
-		fmt.Println(attestation.AggregationBits)
-		fmt.Println(len(attestation.Signatures))
 		a := &types.Attestation{
 			AggregationBits: utils.MustParseHex(attestation.AggregationBits),
 			Attesters:       []uint64{},
@@ -1114,7 +1111,6 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 		}
 
 		aggregationBits := bitfield.Bitlist(a.AggregationBits)
-		fmt.Println(aggregationBits)
 		assignments, err := lc.GetEpochAssignments(a.Data.Slot / utils.Config.Chain.ClConfig.SlotsPerEpoch)
 		if err != nil {
 			return nil, fmt.Errorf("error receiving epoch assignment for epoch %v: %w", a.Data.Slot/utils.Config.Chain.ClConfig.SlotsPerEpoch, err)
@@ -1224,9 +1220,9 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 	if epoch < request_epoch {
 		// we requested the next epoch, so we have to use the previous value for everything here
 
-		prevEpochActiveGwei := parsedResponse.Data.PreviousEpochActiveGwei
-		if prevEpochActiveGwei == 0 {
-			// lh@5.2.0+ has no previous_epoch_active_gwei field anymore, see https://github.com/sigp/lighthouse/pull/5279
+		prevEpochActiveGplanck := parsedResponse.Data.PreviousEpochActiveGplanck
+		if prevEpochActiveGplanck == 0 {
+			// lh@5.2.0+ has no previous_epoch_active_gplanck field anymore, see https://github.com/sigp/lighthouse/pull/5279
 			prevResp, err := lc.get(fmt.Sprintf("%s/zond/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch-1))
 			if err != nil {
 				return nil, fmt.Errorf("error retrieving validator participation data for prevEpoch %v: %w", request_epoch-1, err)
@@ -1236,22 +1232,22 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 			if err != nil {
 				return nil, fmt.Errorf("error parsing validator participation data for prevEpoch %v: %w", epoch, err)
 			}
-			prevEpochActiveGwei = parsedPrevResponse.Data.CurrentEpochActiveGwei
+			prevEpochActiveGplanck = parsedPrevResponse.Data.CurrentEpochActiveGplanck
 		}
 
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
-			GlobalParticipationRate: float32(parsedResponse.Data.PreviousEpochTargetAttestingGwei) / float32(prevEpochActiveGwei),
-			VotedEther:              uint64(parsedResponse.Data.PreviousEpochTargetAttestingGwei),
-			EligibleEther:           uint64(prevEpochActiveGwei),
+			GlobalParticipationRate: float32(parsedResponse.Data.PreviousEpochTargetAttestingGplanck) / float32(prevEpochActiveGplanck),
+			VotedZND:                uint64(parsedResponse.Data.PreviousEpochTargetAttestingGplanck),
+			EligibleZND:             uint64(prevEpochActiveGplanck),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	} else {
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
-			GlobalParticipationRate: float32(parsedResponse.Data.CurrentEpochTargetAttestingGwei) / float32(parsedResponse.Data.CurrentEpochActiveGwei),
-			VotedEther:              uint64(parsedResponse.Data.CurrentEpochTargetAttestingGwei),
-			EligibleEther:           uint64(parsedResponse.Data.CurrentEpochActiveGwei),
+			GlobalParticipationRate: float32(parsedResponse.Data.CurrentEpochTargetAttestingGplanck) / float32(parsedResponse.Data.CurrentEpochActiveGplanck),
+			VotedZND:                uint64(parsedResponse.Data.CurrentEpochTargetAttestingGplanck),
+			EligibleZND:             uint64(parsedResponse.Data.CurrentEpochActiveGplanck),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	}
@@ -1378,11 +1374,11 @@ type StandardSyncCommitteesResponse struct {
 
 type QrysmValidatorParticipationResponse struct {
 	Data struct {
-		CurrentEpochActiveGwei           uint64Str `json:"currentEpochActiveGwei"`
-		PreviousEpochActiveGwei          uint64Str `json:"previousEpochActiveGwei"`
-		CurrentEpochTargetAttestingGwei  uint64Str `json:"currentEpochTargetAttestingGwei"`
-		PreviousEpochTargetAttestingGwei uint64Str `json:"previousEpochTargetAttestingGwei"`
-		PreviousEpochHeadAttestingGwei   uint64Str `json:"previousEpochHeadAttestingGwei"`
+		CurrentEpochActiveGplanck           uint64Str `json:"currentEpochActiveGplanck"`
+		PreviousEpochActiveGplanck          uint64Str `json:"previousEpochActiveGplanck"`
+		CurrentEpochTargetAttestingGplanck  uint64Str `json:"currentEpochTargetAttestingGplanck"`
+		PreviousEpochTargetAttestingGplanck uint64Str `json:"previousEpochTargetAttestingGplanck"`
+		PreviousEpochHeadAttestingGplanck   uint64Str `json:"previousEpochHeadAttestingGplanck"`
 	} `json:"participation"`
 }
 

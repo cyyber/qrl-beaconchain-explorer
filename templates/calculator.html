@@ -549,7 +549,7 @@
 
       calculate() {
         // this calculation is only a rough estimation, it calculates the total
-        // network issuance based ond total staked ether and online-probability
+        // network issuance based ond total staked ZND and online-probability
         // of the network.
         this.result.priceChartData = []
         this.result.networkIssuanceChartData = []
@@ -582,8 +582,8 @@
 
         var now = Date.now()
         var yourStake = this.params.stake
-        var incomeGwei = this.params.stake
-        var incomeDollar = (incomeGwei * price) / 1e9
+        var incomeGplanck = this.params.stake
+        var incomeDollar = (incomeGplanck * price) / 1e9
         var incomeAll = 0
 
         this.result.start = now
@@ -621,16 +621,16 @@
           price = price * (1 + priceChangePerEpoch)
           if (this.params.stakingFee > 0) {
             costs += (valRewards * (yourStake / valStake) * this.params.stakingFee * price) / 1e9
-            incomeGwei += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
+            incomeGplanck += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
             if (this.params.reinvest) yourStake += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
           } else {
-            incomeGwei += valRewards * (yourStake / valStake)
+            incomeGplanck += valRewards * (yourStake / valStake)
           }
           costs += costsPerEpoch
           var day = ((i + 1) / epochsPerDay) | 0
           if (day > this.result.incomeDollarChartData.length - 1) {
             var t = now + (i + 1) * 12 * 32 * 1000
-            this.fillChartData(t, (incomeGwei * price) / 1e9, costs, price)
+            this.fillChartData(t, (incomeGplanck * price) / 1e9, costs, price)
             this.result.networkIssuanceChartData.push([t, (100 * incomeAll) / totalStake])
           }
         }
@@ -970,8 +970,8 @@
                   <div class="setting">
                     <div class="d-flex justify-content-between">
                       <h6 width="50%">
-                        Total staked ether <span id="totalStake-currency">ETH</span>
-                        <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="Total staked ether is the sum of effective balances of all active validators attesting in the network."></i>
+                        Total staked ZND <span id="totalStake-currency">ETH</span>
+                        <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="Total staked ZND is the sum of effective balances of all active validators attesting in the network."></i>
                       </h6>
                       <span id="staking-variable-totalStake-percentage"></span>
                     </div>

@@ -264,7 +264,7 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 			}
 
 			if amount, found := v.DecodedData["amount"]; found {
-				// amount is a little endian hex denominated in GEwei so we have to decode and reverse it and then convert to ETH
+				// amount is a little endian hex denominated in GEplanck so we have to decode and reverse it and then convert to ETH
 				ba, err := hex.DecodeString(amount.Raw[2:])
 				if err != nil {
 					continue

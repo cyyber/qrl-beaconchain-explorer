@@ -431,9 +431,9 @@
                 <td>{{ formatDepositAmount $deposit.Amount $.Rates.SelectedCurrency }}</td>
                 <td>
                   {{ if $deposit.ValidSignature }}
-                    <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">{{ $deposit.ValidSignature }}</span>
+                    <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">{{ $deposit.ValidSignature }}</span>
                   {{ else }}
-                    <span class="badge badge-pill bg-danger text-white" style="font-size: 12px; font-weight: 500;">{{ $deposit.ValidSignature }}</span>
+                    <span class="badge badge-pill bg-danger text-white" style="font-size: 12px; font-planckght: 500;">{{ $deposit.ValidSignature }}</span>
                   {{ end }}
                 </td>
               </tr>
@@ -846,8 +846,8 @@
         <td><span data-toggle="tooltip" data-placement="top" title="Entering">{{ .NetworkStats.EnteringValidators }}</span>/<span data-toggle="tooltip" data-placement="top" title="Exiting">{{ .NetworkStats.ExitingValidators }}</span></td>
       </tr>
       <tr>
-        <th scope="row">Staked Ether</th>
-        <td>{{ .NetworkStats.StakedEther }}</td>
+        <th scope="row">Staked ZND</th>
+        <td>{{ .NetworkStats.StakedZND }}</td>
       </tr>
       <tr>
         <th scope="row">Average Balance</th>

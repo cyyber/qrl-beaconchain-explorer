@@ -24,10 +24,10 @@ func WriteHistoricPricesForDay(ts time.Time) error {
 
 	historicPrice, err := fetchHistoricPrice(ts)
 	if err != nil {
-		return fmt.Errorf("error retrieving historic eth prices for %v: %w", tsFormatted, err)
+		return fmt.Errorf("error retrieving historic znd prices for %v: %w", tsFormatted, err)
 	}
 
-	if historicPrice.MarketData.CurrentPrice.Eth == 0.0 ||
+	if historicPrice.MarketData.CurrentPrice.Znd == 0.0 ||
 		historicPrice.MarketData.CurrentPrice.Eur == 0.0 ||
 		historicPrice.MarketData.CurrentPrice.Usd == 0.0 ||
 		historicPrice.MarketData.CurrentPrice.Rub == 0.0 ||
@@ -36,7 +36,7 @@ func WriteHistoricPricesForDay(ts time.Time) error {
 		historicPrice.MarketData.CurrentPrice.Jpy == 0.0 ||
 		historicPrice.MarketData.CurrentPrice.Gbp == 0.0 ||
 		historicPrice.MarketData.CurrentPrice.Aud == 0.0 {
-		return fmt.Errorf("incomplete historic eth prices for %v", tsFormatted)
+		return fmt.Errorf("incomplete historic znd prices for %v", tsFormatted)
 	}
 
 	_, err = db.WriterDb.Exec(`
@@ -104,7 +104,7 @@ func updateHistoricPrices() error {
 	return nil
 }
 
-func fetchHistoricPrice(ts time.Time) (*types.HistoricEthPrice, error) {
+func fetchHistoricPrice(ts time.Time) (*types.HistoricZNDPrice, error) {
 	logger.Infof("fetching historic prices for day %v", ts)
 	client := &http.Client{Timeout: time.Second * 10}
 
@@ -117,7 +117,7 @@ func fetchHistoricPrice(ts time.Time) (*types.HistoricEthPrice, error) {
 		return nil, err
 	}
 
-	priceData := &types.HistoricEthPrice{}
+	priceData := &types.HistoricZNDPrice{}
 	err = json.NewDecoder(resp.Body).Decode(&priceData)
 	return priceData, err
 }

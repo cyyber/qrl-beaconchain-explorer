@@ -130,12 +130,12 @@ func main() {
 
 	if gzondEndpoint == nil || *gzondEndpoint == "" {
 
-		if utils.Config.Eth1GzondEndpoint == "" {
+		if utils.Config.ELNodeEndpoint == "" {
 
 			utils.LogFatal(nil, "no gzond node url provided", 0)
 		} else {
 			logrus.Info("applying gzond endpoint from config")
-			*gzondEndpoint = utils.Config.Eth1GzondEndpoint
+			*gzondEndpoint = utils.Config.ELNodeEndpoint
 		}
 
 	}

@@ -44,7 +44,7 @@ func BurnPageData(w http.ResponseWriter, r *http.Request) {
 
 	currency := GetCurrency(r)
 
-	if currency == "ETH" {
+	if currency == "ZND" {
 		currency = "USD"
 	}
 

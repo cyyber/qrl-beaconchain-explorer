@@ -1862,7 +1862,7 @@ func (bigtable *Bigtable) SaveValidatorIncomeDetails(epoch uint64, rewards map[u
 		total.SyncCommitteePenalty += rewardDetails.SyncCommitteePenalty
 		total.SlashingReward += rewardDetails.SlashingReward
 		total.SlashingPenalty += rewardDetails.SlashingPenalty
-		total.TxFeeRewardWei = utils.AddBigInts(total.TxFeeRewardWei, rewardDetails.TxFeeRewardWei)
+		total.TxFeeRewardPlanck = utils.AddBigInts(total.TxFeeRewardPlanck, rewardDetails.TxFeeRewardPlanck)
 	}
 
 	sum, err := proto.Marshal(total)
@@ -2120,7 +2120,7 @@ func (bigtable *Bigtable) GetAggregatedValidatorIncomeDetailsHistory(validators 
 				resultContainer.res[validator].SyncCommitteePenalty += rewardDetails.SyncCommitteePenalty
 				resultContainer.res[validator].SlashingReward += rewardDetails.SlashingReward
 				resultContainer.res[validator].SlashingPenalty += rewardDetails.SlashingPenalty
-				resultContainer.res[validator].TxFeeRewardWei = utils.AddBigInts(resultContainer.res[validator].TxFeeRewardWei, rewardDetails.TxFeeRewardWei)
+				resultContainer.res[validator].TxFeeRewardPlanck = utils.AddBigInts(resultContainer.res[validator].TxFeeRewardPlanck, rewardDetails.TxFeeRewardPlanck)
 			}
 		}
 		resultContainer.mu.Unlock()

@@ -241,7 +241,7 @@ func ApiEpoch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := db.ReaderDb.Query(`SELECT attestationscount, attesterslashingscount, averagevalidatorbalance, blockscount, depositscount, eligibleether, epoch, (epoch <= $2) AS finalized, globalparticipationrate, proposerslashingscount, rewards_exported, totalvalidatorbalance, validatorscount, voluntaryexitscount, votedether, COALESCE(withdrawalcount,0) as withdrawalcount, 
+	rows, err := db.ReaderDb.Query(`SELECT attestationscount, attesterslashingscount, averagevalidatorbalance, blockscount, depositscount, eligibleznd, epoch, (epoch <= $2) AS finalized, globalparticipationrate, proposerslashingscount, rewards_exported, totalvalidatorbalance, validatorscount, voluntaryexitscount, votedznd, COALESCE(withdrawalcount,0) as withdrawalcount, 
 		(SELECT COUNT(*) FROM blocks WHERE epoch = $1 AND status = '0') as scheduledblocks,
 		(SELECT COUNT(*) FROM blocks WHERE epoch = $1 AND status = '1') as proposedblocks,
 		(SELECT COUNT(*) FROM blocks WHERE epoch = $1 AND status = '2') as missedblocks,
@@ -1278,8 +1278,8 @@ type DashboardResponse struct {
 func getEpoch(epoch int64) ([]interface{}, error) {
 	latestFinalizedEpoch := services.LatestFinalizedEpoch()
 	rows, err := db.ReaderDb.Query(`SELECT attestationscount, attesterslashingscount, averagevalidatorbalance,
-	blockscount, depositscount, eligibleether, epoch, (epoch <= $2) AS finalized, TRUNC(globalparticipationrate::decimal, 10)::float as globalparticipationrate, proposerslashingscount,
-	totalvalidatorbalance, validatorscount, voluntaryexitscount, votedether
+	blockscount, depositscount, eligibleznd, epoch, (epoch <= $2) AS finalized, TRUNC(globalparticipationrate::decimal, 10)::float as globalparticipationrate, proposerslashingscount,
+	totalvalidatorbalance, validatorscount, voluntaryexitscount, votedznd
 	FROM epochs WHERE epoch = $1`, epoch, latestFinalizedEpoch)
 	if err != nil {
 		return nil, fmt.Errorf("error querying epoch: %w", err)
@@ -1674,9 +1674,9 @@ func ApiValidatorIncomeDetailsHistory(w http.ResponseWriter, r *http.Request) {
 		for epoch, income := range epochs {
 			epochAtStartOfTheWeek := (epoch / epochsPerWeek) * epochsPerWeek
 
-			txFeeRewardWei := ""
-			if len(income.TxFeeRewardWei) > 0 {
-				txFeeRewardWei = new(big.Int).SetBytes(income.TxFeeRewardWei).String()
+			txFeeRewardPlanck := ""
+			if len(income.TxFeeRewardPlanck) > 0 {
+				txFeeRewardPlanck = new(big.Int).SetBytes(income.TxFeeRewardPlanck).String()
 			}
 
 			responseIncome := &types.ApiValidatorIncomeHistory{
@@ -1693,7 +1693,7 @@ func ApiValidatorIncomeDetailsHistory(w http.ResponseWriter, r *http.Request) {
 				SyncCommitteePenalty:               income.SyncCommitteePenalty,
 				SlashingReward:                     income.SlashingReward,
 				SlashingPenalty:                    income.SlashingPenalty,
-				TxFeeRewardWei:                     txFeeRewardWei,
+				TxFeeRewardPlanck:                  txFeeRewardPlanck,
 				ProposalsMissed:                    income.ProposalsMissed}
 
 			responseData = append(responseData, &types.ApiValidatorIncomeHistoryResponse{

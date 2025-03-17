@@ -364,20 +364,22 @@ func TimeToEpoch(ts time.Time) int64 {
 	return (ts.Unix() - int64(Config.Chain.GenesisTimestamp)) / int64(Config.Chain.ClConfig.SecondsPerSlot) / int64(Config.Chain.ClConfig.SlotsPerEpoch)
 }
 
-func WeiToEther(wei *big.Int) decimal.Decimal {
-	return decimal.NewFromBigInt(wei, 0).DivRound(decimal.NewFromInt(params.Ether), 18)
+func PlanckToZND(planck *big.Int) decimal.Decimal {
+	// TODO(rgeraldes24): params.Ether
+	return decimal.NewFromBigInt(planck, 0).DivRound(decimal.NewFromInt(params.Ether), 18)
 }
 
-func WeiBytesToEther(wei []byte) decimal.Decimal {
-	return WeiToEther(new(big.Int).SetBytes(wei))
+func PlanckBytesToZND(planck []byte) decimal.Decimal {
+	return PlanckToZND(new(big.Int).SetBytes(planck))
 }
 
-func GWeiToEther(gwei *big.Int) decimal.Decimal {
-	return decimal.NewFromBigInt(gwei, 0).Div(decimal.NewFromInt(params.GWei))
+func GPlanckToEther(gplanck *big.Int) decimal.Decimal {
+	// TODO(rgeraldes24): params.GPlanck
+	return decimal.NewFromBigInt(gplanck, 0).Div(decimal.NewFromInt(params.GWei))
 }
 
-func GWeiBytesToEther(gwei []byte) decimal.Decimal {
-	return GWeiToEther(new(big.Int).SetBytes(gwei))
+func GPlanckBytesToEther(gplanck []byte) decimal.Decimal {
+	return GPlanckToEther(new(big.Int).SetBytes(gplanck))
 }
 
 // WaitForCtrlC will block/wait until a control-c is pressed
@@ -608,8 +610,8 @@ func ReadConfig(cfg *types.Config, path string) error {
 	if cfg.Frontend.ClCurrency == "" {
 		switch cfg.Chain.Name {
 		default:
-			cfg.Frontend.MainCurrency = "ETH"
-			cfg.Frontend.ClCurrency = "ETH"
+			cfg.Frontend.MainCurrency = "ZND"
+			cfg.Frontend.ClCurrency = "ZND"
 			cfg.Frontend.ClCurrencyDecimals = 18
 			cfg.Frontend.ClCurrencyDivisor = 1e9
 		}
@@ -618,7 +620,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 	if cfg.Frontend.ElCurrency == "" {
 		switch cfg.Chain.Name {
 		default:
-			cfg.Frontend.ElCurrency = "ETH"
+			cfg.Frontend.ElCurrency = "ZND"
 			cfg.Frontend.ElCurrencyDecimals = 18
 			cfg.Frontend.ElCurrencyDivisor = 1e18
 		}

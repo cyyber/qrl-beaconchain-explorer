@@ -223,7 +223,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		Zrc1155Table:       zrc1155,
 		WithdrawalsTable:   withdrawals,
 		BlocksMinedTable:   blocksMined,
-		EtherValue:         utils.FormatPricedValue(utils.WeiBytesToEther(metadata.EthBalance.Balance), utils.Config.Frontend.ElCurrency, currency),
+		ZNDValue:           utils.FormatPricedValue(utils.PlanckBytesToZND(metadata.EthBalance.Balance), utils.Config.Frontend.ElCurrency, currency),
 		Tabs:               tabs,
 	}
 

@@ -65,8 +65,8 @@ type EpochData struct {
 type ValidatorParticipation struct {
 	Epoch                   uint64
 	GlobalParticipationRate float32
-	VotedEther              uint64
-	EligibleEther           uint64
+	VotedZND                uint64
+	EligibleZND             uint64
 	Finalized               bool
 }
 
@@ -321,7 +321,7 @@ type Eth2Deposit struct {
 	Signature             []byte `db:"signature"`
 }
 
-type HistoricEthPrice struct {
+type HistoricZNDPrice struct {
 	MarketData struct {
 		CurrentPrice struct {
 			Aed float64 `json:"aed"`
@@ -338,7 +338,7 @@ type HistoricEthPrice struct {
 			Cny float64 `json:"cny"`
 			Czk float64 `json:"czk"`
 			Dkk float64 `json:"dkk"`
-			Eth float64 `json:"eth"`
+			Znd float64 `json:"znd"`
 			Eur float64 `json:"eur"`
 			Gbp float64 `json:"gbp"`
 			Hkd float64 `json:"hkd"`
@@ -391,7 +391,6 @@ type HistoricEthPrice struct {
 			Cny float64 `json:"cny"`
 			Czk float64 `json:"czk"`
 			Dkk float64 `json:"dkk"`
-			Eth float64 `json:"eth"`
 			Eur float64 `json:"eur"`
 			Gbp float64 `json:"gbp"`
 			Hkd float64 `json:"hkd"`
@@ -428,6 +427,7 @@ type HistoricEthPrice struct {
 			Xau float64 `json:"xau"`
 			Xdr float64 `json:"xdr"`
 			Zar float64 `json:"zar"`
+			Znd float64 `json:"znd"`
 		} `json:"market_cap"`
 		TotalVolume struct {
 			Aed float64 `json:"aed"`
@@ -521,15 +521,15 @@ func (s *TagMetadataSlice) Scan(src interface{}) error {
 	return errors.New("type assertion failed")
 }
 
-type WeiString struct {
+type PlanckString struct {
 	pgtype.Numeric
 }
 
-func (b WeiString) MarshalJSON() ([]byte, error) {
+func (b PlanckString) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + b.BigInt().String() + "\""), nil
 }
 
-func (b *WeiString) UnmarshalJSON(p []byte) error {
+func (b *PlanckString) UnmarshalJSON(p []byte) error {
 	if string(p) == "null" {
 		return nil
 	}
@@ -538,12 +538,12 @@ func (b *WeiString) UnmarshalJSON(p []byte) error {
 	}
 	err := b.Set(string(p))
 	if err != nil {
-		return fmt.Errorf("failed to unmarshal WeiString: %v", err)
+		return fmt.Errorf("failed to unmarshal PlanckString: %v", err)
 	}
 	return nil
 }
 
-func (b *WeiString) BigInt() *big.Int {
+func (b *PlanckString) BigInt() *big.Int {
 	// this is stupid
 
 	if b.Exp == 0 {
@@ -603,16 +603,16 @@ type ValidatorStatsTableDbRow struct {
 	WithdrawalsAmount      int64 `db:"withdrawals_amount"`
 	WithdrawalsAmountTotal int64 `db:"withdrawals_amount_total"`
 
-	ClRewardsGWei      int64 `db:"cl_rewards_gwei"`
-	ClRewardsGWeiTotal int64 `db:"cl_rewards_gwei_total"`
+	ClRewardsGPlanck      int64 `db:"cl_rewards_gplanck"`
+	ClRewardsGPlanckTotal int64 `db:"cl_rewards_gplanck_total"`
 
 	ClPerformance1d   int64 `db:"-"`
 	ClPerformance7d   int64 `db:"-"`
 	ClPerformance31d  int64 `db:"-"`
 	ClPerformance365d int64 `db:"-"`
 
-	ElRewardsWei      decimal.Decimal `db:"el_rewards_wei"`
-	ElRewardsWeiTotal decimal.Decimal `db:"el_rewards_wei_total"`
+	ElRewardsPlanck      decimal.Decimal `db:"el_rewards_planck"`
+	ElRewardsPlanckTotal decimal.Decimal `db:"el_rewards_planck_total"`
 
 	ElPerformance1d   decimal.Decimal `db:"-"`
 	ElPerformance7d   decimal.Decimal `db:"-"`

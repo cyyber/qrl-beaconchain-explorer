@@ -121,8 +121,6 @@ func GetSyncCommitteAtPeriod(rpcClient rpc.Client, p uint64) ([]SyncCommittee, e
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("GetSyncCommitteAtPeriod")
-	fmt.Println(c.Validators)
 
 	result := make([]SyncCommittee, len(c.Validators))
 	for i, idxStr := range c.Validators {

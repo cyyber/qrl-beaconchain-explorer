@@ -5,11 +5,11 @@
         <div class="card h-100">
           <div class="card-body">
             <div class="d-flex justify-content-between align-item-center">
-              <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Withdrawals</h2>
+              <h2 class="small text-uppercase font-planckght-medium text-secondary mr-1">Withdrawals</h2>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="h6 font-weight-normal mb-0" title="Number of withdrawals Processed"><b>{{ formatAddCommas .WithdrawalCount }}</b> <small>processed</small></span>
-              <span class="h6 font-weight-normal mb-0"><b>{{ formatClCurrency .TotalAmountWithdrawn config.Frontend.MainCurrency 2 true false false true }}</b> <small>distributed</small></span>
+              <span class="h6 font-planckght-normal mb-0" title="Number of withdrawals Processed"><b>{{ formatAddCommas .WithdrawalCount }}</b> <small>processed</small></span>
+              <span class="h6 font-planckght-normal mb-0"><b>{{ formatClCurrency .TotalAmountWithdrawn config.Frontend.MainCurrency 2 true false false true }}</b> <small>distributed</small></span>
             </div>
           </div>
         </div>
@@ -18,11 +18,11 @@
         <div class="card h-100">
           <div class="card-body">
             <div class="d-flex justify-content-between align-item-center">
-              <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Validator Counts</h2>
+              <h2 class="small text-uppercase font-planckght-medium text-secondary mr-1">Validator Counts</h2>
             </div>
             <div class="d-flex align-items-center justify-content-between">
-              <span class="h6 font-weight-normal mb-0"><b>{{ formatAddCommas .WithdrawableValidatorCount }}</b> withdrawable</span>
-              <span class="h6 font-weight-normal mb-0"><b>{{ formatAddCommas .ActiveValidatorCount }}</b> active</span>
+              <span class="h6 font-planckght-normal mb-0"><b>{{ formatAddCommas .WithdrawableValidatorCount }}</b> withdrawable</span>
+              <span class="h6 font-planckght-normal mb-0"><b>{{ formatAddCommas .ActiveValidatorCount }}</b> active</span>
             </div>
           </div>
         </div>
@@ -31,11 +31,11 @@
         <div class="card h-100">
           <div class="card-body">
             <div class="d-flex align-item-center">
-              <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Dilithium Address Changes</h2>
+              <h2 class="small text-uppercase font-planckght-medium text-secondary mr-1">Dilithium Address Changes</h2>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="h6 font-weight-normal mb-0"><b>{{ formatAddCommas .DilithiumChangeCount }}</b> changed</span>
-              <span class="h6 font-weight-normal mb-0"><b>{{ formatAddCommas .PendingDilithiumChangeValidatorCount }}</b> unchanged</span>
+              <span class="h6 font-planckght-normal mb-0"><b>{{ formatAddCommas .DilithiumChangeCount }}</b> changed</span>
+              <span class="h6 font-planckght-normal mb-0"><b>{{ formatAddCommas .PendingDilithiumChangeValidatorCount }}</b> unchanged</span>
             </div>
           </div>
         </div>

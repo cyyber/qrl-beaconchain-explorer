@@ -217,7 +217,11 @@
                 </span>
                 <span class="multiselect-border" style="margin:1rem 0;">
                   <ul id="selected-validators-input" class="multiselect">
+                    // TODO(rgeraldes24)
+                    <!--
                     <li class="input"><input class="typeahead-dashboard" type="text" placeholder="Add a validator via their index, public key, name, graffiti, ENS name or address" aria-label="Search" style="font-size:.9rem;" /></li>
+                    -->
+                    <li class="input"><input class="typeahead-dashboard" type="text" placeholder="Add a validator via their index, public key, name, graffiti or address" aria-label="Search" style="font-size:.9rem;" /></li>
                   </ul>
                   <div id="selected-validators-overview" class="d-none dropdown-selected-validators" style="position:absolute;overflow-y:auto;left:.5rem;right:calc(92px + .5rem);top:100%;margin-top:.3rem;max-height:280px;min-width:240px;border-radius:5px;box-shadow:0 .5rem 1rem rgba(0,0,0,.175);">
                     <!-- class="dropdown-selected-validators" -->
@@ -232,7 +236,7 @@
                     </button>
                   </div>
                 </span>
-                <div style="font-weight:300;font-size:1rem;display:flex;justify-content:center" class="pb-2">
+                <div style="font-planckght:300;font-size:1rem;display:flex;justify-content:center" class="pb-2">
                   <span id="dashboard-info">0 active (0 online, 0 offline), 0 pending, 0 exited validators (0 voluntary)</span>
                 </div>
               </div>
@@ -285,7 +289,7 @@
                     <th scope="row">
                       <div id="validator-eff-header" class="title" data-toggle="tooltip" data-placement="top" title="Average Attestation Effectiveness">Avg. Eff<span class="d-xl-none d-inline">.</span><span class="d-none d-xl-inline">ectiveness</span></div>
                     </th>
-                    <td><div id="validator-eff-total" class="stat" style="font-weight:bold;">0.000</div></td>
+                    <td><div id="validator-eff-total" class="stat" style="font-planckght:bold;">0.000</div></td>
                   </tr>
                 </tbody>
               </table>

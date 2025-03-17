@@ -161,11 +161,11 @@
           <div class="card h-100">
             <div class="card-body">
               <div class="d-flex justify-content-between align-item-center">
-                <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Top Depositor</h2>
+                <h2 class="small text-uppercase font-planckght-medium text-secondary mr-1">Top Depositor</h2>
                 <span class="h6" title="Number of deposits made">{{ if len .Stats.TopDepositors }}{{ (index .Stats.TopDepositors 0).DepositCount }}{{ else }}0{{ end }} Deposits</span>
               </div>
               <div class="d-flex align-items-center">
-                <span style="max-width: 150px;" class="h6 font-weight-normal mb-0 text-truncate">
+                <span style="max-width: 150px;" class="h6 font-planckght-normal mb-0 text-truncate">
                   <a href="/validators/deposit-leaderboard" class="text-primary text-truncate">
                     <i class="fas fa-medal"></i>
                     {{ if len .Stats.TopDepositors }}0x{{ (index .Stats.TopDepositors 0).Address }}{{ end }}
@@ -179,11 +179,11 @@
           <div class="card h-100">
             <div class="card-body">
               <div class="d-flex justify-content-between align-item-center">
-                <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Runner Up</h2>
+                <h2 class="small text-uppercase font-planckght-medium text-secondary mr-1">Runner Up</h2>
                 <span class="h6" title="Number of deposits made">{{ if gt (len .Stats.TopDepositors) 1 }}{{ (index .Stats.TopDepositors 1).DepositCount }}{{ else }}0{{ end }} Deposits</span>
               </div>
               <div class="d-flex align-items-center">
-                <span style="max-width: 150px;" class="h6 font-weight-normal mb-0 text-truncate">
+                <span style="max-width: 150px;" class="h6 font-planckght-normal mb-0 text-truncate">
                   <a href="/validators/deposit-leaderboard" class="text-primary text-truncate">
                     <i class="fas fa-medal"></i>
                     {{ if gt (len .Stats.TopDepositors) 1 }}
@@ -201,11 +201,11 @@
           <div class="card h-100">
             <div class="card-body">
               <div class="d-flex align-item-center">
-                <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Validator Pubkeys</h2>
+                <h2 class="small text-uppercase font-planckght-medium text-secondary mr-1">Validator Pubkeys</h2>
               </div>
               <div class="d-flex justify-content-between align-items-center">
-                <span class="h6 font-weight-normal mb-0">{{ .Stats.UniqueValidatorCount }} Validators</span>
-                <span class="h6 font-weight-normal mb-0"><b>{{ .InvalidDepositCount }}</b> Invalid Deposits</span>
+                <span class="h6 font-planckght-normal mb-0">{{ .Stats.UniqueValidatorCount }} Validators</span>
+                <span class="h6 font-planckght-normal mb-0"><b>{{ .InvalidDepositCount }}</b> Invalid Deposits</span>
               </div>
             </div>
           </div>

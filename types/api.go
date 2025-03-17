@@ -103,7 +103,7 @@ type ApiEth1AddressZRC20TokenResponse struct {
 
 type ApiEth1AddressResponse struct {
 	Address string                             `json:"address"`
-	Ether   string                             `json:"ether"`
+	ZND     string                             `json:"znd"`
 	Tokens  []ApiEth1AddressZRC20TokenResponse `json:"tokens"`
 }
 
@@ -174,7 +174,7 @@ type APIEpochResponse struct {
 	AverageValidatorBalance uint64 `json:"averagevalidatorbalance"`
 	BlocksCount             uint64 `json:"blockscount"`
 	DepositsCount           uint64 `json:"depositscount"`
-	EligibleEther           uint64 `json:"eligibleether"`
+	EligibleZND             uint64 `json:"eligibleznd"`
 	Finalized               bool   `json:"finalized"`
 	GlobalParticipationRate uint64 `json:"globalparticipationrate"`
 	MissedBlocks            uint64 `json:"missedblocks"`
@@ -185,7 +185,7 @@ type APIEpochResponse struct {
 	TotalValidatorBalance   uint64 `json:"totalvalidatorbalance"`
 	ValidatorsCount         uint64 `json:"validatorscount"`
 	VoluntaryExitsCount     uint64 `json:"voluntaryexitscount"`
-	VotedEther              uint64 `json:"votedether"`
+	VotedZND                uint64 `json:"votedznd"`
 	RewardsExported         uint64 `json:"rewards_exported"`
 	WithdrawalCount         uint64 `json:"withdrawalcount"`
 }
@@ -394,7 +394,7 @@ type ApiValidatorIncomeHistory struct {
 	SyncCommitteePenalty               uint64 `json:"sync_committee_penalty,omitempty"`
 	SlashingReward                     uint64 `json:"slashing_reward,omitempty"`
 	SlashingPenalty                    uint64 `json:"slashing_penalty,omitempty"`
-	TxFeeRewardWei                     string `json:"tx_fee_reward_wei,omitempty"`
+	TxFeeRewardPlanck                  string `json:"tx_fee_reward_planck,omitempty"`
 	ProposalsMissed                    uint64 `json:"proposals_missed,omitempty"`
 }
 
