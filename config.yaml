@@ -36,6 +36,5 @@ indexer:
     port: "4000" # GRPC port of the Qrysm node
     type: "qrysm"
     pageSize: 100 # the amount of entries to fetch per paged rpc call, TODO set to 500
-  eth1Endpoint: 'http://localhost:8545'
   # Note: 0 is correct, but due to an underflow bug (being fixed), doesn't work.
   depositContractFirstBlock: 1

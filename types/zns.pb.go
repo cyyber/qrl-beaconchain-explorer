@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.30.0
 // 	protoc        v4.25.0
-// source: types/ens.proto
+// source: types/zns.proto
 
 package types
 
@@ -21,7 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type EnsNameRegistered struct {
+type ZnsNameRegistered struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -39,8 +39,8 @@ type EnsNameRegistered struct {
 	Expires          *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=expires,proto3" json:"expires,omitempty"`
 }
 
-func (x *EnsNameRegistered) Reset() {
-	*x = EnsNameRegistered{}
+func (x *ZnsNameRegistered) Reset() {
+	*x = ZnsNameRegistered{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_ens_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -48,13 +48,13 @@ func (x *EnsNameRegistered) Reset() {
 	}
 }
 
-func (x *EnsNameRegistered) String() string {
+func (x *ZnsNameRegistered) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EnsNameRegistered) ProtoMessage() {}
+func (*ZnsNameRegistered) ProtoMessage() {}
 
-func (x *EnsNameRegistered) ProtoReflect() protoreflect.Message {
+func (x *ZnsNameRegistered) ProtoReflect() protoreflect.Message {
 	mi := &file_types_ens_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -66,89 +66,89 @@ func (x *EnsNameRegistered) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EnsNameRegistered.ProtoReflect.Descriptor instead.
-func (*EnsNameRegistered) Descriptor() ([]byte, []int) {
+// Deprecated: Use ZnsNameRegistered.ProtoReflect.Descriptor instead.
+func (*ZnsNameRegistered) Descriptor() ([]byte, []int) {
 	return file_types_ens_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *EnsNameRegistered) GetParentHash() []byte {
+func (x *ZnsNameRegistered) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetBlockNumber() uint64 {
+func (x *ZnsNameRegistered) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *EnsNameRegistered) GetRegisterContract() []byte {
+func (x *ZnsNameRegistered) GetRegisterContract() []byte {
 	if x != nil {
 		return x.RegisterContract
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetResolverContract() []byte {
+func (x *ZnsNameRegistered) GetResolverContract() []byte {
 	if x != nil {
 		return x.ResolverContract
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetTime() *timestamppb.Timestamp {
+func (x *ZnsNameRegistered) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetLabel() []byte {
+func (x *ZnsNameRegistered) GetLabel() []byte {
 	if x != nil {
 		return x.Label
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetOwner() []byte {
+func (x *ZnsNameRegistered) GetOwner() []byte {
 	if x != nil {
 		return x.Owner
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetResolver() []byte {
+func (x *ZnsNameRegistered) GetResolver() []byte {
 	if x != nil {
 		return x.Resolver
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetNode() []byte {
+func (x *ZnsNameRegistered) GetNode() []byte {
 	if x != nil {
 		return x.Node
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetName() []byte {
+func (x *ZnsNameRegistered) GetName() []byte {
 	if x != nil {
 		return x.Name
 	}
 	return nil
 }
 
-func (x *EnsNameRegistered) GetExpires() *timestamppb.Timestamp {
+func (x *ZnsNameRegistered) GetExpires() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Expires
 	}
 	return nil
 }
 
-type EnsNameRenewed struct {
+type ZnsNameRenewed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -161,8 +161,8 @@ type EnsNameRenewed struct {
 	Expires     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires,proto3" json:"expires,omitempty"`
 }
 
-func (x *EnsNameRenewed) Reset() {
-	*x = EnsNameRenewed{}
+func (x *ZnsNameRenewed) Reset() {
+	*x = ZnsNameRenewed{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_ens_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -170,13 +170,13 @@ func (x *EnsNameRenewed) Reset() {
 	}
 }
 
-func (x *EnsNameRenewed) String() string {
+func (x *ZnsNameRenewed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EnsNameRenewed) ProtoMessage() {}
+func (*ZnsNameRenewed) ProtoMessage() {}
 
-func (x *EnsNameRenewed) ProtoReflect() protoreflect.Message {
+func (x *ZnsNameRenewed) ProtoReflect() protoreflect.Message {
 	mi := &file_types_ens_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -188,54 +188,54 @@ func (x *EnsNameRenewed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EnsNameRenewed.ProtoReflect.Descriptor instead.
-func (*EnsNameRenewed) Descriptor() ([]byte, []int) {
+// Deprecated: Use ZnsNameRenewed.ProtoReflect.Descriptor instead.
+func (*ZnsNameRenewed) Descriptor() ([]byte, []int) {
 	return file_types_ens_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *EnsNameRenewed) GetParentHash() []byte {
+func (x *ZnsNameRenewed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *EnsNameRenewed) GetBlockNumber() uint64 {
+func (x *ZnsNameRenewed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *EnsNameRenewed) GetTime() *timestamppb.Timestamp {
+func (x *ZnsNameRenewed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *EnsNameRenewed) GetLabel() []byte {
+func (x *ZnsNameRenewed) GetLabel() []byte {
 	if x != nil {
 		return x.Label
 	}
 	return nil
 }
 
-func (x *EnsNameRenewed) GetName() []byte {
+func (x *ZnsNameRenewed) GetName() []byte {
 	if x != nil {
 		return x.Name
 	}
 	return nil
 }
 
-func (x *EnsNameRenewed) GetExpires() *timestamppb.Timestamp {
+func (x *ZnsNameRenewed) GetExpires() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Expires
 	}
 	return nil
 }
 
-type EnsAddressChanged struct {
+type ZnsAddressChanged struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -249,8 +249,8 @@ type EnsAddressChanged struct {
 	NewAddress      []byte                 `protobuf:"bytes,7,opt,name=new_address,json=newAddress,proto3" json:"new_address,omitempty"`
 }
 
-func (x *EnsAddressChanged) Reset() {
-	*x = EnsAddressChanged{}
+func (x *ZnsAddressChanged) Reset() {
+	*x = ZnsAddressChanged{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_ens_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -258,13 +258,13 @@ func (x *EnsAddressChanged) Reset() {
 	}
 }
 
-func (x *EnsAddressChanged) String() string {
+func (x *ZnsAddressChanged) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EnsAddressChanged) ProtoMessage() {}
+func (*ZnsAddressChanged) ProtoMessage() {}
 
-func (x *EnsAddressChanged) ProtoReflect() protoreflect.Message {
+func (x *ZnsAddressChanged) ProtoReflect() protoreflect.Message {
 	mi := &file_types_ens_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -276,61 +276,61 @@ func (x *EnsAddressChanged) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EnsAddressChanged.ProtoReflect.Descriptor instead.
-func (*EnsAddressChanged) Descriptor() ([]byte, []int) {
+// Deprecated: Use ZnsAddressChanged.ProtoReflect.Descriptor instead.
+func (*ZnsAddressChanged) Descriptor() ([]byte, []int) {
 	return file_types_ens_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *EnsAddressChanged) GetParentHash() []byte {
+func (x *ZnsAddressChanged) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *EnsAddressChanged) GetBlockNumber() uint64 {
+func (x *ZnsAddressChanged) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *EnsAddressChanged) GetResolveContract() []byte {
+func (x *ZnsAddressChanged) GetResolveContract() []byte {
 	if x != nil {
 		return x.ResolveContract
 	}
 	return nil
 }
 
-func (x *EnsAddressChanged) GetTime() *timestamppb.Timestamp {
+func (x *ZnsAddressChanged) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *EnsAddressChanged) GetNode() []byte {
+func (x *ZnsAddressChanged) GetNode() []byte {
 	if x != nil {
 		return x.Node
 	}
 	return nil
 }
 
-func (x *EnsAddressChanged) GetCoinType() uint64 {
+func (x *ZnsAddressChanged) GetCoinType() uint64 {
 	if x != nil {
 		return x.CoinType
 	}
 	return 0
 }
 
-func (x *EnsAddressChanged) GetNewAddress() []byte {
+func (x *ZnsAddressChanged) GetNewAddress() []byte {
 	if x != nil {
 		return x.NewAddress
 	}
 	return nil
 }
 
-type EnsNameChanged struct {
+type ZnsNameChanged struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -343,8 +343,8 @@ type EnsNameChanged struct {
 	NewName         []byte                 `protobuf:"bytes,6,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`
 }
 
-func (x *EnsNameChanged) Reset() {
-	*x = EnsNameChanged{}
+func (x *ZnsNameChanged) Reset() {
+	*x = ZnsNameChanged{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_ens_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -352,13 +352,13 @@ func (x *EnsNameChanged) Reset() {
 	}
 }
 
-func (x *EnsNameChanged) String() string {
+func (x *ZnsNameChanged) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EnsNameChanged) ProtoMessage() {}
+func (*ZnsNameChanged) ProtoMessage() {}
 
-func (x *EnsNameChanged) ProtoReflect() protoreflect.Message {
+func (x *ZnsNameChanged) ProtoReflect() protoreflect.Message {
 	mi := &file_types_ens_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -370,47 +370,47 @@ func (x *EnsNameChanged) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EnsNameChanged.ProtoReflect.Descriptor instead.
-func (*EnsNameChanged) Descriptor() ([]byte, []int) {
+// Deprecated: Use ZnsNameChanged.ProtoReflect.Descriptor instead.
+func (*ZnsNameChanged) Descriptor() ([]byte, []int) {
 	return file_types_ens_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *EnsNameChanged) GetParentHash() []byte {
+func (x *ZnsNameChanged) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *EnsNameChanged) GetBlockNumber() uint64 {
+func (x *ZnsNameChanged) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *EnsNameChanged) GetResolveContract() []byte {
+func (x *ZnsNameChanged) GetResolveContract() []byte {
 	if x != nil {
 		return x.ResolveContract
 	}
 	return nil
 }
 
-func (x *EnsNameChanged) GetTime() *timestamppb.Timestamp {
+func (x *ZnsNameChanged) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *EnsNameChanged) GetNode() []byte {
+func (x *ZnsNameChanged) GetNode() []byte {
 	if x != nil {
 		return x.Node
 	}
 	return nil
 }
 
-func (x *EnsNameChanged) GetNewName() []byte {
+func (x *ZnsNameChanged) GetNewName() []byte {
 	if x != nil {
 		return x.NewName
 	}
@@ -511,19 +511,19 @@ func file_types_ens_proto_rawDescGZIP() []byte {
 
 var file_types_ens_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_types_ens_proto_goTypes = []interface{}{
-	(*EnsNameRegistered)(nil),     // 0: types.EnsNameRegistered
-	(*EnsNameRenewed)(nil),        // 1: types.EnsNameRenewed
-	(*EnsAddressChanged)(nil),     // 2: types.EnsAddressChanged
-	(*EnsNameChanged)(nil),        // 3: types.EnsNameChanged
+	(*ZnsNameRegistered)(nil),     // 0: types.ZnsNameRegistered
+	(*ZnsNameRenewed)(nil),        // 1: types.ZnsNameRenewed
+	(*ZnsAddressChanged)(nil),     // 2: types.ZnsAddressChanged
+	(*ZnsNameChanged)(nil),        // 3: types.ZnsNameChanged
 	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
 }
 var file_types_ens_proto_depIdxs = []int32{
-	4, // 0: types.EnsNameRegistered.time:type_name -> google.protobuf.Timestamp
-	4, // 1: types.EnsNameRegistered.expires:type_name -> google.protobuf.Timestamp
-	4, // 2: types.EnsNameRenewed.time:type_name -> google.protobuf.Timestamp
-	4, // 3: types.EnsNameRenewed.expires:type_name -> google.protobuf.Timestamp
-	4, // 4: types.EnsAddressChanged.time:type_name -> google.protobuf.Timestamp
-	4, // 5: types.EnsNameChanged.time:type_name -> google.protobuf.Timestamp
+	4, // 0: types.ZnsNameRegistered.time:type_name -> google.protobuf.Timestamp
+	4, // 1: types.ZnsNameRegistered.expires:type_name -> google.protobuf.Timestamp
+	4, // 2: types.ZnsNameRenewed.time:type_name -> google.protobuf.Timestamp
+	4, // 3: types.ZnsNameRenewed.expires:type_name -> google.protobuf.Timestamp
+	4, // 4: types.ZnsAddressChanged.time:type_name -> google.protobuf.Timestamp
+	4, // 5: types.ZnsNameChanged.time:type_name -> google.protobuf.Timestamp
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -538,7 +538,7 @@ func file_types_ens_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_types_ens_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EnsNameRegistered); i {
+			switch v := v.(*ZnsNameRegistered); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -550,7 +550,7 @@ func file_types_ens_proto_init() {
 			}
 		}
 		file_types_ens_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EnsNameRenewed); i {
+			switch v := v.(*ZnsNameRenewed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -562,7 +562,7 @@ func file_types_ens_proto_init() {
 			}
 		}
 		file_types_ens_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EnsAddressChanged); i {
+			switch v := v.(*ZnsAddressChanged); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -574,7 +574,7 @@ func file_types_ens_proto_init() {
 			}
 		}
 		file_types_ens_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EnsNameChanged); i {
+			switch v := v.(*ZnsNameChanged); i {
 			case 0:
 				return &v.state
 			case 1:

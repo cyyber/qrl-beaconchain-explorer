@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/lib/pq"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
@@ -388,33 +389,6 @@ func getProposalLuck(slots []uint64, validatorsCount int, fromEpoch uint64) (flo
 	return float64(qualifiedProposalCount) / expectedSlotProposals, proposalTimeFrame
 }
 
-func getProposalTimeframeName(proposalTimeframe time.Duration) string {
-	switch {
-	case proposalTimeframe == fiveDays:
-		return "5 days"
-	case proposalTimeframe == oneWeek:
-		return "week"
-	case proposalTimeframe == oneMonth:
-		return "month"
-	case proposalTimeframe == sixWeeks:
-		return "6 weeks"
-	case proposalTimeframe == twoMonths:
-		return "2 months"
-	case proposalTimeframe == threeMonths:
-		return "3 months"
-	case proposalTimeframe == fourMonths:
-		return "4 months"
-	case proposalTimeframe == fiveMonths:
-		return "5 months"
-	case proposalTimeframe == sixMonths:
-		return "6 months"
-	case proposalTimeframe == year:
-		return "year"
-	default:
-		return "month"
-	}
-}
-
 // calcExpectedSlotProposals calculates the expected number of slot proposals for a certain time frame and validator count
 func calcExpectedSlotProposals(timeframe time.Duration, validatorCount int, activeValidatorsCount uint64) float64 {
 	if validatorCount == 0 || activeValidatorsCount == 0 {
@@ -477,11 +451,6 @@ func LatestState(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCurrency(r *http.Request) string {
-	if cookie, err := r.Cookie("currency"); err == nil {
-		if price.IsAvailableCurrency(cookie.Value) {
-			return cookie.Value
-		}
-	}
 	return utils.Config.Frontend.MainCurrency
 }
 
@@ -694,8 +663,7 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 		consData := consMap[block.Number]
 		day := int64(consData.Epoch / epochsPerDay)
 
-		var totalReward float64
-		totalReward = utils.PlanckToZND(utils.Eth1TotalReward(block)).InexactFloat64()
+		totalReward := utils.PlanckToZND(utils.Eth1TotalReward(block)).InexactFloat64()
 
 		// Add the reward to the existing reward for the day or set it if not previously set
 		dayRewardMap[day] += totalReward
@@ -718,4 +686,57 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 	})
 
 	return chartData, nil
+}
+
+func findExecBlockNumbersByProposerIndex(indices []uint64, offset, limit uint64, isSortAsc bool, onlyFinalized bool, lowerBoundDay uint64) ([]uint64, map[uint64]types.ExecBlockProposer, error) {
+	var blockListSub []types.ExecBlockProposer
+
+	lowerBoundEpoch := lowerBoundDay * utils.EpochsPerDay()
+
+	order := "DESC"
+	if isSortAsc {
+		order = "ASC"
+	}
+
+	status := "status != '3'"
+	if onlyFinalized {
+		status = `status = '1'`
+	}
+
+	query := fmt.Sprintf(`
+		SELECT 
+			exec_block_number,
+			proposer,
+			slot,
+			epoch  
+		FROM blocks 
+		WHERE proposer = ANY($1)
+			AND exec_block_number IS NOT NULL AND exec_block_number > 0
+			AND epoch >= $4
+			AND %s
+		ORDER BY exec_block_number %s
+		OFFSET $2 LIMIT $3`, status, order)
+
+	err := db.ReaderDb.Select(&blockListSub,
+		query,
+		pq.Array(indices),
+		offset,
+		limit,
+		lowerBoundEpoch,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+	blockList, blockProposerMap := getBlockNumbersAndMapProposer(blockListSub)
+	return blockList, blockProposerMap, nil
+}
+
+func getBlockNumbersAndMapProposer(data []types.ExecBlockProposer) ([]uint64, map[uint64]types.ExecBlockProposer) {
+	blockList := []uint64{}
+	blockToProposerMap := make(map[uint64]types.ExecBlockProposer)
+	for _, execBlock := range data {
+		blockList = append(blockList, execBlock.ExecBlock)
+		blockToProposerMap[execBlock.ExecBlock] = execBlock
+	}
+	return blockList, blockToProposerMap
 }

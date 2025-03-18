@@ -1187,12 +1187,6 @@ func DerefString(str *string) string {
 	return ""
 }
 
-// TrLang returns translated text based on language tag and text id
-func TrLang(lang string, key string) template.HTML {
-	I18n := getLocaliser()
-	return template.HTML(I18n.Tr(lang, key))
-}
-
 func KFormatterEthPrice(price uint64) template.HTML {
 	if price > 999 {
 		ethTruncPrice := fmt.Sprint(float64(int((float64(price)/float64(1000))*10))/float64(10)) + "k"
@@ -1274,9 +1268,6 @@ func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
 	p := message.NewPrinter(language.English)
 	return template.HTML(p.Sprintf(`
 		<div class="d-flex align-items-center">
-			<svg style="width: 1rem; height: 1rem;">
-				<use xlink:href="#ethereum-diamond-logo"/>
-			</svg> 
 			<span class="token-holdings">%v %v</span>
 		</div>`, balZND, Config.Frontend.ElCurrency))
 }

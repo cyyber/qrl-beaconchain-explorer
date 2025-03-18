@@ -43,5 +43,4 @@ indexer:
     port: "4000" # port of the backend node
     type: "qrysm"
     pageSize: 500 # the amount of entries to fetch per paged rpc call
-  eth1Endpoint: "https://goerli.infura.io/v3/<api-token>"
   depositContractFirstBlock: 2523557

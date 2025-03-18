@@ -18,7 +18,7 @@ func Burn(w http.ResponseWriter, r *http.Request) {
 
 	// data.Meta.Tdata1 = utils.FormatAmount((data.Data.(*types.BurnPageData).TotalBurned / 1e18) * data.Data.(*types.BurnPageData).Price)
 	// data.Meta.Tdata2 = utils.FormatAmount(data.Data.(*types.BurnPageData).BurnRate24h/1e18) + " ETH/min"
-	// data.Meta.Description = "The current ethereum burn rate is " + data.Meta.Tdata2 + ". A total of " + utils.FormatUSD(data.Data.(*types.BurnPageData).TotalBurned/1e18) + "ETH with a market value of $" + data.Meta.Tdata1 + " has been burned. " + data.Meta.Description
+	// data.Meta.Description = "The current zond burn rate is " + data.Meta.Tdata2 + ". A total of " + utils.FormatUSD(data.Data.(*types.BurnPageData).TotalBurned/1e18) + "ETH with a market value of $" + data.Meta.Tdata1 + " has been burned. " + data.Meta.Description
 
 	latestBurn := services.LatestBurnData()
 

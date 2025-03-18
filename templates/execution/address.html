@@ -1,5 +1,4 @@
 {{ define "css" }}
-  {{ template "LayoutSvgSprite" }}
   <style>
     .border-bottom-radius-0 {
       border-bottom-left-radius: 0px !important;
@@ -286,17 +285,8 @@
       <div class="mb-1 mb-md-0 mt-md-3 d-flex justify-content-between">
         <h1 class="font-planckght-bold header-address">
           <span class="mr-1">{{ if .Data.IsContract }}Contract{{ else }}Address{{ end }}</span>
-          {{ if len .Data.EnsName }}<span class="badge badge-pill badge-ens">{{ .Data.EnsName }}</span>{{ end }}
+          {{ if len .Data.ZnsName }}<span class="badge badge-pill badge-ens">{{ .Data.ZnsName }}</span>{{ end }}
         </h1>
-        <div class="dropdown">
-          <button class="btn btn-sm btn-primary text-white dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">More</button>
-          <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="https://www.chainabuse.com/report?source=bitfly">
-              <i class="fas fa-flag"></i>
-              Report as scam
-            </a>
-          </div>
-        </div>
       </div>
       <h4 class="h4 text-monospace mb-md-3 header-address text-truncate">
         {{ .Data.Address | formatAddressLong }}

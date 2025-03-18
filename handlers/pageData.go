@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -48,33 +47,16 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 		CurrentSlot:           services.LatestSlot(),
 		FinalizationDelay:     services.FinalizationDelay(),
 		Rates:                 &types.Rates{SelectedCurrency: "ZND"},
-		// Rates:                 services.GetRates(GetCurrency(r)),
-		Mainnet:             utils.Config.Chain.ClConfig.ConfigName == "mainnet",
-		DepositContract:     utils.Config.Chain.ClConfig.DepositContractAddress,
-		ChainConfig:         utils.Config.Chain.ClConfig,
-		Lang:                "en-US",
-		Debug:               utils.Config.Frontend.Debug,
-		GasNow:              services.LatestGasNowData(),
-		ShowSyncingMessage:  services.IsSyncing(),
-		GlobalNotification:  services.GlobalNotificationMessage(),
-		AvailableCurrencies: price.GetAvailableCurrencies(),
-		MainMenuItems:       createMenuItems(active, isMainnet),
-		TermsOfServiceUrl:   utils.Config.Frontend.Legal.TermsOfServiceUrl,
-		PrivacyPolicyUrl:    utils.Config.Frontend.Legal.PrivacyPolicyUrl,
-	}
-
-	acceptedLangs := strings.Split(r.Header.Get("Accept-Language"), ",")
-	if len(acceptedLangs) > 0 {
-		if strings.Contains(acceptedLangs[0], "ru") || strings.Contains(acceptedLangs[0], "RU") {
-			data.Lang = "ru-RU"
-		}
-	}
-
-	for _, v := range r.Cookies() {
-		if v.Name == "language" {
-			data.Lang = v.Value
-			break
-		}
+		Mainnet:               utils.Config.Chain.ClConfig.ConfigName == "mainnet",
+		DepositContract:       utils.Config.Chain.ClConfig.DepositContractAddress,
+		ChainConfig:           utils.Config.Chain.ClConfig,
+		Debug:                 utils.Config.Frontend.Debug,
+		GasNow:                services.LatestGasNowData(),
+		ShowSyncingMessage:    services.IsSyncing(),
+		GlobalNotification:    services.GlobalNotificationMessage(),
+		MainMenuItems:         createMenuItems(active, isMainnet),
+		TermsOfServiceUrl:     utils.Config.Frontend.Legal.TermsOfServiceUrl,
+		PrivacyPolicyUrl:      utils.Config.Frontend.Legal.PrivacyPolicyUrl,
 	}
 
 	return data
@@ -82,18 +64,13 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 
 func SetPageDataTitle(pageData *types.PageData, title string) {
 	if title == "" {
-		pageData.Meta.Title = fmt.Sprintf("%v - beaconcha.in - %v", utils.Config.Frontend.SiteName, time.Now().Year())
+		pageData.Meta.Title = fmt.Sprintf("%v - %v", utils.Config.Frontend.SiteName, time.Now().Year())
 	} else {
-		pageData.Meta.Title = fmt.Sprintf("%v - %v - beaconcha.in - %v", title, utils.Config.Frontend.SiteName, time.Now().Year())
+		pageData.Meta.Title = fmt.Sprintf("%v - %v - %v", title, utils.Config.Frontend.SiteName, time.Now().Year())
 	}
 }
 
 func createMenuItems(active string, isMain bool) []types.MainMenuItem {
-	hiddenFor := []string{"confirmation", "login", "register"}
-
-	if utils.SliceContains(hiddenFor, active) {
-		return []types.MainMenuItem{}
-	}
 	return []types.MainMenuItem{
 		{
 			Label:    "Blockchain",
@@ -256,14 +233,6 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 							Path:  "/slots/finder",
 							Icon:  "fa-cube",
 						},
-						// TODO(rgeraldes24)
-						/*
-							{
-								Label: "Report a scam",
-								Path:  "https://www.chainabuse.com/report?source=bitfly",
-								Icon:  "fa-flag",
-							},
-						*/
 					},
 				},
 			},

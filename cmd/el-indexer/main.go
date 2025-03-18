@@ -23,11 +23,9 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/version"
-	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
 
 	"github.com/coocood/freecache"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/common"
 	"golang.org/x/sync/errgroup"
@@ -62,16 +60,12 @@ func main() {
 	enableFullBalanceUpdater := flag.Bool("balances.full.enabled", false, "Enable full balance update process")
 	balanceUpdaterBatchSize := flag.Int("balances.batch", 1000, "Batch size for balance updates")
 
-	tokenPriceExport := flag.Bool("token.price.enabled", false, "Enable token export process")
-	tokenPriceExportList := flag.String("token.price.list", "", "Tokenlist path to use for the token price export")
-	tokenPriceExportFrequency := flag.Duration("token.price.frequency", time.Hour, "Token price export interval")
-
 	versionFlag := flag.Bool("version", false, "Print version and exit")
 
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
-	// enableEnsUpdater := flag.Bool("ens.enabled", false, "Enable ens update process")
-	// ensBatchSize := flag.Int64("ens.batch", 200, "Batch size for ens updates")
+	// enableZnsUpdater := flag.Bool("zns.enabled", false, "Enable zns update process")
+	// znsBatchSize := flag.Int64("zns.batch", 200, "Batch size for zns updates")
 
 	flag.Parse()
 
@@ -165,19 +159,6 @@ func main() {
 	}
 	defer bt.Close()
 
-	if *tokenPriceExport {
-		go func() {
-			for {
-				err = UpdateTokenPrices(bt, client, *tokenPriceExportList)
-				if err != nil {
-					utils.LogError(err, "error while updating token prices", 0)
-					time.Sleep(*tokenPriceExportFrequency)
-				}
-				time.Sleep(*tokenPriceExportFrequency)
-			}
-		}()
-	}
-
 	if *enableFullBalanceUpdater {
 		ProcessMetadataUpdates(bt, client, balanceUpdaterPrefix, *balanceUpdaterBatchSize, -1)
 		return
@@ -192,7 +173,7 @@ func main() {
 		bt.TransformZRC721,
 		bt.TransformZRC1155,
 		bt.TransformWithdrawals,
-		// bt.TransformEnsNameRegistered,
+		// bt.TransformZnsNameRegistered,
 		bt.TransformContract)
 
 	cache := freecache.NewCache(100 * 1024 * 1024) // 100 MB limit
@@ -377,10 +358,10 @@ func main() {
 		}
 
 		/*
-			if *enableEnsUpdater {
-				err := bt.ImportEnsUpdates(client.GetNativeClient(), *ensBatchSize)
+			if *enableZnsUpdater {
+				err := bt.ImportZnsUpdates(client.GetNativeClient(), *znsBatchSize)
 				if err != nil {
-					utils.LogError(err, "error importing ens updates", 0, nil)
+					utils.LogError(err, "error importing zns updates", 0, nil)
 					continue
 				}
 			}
@@ -391,102 +372,6 @@ func main() {
 	}
 
 	// utils.WaitForCtrlC()
-}
-
-func UpdateTokenPrices(bt *db.Bigtable, client *rpc.GzondClient, tokenListPath string) error {
-
-	tokenListContent, err := os.ReadFile(tokenListPath)
-	if err != nil {
-		return err
-	}
-
-	tokenList := &zrc20.ZRC20TokenList{}
-
-	err = json.Unmarshal(tokenListContent, tokenList)
-	if err != nil {
-		return err
-	}
-
-	type defillamaPriceRequest struct {
-		Coins []string `json:"coins"`
-	}
-	coinsList := make([]string, 0, len(tokenList.Tokens))
-	for _, token := range tokenList.Tokens {
-		coinsList = append(coinsList, "zond:"+token.Address)
-	}
-
-	req := &defillamaPriceRequest{
-		Coins: coinsList,
-	}
-
-	reqEncoded, err := json.Marshal(req)
-	if err != nil {
-		return err
-	}
-
-	httpClient := &http.Client{Timeout: time.Second * 10}
-
-	resp, err := httpClient.Post("https://coins.llama.fi/prices", "application/json", bytes.NewReader(reqEncoded))
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("error querying defillama api: %v", resp.Status)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	type defillamaCoin struct {
-		Decimals  int64            `json:"decimals"`
-		Price     *decimal.Decimal `json:"price"`
-		Symbol    string           `json:"symbol"`
-		Timestamp int64            `json:"timestamp"`
-	}
-
-	type defillamaResponse struct {
-		Coins map[string]defillamaCoin `json:"coins"`
-	}
-
-	respParsed := &defillamaResponse{}
-	err = json.Unmarshal(body, respParsed)
-	if err != nil {
-		return err
-	}
-
-	// TODO(rgeraldes24)
-	tokenPrices := make([]*types.ZRC20TokenPrice, 0, len(respParsed.Coins))
-	for address, data := range respParsed.Coins {
-		tokenPrices = append(tokenPrices, &types.ZRC20TokenPrice{
-			Token: common.FromHex(strings.TrimPrefix(address, "ethereum:0x")),
-			Price: []byte(data.Price.String()),
-		})
-	}
-
-	g := new(errgroup.Group)
-	g.SetLimit(20)
-	for i := range tokenPrices {
-		i := i
-		g.Go(func() error {
-
-			metadata, err := client.GetZRC20TokenMetadata(tokenPrices[i].Token)
-			if err != nil {
-				return err
-			}
-			tokenPrices[i].TotalSupply = metadata.TotalSupply
-			// logrus.Infof("price for token %x is %s @ %v", tokenPrices[i].Token, tokenPrices[i].Price, new(big.Int).SetBytes(tokenPrices[i].TotalSupply))
-			return nil
-		})
-	}
-	err = g.Wait()
-	if err != nil {
-		return err
-	}
-
-	return bt.SaveZRC20TokenPrices(tokenPrices)
 }
 
 func HandleChainReorgs(bt *db.Bigtable, client *rpc.GzondClient, depth int) error {

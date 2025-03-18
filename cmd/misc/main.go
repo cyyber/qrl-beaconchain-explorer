@@ -69,7 +69,7 @@ func main() {
 	statsPartitionCommand := commands.StatsMigratorCommand{}
 
 	configPath := flag.String("config", "config/default.config.yml", "Path to the config file")
-	flag.StringVar(&opts.Command, "command", "", "command to run, available: updateAPIKey, applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, historic-prices-export, index-missing-blocks, export-epoch-missed-slots, migrate-last-attestation-slot-bigtable, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats, migrate-app-purchases")
+	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, historic-prices-export, index-missing-blocks, export-epoch-missed-slots, migrate-last-attestation-slot-bigtable, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats, migrate-app-purchases")
 	flag.Uint64Var(&opts.StartEpoch, "start-epoch", 0, "start epoch")
 	flag.Uint64Var(&opts.EndEpoch, "end-epoch", 0, "end epoch")
 	flag.Uint64Var(&opts.User, "user", 0, "user id")
@@ -206,11 +206,6 @@ func main() {
 		err := nameValidatorsByRanges(opts.ValidatorNameRanges)
 		if err != nil {
 			logrus.WithError(err).Fatal("error naming validators by ranges")
-		}
-	case "updateAPIKey":
-		err := updateAPIKey(opts.User)
-		if err != nil {
-			logrus.WithError(err).Fatal("error updating API key")
 		}
 	case "applyDbSchema":
 		logrus.Infof("applying db schema")
@@ -422,10 +417,10 @@ func main() {
 	case "partition-validator-stats":
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
-	// case "fix-ens":
-	// 	err = fixEns(gzondClient)
-	// case "fix-ens-addresses":
-	// 	err = fixEnsAddresses(gzondClient)
+	// case "fix-zns":
+	// 	err = fixZns(gzondClient)
+	// case "fix-zns-addresses":
+	// 	err = fixZnsAddresses(gzondClient)
 	case "fix-epochs":
 		err = fixEpochs()
 	default:
@@ -468,18 +463,18 @@ func fixEpoch(e uint64) error {
 }
 
 /*
-func fixEns(gzondClient *rpc.GzondClient) error {
-	logrus.WithField("dry", opts.DryRun).Infof("command: fix-ens")
+func fixZns(gzondClient *rpc.GzondClient) error {
+	logrus.WithField("dry", opts.DryRun).Infof("command: fix-zns")
 	addrs := []struct {
 		Address []byte `db:"address"`
-		EnsName string `db:"ens_name"`
+		ZnsName string `db:"zns_name"`
 	}{}
-	err := db.WriterDb.Select(&addrs, `select address, ens_name from ens where is_primary_name = true`)
+	err := db.WriterDb.Select(&addrs, `select address, zns_name from zns where is_primary_name = true`)
 	if err != nil {
 		return err
 	}
 
-	logrus.Infof("found %v ens entries", len(addrs))
+	logrus.Infof("found %v zns entries", len(addrs))
 
 	g := new(errgroup.Group)
 	g.SetLimit(10) // limit load on the node
@@ -497,7 +492,7 @@ func fixEns(gzondClient *rpc.GzondClient) error {
 		for _, addr := range batch {
 			addr := addr
 			g.Go(func() error {
-				ensAddr, err := go_ens.Resolve(gzondClient.GetNativeClient(), addr.EnsName)
+				znsAddr, err := go_zns.Resolve(gzondClient.GetNativeClient(), addr.ZnsName)
 				if err != nil {
 					if err.Error() == "unregistered name" ||
 						err.Error() == "no address" ||
@@ -505,9 +500,9 @@ func fixEns(gzondClient *rpc.GzondClient) error {
 						err.Error() == "abi: attempting to unmarshall an empty string while arguments are expected" ||
 						strings.Contains(err.Error(), "execution reverted") ||
 						err.Error() == "invalid jump destination" {
-						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.EnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting ens entry")
+						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting zns entry")
 						if !opts.DryRun {
-							_, err = db.WriterDb.Exec(`delete from ens where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+							_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 							if err != nil {
 								return err
 							}
@@ -518,22 +513,22 @@ func fixEns(gzondClient *rpc.GzondClient) error {
 				}
 
 				dbAddr := common.BytesToAddress(addr.Address)
-				if dbAddr.Cmp(ensAddr) != 0 {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.EnsName, "reason": fmt.Sprintf("dbAddr != resolved ensAddr: %#x != %#x", addr.Address, ensAddr.Bytes())}).Warnf("deleting ens entry")
+				if dbAddr.Cmp(znsAddr) != 0 {
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("dbAddr != resolved znsAddr: %#x != %#x", addr.Address, znsAddr.Bytes())}).Warnf("deleting zns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from ens where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+						_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 						if err != nil {
 							return err
 						}
 					}
 				}
 
-				reverseName, err := go_ens.ReverseResolve(gzondClient.GetNativeClient(), dbAddr)
+				reverseName, err := go_zns.ReverseResolve(gzondClient.GetNativeClient(), dbAddr)
 				if err != nil {
 					if err.Error() == "not a resolver" || err.Error() == "no resolution" {
-						logrus.WithFields(logrus.Fields{"addr": dbAddr, "name": addr.EnsName, "reason": fmt.Sprintf("failed reverse-resolve: %v", err.Error())}).Warnf("updating ens entry: is_primary_name = false")
+						logrus.WithFields(logrus.Fields{"addr": dbAddr, "name": addr.ZnsName, "reason": fmt.Sprintf("failed reverse-resolve: %v", err.Error())}).Warnf("updating zns entry: is_primary_name = false")
 						if !opts.DryRun {
-							_, err = db.WriterDb.Exec(`update ens set is_primary_name = false where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+							_, err = db.WriterDb.Exec(`update zns set is_primary_name = false where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 							if err != nil {
 								return err
 							}
@@ -543,10 +538,10 @@ func fixEns(gzondClient *rpc.GzondClient) error {
 					return err
 				}
 
-				if reverseName != addr.EnsName {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.EnsName, "reason": fmt.Sprintf("resolved != reverseResolved: %v != %v", addr.EnsName, reverseName)}).Warnf("updating ens entry: is_primary_name = false")
+				if reverseName != addr.ZnsName {
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("resolved != reverseResolved: %v != %v", addr.ZnsName, reverseName)}).Warnf("updating zns entry: is_primary_name = false")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`update ens set is_primary_name = false where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+						_, err = db.WriterDb.Exec(`update zns set is_primary_name = false where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 						if err != nil {
 							return err
 						}
@@ -566,15 +561,15 @@ func fixEns(gzondClient *rpc.GzondClient) error {
 	return nil
 }
 
-func fixEnsAddresses(gzondClient *rpc.GzondClient) error {
-	logrus.WithFields(logrus.Fields{"dry": opts.DryRun}).Infof("command: fix-ens-addresses")
+func fixZnsAddresses(gzondClient *rpc.GzondClient) error {
+	logrus.WithFields(logrus.Fields{"dry": opts.DryRun}).Infof("command: fix-zns-addresses")
 	if opts.Addresses == "" {
 		return errors.New("no addresses specified")
 	}
 
 	type DbEntry struct {
 		NameHash      []byte    `db:"name_hash"`
-		EnsName       string    `db:"ens_name"`
+		ZnsName       string    `db:"zns_name"`
 		Address       []byte    `db:"address"`
 		IsPrimaryName bool      `db:"is_primary_name"`
 		ValidTo       time.Time `db:"valid_to"`
@@ -588,31 +583,31 @@ func fixEnsAddresses(gzondClient *rpc.GzondClient) error {
 		addr := common.HexToAddress(addrHex)
 
 		dbEntry := &DbEntry{}
-		err := db.WriterDb.Get(dbEntry, `select name_hash, ens_name, address, is_primary_name, valid_to from ens where address = $1`, addr.Bytes())
+		err := db.WriterDb.Get(dbEntry, `select name_hash, zns_name, address, is_primary_name, valid_to from zns where address = $1`, addr.Bytes())
 		if err != nil && err != sql.ErrNoRows {
-			return fmt.Errorf("error getting ens entry for addr [%v]: %w", addr.Hex(), err)
+			return fmt.Errorf("error getting zns entry for addr [%v]: %w", addr.Hex(), err)
 		}
 		if err == sql.ErrNoRows {
 			dbEntry = nil
 		}
 
-		name, err := go_ens.ReverseResolve(gzondClient.GetNativeClient(), addr)
+		name, err := go_zns.ReverseResolve(gzondClient.GetNativeClient(), addr)
 		if err != nil {
 			if err.Error() == "not a resolver" ||
 				err.Error() == "no resolution" {
 				logrus.WithFields(logrus.Fields{"addr": addr.Hex()}).Warnf("error reverse-resolving name: %v", err)
 				if dbEntry != nil {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error reverse-resolving name: %v", err)}).Warnf("deleting ens entry")
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error reverse-resolving name: %v", err)}).Warnf("deleting zns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from ens where address = $1`, addr.Bytes())
+						_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
 						if err != nil {
-							return fmt.Errorf("error deleting ens entry: %w", err)
+							return fmt.Errorf("error deleting zns entry: %w", err)
 						}
 					}
 				}
 				continue
 			} else {
-				return fmt.Errorf("error go_ens.ReverseResolve for addr %v: %w", addr.Hex(), err)
+				return fmt.Errorf("error go_zns.ReverseResolve for addr %v: %w", addr.Hex(), err)
 			}
 		}
 
@@ -621,7 +616,7 @@ func fixEnsAddresses(gzondClient *rpc.GzondClient) error {
 			name = name + ".eth"
 		}
 
-		resolvedAddr, err := go_ens.Resolve(gzondClient.GetNativeClient(), name)
+		resolvedAddr, err := go_zns.Resolve(gzondClient.GetNativeClient(), name)
 		if err != nil {
 			if err.Error() == "unregistered name" ||
 				err.Error() == "no address" ||
@@ -630,62 +625,62 @@ func fixEnsAddresses(gzondClient *rpc.GzondClient) error {
 				strings.Contains(err.Error(), "execution reverted") ||
 				err.Error() == "invalid jump destination" {
 				if dbEntry != nil {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error resolving name: %v", err)}).Warnf("deleting ens entry")
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error resolving name: %v", err)}).Warnf("deleting zns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from ens where address = $1`, addr.Bytes())
+						_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
 						if err != nil {
-							return fmt.Errorf("error deleting ens entry: %w", err)
+							return fmt.Errorf("error deleting zns entry: %w", err)
 						}
 					}
 				}
 			} else {
-				return fmt.Errorf("error go_ens.Resolve(%v) for addr %v: %w", name, addr.Hex(), err)
+				return fmt.Errorf("error go_zns.Resolve(%v) for addr %v: %w", name, addr.Hex(), err)
 			}
 		}
 
 		if !bytes.Equal(resolvedAddr.Bytes(), addr.Bytes()) {
-			logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("addr != resolvedAddr: %v != %v", addr.Hex(), resolvedAddr.Hex())}).Warnf("deleting ens entry")
+			logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("addr != resolvedAddr: %v != %v", addr.Hex(), resolvedAddr.Hex())}).Warnf("deleting zns entry")
 			if !opts.DryRun {
-				_, err = db.WriterDb.Exec(`delete from ens where address = $1`, addr.Bytes())
+				_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
 				if err != nil {
-					return fmt.Errorf("error deleting ens entry: %w", err)
+					return fmt.Errorf("error deleting zns entry: %w", err)
 				}
 			}
 		}
 
-		nameHash, err := go_ens.NameHash(name)
+		nameHash, err := go_zns.NameHash(name)
 		if err != nil {
-			return fmt.Errorf("error go_ens.NameHash(%v) for addr %v: %w", name, addr.Hex(), err)
+			return fmt.Errorf("error go_zns.NameHash(%v) for addr %v: %w", name, addr.Hex(), err)
 		}
 		parts := strings.Split(name, ".")
 		mainName := strings.Join(parts[len(parts)-2:], ".")
-		ensName, err := go_ens.NewName(gzondClient.GetNativeClient(), mainName)
+		znsName, err := go_zns.NewName(gzondClient.GetNativeClient(), mainName)
 		if err != nil {
-			return fmt.Errorf("error could not create name via go_ens.NewName for [%v]: %w", name, err)
+			return fmt.Errorf("error could not create name via go_zns.NewName for [%v]: %w", name, err)
 		}
-		expires, err := ensName.Expires()
+		expires, err := znsName.Expires()
 		if err != nil {
-			return fmt.Errorf("error could not get ens expire date for [%v]: %w", name, err)
+			return fmt.Errorf("error could not get zns expire date for [%v]: %w", name, err)
 		}
 
-		if dbEntry == nil || dbEntry.EnsName != name || !bytes.Equal(dbEntry.NameHash, nameHash[:]) || !bytes.Equal(dbEntry.Address, resolvedAddr.Bytes()) || dbEntry.ValidTo != expires {
+		if dbEntry == nil || dbEntry.ZnsName != name || !bytes.Equal(dbEntry.NameHash, nameHash[:]) || !bytes.Equal(dbEntry.Address, resolvedAddr.Bytes()) || dbEntry.ValidTo != expires {
 			logFields := logrus.Fields{"resolvedAddr": resolvedAddr, "addr": addr.Hex(), "name": name, "nameHash": fmt.Sprintf("%#x", nameHash), "expires": expires}
 			if dbEntry == nil {
 				logFields["db"] = "nil"
-				logrus.WithFields(logFields).Warnf("adding ens entry")
+				logrus.WithFields(logFields).Warnf("adding zns entry")
 			} else {
-				logFields["db.name"] = dbEntry.EnsName
+				logFields["db.name"] = dbEntry.ZnsName
 				logFields["db.nameHash"] = fmt.Sprintf("%#x", dbEntry.NameHash)
 				logFields["db.addr"] = fmt.Sprintf("%#x", dbEntry.Address)
 				logFields["db.expire"] = dbEntry.ValidTo
-				logrus.WithFields(logFields).Warnf("updating ens entry")
+				logrus.WithFields(logFields).Warnf("updating zns entry")
 			}
 
 			if !opts.DryRun {
 				_, err = db.WriterDb.Exec(`
-					INSERT INTO ens (
+					INSERT INTO zns (
 						name_hash,
-						ens_name,
+						zns_name,
 						address,
 						is_primary_name,
 						valid_to)
@@ -693,13 +688,13 @@ func fixEnsAddresses(gzondClient *rpc.GzondClient) error {
 					ON CONFLICT
 						(name_hash)
 					DO UPDATE SET
-						ens_name = excluded.ens_name,
+						zns_name = excluded.zns_name,
 						address = excluded.address,
 						is_primary_name = excluded.is_primary_name,
 						valid_to = excluded.valid_to`,
 					nameHash[:], name, addr.Bytes(), true, expires)
 				if err != nil {
-					return fmt.Errorf("error writing ens data for addr [%v]: %w", addr.Hex(), err)
+					return fmt.Errorf("error writing zns data for addr [%v]: %w", addr.Hex(), err)
 				}
 			}
 		}
@@ -1139,60 +1134,6 @@ func updateAggregationBits(rpcClient *rpc.QrysmClient, startEpoch uint64, endEpo
 	}
 }
 
-// Updates a users API key
-func updateAPIKey(user uint64) error {
-	type User struct {
-		PHash  string `db:"password"`
-		Email  string `db:"email"`
-		OldKey string `db:"api_key"`
-	}
-
-	var u User
-	err := db.FrontendWriterDB.Get(&u, `SELECT password, email, api_key from users where id = $1`, user)
-	if err != nil {
-		return fmt.Errorf("error getting current user, err: %w", err)
-	}
-
-	apiKey, err := utils.GenerateRandomAPIKey()
-	if err != nil {
-		return err
-	}
-
-	logrus.Infof("updating api key for user %v from old key: %v to new key: %v", user, u.OldKey, apiKey)
-
-	tx, err := db.FrontendWriterDB.Beginx()
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	_, err = tx.Exec(`UPDATE api_statistics set apikey = $1 where apikey = $2`, apiKey, u.OldKey)
-	if err != nil {
-		return err
-	}
-
-	rows, err := tx.Exec(`UPDATE users SET api_key = $1 WHERE id = $2`, apiKey, user)
-	if err != nil {
-		return err
-	}
-
-	amount, err := rows.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if amount > 1 {
-		return fmt.Errorf("error too many rows affected expected 1 but got: %v", amount)
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // Debugging function to compare Rewards from the Statistic Table with the onces from the Big Table
 func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Bigtable) {
 
@@ -1351,13 +1292,13 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 	logrus.Infof("transformerFlag: %v", transformerFlag)
 	transformerList := strings.Split(transformerFlag, ",")
 	if transformerFlag == "all" {
-		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformZRC20", "TransformZRC721", "TransformZRC1155", "TransformWithdrawals", "TransformEnsNameRegistered", "TransformContract"}
+		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformZRC20", "TransformZRC721", "TransformZRC1155", "TransformWithdrawals", "TransformZnsNameRegistered", "TransformContract"}
 	} else if len(transformerList) == 0 {
 		utils.LogError(nil, "no transformer functions provided", 0)
 		return
 	}
 	logrus.Infof("transformers: %v", transformerList)
-	// importENSChanges := false
+	// importZNSChanges := false
 	/**
 	* Add additional transformers you want to sync to this switch case
 	**/
@@ -1377,9 +1318,9 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformZRC1155)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
-		// case "TransformEnsNameRegistered":
-		// 	transforms = append(transforms, bt.TransformEnsNameRegistered)
-		// 	importENSChanges = true
+		// case "TransformZnsNameRegistered":
+		// 	transforms = append(transforms, bt.TransformZnsNameRegistered)
+		// 	importZNSChanges = true
 		case "TransformContract":
 			transforms = append(transforms, bt.TransformContract)
 		default:
@@ -1415,9 +1356,9 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 
 	}
 
-	// if importENSChanges {
-	// 	if err := bt.ImportEnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
-	// 		utils.LogError(err, "error importing ens from events", 0)
+	// if importZNSChanges {
+	// 	if err := bt.ImportZnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
+	// 		utils.LogError(err, "error importing zns from events", 0)
 	// 		return
 	// 	}
 	// }

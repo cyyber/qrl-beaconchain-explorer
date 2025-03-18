@@ -39,18 +39,15 @@ type PageData struct {
 	DepositContract       string
 	Rates                 *Rates
 	InfoBanner            *template.HTML
-	// IsUserClientUpdated   func(uint64) bool
-	ChainConfig         ClChainConfig
-	Lang                string
-	Debug               bool
-	DebugTemplates      []string
-	DebugSession        map[string]interface{}
-	GasNow              *GasNowPageData
-	GlobalNotification  template.HTML
-	AvailableCurrencies []string
-	MainMenuItems       []MainMenuItem
-	TermsOfServiceUrl   string
-	PrivacyPolicyUrl    string
+	ChainConfig           ClChainConfig
+	Debug                 bool
+	DebugTemplates        []string
+	DebugSession          map[string]interface{}
+	GasNow                *GasNowPageData
+	GlobalNotification    template.HTML
+	MainMenuItems         []MainMenuItem
+	TermsOfServiceUrl     string
+	PrivacyPolicyUrl      string
 }
 
 type MainMenuItem struct {
@@ -1199,7 +1196,7 @@ type DataTableSaveStateColumns struct {
 
 type Eth1AddressPageData struct {
 	Address            string `json:"address"`
-	EnsName            string `json:"ensName"`
+	ZnsName            string `json:"znsName"`
 	IsContract         bool
 	QRCode             string `json:"qr_code_base64"`
 	QRCodeInverse      string

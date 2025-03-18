@@ -16,6 +16,7 @@ import (
 	"github.com/theQRL/go-zond/event"
 )
 
+// TODO(rgeraldes24): generate new bindings
 // Reference imports to suppress errors if they are not otherwise used.
 var (
 	_ = errors.New

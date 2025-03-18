@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "./types";
 
-message EnsNameRegistered {
+message ZnsNameRegistered {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes register_contract = 3;
@@ -19,7 +19,7 @@ message EnsNameRegistered {
     google.protobuf.Timestamp expires = 11;
 }
 
-message EnsNameRenewed {
+message ZnsNameRenewed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     google.protobuf.Timestamp time = 3;
@@ -28,7 +28,7 @@ message EnsNameRenewed {
     google.protobuf.Timestamp expires = 6;
 }
 
-message EnsAddressChanged {
+message ZnsAddressChanged {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes resolve_contract = 3;
@@ -38,7 +38,7 @@ message EnsAddressChanged {
     bytes new_address = 7;
 }
 
-message EnsNameChanged {
+message ZnsNameChanged {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes resolve_contract = 3;

@@ -1,45 +1,20 @@
 package types
 
 import (
-	"database/sql/driver"
-	"encoding/json"
 	"math/big"
 
 	"github.com/lib/pq"
-	"github.com/pkg/errors"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 )
 
-type Tag string
-
-const (
-	ValidatorTagsWatchlist Tag = "watchlist"
-)
-
-type ErrorResponse struct {
-	Status string // e.g. "200 OK"
-	Body   string
-}
-
-func (e *ErrorResponse) Scan(value interface{}) error {
-	b, ok := value.([]byte)
-	if !ok {
-		return errors.New("type assertion to []byte failed")
-	}
-
-	return json.Unmarshal(b, &e)
-}
-
-func (a ErrorResponse) Value() (driver.Value, error) {
-	return json.Marshal(a)
-}
-
-type EnsSearchPageData = struct {
+/*
+type ZnsSearchPageData = struct {
 	Error  string
 	Search string
-	Result *EnsDomainResponse
+	Result *ZnsDomainResponse
 }
+*/
 
 type GasNowPageData struct {
 	Code int `json:"code"`

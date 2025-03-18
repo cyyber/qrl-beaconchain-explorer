@@ -321,9 +321,6 @@ func main() {
 			router.HandleFunc("/heatmap", handlers.Heatmap).Methods("GET")
 
 			router.HandleFunc("/dashboard", handlers.Dashboard).Methods("GET")
-			// TODO(rgeraldes24)
-			// router.HandleFunc("/dashboard/save", handlers.UserDashboardWatchlistAdd).Methods("POST")
-
 			router.HandleFunc("/dashboard/data/allbalances", handlers.DashboardDataBalanceCombined).Methods("GET")
 			router.HandleFunc("/dashboard/data/proposals", handlers.DashboardDataProposals).Methods("GET")
 			router.HandleFunc("/dashboard/data/proposalshistory", handlers.DashboardDataProposalsHistory).Methods("GET")
@@ -342,7 +339,7 @@ func main() {
 
 			router.HandleFunc("/tables/{tableId}/state", handlers.GetDataTableStateChanges).Methods("GET")
 			router.HandleFunc("/tables/{tableId}/state", handlers.SetDataTableStateChanges).Methods("PUT")
-			// router.HandleFunc("/ens/{search}", handlers.EnsSearch).Methods("GET")
+			// router.HandleFunc("/zns/{search}", handlers.ZnsSearch).Methods("GET")
 
 			router.HandleFunc("/zondClients", handlers.ZondClientsServices).Methods("GET")
 

@@ -1300,7 +1300,7 @@ func AvgBlockUtilChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:                           "Average Block Usage",
-		Subtitle:                        "Evolution of the average utilization of Ethereum blocks",
+		Subtitle:                        "Evolution of the average utilization of Zond blocks",
 		XAxisTitle:                      "",
 		YAxisTitle:                      "Block Usage [%]",
 		StackingMode:                    "false",
@@ -1354,7 +1354,7 @@ func MarketCapChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:                           "Market Cap",
-		Subtitle:                        "The Evolution of the Ethereum Market Cap.",
+		Subtitle:                        "The Evolution of the Zond Market Cap.",
 		XAxisTitle:                      "",
 		YAxisTitle:                      "Market Cap [$]",
 		StackingMode:                    "false",

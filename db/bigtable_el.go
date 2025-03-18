@@ -33,14 +33,14 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/math"
-	eth_types "github.com/theQRL/go-zond/core/types"
+	zond_types "github.com/theQRL/go-zond/core/types"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
 const (
-	ECR20TokensPerAddressLimit    = uint64(200) // when changing this, you will have to update the swagger docu for func ApiEth1Address too
+	ZRC20TokensPerAddressLimit    = uint64(200)
 	digitLimitInAddressPagesTable = 17
 	nameLimitInAddressPagesTable  = 0
 )
@@ -1296,7 +1296,7 @@ func (bigtable *Bigtable) TransformZRC20(blk *types.Eth1Block, cache *freecache.
 				topics = append(topics, common.BytesToHash(lTopic))
 			}
 
-			ethLog := eth_types.Log{
+			ethLog := zond_types.Log{
 				Address:     common.BytesToAddress(log.GetAddress()),
 				Data:        log.Data,
 				Topics:      topics,
@@ -1452,7 +1452,7 @@ func (bigtable *Bigtable) TransformZRC721(blk *types.Eth1Block, cache *freecache
 				topics = append(topics, common.BytesToHash(lTopic))
 			}
 
-			ethLog := eth_types.Log{
+			ethLog := zond_types.Log{
 				Address:     common.BytesToAddress(log.GetAddress()),
 				Data:        log.Data,
 				Topics:      topics,
@@ -1611,7 +1611,7 @@ func (bigtable *Bigtable) TransformZRC1155(blk *types.Eth1Block, cache *freecach
 				topics = append(topics, common.BytesToHash(lTopic))
 			}
 
-			ethLog := eth_types.Log{
+			ethLog := zond_types.Log{
 				Address:     common.BytesToAddress(log.GetAddress()),
 				Data:        log.Data,
 				Topics:      topics,
@@ -3048,11 +3048,11 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 		EthBalance: &types.Eth1AddressBalance{
 			Metadata: &types.ZRC20Metadata{},
 		},
-		ZRC20TokenLimit: ECR20TokensPerAddressLimit,
+		ZRC20TokenLimit: ZRC20TokensPerAddressLimit,
 	}
 
-	if limit == 0 || limit > ECR20TokensPerAddressLimit {
-		limit = ECR20TokensPerAddressLimit
+	if limit == 0 || limit > ZRC20TokensPerAddressLimit {
+		limit = ZRC20TokensPerAddressLimit
 	}
 
 	tokenCount := uint64(0)
@@ -3336,7 +3336,7 @@ func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
 	add := common.Address{}
 	add.SetBytes(address)
-	name, err := GetEnsNameForAddress(add)
+	name, err := GetZnsNameForAddress(add)
 	if err == nil && len(name) > 0 {
 		return name, nil
 	}
@@ -3385,7 +3385,7 @@ func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
 
 	keys := make([]string, 0, len(addresses))
 
-	if err := GetEnsNamesForAddress(addresses); err != nil {
+	if err := GetZnsNamesForAddress(addresses); err != nil {
 		return err
 	}
 
@@ -3640,96 +3640,6 @@ func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 
 	return bigtable.tableMetadata.Apply(ctx, fmt.Sprintf("%s:%x", bigtable.chainId, address), mut)
 }
-
-/*
-func (bigtable *Bigtable) GetContractMetadata(address []byte) (*types.ContractMetadata, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"address": address,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
-	defer cancel()
-
-	rowKey := fmt.Sprintf("%s:%x", bigtable.chainId, address)
-	cacheKey := bigtable.chainId + ":CONTRACT:" + rowKey
-	if cached, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, utils.Day, new(types.ContractMetadata)); err == nil {
-		ret := cached.(*types.ContractMetadata)
-		val, err := abi.JSON(bytes.NewReader(ret.ABIJson))
-		ret.ABI = &val
-		return ret, err
-	}
-
-	row, err := bigtable.tableMetadata.ReadRow(ctx, rowKey, gcp_bigtable.RowFilter(gcp_bigtable.FamilyFilter(CONTRACT_METADATA_FAMILY)))
-
-	ret := &types.ContractMetadata{}
-
-	if err != nil || row == nil {
-		ret, err := utils.TryFetchContractMetadata(address)
-
-		if err != nil {
-			if err == utils.ErrRateLimit {
-				logrus.Warnf("Hit rate limit when fetching contract metadata for address %x", address)
-			} else {
-				logAdditionalInfo := map[string]interface{}{"address": fmt.Sprintf("%x", address)}
-				if strings.Contains(err.Error(), "unsupported arg type") {
-					// open issue in the go-ethereum lib: https://github.com/ethereum/go-ethereum/issues/24572
-					logrus.Warnf("could not parse ABI for %x: %v", address, err)
-				} else {
-					utils.LogError(err, "Fetching contract metadata", 0, logAdditionalInfo)
-				}
-				err := cache.TieredCache.Set(cacheKey, &types.ContractMetadata{}, utils.Day)
-				if err != nil {
-					utils.LogError(err, "Caching contract metadata", 0, logAdditionalInfo)
-				}
-			}
-			return nil, err
-		}
-
-		// No contract found, caching empty
-		if ret == nil {
-			err = cache.TieredCache.Set(cacheKey, &types.ContractMetadata{}, utils.Day)
-			if err != nil {
-				utils.LogError(err, "Caching contract metadata", 0, map[string]interface{}{"address": fmt.Sprintf("%x", address)})
-			}
-			return nil, nil
-		}
-
-		err = cache.TieredCache.Set(cacheKey, ret, utils.Day)
-		if err != nil {
-			utils.LogError(err, "Caching contract metadata", 0, map[string]interface{}{"address": fmt.Sprintf("%x", address)})
-		}
-
-		err = bigtable.SaveContractMetadata(address, ret)
-		if err != nil {
-			logger.Errorf("error saving contract metadata to bigtable: %v", err)
-		}
-		return ret, nil
-	}
-
-	for _, ri := range row {
-		for _, item := range ri {
-			if item.Column == CONTRACT_METADATA_FAMILY+":"+CONTRACT_NAME {
-				ret.Name = string(item.Value)
-			} else if item.Column == CONTRACT_METADATA_FAMILY+":"+CONTRACT_ABI {
-				ret.ABIJson = item.Value
-				val, err := abi.JSON(bytes.NewReader(ret.ABIJson))
-
-				if err != nil {
-					logrus.Fatalf("error decoding abi for address 0x%x: %v", address, err)
-				}
-				ret.ABI = &val
-			}
-		}
-	}
-
-	err = cache.TieredCache.Set(cacheKey, ret, utils.Day)
-	return ret, err
-}
-*/
 
 func (bigtable *Bigtable) SaveContractMetadata(address []byte, metadata *types.ContractMetadata) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))

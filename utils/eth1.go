@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"html/template"
@@ -17,13 +16,9 @@ import (
 	"golang.org/x/text/message"
 )
 
-var Zrc20TransferEventHash = common.HexToHash("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
-var Zrc1155TransferSingleEventHash = common.HexToHash("0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62")
-
 // TODO(rgeraldes24)
 func Eth1TotalReward(block *types.Eth1BlockIndexed) *big.Int {
-	txFees := big.NewInt(0).SetBytes(block.GetTxReward())
-	return txFees
+	return new(big.Int).SetBytes(block.GetTxReward())
 }
 
 func StripPrefix(hexStr string) string {
@@ -285,27 +280,6 @@ func FormatAddressAsLink(address []byte, name string, isContract bool) template.
 	return template.HTML(ret)
 }
 
-func FormatAddressAsTokenLink(token, address []byte, name string, verified bool, isContract bool) template.HTML {
-	ret := ""
-	name = template.HTMLEscapeString(name)
-	addressString := FixAddressCasing(fmt.Sprintf("Z%x", address))
-
-	if len(name) > 0 {
-		if verified {
-			ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/token/%x?a=%s\">✔ %s (%s…%s)</a> %v", token, addressString, name, addressString[:8], addressString[len(addressString)-6:], CopyButton(addressString))
-		} else {
-			ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/token/%x?a=%s\">%s %s…%s</a> %v", token, addressString, name, addressString[:8], addressString[len(addressString)-6:], CopyButton(addressString))
-		}
-	} else {
-		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/token/%x?a=%s\">%s…%s</a> %v", token, addressString, addressString[:8], addressString[len(addressString)-6:], CopyButton(addressString))
-	}
-
-	if isContract {
-		ret = "<i class=\"fas fa-file-contract mr-1\"></i>" + ret
-	}
-	return template.HTML(ret)
-}
-
 func FormatHashLong(hash common.Hash) template.HTML {
 	address := hash.String()
 	if len(address) > 4 {
@@ -323,7 +297,7 @@ func FormatHashLong(hash common.Hash) template.HTML {
 }
 
 func FormatAddressLong(address string) template.HTML {
-	// if IsValidEnsDomain(address) {
+	// if IsValidZnsDomain(address) {
 	// 	return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.eth`, strings.TrimSuffix(address, ".eth")))
 	// }
 	address = FixAddressCasing(fmt.Sprintf("Z%s", address))
@@ -354,7 +328,7 @@ func formatAmount(amount *big.Int, unit string, digits int, maxPreCommaDigitsBef
 	// define display unit & digits used per unit max
 	displayUnit := " " + unit
 	var unitDigits int
-	if unit == "ZND" || unit == "xDAI" || unit == "GNO" {
+	if unit == "ZND" {
 		unitDigits = 18
 	} else if unit == "GPlanck" {
 		unitDigits = 9
@@ -493,21 +467,6 @@ func FormatNumber(number interface{}) string {
 	return p.Sprintf("%.5f", number)
 }
 
-func FormatHashrate(h float64) template.HTML {
-	if h > 1e12 {
-		return template.HTML(fmt.Sprintf("%.1f TH/s", h/1e12))
-	}
-	return template.HTML(fmt.Sprintf("%.1f GH/s", h/1e9))
-}
-
 // func FormatPercentage(p float64, digits int) template.HTML {
 // 	return template.HTML(fmt.Sprintf("%."+strconv.Itoa(digits)+"f %%", p))
 // }
-
-func FormatTokenIcon(icon []byte, size int) template.HTML {
-	if icon == nil {
-		return template.HTML("")
-	}
-	icon64 := base64.StdEncoding.EncodeToString(icon)
-	return template.HTML(fmt.Sprintf("<img class=\"mb-1 mr-1\" src=\"data:image/gif;base64,%v\" width=\"%v\" height=\"%v\">", icon64, size, size))
-}

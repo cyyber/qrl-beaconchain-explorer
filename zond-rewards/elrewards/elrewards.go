@@ -14,7 +14,6 @@ import (
 )
 
 func GetELRewardForBlock(executionBlockNumber uint64, endpoint string) (*big.Int, error) {
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
@@ -85,7 +84,7 @@ func batchRequestReceipts(ctx context.Context, elClient *rpc.Client, txHashes []
 		txReceipt := &types.TxReceipt{}
 		err := error(nil)
 		elems = append(elems, rpc.BatchElem{
-			Method: "eth_getTransactionReceipt",
+			Method: "zond_getTransactionReceipt",
 			Args:   []interface{}{h.Hex()},
 			Result: txReceipt,
 			Error:  err,

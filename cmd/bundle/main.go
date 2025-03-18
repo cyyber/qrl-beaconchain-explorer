@@ -14,7 +14,6 @@ import (
 )
 
 func bundle(staticDir string) (map[string]string, error) {
-
 	nameMapping := make(map[string]string, 0)
 
 	if staticDir == "" {

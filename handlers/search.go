@@ -35,9 +35,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// var ensData *types.EnsDomainResponse
-	// if utils.IsValidEnsDomain(search) {
-	// 	ensData, _ = GetEnsDomain(search)
+	// var ensData *types.ZnsDomainResponse
+	// if utils.IsValidZnsDomain(search) {
+	// 	ensData, _ = GetZnsDomain(search)
 	// }
 	search = strings.Replace(search, "0x", "", -1)
 	// if ensData != nil && len(ensData.Address) > 0 {
@@ -181,8 +181,8 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			ORDER BY index LIMIT 10`, search+"%")
 		}
 	case "eth1_addresses":
-		// if utils.IsValidEnsDomain(search) {
-		// 	ensData, _ := GetEnsDomain(search)
+		// if utils.IsValidZnsDomain(search) {
+		// 	ensData, _ := GetZnsDomain(search)
 		// 	if len(ensData.Address) > 0 {
 		// 		result = []*types.Eth1AddressSearchItem{{
 		// 			Address: ensData.Address,
@@ -235,15 +235,15 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			LEFT JOIN validators ON validators.pubkey = eth1_deposits.publickey
 			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_eth1_addresses":
-		// search = ReplaceEnsNameWithAddress(search)
+		// search = ReplaceZnsNameWithAddress(search)
 		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
 	case "count_indexed_validators_by_eth1_address":
-		// var ensData *types.EnsDomainResponse
-		// if utils.IsValidEnsDomain(search) {
-		// 	ensData, _ = GetEnsDomain(search)
+		// var ensData *types.ZnsDomainResponse
+		// if utils.IsValidZnsDomain(search) {
+		// 	ensData, _ = GetZnsDomain(search)
 		// 	if len(ensData.Address) > 0 {
 		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
 		// 	}
@@ -268,9 +268,9 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
-		// var ensData *types.EnsDomainResponse
-		// if utils.IsValidEnsDomain(search) {
-		// 	ensData, _ = GetEnsDomain(search)
+		// var ensData *types.ZnsDomainResponse
+		// if utils.IsValidZnsDomain(search) {
+		// 	ensData, _ = GetZnsDomain(search)
 		// 	if len(ensData.Address) > 0 {
 		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
 		// 	}
@@ -366,10 +366,10 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 		}
 		result = &res
 	// case "ens":
-	// 	if !utils.IsValidEnsDomain(search) {
+	// 	if !utils.IsValidZnsDomain(search) {
 	// 		break
 	// 	}
-	// 	data, ensErr := GetEnsDomain(search)
+	// 	data, ensErr := GetZnsDomain(search)
 	// 	if ensErr != nil {
 	// 		if ensErr != sql.ErrNoRows {
 	// 			err = ensErr
@@ -394,9 +394,9 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// search can either be a valid Zond address or an ENS name mapping to one
+// search can either be a valid Zond address or an ZNS name mapping to one
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
-	// search = strings.ToLower(strings.Replace(ReplaceEnsNameWithAddress(search), "0x", "", -1))
+	// search = strings.ToLower(strings.Replace(ReplaceZnsNameWithAddress(search), "0x", "", -1))
 	search = strings.ToLower(search)
 	if !utils.IsValidAddress(search) {
 		return nil, fmt.Errorf("not a valid Zond address: %v", search)

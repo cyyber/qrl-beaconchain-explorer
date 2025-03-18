@@ -21,19 +21,19 @@ import (
 )
 
 func Eth1Address(w http.ResponseWriter, r *http.Request) {
-	templateFiles := append(layoutTemplateFiles, "sprites.html", "execution/address.html")
+	templateFiles := append(layoutTemplateFiles, "execution/address.html")
 	var eth1AddressTemplate = templates.GetTemplate(templateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
 	address := template.HTMLEscapeString(vars["address"])
-	// ensData, err := GetEnsDomain(address)
-	// if err != nil && utils.IsValidEnsDomain(address) {
+	// znsData, err := GetZnsDomain(address)
+	// if err != nil && utils.IsValidZnsDomain(address) {
 	// 	handleNotFoundHtml(w, r)
 	// 	return
 	// }
-	// if len(ensData.Address) > 0 {
-	// 	address = ensData.Address
+	// if len(znsData.Address) > 0 {
+	// 	address = znsData.Address
 	// }
 
 	isValid := utils.IsAddress(address)
@@ -50,7 +50,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	addressBytes := common.FromHex(address)
 	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address Z%x", addressBytes), templateFiles)
 
-	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.ECR20TokensPerAddressLimit)
+	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.ZRC20TokensPerAddressLimit)
 	if err != nil {
 		logger.Errorf("error retrieving balances for %v route: %v", r.URL.String(), err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -210,7 +210,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 
 	data.Data = types.Eth1AddressPageData{
 		Address: address,
-		// EnsName:            ensData.Domain,
+		// ZnsName:            znsData.Domain,
 		IsContract:         isContract,
 		QRCode:             pngStr,
 		QRCodeInverse:      pngStrInverse,
@@ -428,30 +428,30 @@ func Eth1AddressZrc1155Transactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// takes the "address" parameter from the request and transforms it to lower case. The ENS name can be used instead of the address
+// takes the "address" parameter from the request and transforms it to lower case. The ZNS name can be used instead of the address
 func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, error) {
 	vars := mux.Vars(r)
 	address := vars["address"]
-	// if utils.IsValidEnsDomain(address) {
-	// 	ensData, err := GetEnsDomain(address)
+	// if utils.IsValidZnsDomain(address) {
+	// 	znsData, err := GetZnsDomain(address)
 	// 	if err != nil {
 	// 		handleNotFoundJson(address, w, r, err)
 	// 		return "", err
 	// 	}
-	// 	if len(ensData.Address) > 0 {
-	// 		address = ensData.Address
+	// 	if len(znsData.Address) > 0 {
+	// 		address = znsData.Address
 	// 	}
 	// }
 	return strings.ToLower(strings.Replace(address, "Z", "", -1)), nil
 }
 
 func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {
-	logger.Errorf("error getting address for ENS name [%v] not found for %v route: %v", address, r.URL.String(), err)
-	http.Error(w, "Invalid ENS name", http.StatusInternalServerError)
+	logger.Errorf("error getting address for ZNS name [%v] not found for %v route: %v", address, r.URL.String(), err)
+	http.Error(w, "Invalid ZNS name", http.StatusInternalServerError)
 }
 
 func handleNotFoundHtml(w http.ResponseWriter, r *http.Request) {
-	templateFiles := append(layoutTemplateFiles, "sprites.html", "execution/addressNotFound.html")
+	templateFiles := append(layoutTemplateFiles, "execution/addressNotFound.html")
 	data := InitPageData(w, r, "blockchain", "/address", "not found", templateFiles)
 
 	if handleTemplateError(w, r, "eth1Account.go", "Eth1Address", "not valid", templates.GetTemplate(templateFiles...).ExecuteTemplate(w, "layout", data)) != nil {

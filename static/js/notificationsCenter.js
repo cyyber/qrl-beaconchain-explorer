@@ -783,10 +783,10 @@ function loadValidatorsData(data) {
         visible: false,
       },
       {
-        // hidden column for filtering by DepositEnsName
+        // hidden column for filtering by DepositZnsName
         targets: 8,
         orderable: false,
-        data: "DepositEnsName",
+        data: "DepositZnsName",
         visible: false,
       },
     ],

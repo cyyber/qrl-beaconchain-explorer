@@ -3,10 +3,7 @@ package types
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
-	"math/big"
 
-	"github.com/jackc/pgtype"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
 )
@@ -519,47 +516,6 @@ func (s *TagMetadataSlice) Scan(src interface{}) error {
 		return json.Unmarshal([]byte(v), s)
 	}
 	return errors.New("type assertion failed")
-}
-
-type PlanckString struct {
-	pgtype.Numeric
-}
-
-func (b PlanckString) MarshalJSON() ([]byte, error) {
-	return []byte("\"" + b.BigInt().String() + "\""), nil
-}
-
-func (b *PlanckString) UnmarshalJSON(p []byte) error {
-	if string(p) == "null" {
-		return nil
-	}
-	if p[0] == byte('"') {
-		p = p[1 : len(p)-1]
-	}
-	err := b.Set(string(p))
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal PlanckString: %v", err)
-	}
-	return nil
-}
-
-func (b *PlanckString) BigInt() *big.Int {
-	// this is stupid
-
-	if b.Exp == 0 {
-		return b.Int
-	}
-	if b.Exp < 0 {
-		return b.Int
-	}
-
-	num := &big.Int{}
-	num.Set(b.Int)
-	mul := &big.Int{}
-	mul.Exp(big.NewInt(10), big.NewInt(int64(b.Exp)), nil)
-	num.Mul(num, mul)
-
-	return num
 }
 
 type ValidatorStatsTableDbRow struct {

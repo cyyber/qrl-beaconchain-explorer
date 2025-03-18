@@ -7,14 +7,14 @@
 {{ define "content" }}
   <div class="container mt-2">
     <div class="py-2 my-3 justify-content-md-between">
-      <h1 class="h4 mb-1 mb-md-0 text-nowrap"><i class="fas fa-search mr-2 position-relative"></i>ENS Search for: {{ formatAddressLong .Data.Search }}</h1>
+      <h1 class="h4 mb-1 mb-md-0 text-nowrap"><i class="fas fa-search mr-2 position-relative"></i>ZNS Search for: {{ formatAddressLong .Data.Search }}</h1>
     </div>
     <div class="card mt-3">
       {{ if gt (len .Data.Error) 0 }}
         <div class="alert-danger p-3">{{ .Data.Error }}</div>
       {{ else }}
         <div class="row border-bottom p-3 mx-0">
-          <div class="col-md-3">Ens name:</div>
+          <div class="col-md-3">Zns name:</div>
           <div class="col-md-9">{{ .Data.Result.Domain }}</div>
         </div>
         <div class="row border-bottom p-3 mx-0">

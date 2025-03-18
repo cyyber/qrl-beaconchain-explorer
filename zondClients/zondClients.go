@@ -38,11 +38,6 @@ type gitAPIResponse struct {
 	Body          string        `json:"body"`
 }
 
-type clientUpdateInfo struct {
-	Name string
-	Date time.Time
-}
-
 type ZondClients struct {
 	ClientReleaseVersion string
 	ClientReleaseDate    template.HTML
@@ -58,8 +53,6 @@ type ZondClientServicesPageData struct {
 
 var zondClients = ZondClientServicesPageData{}
 var zondClientsMux = &sync.RWMutex{}
-var bannerClients = []clientUpdateInfo{}
-var bannerClientsMux = &sync.RWMutex{}
 
 var httpClient = &http.Client{Timeout: time.Second * 10}
 
@@ -145,12 +138,7 @@ func prepareZondClientData(repo string, name string, curTime time.Time) (string,
 			logger.Errorf("error parsing git repo. time: %v", err)
 			return client.Name, "GitHub" // client.Name is client version from github api
 		}
-		timeDiff := (curTime.Sub(rTime).Hours() / 24.0)
 
-		if timeDiff < 1 { // add recent releases for notification collector to be collected
-			update := clientUpdateInfo{Name: name, Date: rTime}
-			bannerClients = append(bannerClients, update)
-		}
 		return client.Name, utils.FormatTimestamp(rTime.Unix())
 	}
 	return "Github", "searching" // If API limit is exceeded
@@ -167,9 +155,6 @@ func updateZondClient() {
 	logger.Println("Updating Zond Clients Information")
 	zondClientsMux.Lock()
 	defer zondClientsMux.Unlock()
-	bannerClientsMux.Lock()
-	defer bannerClientsMux.Unlock()
-	bannerClients = []clientUpdateInfo{}
 	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareZondClientData("/theQRL/go-zond", "Gzond", curTime)
 
 	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareZondClientData("/theQRL/qrysm", "Qrysm", curTime)
@@ -189,12 +174,4 @@ func GetZondClientData() ZondClientServicesPageData {
 	zondClientsMux.Lock()
 	defer zondClientsMux.Unlock()
 	return zondClients
-}
-
-// GetUpdatedClients returns a slice of latest updated clients or empty slice if no updates
-func GetUpdatedClients() []clientUpdateInfo {
-	bannerClientsMux.Lock()
-	defer bannerClientsMux.Unlock()
-	return bannerClients
-	// return []string{"Qrysm"}
 }

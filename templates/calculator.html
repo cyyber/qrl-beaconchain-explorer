@@ -3,37 +3,6 @@
   <script src="/js/highcharts/annotations.min.js"></script>
   <script src="/js/highcharts/highcharts-global-options.js"></script>
   <script>
-    // share
-    var left = (screen.width - 570) / 2
-    var topScreen = (screen.height - 570) / 2
-    var windowParams = "menubar=no,toolbar=no,status=no,width=570,height=570,top=" + topScreen + ",left=" + left
-    document.addEventListener("DOMContentLoaded", function () {
-      document.getElementById("twitter-share").addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault()
-          window.open("https://twitter.com/share?url=" + encodeURIComponent(window.location.href) + "&text=Calculate your potential Ethereum earnings via the @etherchain_org beaconcha.in explorer!&hashtag=ethereum&related=@etherchain_org", "NewWindow", windowParams)
-        },
-        false
-      )
-      document.getElementById("facebook-share").addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault()
-          window.open("https://facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href) + "&t=Calculate your potential Ethereum earnings via the @etherchain_org beaconcha.in explorer!", "NewWindow", windowParams)
-        },
-        false
-      )
-      document.getElementById("linkedin-share").addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault()
-          window.open("https://linkedin.com/shareArticle?mini=true&url=" + encodeURIComponent(window.location.href) + "&title=" + encodeURIComponent("Beaconcha.in Staking Calculator") + "&summary=" + encodeURIComponent("Calculate your potential Ethereum earnings via the @etherchain_org beaconcha.in explorer!" + "&source=" + encodeURIComponent("https://beaconcha.in")), "NewWindow", windowParams)
-        },
-        false
-      )
-    })
-
     function formatNumberSpacing(str) {
       var result = ""
       var floor = ""
@@ -924,12 +893,12 @@
                   <div class="setting">
                     <h6>ETH price in <span class="currency-key">USD</span></h6>
                     <input id="staking-variable-price" class="staking-variable form-control" type="text" value="209.46" />
-                    <span id="staking-variable-price-validation" class="input-validation">Ethereum price must be greater than 0</span>
+                    <span id="staking-variable-price-validation" class="input-validation">Zond price must be greater than 0</span>
                   </div>
                   <div class="setting">
                     <h6>Monthly price change in %</h6>
                     <input id="staking-variable-priceChangePerMonth" class="staking-variable form-control" type="text" value="0" />
-                    <span id="staking-variable-priceChangePerMonth-validation" class="input-validation">Ethereum price change must be a percentage greater or equal to 0</span>
+                    <span id="staking-variable-priceChangePerMonth-validation" class="input-validation">Zond price change must be a percentage greater or equal to 0</span>
                   </div>
                   <div class="setting">
                     <h6>Initial one-time-costs in <span class="currency-key">USD</span></h6>
@@ -998,20 +967,6 @@
         </div>
         <div class="col-md-7 col-sm-12">
           <h5 class="my-3 px-0 col-10">Estimated Rewards</h5>
-          <div style="height: calc(54px - 1rem);" class="my-3 px-0 col-10 d-flex justif-content-center align-items-center">
-            <button style="width:38px; height:28px;" data-toggle="tooltip" data-original-title="Copy Link to Configuration" id="copy-button" data-clipboard-text="https://beaconcha.in/calculator" type="button" class="d-flex justify-content-center align-items-center btn btn-primary btn-sm m-1">
-              <i class="fa fa-copy"></i>
-            </button>
-            <button id="twitter-share" style="width:38px; height:28px;color:#fff;background-color:#1DA1F2" type="button" class="d-flex justify-content-center align-items-center btn btn-sm m-1">
-              <i class="fab fa-twitter"></i>
-            </button>
-            <button id="facebook-share" style="width:38px; height:28px;background-color:#4267B2;color:#fff" type="button" class="d-flex justify-content-center align-items-center btn btn-sm m-1">
-              <i class="fab fa-facebook-f"></i>
-            </button>
-            <button id="linkedin-share" style="width:38px; height:28px;background-color:#2867B2;color:#fff" type="button" class="d-flex justify-content-center align-items-center btn btn-sm m-1">
-              <i class="fab fa-linkedin-in"></i>
-            </button>
-          </div>
           <div id="stakeChart" class="card my-3"></div>
           <div id="breakEvenChart" class="card my-3"></div>
           <div class="card my-3 table-responsive">

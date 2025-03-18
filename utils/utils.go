@@ -4,9 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	securerand "crypto/rand"
-	"crypto/sha256"
-	"database/sql"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -32,7 +29,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/theQRL/zond-beaconchain-explorer/config"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 
 	"golang.org/x/text/cases"
@@ -40,11 +36,8 @@ import (
 	"golang.org/x/text/message"
 	"gopkg.in/yaml.v3"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/carlmjohnson/requests"
-	"github.com/kataras/i18n"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/lib/pq"
 	"github.com/mvdan/xurls"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
@@ -61,21 +54,7 @@ var Config *types.Config
 
 var ErrRateLimit = errors.New("## RATE LIMIT ##")
 
-var localiser *i18n.I18n
-
 var logger = logrus.New().WithField("module", "oauth")
-
-// making sure language files are loaded only once
-func getLocaliser() *i18n.I18n {
-	if localiser == nil {
-		localiser, err := i18n.New(i18n.Glob("locales/*/*"), "en-US", "ru-RU")
-		if err != nil {
-			log.Println(err)
-		}
-		return localiser
-	}
-	return localiser
-}
 
 var HashLikeRegex = regexp.MustCompile(`^[0-9a-fA-F]{0,96}$`)
 
@@ -141,7 +120,6 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatYesNo":                             FormatYesNo,
 		"formatAmountFormatted":                   FormatAmountFormatted,
 		"formatAddressAsLink":                     FormatAddressAsLink,
-		"getCurrencyLabel":                        price.GetCurrencyLabel,
 		"config":                                  func() *types.Config { return Config },
 		"epochOfSlot":                             EpochOfSlot,
 		"dayToTime":                               DayToTime,
@@ -180,7 +158,6 @@ func GetTemplateFuncs() template.FuncMap {
 		},
 		"formatStringThousands": FormatThousandsEnglish,
 		"derefString":           DerefString,
-		"trLang":                TrLang,
 		"firstCharToUpper":      func(s string) string { return cases.Title(language.English).String(s) },
 		"eqsp": func(a, b *string) bool {
 			if a != nil && b != nil {
@@ -718,19 +695,6 @@ func MustParseHex(hexString string) []byte {
 	return data
 }
 
-func CORSMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Headers", "*, Authorization")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "*")
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
 func IsApiRequest(r *http.Request) bool {
 	query, ok := r.URL.Query()["format"]
 	return ok && len(query) > 0 && query[0] == "json"
@@ -776,189 +740,11 @@ func IsValidWithdrawalCredentials(s string) bool {
 	return withdrawalCredentialsRE.MatchString(s) || withdrawalCredentialsAddressRE.MatchString(s)
 }
 
-// IsValidUrl verifies whether a string represents a valid Url.
-func IsValidUrl(s string) bool {
-	u, err := url.ParseRequestURI(s)
-	if err != nil {
-		return false
-	}
-	if u.Scheme != "http" && u.Scheme != "https" {
-		return false
-	}
-	if len(u.Host) == 0 {
-		return false
-	}
-	return govalidator.IsURL(s)
-}
-
+// TODO(rgeraldes24): remove?
 // RoundDecimals rounds (nearest) a number to the specified number of digits after comma
 func RoundDecimals(f float64, n int) float64 {
 	d := math.Pow10(n)
 	return math.Round(f*d) / d
-}
-
-// HashAndEncode digests the input with sha256 and returns it as hex string
-func HashAndEncode(input string) string {
-	codeHashedBytes := sha256.Sum256([]byte(input))
-	return hex.EncodeToString(codeHashedBytes[:])
-}
-
-const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
-
-// RandomString returns a random hex-string
-func RandomString(length int) string {
-	b, _ := GenerateRandomBytesSecure(length)
-	for i := range b {
-		b[i] = charset[int(b[i])%len(charset)]
-	}
-	return string(b)
-}
-
-func GenerateRandomBytesSecure(n int) ([]byte, error) {
-	b := make([]byte, n)
-	_, err := securerand.Read(b)
-	if err != nil {
-		return nil, err
-	}
-
-	return b, nil
-}
-
-func SqlRowsToJSON(rows *sql.Rows) ([]interface{}, error) {
-	columnTypes, err := rows.ColumnTypes()
-
-	if err != nil {
-		return nil, fmt.Errorf("error getting column types: %w", err)
-	}
-
-	count := len(columnTypes)
-	finalRows := []interface{}{}
-
-	for rows.Next() {
-
-		scanArgs := make([]interface{}, count)
-
-		for i, v := range columnTypes {
-			switch v.DatabaseTypeName() {
-			case "VARCHAR", "TEXT", "UUID":
-				scanArgs[i] = new(sql.NullString)
-			case "BOOL":
-				scanArgs[i] = new(sql.NullBool)
-			case "INT4", "INT8":
-				scanArgs[i] = new(sql.NullInt64)
-			case "FLOAT8":
-				scanArgs[i] = new(sql.NullFloat64)
-			case "TIMESTAMP":
-				scanArgs[i] = new(sql.NullTime)
-			case "_INT4", "_INT8":
-				scanArgs[i] = new(pq.Int64Array)
-			default:
-				scanArgs[i] = new(sql.NullString)
-			}
-		}
-
-		err := rows.Scan(scanArgs...)
-
-		if err != nil {
-			return nil, fmt.Errorf("error scanning rows: %w", err)
-		}
-
-		masterData := map[string]interface{}{}
-
-		for i, v := range columnTypes {
-
-			//log.Println(v.Name(), v.DatabaseTypeName())
-			if z, ok := (scanArgs[i]).(*sql.NullBool); ok {
-				if z.Valid {
-					masterData[v.Name()] = z.Bool
-				} else {
-					masterData[v.Name()] = nil
-				}
-				continue
-			}
-
-			if z, ok := (scanArgs[i]).(*sql.NullString); ok {
-				if z.Valid {
-					if v.DatabaseTypeName() == "BYTEA" {
-						if len(z.String) > 0 {
-							masterData[v.Name()] = "0x" + hex.EncodeToString([]byte(z.String))
-						} else {
-							masterData[v.Name()] = nil
-						}
-					} else if v.DatabaseTypeName() == "NUMERIC" {
-						nbr, _ := new(big.Int).SetString(z.String, 10)
-						masterData[v.Name()] = nbr
-					} else {
-						masterData[v.Name()] = z.String
-					}
-				} else {
-					masterData[v.Name()] = nil
-				}
-				continue
-			}
-
-			if z, ok := (scanArgs[i]).(*sql.NullInt64); ok {
-				if z.Valid {
-					masterData[v.Name()] = z.Int64
-				} else {
-					masterData[v.Name()] = nil
-				}
-				continue
-			}
-
-			if z, ok := (scanArgs[i]).(*sql.NullInt32); ok {
-				if z.Valid {
-					masterData[v.Name()] = z.Int32
-				} else {
-					masterData[v.Name()] = nil
-				}
-				continue
-			}
-
-			if z, ok := (scanArgs[i]).(*sql.NullFloat64); ok {
-				if z.Valid {
-					masterData[v.Name()] = z.Float64
-				} else {
-					masterData[v.Name()] = nil
-				}
-				continue
-			}
-
-			if z, ok := (scanArgs[i]).(*sql.NullTime); ok {
-				if z.Valid {
-					masterData[v.Name()] = z.Time.Unix()
-				} else {
-					masterData[v.Name()] = nil
-				}
-				continue
-			}
-
-			masterData[v.Name()] = scanArgs[i]
-		}
-
-		finalRows = append(finalRows, masterData)
-	}
-
-	return finalRows, nil
-}
-
-// GenerateAPIKey generates an API key for a user
-func GenerateRandomAPIKey() (string, error) {
-	const apiLength = 28
-	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-
-	max := big.NewInt(int64(len(letters)))
-	key := make([]byte, apiLength)
-	for i := 0; i < apiLength; i++ {
-		num, err := securerand.Int(securerand.Reader, max)
-		if err != nil {
-			return "", err
-		}
-		key[i] = letters[num.Int64()]
-	}
-
-	apiKeyBase64 := base64.RawURLEncoding.EncodeToString(key)
-	return apiKeyBase64, nil
 }
 
 // Glob walks through a directory and returns files with a given extension
@@ -1031,136 +817,6 @@ func ElementExists(arr []string, el string) bool {
 	}
 	return false
 }
-
-/*
-func TryFetchContractMetadata(address []byte) (*types.ContractMetadata, error) {
-	return getABIFromEtherscan(address)
-}
-*/
-
-// func getABIFromSourcify(address []byte) (*types.ContractMetadata, error) {
-// 	httpClient := http.Client{
-// 		Timeout: time.Second * 5,
-// 	}
-
-// 	resp, err := httpClient.Get(fmt.Sprintf("https://sourcify.dev/server/repository/contracts/full_match/%d/0x%x/metadata.json", 1, address))
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	if resp.StatusCode == 200 {
-// 		body, err := io.ReadAll(resp.Body)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		data := &types.SourcifyContractMetadata{}
-// 		err = json.Unmarshal(body, data)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		abiString, err := json.Marshal(data.Output.Abi)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		contractAbi, err := abi.JSON(bytes.NewReader(abiString))
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		meta := &types.ContractMetadata{}
-// 		meta.ABIJson = abiString
-// 		meta.ABI = &contractAbi
-// 		meta.Name = ""
-
-// 		return meta, nil
-// 	} else {
-// 		return nil, fmt.Errorf("sourcify contract code not found")
-// 	}
-// }
-
-/*
-func GetEtherscanAPIBaseUrl(provideDefault bool) string {
-	const mainnetBaseUrl = "api.etherscan.io"
-
-	// check config first
-	if len(Config.EtherscanAPIBaseURL) > 0 {
-		return Config.EtherscanAPIBaseURL
-	}
-
-	// check chain id
-	switch Config.Chain.ClConfig.DepositChainID {
-	case 1: // mainnet
-		return mainnetBaseUrl
-	}
-
-	// use default
-	if provideDefault {
-		return mainnetBaseUrl
-	}
-	return ""
-}
-*/
-
-/*
-func getABIFromEtherscan(address []byte) (*types.ContractMetadata, error) {
-	baseUrl := GetEtherscanAPIBaseUrl(false)
-	if len(baseUrl) < 1 {
-		return nil, nil
-	}
-
-	httpClient := http.Client{Timeout: time.Second * 5}
-	resp, err := httpClient.Get(fmt.Sprintf("https://%s/api?module=contract&action=getsourcecode&address=0x%x&apikey=%s", baseUrl, address, Config.EtherscanAPIKey))
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("StatusCode: '%d', Status: '%s'", resp.StatusCode, resp.Status)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	headerData := &struct {
-		Status  string `json:"status"`
-		Message string `json:"message"`
-	}{}
-	err = json.Unmarshal(body, headerData)
-	if err != nil {
-		return nil, err
-	}
-	if headerData.Status == "0" {
-		if headerData.Message == "NOTOK" {
-			return nil, ErrRateLimit
-		}
-		return nil, fmt.Errorf("%s", headerData.Message)
-	}
-
-	data := &types.EtherscanContractMetadata{}
-	err = json.Unmarshal(body, data)
-	if err != nil {
-		return nil, err
-	}
-	if data.Result[0].Abi == "Contract source code not verified" {
-		return nil, nil
-	}
-
-	contractAbi, err := abi.JSON(strings.NewReader(data.Result[0].Abi))
-	if err != nil {
-		return nil, err
-	}
-	meta := &types.ContractMetadata{}
-	meta.ABIJson = []byte(data.Result[0].Abi)
-	meta.ABI = &contractAbi
-	meta.Name = data.Result[0].ContractName
-	return meta, nil
-}
-*/
 
 func FormatThousandsEnglish(number string) string {
 	runes := []rune(number)

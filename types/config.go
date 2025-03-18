@@ -68,14 +68,13 @@ type Config struct {
 		PubKeyTagsExporter        struct {
 			Enabled bool `yaml:"enabled" envconfig:"PUBKEY_TAGS_EXPORTER_ENABLED"`
 		} `yaml:"pubkeyTagsExporter"`
-		// EnsTransformer struct {
-		// 	ValidRegistrarContracts []string `yaml:"validRegistrarContracts" envconfig:"ENS_VALID_REGISTRAR_CONTRACTS"`
-		// } `yaml:"ensTransformer"`
+		// ZnsTransformer struct {
+		// 	ValidRegistrarContracts []string `yaml:"validRegistrarContracts" envconfig:"ZNS_VALID_REGISTRAR_CONTRACTS"`
+		// } `yaml:"znsTransformer"`
 	} `yaml:"indexer"`
 	Frontend struct {
 		Debug                          bool   `yaml:"debug" envconfig:"FRONTEND_DEBUG"`
 		BeaconchainETHPoolBridgeSecret string `yaml:"beaconchainETHPoolBridgeSecret" envconfig:"FRONTEND_BEACONCHAIN_ETHPOOL_BRIDGE_SECRET"`
-		Kong                           string `yaml:"kong" envconfig:"FRONTEND_KONG"`
 		OnlyAPI                        bool   `yaml:"onlyAPI" envconfig:"FRONTEND_ONLY_API"`
 		DisableCharts                  bool   `yaml:"disableCharts" envconfig:"disableCharts"`
 		RecaptchaSiteKey               string `yaml:"recaptchaSiteKey" envconfig:"FRONTEND_RECAPTCHA_SITEKEY"`

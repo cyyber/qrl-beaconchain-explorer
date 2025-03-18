@@ -23,7 +23,7 @@ func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	// search := ReplaceEnsNameWithAddress(q.Get("search[value]"))
+	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 	search = strings.Replace(search, "0x", "", -1)
 
