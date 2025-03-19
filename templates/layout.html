@@ -37,14 +37,6 @@
       <link rel="stylesheet" href="/css/layout/banner.css" />
       <link rel="stylesheet" href="/css/layout/herofeed.css" />
       <script>
-        var selectedCurrency = {{$.Rates.SelectedCurrency}}
-        var mainCurrency = {{config.Frontend.MainCurrency}}
-        var elCurrency = {{config.Frontend.ElCurrency}}
-        var clCurrency = {{config.Frontend.ClCurrency}}
-        var elPrice = {{$.Rates.ElCurrencyPrice}}
-        var clPrice = {{$.Rates.ClCurrencyPrice}}
-        var mainPrice = {{$.Rates.MainCurrencyPrice}}
-
         var mql = window.matchMedia("(prefers-color-scheme: light)")
         var lightScheme = mql.matches
         var currentTheme = localStorage.getItem("theme")
@@ -105,33 +97,15 @@
                 <div class="info-item-body"><a id="banner-slot-data" href="/slot/{{ .CurrentSlot }}">{{ formatAddCommas .CurrentSlot }}</a></div>
               </div>
             </div>
-            {{ if .Mainnet }}
-              <div data-toggle="tooltip" title="" data-original-title="Price: 1 {{ .Rates.MainCurrencySymbol }} = {{ .Rates.MainCurrencyTickerPriceKFormatted }} {{ .Rates.TickerCurrencySymbol }}" id="banner-eth-price">
-                <div class="info-item d-flex mr-2 mr-lg-3">
-                  <div class="info-item-header mr-1">
-                    <span class="item-icon"><i class="fas fa-cubes"></i></span>
-                    <span class="d-none d-xl-inline item-text">Price</span>
-                  </div>
+            {{- if .GasNow }}
+              <div data-toggle="tooltip" title="" data-original-title="Gas Price" class="d-none d-lg-block">
+                <div id="banner-slot" class="info-item d-flex mr-2 mr-lg-3">
                   <div class="info-item-body">
-                    <a id="banner-eth-price-data">
-                      <span id="currentCurrencySymbol" class="currency-symbol">{{ .Rates.TickerCurrencySymbol }}</span>
-                      <span id="currentKFormattedPrice" class="k-formatted-price">{{ .Rates.MainCurrencyTickerPriceKFormatted }}</span>
-                      <span id="currentCurrencyPrice" class="price">{{ .Rates.MainCurrencyTickerPriceFormatted }}</span>
-                    </a>
+                    <a id="banner-gpo-data" href="/gasnow"><i class="fas fa-gas-pump mr-1"></i>{{ formatAmountFormatted .GasNow.Data.Fast "GPlanck" 0 0 false false false }}</a>
                   </div>
                 </div>
               </div>
-            {{ else }}
-              {{- if .GasNow }}
-                <div data-toggle="tooltip" title="" data-original-title="Gas Price" class="d-none d-lg-block">
-                  <div id="banner-slot" class="info-item d-flex mr-2 mr-lg-3">
-                    <div class="info-item-body">
-                      <a id="banner-gpo-data" href="/gasnow"><i class="fas fa-gas-pump mr-1"></i>{{ formatAmountFormatted .GasNow.Data.Fast "GPlanck" 0 0 false false false }}</a>
-                    </div>
-                  </div>
-                </div>
-              {{- end }}
-            {{ end }}
+            {{- end }}
             {{ if not .ShowSyncingMessage }}
               {{ if gt .FinalizationDelay 5 }}
                 <div data-toggle="tooltip" title="" data-original-title="Finality: The last finalized epoch was {{ .FinalizationDelay }} epochs ago" id="banner-fin" class="info-item d-flex mr-2 mr-lg-3">

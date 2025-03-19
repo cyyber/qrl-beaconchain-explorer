@@ -47,18 +47,6 @@ function updateBanner() {
         slotHandle.setAttribute("href", "/slot/" + data.currentSlot)
       }
 
-      var ethPriceHandle = document.getElementById("banner-eth-price-data")
-      if (ethPriceHandle) {
-        try {
-          let userCurrency = getCookie("currency")
-          if (!userCurrency || userCurrency == data.rates.mainCurrency) userCurrency = data.rates.tickerCurrency
-          var price = data.rates.mainCurrencyTickerPrices[userCurrency]
-          ethPriceHandle.innerHTML = `<span class='currency-symbol'>${price.symbol} </span><span class='k-formatted-price'>${price.truncPrice}</span><span class='price'>${addCommas(price.roundPrice)}</span>`
-        } catch (err) {
-          console.error("failed updating banner-price:", err)
-        }
-      }
-
       var finDelayDataHandle = document.getElementById("banner-fin-data")
       finDelayHtml = `
       <div id="banner-fin" class="info-item d-flex mr-3">
