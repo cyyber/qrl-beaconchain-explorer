@@ -12,7 +12,7 @@
       <div class="container">
         <div style="padding-top: 2rem;" class="row justify-content-between align-items-center">
           <div class="col-md-6 mb-5">
-            <h1 class="h6 font-planckght-bold text-primary">Connect to Zond</h1>
+            <h1 class="h6 font-weight-bold text-primary">Connect to Zond</h1>
             <h2 class="mb-4">The most popular Zond clients</h2>
           </div>
           <div class="col-md-5 p-1">
@@ -53,7 +53,7 @@
       <section class="my-5">
         <div class="row">
           <div class="col-md-12">
-            <h1 class="h2 mb-4 font-planckght-bold text-primary text-center">Execution Clients</h1>
+            <h1 class="h2 mb-4 font-weight-bold text-primary text-center">Execution Clients</h1>
 
             <div class="table-responsive">
               <table class="table" id="ethClientsServices">
@@ -70,8 +70,7 @@
                     <td data-column="Name"><a href="https://github.com/theQRL/go-zond">Gzond</a></td>
                     <td data-column="Language">Go</td>
                     <td data-column="Latest update"><a href="https://github.com/theQRL/go-zond/releases">{{ .Gzond.ClientReleaseVersion }}</a> - {{ .Gzond.ClientReleaseDate }}</td>
-                    <td data-column="Social media">
-                    </td>
+                    <td data-column="Social media"></td>
                   </tr>
                 </tbody>
               </table>
@@ -83,7 +82,7 @@
       <section class="my-5">
         <div class="row">
           <div class="col-md-12">
-            <h1 class="h2 mb-4 font-planckght-bold text-primary text-center">Consensus Clients</h1>
+            <h1 class="h2 mb-4 font-weight-bold text-primary text-center">Consensus Clients</h1>
 
             <div class="table-responsive">
               <table class="table" id="eth2ClientsServices">
@@ -100,8 +99,7 @@
                     <td data-column="Name"><a href="https://github.com/theQRL/qrysm">Qrysm</a></td>
                     <td data-column="Language">Go</td>
                     <td data-column="Latest update"><a href="https://github.com/theQRL/qrysm/releases">{{ .Qrysm.ClientReleaseVersion }}</a> - {{ .Qrysm.ClientReleaseDate }}</td>
-                    <td data-column="Social media">
-                    </td>
+                    <td data-column="Social media"></td>
                   </tr>
                 </tbody>
               </table>
@@ -113,12 +111,11 @@
       <section class="my-5">
         <div class="row">
           <div class="col-md-12">
-            <div class="row justify-content-center">
-            </div>
+            <div class="row justify-content-center"></div>
           </div>
         </div>
       </section>
     </div>
   {{ end }}
-  <script src="/js/jquery.min.js"></script>    
+  <script src="/js/jquery.min.js"></script>
 {{ end }}

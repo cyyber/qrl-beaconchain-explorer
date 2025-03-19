@@ -34,7 +34,7 @@
       background-color: var(--bg-color-light);
       font-style: normal;
       /* font-family: 'Mukta'; */
-      font-planckght: 500;
+      font-weight: 500;
       font-size: 1rem;
       line-height: 23px;
       backdrop-filter: blur(2px);
@@ -55,7 +55,7 @@
     .overview-label,
     .overview-col,
     .token-balance-col {
-      font-planckght: 400;
+      font-weight: 400;
       font-size: 0.85rem;
       line-height: 23px;
       font-style: normal;
@@ -66,7 +66,7 @@
       .overview-col,
       .token-balance-col {
         font-size: 1rem;
-        font-planckght: 300;
+        font-weight: 300;
       }
     }
 
@@ -244,7 +244,7 @@
   <div class="container mt-2">
     <div class="d-md-flex py-2 my-md-1 justify-content-md-between">
       <h1 class="h4 mb-1 mb-md-0 header-token text-truncate">
-        <div class="my-md-3 font-planckght-bold">
+        <div class="my-md-3 font-weight-bold">
           <span class="d-flex">
             <span class="mr-1 d-flex align-items-center" title="{{ .Data.Metadata.Symbol | formatTokenSymbolTitle }}">
               {{ if .Data.Metadata.Logo }}
@@ -474,7 +474,7 @@
     <div class="modal-dialog modal-dialog-centered" style="width: 95%; max-width: 400px; height: 375px; margin: 1.75rem auto;">
       <div class="modal-content">
         <div class="modal-header justify-content-center text-truncate">
-          <span class="text-monospace text-truncate text-center font-planckght-bold" style="font-size: 85%; width: 100%;">{{ fixAddressCasing .Data.Token }}</span>
+          <span class="text-monospace text-truncate text-center font-weight-bold" style="font-size: 85%; width: 100%;">{{ fixAddressCasing .Data.Token }}</span>
         </div>
         <div class="modal-body d-flex justify-content-center">
           <img style="visibility: hidden;" class="qrcode-light" src="data:image/png;base64,{{ .Data.QRCode }}" alt="QR code for address {{ fixAddressCasing .Data.Token }}" />

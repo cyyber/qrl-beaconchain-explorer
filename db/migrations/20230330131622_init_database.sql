@@ -187,25 +187,6 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    validator_attestation_streaks (
-        validatorindex INT NOT NULL,
-        status INT NOT NULL,
-        START INT NOT NULL,
-        LENGTH INT NOT NULL,
-        longest BOOLEAN NOT NULL,
-        CURRENT BOOLEAN NOT NULL,
-        PRIMARY KEY (validatorindex, status, START)
-    );
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_validatorindex ON validator_attestation_streaks (validatorindex);
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_status ON validator_attestation_streaks (status);
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_length ON validator_attestation_streaks (LENGTH);
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_start ON validator_attestation_streaks (START);
-
-CREATE TABLE IF NOT EXISTS
     queue (
         ts TIMESTAMP WITHOUT TIME ZONE,
         entering_validators_count INT NOT NULL,

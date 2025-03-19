@@ -218,7 +218,7 @@ func blocksChartData() (*types.GenericChartData, error) {
 		TooltipUseHTML:       true,
 		TooltipFollowPointer: true,
 		TooltipFormatter: `function(tooltip){
-	let header = '<div style="font-planckght:bold; text-align:center;">' + Highcharts.dateFormat("%Y-%m-%d %H:%M", this.x) + '</div><table>'
+	let header = '<div style="font-weight:bold; text-align:center;">' + Highcharts.dateFormat("%Y-%m-%d %H:%M", this.x) + '</div><table>'
 	this.points.sort((a, b) => b.y - a.y)
 	let total = 0
 	return this.points.reduce(function (s, point) {
@@ -226,12 +226,12 @@ func blocksChartData() (*types.GenericChartData, error) {
 		return s +
 			'<tr><td>' +
 			'<span style="color:' + point.series.color + ';">\u25CF </span>' +
-			'<span style="font-planckght:bold;">' + point.series.name + ':</span></td><td>' +
+			'<span style="font-weight:bold;">' + point.series.name + ':</span></td><td>' +
 			point.percentage.toFixed(2)+'% ('+point.y+' blocks)'
 			'</td></tr>'
 	}, header) + 
 	'<tr><td>' + 
-	'<span>\u25CF </span><span style="font-planckght:bold;">Total:</span></td><td>' + total + ' blocks'
+	'<span>\u25CF </span><span style="font-weight:bold;">Total:</span></td><td>' + total + ' blocks'
 	'</td></tr>' +
 	'</table>'
 }`,

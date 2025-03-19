@@ -431,9 +431,9 @@
                 <td>{{ formatDepositAmount $deposit.Amount $.Rates.SelectedCurrency }}</td>
                 <td>
                   {{ if $deposit.ValidSignature }}
-                    <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-planckght: 500;">{{ $deposit.ValidSignature }}</span>
+                    <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">{{ $deposit.ValidSignature }}</span>
                   {{ else }}
-                    <span class="badge badge-pill bg-danger text-white" style="font-size: 12px; font-planckght: 500;">{{ $deposit.ValidSignature }}</span>
+                    <span class="badge badge-pill bg-danger text-white" style="font-size: 12px; font-weight: 500;">{{ $deposit.ValidSignature }}</span>
                   {{ end }}
                 </td>
               </tr>

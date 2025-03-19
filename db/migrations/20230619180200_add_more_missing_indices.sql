@@ -9,12 +9,6 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_deposits_block_slot_block_roo
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_validators_activationeligibilityepoch ON public.validators USING btree (activationeligibilityepoch);
 -- +goose StatementEnd
 -- +goose StatementBegin
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_validator_attestation_streaks_status_longest ON public.validator_attestation_streaks USING btree (status, longest);
--- +goose StatementEnd
--- +goose StatementBegin
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_validator_attestation_streaks_status_current ON public.validator_attestation_streaks USING btree (status, current);
--- +goose StatementEnd
--- +goose StatementBegin
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_sync_committees_validatorindex_period ON public.sync_committees USING btree (validatorindex, period DESC);
 -- +goose StatementEnd
 -- +goose StatementBegin
@@ -37,12 +31,6 @@ DROP INDEX CONCURRENTLY idx_blocks_deposits_block_slot_block_root;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_validators_activationeligibilityepoch;
--- +goose StatementEnd
--- +goose StatementBegin
-DROP INDEX CONCURRENTLY idx_validator_attestation_streaks_status_longest;
--- +goose StatementEnd
--- +goose StatementBegin
-DROP INDEX CONCURRENTLY idx_validator_attestation_streaks_status_current;
 -- +goose StatementEnd
 -- +goose StatementBegin
 DROP INDEX CONCURRENTLY idx_sync_committees_validatorindex_period;
