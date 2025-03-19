@@ -1241,7 +1241,7 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 	return template.HTML(p.Sprintf(`
 	<div class="token-balance-col token-name text-truncate d-flex align-items-center justify-content-between flex-wrap">
 		<div class="token-icon p-1">
-			<a href='/token/0x%x?a=0x%x'>
+			<a href='/token/Z%x?a=Z%x'>
 				<span>%s</span> <span title="%s">%s</span>
 			</a> 
 		</div>
@@ -1302,7 +1302,7 @@ func FormatTokenName(balance *types.Eth1AddressBalance) template.HTML {
 	}
 	symbolTitle := FormatTokenSymbolTitle(balance.Metadata.Symbol)
 	symbol := FormatTokenSymbol(balance.Metadata.Symbol)
-	return template.HTML(fmt.Sprintf(`<a href='/token/0x%x?a=0x%x' title="%s">%s %s</a>`, balance.Token, balance.Address, symbolTitle, logo, symbol))
+	return template.HTML(fmt.Sprintf(`<a href='/token/Z%x?a=Z%x' title="%s">%s %s</a>`, balance.Token, balance.Address, symbolTitle, logo, symbol))
 }
 
 func ToBase64(input []byte) string {

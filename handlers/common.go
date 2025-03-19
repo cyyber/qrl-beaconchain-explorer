@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,7 +8,6 @@ import (
 	"math/big"
 	"net/http"
 	"sort"
-	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -453,6 +451,7 @@ func GetCurrency(r *http.Request) string {
 	return utils.Config.Frontend.MainCurrency
 }
 
+// TODO(rgeraldes24)
 func GetCurrencySymbol(r *http.Request) string {
 	cookie, err := r.Cookie("currency")
 	if err != nil {
@@ -463,30 +462,6 @@ func GetCurrencySymbol(r *http.Request) string {
 		return "USD"
 	}
 	return price.GetCurrencySymbol(cookie.Value)
-}
-
-// GetValidatorKeysFrom gets the validator keys from users input
-func GetValidatorKeysFrom(userInput []string) (pubKeys [][]byte, err error) {
-	indexList := []uint64{}
-	keyList := [][]byte{}
-	for _, input := range userInput {
-
-		validatorIndex, err := strconv.ParseUint(input, 10, 32)
-		if err == nil {
-			indexList = append(indexList, validatorIndex)
-		}
-
-		pubKey, err := hex.DecodeString(strings.Replace(input, "0x", "", -1))
-		if err == nil {
-			keyList = append(keyList, pubKey)
-		}
-	}
-
-	pubKeys, err = db.GetValidatorPublicKeys(indexList, keyList)
-	if len(pubKeys) != len(userInput) {
-		err = fmt.Errorf("not all validators found in db")
-	}
-	return
 }
 
 func GetDataTableStateChanges(w http.ResponseWriter, r *http.Request) {

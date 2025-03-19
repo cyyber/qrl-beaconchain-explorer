@@ -478,104 +478,6 @@ func WriteValidatorStatsExported(day uint64, tx pgx.Tx) error {
 	return nil
 }
 
-func WriteValidatorTotalPerformance(day uint64, tx pgx.Tx) error {
-	exportStart := time.Now()
-	defer func() {
-		metrics.TaskDuration.WithLabelValues("db_update_validator_total_performance_stats").Observe(time.Since(exportStart).Seconds())
-	}()
-
-	start := time.Now()
-
-	logger.Infof("exporting total performance stats")
-
-	_, err := tx.Exec(context.Background(), `insert into validator_performance (
-				validatorindex,
-				balance,
-				rank7d,
-
-				cl_performance_1d,
-				cl_performance_7d,
-				cl_performance_31d,
-				cl_performance_365d,
-				cl_performance_total,
-
-				el_performance_1d,
-				el_performance_7d,
-				el_performance_31d,
-				el_performance_365d,
-				el_performance_total
-				) (
-					select 
-					vs_now.validatorindex, 
-						COALESCE(vs_now.end_balance, 0) as balance,
-						0 as rank7d,
-
-						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_1d.cl_rewards_gplanck_total, 0) as cl_performance_1d, 
-						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_7d.cl_rewards_gplanck_total, 0) as cl_performance_7d, 
-						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_31d.cl_rewards_gplanck_total, 0) as cl_performance_31d, 
-						coalesce(vs_now.cl_rewards_gplanck_total, 0) - coalesce(vs_365d.cl_rewards_gplanck_total, 0) as cl_performance_365d,
-						coalesce(vs_now.cl_rewards_gplanck_total, 0) as cl_performance_total, 
-						
-						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_1d.el_rewards_planck_total, 0) as el_performance_1d, 
-						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_7d.el_rewards_planck_total, 0) as el_performance_7d, 
-						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_31d.el_rewards_planck_total, 0) as el_performance_31d, 
-						coalesce(vs_now.el_rewards_planck_total, 0) - coalesce(vs_365d.el_rewards_planck_total, 0) as el_performance_365d,
-						coalesce(vs_now.el_rewards_planck_total, 0) as el_performance_total
-					from validator_stats vs_now
-					left join validator_stats vs_1d on vs_1d.validatorindex = vs_now.validatorindex and vs_1d.day = $2
-					left join validator_stats vs_7d on vs_7d.validatorindex = vs_now.validatorindex and vs_7d.day = $3
-					left join validator_stats vs_31d on vs_31d.validatorindex = vs_now.validatorindex and vs_31d.day = $4
-					left join validator_stats vs_365d on vs_365d.validatorindex = vs_now.validatorindex and vs_365d.day = $5
-					where vs_now.day = $1
-				) 
-				on conflict (validatorindex) do update set 
-					balance = excluded.balance,
-					rank7d=excluded.rank7d,
-
-					cl_performance_1d=excluded.cl_performance_1d,
-					cl_performance_7d=excluded.cl_performance_7d,
-					cl_performance_31d=excluded.cl_performance_31d,
-					cl_performance_365d=excluded.cl_performance_365d,
-					cl_performance_total=excluded.cl_performance_total,
-
-					el_performance_1d=excluded.el_performance_1d,
-					el_performance_7d=excluded.el_performance_7d,
-					el_performance_31d=excluded.el_performance_31d,
-					el_performance_365d=excluded.el_performance_365d,
-					el_performance_total=excluded.el_performance_total
-			;`, day, int64(day)-1, int64(day)-7, int64(day)-31, int64(day)-365)
-
-	if err != nil {
-		return fmt.Errorf("error inserting performance into validator_performance for day [%v]: %w", day, err)
-	}
-
-	logger.Infof("export completed, took %v", time.Since(start))
-
-	start = time.Now()
-	logger.Infof("populate validator_performance rank7d")
-
-	_, err = tx.Exec(context.Background(), `
-		WITH ranked_performance AS (
-			SELECT
-				validatorindex, 
-				row_number() OVER (ORDER BY cl_performance_7d DESC) AS rank7d
-			FROM validator_performance
-		)
-		UPDATE validator_performance vp
-		SET rank7d = rp.rank7d
-		FROM ranked_performance rp
-		WHERE vp.validatorindex = rp.validatorindex
-		`)
-	if err != nil {
-		return fmt.Errorf("error updating rank7d while exporting day [%v]: %w", day, err)
-	}
-
-	logger.Infof("export completed, took %v", time.Since(start))
-
-	logger.Infof("total performance statistics export of day %v completed, took %v", day, time.Since(exportStart))
-	return nil
-}
-
 func gatherValidatorBlockStats(day uint64, data []*types.ValidatorStatsTableDbRow, mux *sync.Mutex) error {
 	exportStart := time.Now()
 	defer func() {
@@ -1118,17 +1020,13 @@ func GetValidatorIncomeHistoryChart(validatorIndices []uint64, currency string, 
 	}
 	var clRewardsSeries = make([]*types.ChartDataPoint, len(incomeHistory))
 
-	// TODO(rgeraldes24)
-	// p := price.GetPrice(utils.Config.Frontend.ClCurrency, currency)
-	p := 1.0
-
 	for i := 0; i < len(incomeHistory); i++ {
 		color := "#7cb5ec"
 		if incomeHistory[i].ClRewards < 0 {
 			color = "#f7a35c"
 		}
 		balanceTs := utils.DayToTime(incomeHistory[i].Day)
-		clRewardsSeries[i] = &types.ChartDataPoint{X: float64(balanceTs.Unix() * 1000), Y: p * (float64(incomeHistory[i].ClRewards)) / float64(utils.Config.Frontend.ClCurrencyDivisor), Color: color}
+		clRewardsSeries[i] = &types.ChartDataPoint{X: float64(balanceTs.Unix() * 1000), Y: (float64(incomeHistory[i].ClRewards)) / float64(utils.Config.Frontend.ClCurrencyDivisor), Color: color}
 	}
 	return clRewardsSeries, err
 }

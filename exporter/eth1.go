@@ -8,13 +8,13 @@ import (
 	"regexp"
 	"time"
 
-	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
+	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 	gzondTypes "github.com/theQRL/go-zond/core/types"
@@ -33,8 +33,7 @@ var depositContractFirstBlock uint64
 var zondDepositContractAddress common.Address
 var eth1Client *zondclient.Client
 var eth1RPCClient *gzondRPC.Client
-var infuraToMuchResultsErrorRE = regexp.MustCompile("query returned more than [0-9]+ results")
-var gethRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too Large")
+var gzondRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too Large")
 
 // eth1DepositsExporter regularly fetches the depositcontract-logs of the
 // last 100 blocks and exports the deposits into the database.
@@ -110,7 +109,7 @@ func eth1DepositsExporter() {
 
 		depositsToSave, err := fetchEth1Deposits(fromBlock, toBlock)
 		if err != nil {
-			if infuraToMuchResultsErrorRE.MatchString(err.Error()) || gethRequestEntityTooLargeRE.MatchString(err.Error()) {
+			if gzondRequestEntityTooLargeRE.MatchString(err.Error()) {
 				toBlock = fromBlock + 100
 				if toBlock > blockHeight {
 					toBlock = blockHeight

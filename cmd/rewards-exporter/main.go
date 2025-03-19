@@ -13,11 +13,11 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/version"
+	zond_rewards "github.com/theQRL/zond-beaconchain-explorer/zond-rewards"
+	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/beacon"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
-	zond_rewards "github.com/theQRL/zond-beaconchain-explorer/zond-rewards"
-	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/beacon"
 	"golang.org/x/sync/errgroup"
 )
 

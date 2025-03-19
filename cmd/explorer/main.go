@@ -245,7 +245,6 @@ func main() {
 			router.HandleFunc("/slots/data", handlers.SlotsData).Methods("GET")
 			router.HandleFunc("/blocks", handlers.Eth1Blocks).Methods("GET")
 			router.HandleFunc("/blocks/data", handlers.Eth1BlocksData).Methods("GET")
-			router.HandleFunc("/blocks/highest", handlers.Eth1BlocksHighest).Methods("GET")
 			router.HandleFunc("/address/{address}", handlers.Eth1Address).Methods("GET")
 			router.HandleFunc("/address/{address}/blocks", handlers.Eth1AddressBlocksMined).Methods("GET")
 			router.HandleFunc("/address/{address}/withdrawals", handlers.Eth1AddressWithdrawals).Methods("GET")
@@ -267,8 +266,6 @@ func main() {
 			router.HandleFunc("/burn/data", handlers.BurnPageData).Methods("GET")
 			router.HandleFunc("/gasnow", handlers.GasNow).Methods("GET")
 			router.HandleFunc("/gasnow/data", handlers.GasNowData).Methods("GET")
-			router.HandleFunc("/correlations", handlers.Correlations).Methods("GET")
-			router.HandleFunc("/correlations/data", handlers.CorrelationsData).Methods("POST")
 
 			router.HandleFunc("/vis", handlers.Vis).Methods("GET")
 			router.HandleFunc("/charts", handlers.Charts).Methods("GET")
@@ -290,8 +287,6 @@ func main() {
 			router.HandleFunc("/validator/{index}/slashings", handlers.ValidatorSlashings).Methods("GET")
 			router.HandleFunc("/validator/{index}/effectiveness", handlers.ValidatorAttestationInclusionEffectiveness).Methods("GET")
 			router.HandleFunc("/validator/{pubkey}/name", handlers.SaveValidatorName).Methods("POST")
-			// TODO(rgeraldes24)
-			// router.HandleFunc("/validator/{pubkey}/remove", handlers.UserValidatorWatchlistRemove).Methods("POST")
 			router.HandleFunc("/validator/{index}/stats", handlers.ValidatorStatsTable).Methods("GET")
 			router.HandleFunc("/validators", handlers.Validators).Methods("GET")
 			router.HandleFunc("/validators/data", handlers.ValidatorsData).Methods("GET")
@@ -329,6 +324,7 @@ func main() {
 
 			router.HandleFunc("/tables/{tableId}/state", handlers.GetDataTableStateChanges).Methods("GET")
 			router.HandleFunc("/tables/{tableId}/state", handlers.SetDataTableStateChanges).Methods("PUT")
+			// NOTE(rgeraldes24): unused for now(zns)
 			// router.HandleFunc("/zns/{search}", handlers.ZnsSearch).Methods("GET")
 
 			router.HandleFunc("/zondClients", handlers.ZondClientsServices).Methods("GET")
@@ -358,6 +354,7 @@ func main() {
 			router.Use(metrics.HttpMiddleware)
 		}
 
+		// TODO(rgeraldes24)
 		// ratelimit.Init()
 		// router.Use(ratelimit.HttpMiddleware)
 

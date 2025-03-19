@@ -18,7 +18,6 @@ import (
 )
 
 func main() {
-
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
 	start := flag.Uint64("start", 1, "Start epoch")

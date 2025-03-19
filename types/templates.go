@@ -1459,18 +1459,6 @@ type BurnPageData struct {
 	Currency         string               `json:"currency"`
 }
 
-type CorrelationDataResponse struct {
-	Status  string      `json:"status"`
-	Data    interface{} `json:"data"`
-	Message string      `json:"message"`
-}
-
-type CorrelationData struct {
-	Indicator string  `db:"indicator" json:"indicator,omitempty"`
-	Time      float64 `db:"time" json:"time,omitempty"`
-	Value     float64 `db:"value" json:"value,omitempty"`
-}
-
 type DilithiumChange struct {
 	Slot            uint64 `db:"slot" json:"slot,omitempty"`
 	BlockRoot       []byte `db:"block_rot" json:"blockroot,omitempty"`

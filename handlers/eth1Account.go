@@ -27,6 +27,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
 	address := template.HTMLEscapeString(vars["address"])
+	// TODO(rgeraldes24)
 	// znsData, err := GetZnsDomain(address)
 	// if err != nil && utils.IsValidZnsDomain(address) {
 	// 	handleNotFoundHtml(w, r)

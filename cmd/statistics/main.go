@@ -125,9 +125,6 @@ func main() {
 		logrus.Fatalf("error connecting to bigtable: %v", err)
 	}
 
-	// TODO(rgerades24): remove
-	// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.ELNodeEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
-
 	if utils.Config.TieredCacheProvider != "redis" {
 		logrus.Fatalf("No cache provider set. Please set TierdCacheProvider (example redis)")
 	}

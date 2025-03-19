@@ -10,6 +10,7 @@ import (
 	"log"
 	"math/big"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -23,20 +24,16 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
 	"github.com/theQRL/zond-beaconchain-explorer/zrc721"
 
-	"strconv"
-
 	gcp_bigtable "cloud.google.com/go/bigtable"
-	"golang.org/x/sync/errgroup"
-	"google.golang.org/protobuf/types/known/timestamppb"
-
 	"github.com/coocood/freecache"
 	"github.com/go-redis/redis/v8"
+	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/math"
 	zond_types "github.com/theQRL/go-zond/core/types"
-
-	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -655,10 +652,6 @@ func reversePaddedIndex(i int, maxValue int) string {
 	return fmt.Sprintf(fmtStr, maxValue-i)
 }
 
-func TimestampToBigtableTimeDesc(ts time.Time) string {
-	return fmt.Sprintf("%04d%02d%02d%02d%02d%02d", 9999-ts.Year(), 12-ts.Month(), 31-ts.Day(), 23-ts.Hour(), 59-ts.Minute(), 59-ts.Second())
-}
-
 func (bigtable *Bigtable) IndexEventsWithTransformers(start, end int64, transforms []func(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error), concurrency int64, cache *freecache.Cache) error {
 	g := new(errgroup.Group)
 	g.SetLimit(int(concurrency))
@@ -808,6 +801,7 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 	txReward := big.NewInt(0)
 
 	for _, t := range block.GetTransactions() {
+		// TODO(rgeraldes24)
 		// price := new(big.Int).SetBytes(t.GasPrice)
 
 		// if minGasPrice == nil {
@@ -894,14 +888,6 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 	}
 
 	return bulkData, bulkMetadataUpdates, nil
-}
-
-func CalculateTxFeesFromBlock(block *types.Eth1Block) *big.Int {
-	txFees := new(big.Int)
-	for _, tx := range block.Transactions {
-		txFees.Add(txFees, CalculateTxFeeFromTransaction(tx, new(big.Int).SetBytes(block.BaseFee)))
-	}
-	return txFees
 }
 
 func CalculateTxFeeFromTransaction(tx *types.Eth1Transaction, blockBaseFee *big.Int) *big.Int {
@@ -1994,6 +1980,7 @@ func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, 
 	g.SetLimit(25)
 	mux := sync.Mutex{}
 
+	// TODO(rgeraldes24)
 	// if names != nil {
 	// 	g.Go(func() error {
 	// 		err := bigtable.GetAddressNames(*names)
@@ -2412,6 +2399,7 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 		names[string(to)] = ""
 	}
 
+	// TODO(rgeraldes24)
 	// err := bigtable.GetAddressNames(names)
 	// if err != nil {
 	// 	return nil, err
@@ -2517,6 +2505,7 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	}
 	g := new(errgroup.Group)
 	g.SetLimit(25)
+	// TODO(rgeraldes24)
 	// g.Go(func() error {
 	// 	err := bigtable.GetAddressNames(names)
 	// 	if err != nil {
@@ -3321,6 +3310,7 @@ func (bigtable *Bigtable) SaveZRC20Metadata(address []byte, metadata *types.ZRC2
 	return bigtable.tableMetadata.Apply(ctx, rowKey, mut)
 }
 
+// NOTE(rgeraldes24): unused for now(zns)
 /*
 func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
@@ -3365,9 +3355,7 @@ func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 	err = cache.TieredCache.SetString(cacheKey, wanted, time.Hour)
 	return wanted, err
 }
-*/
 
-/*
 func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -3631,7 +3619,7 @@ func (bigtable *Bigtable) GetAddressContractInteractionsAtTransactions(transacti
 	return bigtable.GetAddressContractInteractionsAt(requests)
 }
 
-// TODO(rgeraldes24): unused
+// TODO(rgeraldes24): unused for now(zns)
 /*
 func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
@@ -3707,7 +3695,7 @@ func (bigtable *Bigtable) SaveBalances(balances []*types.Eth1AddressBalance, del
 	return nil
 }
 
-// TODO(rgeraldes24): unused
+// TODO(rgeraldes24): unused for now(zns)
 /*
 func (bigtable *Bigtable) SaveZRC20TokenPrices(prices []*types.ZRC20TokenPrice) error {
 	if len(prices) == 0 {
@@ -3872,7 +3860,6 @@ func (bigtable *Bigtable) DeleteBlock(blockNumber uint64, blockHash []byte) erro
 }
 
 func (bigtable *Bigtable) GetEth1TxForToken(prefix string, limit int64) ([]*types.Eth1ZRC20Indexed, string, error) {
-
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
 			"prefix": prefix,

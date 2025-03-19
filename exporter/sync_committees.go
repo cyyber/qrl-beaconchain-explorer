@@ -61,7 +61,6 @@ func exportSyncCommittees(rpcClient rpc.Client) error {
 }
 
 func ExportSyncCommitteeAtPeriod(rpcClient rpc.Client, p uint64, providedTx *sqlx.Tx) error {
-
 	data, err := GetSyncCommitteAtPeriod(rpcClient, p)
 	if err != nil {
 		return err
@@ -103,7 +102,6 @@ func ExportSyncCommitteeAtPeriod(rpcClient rpc.Client, p uint64, providedTx *sql
 }
 
 func GetSyncCommitteAtPeriod(rpcClient rpc.Client, p uint64) ([]SyncCommittee, error) {
-
 	stateID := uint64(0)
 	if p > 0 {
 		stateID = utils.FirstEpochOfSyncPeriod(p-1) * utils.Config.Chain.ClConfig.SlotsPerEpoch

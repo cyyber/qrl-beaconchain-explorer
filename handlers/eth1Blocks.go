@@ -123,12 +123,6 @@ func getProposerAndStatusFromSlot(startSlot uint64, endSlot uint64) (map[uint64]
 	return data, nil
 }
 
-func Eth1BlocksHighest(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/text")
-	w.Write([]byte(fmt.Sprintf("%d", services.LatestEth1BlockNumber())))
-}
-
 func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.DataTableResponse, error) {
 	if recordsTotal == 0 {
 		recordsTotal = services.LatestEth1BlockNumber() + 1 // +1 to include block 0

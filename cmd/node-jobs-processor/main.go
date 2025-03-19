@@ -12,7 +12,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/version"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-
 	"github.com/sirupsen/logrus"
 )
 

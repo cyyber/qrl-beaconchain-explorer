@@ -15,19 +15,17 @@ import (
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
+	"github.com/theQRL/zond-beaconchain-explorer/rpc"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"github.com/pressly/goose/v3"
 	"github.com/sirupsen/logrus"
 	qrysm_deposit "github.com/theQRL/qrysm/contracts/deposit"
-	ethpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
-
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-
-	"github.com/jackc/pgx/v5/pgxpool"
+	zondpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
 )
 
 //go:embed migrations/*.sql
@@ -1363,7 +1361,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 
 			for i, d := range b.Deposits {
 
-				err := qrysm_deposit.VerifyDepositSignature(&ethpb.Deposit_Data{
+				err := qrysm_deposit.VerifyDepositSignature(&zondpb.Deposit_Data{
 					PublicKey:             d.PublicKey,
 					WithdrawalCredentials: d.WithdrawalCredentials,
 					Amount:                d.Amount,
@@ -1484,7 +1482,7 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 		return err
 	}
 
-	// efficiently collect the tnx that pushed each validator over 32 ETH.
+	// efficiently collect the tnx that pushed each validator over 40000 ZND.
 	_, err = tx.Exec(`
 		UPDATE validator_queue_deposits 
 		SET 
@@ -1511,8 +1509,8 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 			FROM CumSum
 			/* join so we can retrieve the validator index again */
 			left join validators on validators.pubkey = CumSum.publickey
-			/* we want the deposit that pushed the cum sum over 32 ETH */
-			WHERE cumTotal>=32000000000
+			/* we want the deposit that pushed the cum sum over 40000 ZND */
+			WHERE cumTotal>=40000000000000
 			ORDER BY publickey, cumTotal asc 
 		) AS data
 		WHERE validator_queue_deposits.validatorindex=data.validatorindex`)

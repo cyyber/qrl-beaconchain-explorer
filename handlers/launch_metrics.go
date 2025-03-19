@@ -9,9 +9,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
-// var currentEpoch uint64
-// var currentSlot uint64
-
 // SlotVizMetrics returns the metrics for the earliest epochs
 func SlotVizMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

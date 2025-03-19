@@ -194,12 +194,6 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 							Path:  "/burn",
 							Icon:  "fa-burn",
 						},
-						{
-							Label:    "Correlations",
-							Path:     "/correlations",
-							Icon:     "fa-chart-line",
-							IsHidden: !isMain,
-						},
 					},
 				}, {
 					Label: "Tools",

@@ -14,11 +14,11 @@ import (
 
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/api/option"
 	"google.golang.org/protobuf/proto"
@@ -70,7 +70,6 @@ type Bigtable struct {
 }
 
 func InitBigtable(project, instance, chainId, redisAddress string) (*Bigtable, error) {
-
 	if utils.Config.Bigtable.Emulator {
 
 		if utils.Config.Bigtable.EmulatorHost == "" {
@@ -124,10 +123,6 @@ func InitBigtable(project, instance, chainId, redisAddress string) (*Bigtable, e
 func (bigtable *Bigtable) Close() {
 	time.Sleep(time.Second * 5)
 	bigtable.client.Close()
-}
-
-func (bigtable *Bigtable) GetClient() *gcp_bigtable.Client {
-	return bigtable.client
 }
 
 func (bigtable *Bigtable) SaveValidatorBalances(epoch uint64, validators []*types.Validator) error {
@@ -208,7 +203,6 @@ func (bigtable *Bigtable) SaveProposalAssignments(epoch uint64, assignments map[
 }
 
 func (bigtable *Bigtable) SaveAttestationDuties(duties map[types.Slot]map[types.ValidatorIndex][]types.Slot) error {
-
 	// Initialize in memory last attestation cache lazily
 	bigtable.LastAttestationCacheMux.Lock()
 	if bigtable.LastAttestationCache == nil {
@@ -288,21 +282,6 @@ func (bigtable *Bigtable) SaveAttestationDuties(duties map[types.Slot]map[types.
 	}
 
 	logger.Infof("exported %v attestations to bigtable in %v", mutsInclusionSlot.Len(), time.Since(start))
-	return nil
-}
-
-// This method is only to be used for migrating the last attestation slot to bigtable and should not be used for any other purpose
-func (bigtable *Bigtable) SetLastAttestationSlot(validator uint64, lastAttestationSlot uint64) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
-
-	mutLastAttestationSlot := gcp_bigtable.NewMutation()
-	mutLastAttestationSlot.Set(ATTESTATIONS_FAMILY, fmt.Sprintf("%d", validator), gcp_bigtable.Timestamp(lastAttestationSlot*1000), []byte{})
-	err := bigtable.tableValidators.Apply(ctx, fmt.Sprintf("%s:lastAttestationSlot", bigtable.chainId), mutLastAttestationSlot)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -680,7 +659,6 @@ func (bigtable *Bigtable) getValidatorAttestationHistoryV2(validators []uint64, 
 }
 
 func (bigtable *Bigtable) GetLastAttestationSlots(validators []uint64) (map[uint64]uint64, error) {
-
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
 		logger.WithFields(logrus.Fields{
 			"validatorsCount": len(validators),
@@ -964,96 +942,6 @@ func (bigtable *Bigtable) getValidatorSyncDutiesHistoryV2(validators []uint64, s
 
 	if err := g.Wait(); err != nil {
 		return nil, err
-	}
-
-	return res, nil
-}
-
-func (bigtable *Bigtable) GetValidatorMissedAttestationsCount(validators []uint64, firstEpoch uint64, lastEpoch uint64) (map[uint64]*types.ValidatorMissedAttestationsStatistic, error) {
-
-	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
-		logger.WithFields(logrus.Fields{
-			"validatorsCount": len(validators),
-			"startEpoch":      firstEpoch,
-			"endEpoch":        lastEpoch,
-		}).Warnf("%s call took longer than %v", utils.GetCurrentFuncName(), REPORT_TIMEOUT)
-	})
-	defer tmr.Stop()
-
-	if firstEpoch > lastEpoch {
-		return nil, fmt.Errorf("GetValidatorMissedAttestationsCount received an invalid firstEpoch (%d) and lastEpoch (%d) combination", firstEpoch, lastEpoch)
-	}
-
-	res := make(map[uint64]*types.ValidatorMissedAttestationsStatistic)
-
-	data, err := bigtable.GetValidatorMissedAttestationHistory(validators, firstEpoch, lastEpoch)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// logger.Infof("retrieved missed attestation history for epochs %v - %v", firstEpoch, lastEpoch)
-
-	for validator, attestations := range data {
-		if len(attestations) == 0 {
-			continue
-		}
-		res[validator] = &types.ValidatorMissedAttestationsStatistic{
-			Index:              validator,
-			MissedAttestations: uint64(len(attestations)),
-		}
-	}
-
-	return res, nil
-}
-
-func (bigtable *Bigtable) GetValidatorSyncDutiesStatistics(validators []uint64, startEpoch uint64, endEpoch uint64) (map[uint64]*types.ValidatorSyncDutiesStatistic, error) {
-
-	data, err := bigtable.GetValidatorSyncDutiesHistory(validators, startEpoch*utils.Config.Chain.ClConfig.SlotsPerEpoch, ((endEpoch+1)*utils.Config.Chain.ClConfig.SlotsPerEpoch)-1)
-
-	if err != nil {
-		return nil, err
-	}
-
-	slotsMap := make(map[uint64]bool)
-	for _, duties := range data {
-		for _, duty := range duties {
-			slotsMap[duty.Slot] = true
-		}
-	}
-	slots := []uint64{}
-	for slot := range slotsMap {
-		slots = append(slots, slot)
-	}
-
-	orphanedSlots, err := GetOrphanedSlots(slots)
-	if err != nil {
-		return nil, err
-	}
-
-	orphanedSlotsMap := make(map[uint64]bool)
-	for _, slot := range orphanedSlots {
-		orphanedSlotsMap[slot] = true
-	}
-
-	res := make(map[uint64]*types.ValidatorSyncDutiesStatistic)
-
-	for validator, duties := range data {
-		if res[validator] == nil && len(duties) > 0 {
-			res[validator] = &types.ValidatorSyncDutiesStatistic{
-				Index: validator,
-			}
-		}
-
-		for _, duty := range duties {
-			if orphanedSlotsMap[duty.Slot] {
-				res[validator].OrphanedSync++
-			} else if duty.Status == 0 {
-				res[validator].MissedSync++
-			} else {
-				res[validator].ParticipatedSync++
-			}
-		}
 	}
 
 	return res, nil
@@ -1452,66 +1340,6 @@ func (bigtable *Bigtable) getValidatorIncomeDetailsHistoryV2(validators []uint64
 	return res, nil
 }
 
-// GetAggregatedValidatorIncomeDetailsHistory returns aggregated validator income details
-// startEpoch & endEpoch are inclusive
-func (bigtable *Bigtable) GetAggregatedValidatorIncomeDetailsHistory(validators []uint64, startEpoch uint64, endEpoch uint64) (map[uint64]*itypes.ValidatorEpochIncome, error) {
-	if startEpoch > endEpoch {
-		startEpoch = 0
-	}
-
-	type ResultContainer struct {
-		mu  sync.Mutex
-		res map[uint64]*itypes.ValidatorEpochIncome
-	}
-	resultContainer := ResultContainer{}
-	resultContainer.res = make(map[uint64]*itypes.ValidatorEpochIncome, len(validators))
-
-	batchSize := 10000
-	for i := 0; i < len(validators); i += batchSize {
-
-		upperBound := i + batchSize
-		if len(validators) < upperBound {
-			upperBound = len(validators)
-		}
-		vals := validators[i:upperBound]
-
-		logrus.Infof("retrieving validator income stats for validators %v - %v", vals[0], vals[len(vals)-1])
-
-		res, err := bigtable.GetValidatorIncomeDetailsHistory(vals, startEpoch, endEpoch)
-
-		if err != nil {
-			return nil, err
-		}
-		resultContainer.mu.Lock()
-		for validator, epochs := range res {
-			for _, rewardDetails := range epochs {
-
-				if resultContainer.res[validator] == nil {
-					resultContainer.res[validator] = &itypes.ValidatorEpochIncome{}
-				}
-
-				resultContainer.res[validator].AttestationHeadReward += rewardDetails.AttestationHeadReward
-				resultContainer.res[validator].AttestationSourceReward += rewardDetails.AttestationSourceReward
-				resultContainer.res[validator].AttestationSourcePenalty += rewardDetails.AttestationSourcePenalty
-				resultContainer.res[validator].AttestationTargetReward += rewardDetails.AttestationTargetReward
-				resultContainer.res[validator].AttestationTargetPenalty += rewardDetails.AttestationTargetPenalty
-				resultContainer.res[validator].FinalityDelayPenalty += rewardDetails.FinalityDelayPenalty
-				resultContainer.res[validator].ProposerSlashingInclusionReward += rewardDetails.ProposerSlashingInclusionReward
-				resultContainer.res[validator].ProposerAttestationInclusionReward += rewardDetails.ProposerAttestationInclusionReward
-				resultContainer.res[validator].ProposerSyncInclusionReward += rewardDetails.ProposerSyncInclusionReward
-				resultContainer.res[validator].SyncCommitteeReward += rewardDetails.SyncCommitteeReward
-				resultContainer.res[validator].SyncCommitteePenalty += rewardDetails.SyncCommitteePenalty
-				resultContainer.res[validator].SlashingReward += rewardDetails.SlashingReward
-				resultContainer.res[validator].SlashingPenalty += rewardDetails.SlashingPenalty
-				resultContainer.res[validator].TxFeeRewardPlanck = utils.AddBigInts(resultContainer.res[validator].TxFeeRewardPlanck, rewardDetails.TxFeeRewardPlanck)
-			}
-		}
-		resultContainer.mu.Unlock()
-	}
-
-	return resultContainer.res, nil
-}
-
 // GetTotalValidatorIncomeDetailsHistory returns the total validator income for a given range of epochs
 // It is considerably faster than fetching the individual income for each validator and aggregating it
 // startEpoch & endEpoch are inclusive
@@ -1562,12 +1390,6 @@ func (bigtable *Bigtable) GetTotalValidatorIncomeDetailsHistory(startEpoch uint6
 		return nil, err
 	}
 	return res, nil
-}
-
-// Deletes all block data from bigtable
-func (bigtable *Bigtable) DeleteEpoch(epoch uint64) error {
-	// TOTO: Implement
-	return fmt.Errorf("NOT IMPLEMENTED")
 }
 
 func (bigtable *Bigtable) getValidatorsEpochRanges(validatorIndices []uint64, prefix string, startEpoch uint64, endEpoch uint64) gcp_bigtable.RowRangeList {
@@ -1664,37 +1486,6 @@ func (bigtable *Bigtable) validatorKeyToIndex(key string) (uint64, error) {
 		return 0, err
 	}
 	return indexKey, nil
-}
-
-func GetCurrentDayClIncome(validator_indices []uint64) (map[uint64]int64, error) {
-	dayIncome := make(map[uint64]int64)
-	lastDay, err := GetLastExportedStatisticDay()
-	if err != nil {
-		if err == ErrNoStats {
-			return dayIncome, nil
-		}
-		return dayIncome, err
-	}
-
-	currentDay := uint64(lastDay + 1)
-	startEpoch := currentDay * utils.EpochsPerDay()
-	endEpoch := startEpoch + utils.EpochsPerDay() - 1
-	income, err := BigtableClient.GetValidatorIncomeDetailsHistory(validator_indices, startEpoch, endEpoch)
-	if err != nil {
-		return dayIncome, err
-	}
-
-	// agregate all epoch income data to total day income for each validator
-	for validatorIndex, validatorIncome := range income {
-		if len(validatorIncome) == 0 {
-			continue
-		}
-		for _, validatorEpochIncome := range validatorIncome {
-			dayIncome[validatorIndex] += validatorEpochIncome.TotalClRewards()
-		}
-	}
-
-	return dayIncome, nil
 }
 
 func (bigtable *Bigtable) reversedPaddedEpoch(epoch uint64) string {

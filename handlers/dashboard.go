@@ -12,6 +12,8 @@ import (
 	"math/rand"
 	"net/http"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
@@ -20,9 +22,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
-
-	"strconv"
-	"strings"
 
 	"github.com/lib/pq"
 	"github.com/theQRL/go-zond/common"

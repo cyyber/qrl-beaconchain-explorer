@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"math/big"
+	"net/http"
+	_ "net/http/pprof"
 
 	"github.com/theQRL/zond-beaconchain-explorer/cache"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
@@ -16,9 +18,6 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
-
-	"net/http"
-	_ "net/http/pprof"
 )
 
 func main() {
@@ -91,10 +90,6 @@ func main() {
 	if utils.Config.TieredCacheProvider != "redis" {
 		logrus.Fatalf("No cache provider set. Please set TierdCacheProvider (example redis, bigtable)")
 	}
-
-	// TODO(rgeraldes24): remove
-	// logrus.Infof("initializing prices")
-	// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.ELNodeEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
 
 	chainID := new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID)
 	rpcClient, err := rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainID)

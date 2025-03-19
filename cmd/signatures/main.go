@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	_ "net/http/pprof"
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
@@ -17,8 +18,6 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
-
-	_ "net/http/pprof"
 )
 
 /**
@@ -203,7 +202,6 @@ func ImportSignatures(bt *db.Bigtable, st types.SignatureType) {
 }
 
 func GetNextSignatures(bt *db.Bigtable, page string, status types.SignatureImportStatus) (*string, []types.Signature, error) {
-
 	httpClient := &http.Client{Timeout: time.Second * 10}
 
 	resp, err := httpClient.Get(page)

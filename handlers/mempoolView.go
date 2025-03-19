@@ -72,14 +72,3 @@ func toTableDataRow(tx *types.RawMempoolTransaction) []interface{} {
 		tx.Nonce.ToInt(),
 	}
 }
-
-// type formatedTx struct {
-// 	Hash      template.HTML `json:"hash"`
-// 	From      template.HTML `json:"from"`
-// 	To        template.HTML `default:"Empty address"`
-// 	Value     template.HTML `json:"value"`
-// 	Gas       template.HTML `json:"gas"`
-// 	GasFeeCap template.HTML `json:"maxFeePerGas,omitempty"`
-// 	GasPrice  template.HTML `json:"gasPrice"`
-// 	Nonce     template.HTML `json:"nonce"`
-// }

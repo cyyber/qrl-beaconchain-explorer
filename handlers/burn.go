@@ -28,6 +28,7 @@ func Burn(w http.ResponseWriter, r *http.Request) {
 		currency = "USD"
 	}
 
+	// TODO(rgeraldes24)
 	// latestBurn.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
 	latestBurn.Price = 1.0
 	latestBurn.Currency = currency
