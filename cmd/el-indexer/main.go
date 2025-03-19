@@ -3,15 +3,11 @@ package main
 import (
 	"bytes"
 	"context"
-	"encoding/hex"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"math/big"
 	"net/http"
 	"strconv"
-	"strings"
 	"sync/atomic"
 	"time"
 
@@ -44,7 +40,7 @@ func main() {
 	offsetBlocks := flag.Int64("blocks.offset", 100, "Blocks offset")
 	checkBlocksGaps := flag.Bool("blocks.gaps", false, "Check for gaps in the blocks table")
 	checkBlocksGapsLookback := flag.Int("blocks.gaps.lookback", 1000000, "Lookback for gaps check of the blocks table")
-	traceMode := flag.String("blocks.tracemode", "parity/geth", "Trace mode to use, can bei either 'parity', 'gzond' or 'parity/gzond' for both") // TODO(rgeraldes24)
+	traceMode := flag.String("blocks.tracemode", "parity/gzond", "Trace mode to use, can bei either 'parity', 'gzond' or 'parity/gzond' for both") // TODO(rgeraldes24)
 
 	concurrencyData := flag.Int64("data.concurrency", 30, "Concurrency to use when indexing data from bigtable")
 	startData := flag.Int64("data.start", 0, "Block to start indexing")
@@ -62,6 +58,7 @@ func main() {
 
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
+	// NOTE(rgeraldes24): unused for now(zns)
 	// enableZnsUpdater := flag.Bool("zns.enabled", false, "Enable zns update process")
 	// znsBatchSize := flag.Int64("zns.batch", 200, "Batch size for zns updates")
 
@@ -355,6 +352,7 @@ func main() {
 			ProcessMetadataUpdates(bt, client, balanceUpdaterPrefix, *balanceUpdaterBatchSize, 10)
 		}
 
+		// NOTE(rgeraldes24): unused for now(zns)
 		/*
 			if *enableZnsUpdater {
 				err := bt.ImportZnsUpdates(client.GetNativeClient(), *znsBatchSize)
@@ -366,7 +364,7 @@ func main() {
 		*/
 
 		logrus.Infof("index run completed")
-		services.ReportStatus("elIndexer", "Running", nil) // TODO(rgeraldes24)
+		services.ReportStatus("elIndexer", "Running", nil)
 	}
 
 	// utils.WaitForCtrlC()
@@ -569,122 +567,3 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 	}
 	return nil
 }
-
-func ImportMainnetZRC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
-
-	client := &http.Client{Timeout: time.Second * 10}
-
-	resp, err := client.Get("<INSERT_TOKENLIST_URL>")
-
-	if err != nil {
-		utils.LogFatal(err, "getting client error", 0)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		utils.LogFatal(err, "reading body for ZRC20 tokens error", 0)
-	}
-
-	type TokenDirectory struct {
-		ChainID       int64    `json:"chainId"`
-		Keywords      []string `json:"keywords"`
-		LogoURI       string   `json:"logoURI"`
-		Name          string   `json:"name"`
-		Timestamp     string   `json:"timestamp"`
-		TokenStandard string   `json:"tokenStandard"`
-		Tokens        []struct {
-			Address    string `json:"address"`
-			ChainID    int64  `json:"chainId"`
-			Decimals   int64  `json:"decimals"`
-			Extensions struct {
-				Description   string      `json:"description"`
-				Link          string      `json:"link"`
-				OgImage       interface{} `json:"ogImage"`
-				OriginAddress string      `json:"originAddress"`
-				OriginChainID int64       `json:"originChainId"`
-			} `json:"extensions"`
-			LogoURI string `json:"logoURI"`
-			Name    string `json:"name"`
-			Symbol  string `json:"symbol"`
-		} `json:"tokens"`
-	}
-
-	td := &TokenDirectory{}
-
-	err = json.Unmarshal(body, td)
-
-	if err != nil {
-		utils.LogFatal(err, "unmarshal json body error", 0)
-	}
-
-	for _, token := range td.Tokens {
-
-		address, err := hex.DecodeString(strings.TrimPrefix(token.Address, "0x"))
-		if err != nil {
-			utils.LogFatal(err, "decoding string to hex error", 0)
-		}
-		logrus.Infof("processing token %v at address %x", token.Name, address)
-
-		meta := &types.ZRC20Metadata{}
-		meta.Decimals = big.NewInt(token.Decimals).Bytes()
-		meta.Description = token.Extensions.Description
-		if len(token.LogoURI) > 0 {
-			resp, err := client.Get(token.LogoURI)
-
-			if err == nil && resp.StatusCode == 200 {
-				body, err := io.ReadAll(resp.Body)
-
-				if err != nil {
-					utils.LogFatal(err, "reading body for ZRC20 token logo URI error", 0)
-				}
-
-				meta.Logo = body
-				meta.LogoFormat = token.LogoURI
-			}
-		}
-		meta.Name = token.Name
-		meta.OfficialSite = token.Extensions.Link
-		meta.Symbol = token.Symbol
-
-		err = bt.SaveZRC20Metadata(address, meta)
-		if err != nil {
-			utils.LogFatal(err, "error while saving ZRC20 metadata", 0)
-		}
-		time.Sleep(time.Millisecond * 250)
-	}
-
-}
-
-// TODO(rgeraldes24): unused
-/*
-func ImportNameLabels(bt *db.Bigtable) {
-	type NameEntry struct {
-		Name string
-	}
-
-	res := make(map[string]*NameEntry)
-
-	data, err := os.ReadFile("")
-
-	if err != nil {
-		utils.LogFatal(err, "reading file error", 0)
-	}
-
-	err = json.Unmarshal(data, &res)
-
-	if err != nil {
-		utils.LogFatal(err, "unmarshal json error", 0)
-	}
-
-	logrus.Infof("retrieved %v names", len(res))
-
-	for address, name := range res {
-		if name.Name == "" {
-			continue
-		}
-		logrus.Infof("%v: %v", address, name.Name)
-		bt.SaveAddressName(common.FromHex(strings.TrimPrefix(address, "0x")), name.Name)
-	}
-}
-*/

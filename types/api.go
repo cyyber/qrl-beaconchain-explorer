@@ -13,6 +13,7 @@ type ApiResponse struct {
 	Data   interface{} `json:"data"`
 }
 
+// NOTE(rgeraldes24): unused for now
 /*
 type ZnsDomainResponse struct {
 	Address string `json:"address"`

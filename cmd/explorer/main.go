@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
+	_ "net/http/pprof"
 	"strings"
 	"sync"
 	"time"
@@ -23,15 +24,10 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/version"
 	zondclients "github.com/theQRL/zond-beaconchain-explorer/zondClients"
 
-	"github.com/sirupsen/logrus"
-
-	_ "net/http/pprof"
-
-	// _ "github.com/theQRL/zond-beaconchain-explorer/docs"
-
 	"github.com/gorilla/mux"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/phyber/negroni-gzip/gzip"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
 	"github.com/zesik/proxyaddr"
 )
@@ -216,11 +212,6 @@ func main() {
 		router.HandleFunc("/api/healthz", handlers.ApiHealthz).Methods("GET", "HEAD")
 		router.HandleFunc("/api/healthz-loadbalancer", handlers.ApiHealthzLoadbalancer).Methods("GET", "HEAD")
 
-		// TODO(rgeraldes24): remove
-		// logrus.Infof("initializing prices")
-		// price.Init(utils.Config.Chain.ClConfig.DepositChainID, utils.Config.ELNodeEndpoint, utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
-
-		// logrus.Infof("prices initialized")
 		if !utils.Config.Frontend.Debug {
 			logrus.Infof("initializing zondclients")
 			zondclients.Init()

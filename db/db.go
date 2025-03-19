@@ -617,83 +617,6 @@ func GetValidatorDeposits(publicKey []byte) (*types.ValidatorDeposits, error) {
 	return deposits, nil
 }
 
-// UpdateCanonicalBlocks will update the blocks for an epoch range in the database
-func UpdateCanonicalBlocks(startEpoch, endEpoch uint64, blocks []*types.MinimalBlock) error {
-	if len(blocks) == 0 {
-		return nil
-	}
-	start := time.Now()
-	defer func() {
-		metrics.TaskDuration.WithLabelValues("db_update_canonical_blocks").Observe(time.Since(start).Seconds())
-	}()
-
-	tx, err := WriterDb.Begin()
-	if err != nil {
-		return fmt.Errorf("error starting db transactions: %w", err)
-	}
-	defer tx.Rollback()
-
-	lastSlotNumber := uint64(0)
-	for _, block := range blocks {
-		if block.Slot > lastSlotNumber {
-			lastSlotNumber = block.Slot
-		}
-	}
-
-	_, err = tx.Exec("UPDATE blocks SET status = 3 WHERE epoch >= $1 AND epoch <= $2 AND (status = '1' OR status = '3') AND slot <= $3", startEpoch, endEpoch, lastSlotNumber)
-	if err != nil {
-		return err
-	}
-
-	for _, block := range blocks {
-		if block.Canonical {
-			logger.Printf("marking block %x at slot %v as canonical", block.BlockRoot, block.Slot)
-			_, err = tx.Exec("UPDATE blocks SET status = '1' WHERE blockroot = $1", block.BlockRoot)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return tx.Commit()
-}
-
-func SetBlockStatus(blocks []*types.CanonBlock) error {
-	if len(blocks) == 0 {
-		return nil
-	}
-
-	tx, err := WriterDb.Begin()
-	if err != nil {
-		return fmt.Errorf("error starting db transactions: %w", err)
-	}
-	defer tx.Rollback()
-
-	canonBlocks := make(pq.ByteaArray, 0)
-	orphanedBlocks := make(pq.ByteaArray, 0)
-	for _, block := range blocks {
-		if !block.Canonical {
-			logger.Printf("marking block %x at slot %v as orphaned", block.BlockRoot, block.Slot)
-			orphanedBlocks = append(orphanedBlocks, block.BlockRoot)
-		} else {
-			logger.Printf("marking block %x at slot %v as canonical", block.BlockRoot, block.Slot)
-			canonBlocks = append(canonBlocks, block.BlockRoot)
-		}
-
-	}
-
-	_, err = tx.Exec("UPDATE blocks SET status = '1' WHERE blockroot = ANY($1)", canonBlocks)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec("UPDATE blocks SET status = '3' WHERE blockroot = ANY($1)", orphanedBlocks)
-	if err != nil {
-		return err
-	}
-
-	return tx.Commit()
-}
-
 // SaveValidatorQueue will save the validator queue into the database
 func SaveValidatorQueue(validators *types.ValidatorQueue, tx *sqlx.Tx) error {
 	_, err := tx.Exec(`
@@ -1503,13 +1426,6 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 	return err
 }
 
-// GetValidatorIndices will return the total-validator-indices
-func GetValidatorIndices() ([]uint64, error) {
-	indices := []uint64{}
-	err := ReaderDb.Select(&indices, "select validatorindex from validators order by validatorindex;")
-	return indices, err
-}
-
 // GetTotalValidatorsCount will return the total-validator-count
 func GetTotalValidatorsCount() (uint64, error) {
 	var totalCount uint64
@@ -1698,70 +1614,6 @@ func GetTotalEligibleZND() (uint64, error) {
 		return 0, err
 	}
 	return total / 1e9, nil
-}
-
-// GetValidatorsGotSlashed returns the validators that got slashed after `epoch` either by an attestation violation or a proposer violation
-func GetValidatorsGotSlashed(epoch uint64) ([]struct {
-	Epoch                  uint64 `db:"epoch"`
-	SlasherIndex           uint64 `db:"slasher"`
-	SlasherPubkey          string `db:"slasher_pubkey"`
-	SlashedValidatorIndex  uint64 `db:"slashedvalidator"`
-	SlashedValidatorPubkey []byte `db:"slashedvalidator_pubkey"`
-	Reason                 string `db:"reason"`
-}, error) {
-
-	var dbResult []struct {
-		Epoch                  uint64 `db:"epoch"`
-		SlasherIndex           uint64 `db:"slasher"`
-		SlasherPubkey          string `db:"slasher_pubkey"`
-		SlashedValidatorIndex  uint64 `db:"slashedvalidator"`
-		SlashedValidatorPubkey []byte `db:"slashedvalidator_pubkey"`
-		Reason                 string `db:"reason"`
-	}
-	err := ReaderDb.Select(&dbResult, `
-		WITH
-			slashings AS (
-				SELECT DISTINCT ON (slashedvalidator) 
-					slot,
-					epoch,
-					slasher,
-					slashedvalidator,
-					reason
-				FROM (
-					SELECT
-						blocks.slot, 
-						blocks.epoch, 
-						blocks.proposer AS slasher, 
-						UNNEST(ARRAY(
-							SELECT UNNEST(attestation1_indices)
-								INTERSECT
-							SELECT UNNEST(attestation2_indices)
-						)) AS slashedvalidator, 
-						'Attestation Violation' AS reason
-					FROM blocks_attesterslashings 
-					LEFT JOIN blocks ON blocks_attesterslashings.block_slot = blocks.slot
-					WHERE blocks.status = '1' AND blocks.epoch > $1
-					UNION ALL
-						SELECT
-							blocks.slot, 
-							blocks.epoch, 
-							blocks.proposer AS slasher, 
-							blocks_proposerslashings.proposerindex AS slashedvalidator,
-							'Proposer Violation' AS reason 
-						FROM blocks_proposerslashings
-						LEFT JOIN blocks ON blocks_proposerslashings.block_slot = blocks.slot
-						WHERE blocks.status = '1' AND blocks.epoch > $1
-				) a
-				ORDER BY slashedvalidator, slot
-			)
-		SELECT slasher, vk.pubkey as slasher_pubkey, slashedvalidator, vv.pubkey as slashedvalidator_pubkey, epoch, reason
-		FROM slashings s
-	    INNER JOIN validators vk ON s.slasher = vk.validatorindex
-		INNER JOIN validators vv ON s.slashedvalidator = vv.validatorindex`, epoch)
-	if err != nil {
-		return nil, err
-	}
-	return dbResult, nil
 }
 
 func GetSlotVizData(latestEpoch uint64) ([]*types.SlotVizEpochs, error) {
@@ -2490,6 +2342,8 @@ func GetExplorerConfigurations() ([]*types.ExplorerConfig, error) {
 	return configs, nil
 }
 
+// TODO(rgeraldes24)
+/*
 // save current configurations
 func SaveExplorerConfiguration(configs []types.ExplorerConfig) error {
 	valueStrings := []string{}
@@ -2504,14 +2358,14 @@ func SaveExplorerConfiguration(configs []types.ExplorerConfig) error {
 	}
 	query := fmt.Sprintf(`
 		INSERT INTO explorer_configurations (
-			category, 
-			key, 
-			value, 
+			category,
+			key,
+			value,
 			data_type)
-    	VALUES %s 
-		ON CONFLICT 
-			(category, key) 
-		DO UPDATE SET 
+    	VALUES %s
+		ON CONFLICT
+			(category, key)
+		DO UPDATE SET
 			value = excluded.value,
 			data_type = excluded.data_type
 			`, strings.Join(valueStrings, ","))
@@ -2522,6 +2376,7 @@ func SaveExplorerConfiguration(configs []types.ExplorerConfig) error {
 	}
 	return nil
 }
+*/
 
 func GetTotalDilithiumChanges() (uint64, error) {
 	var count uint64
@@ -2684,39 +2539,6 @@ func GetValidatorDilithiumChange(validatorindex uint64) (*types.DilithiumChange,
 			return nil, nil
 		}
 		return nil, fmt.Errorf("error getting validator blocks_dilithium_change: %w", err)
-	}
-
-	return change, nil
-}
-
-// GetValidatorsDilithiumChange returns the Dilithium change for a list of validators
-func GetValidatorsDilithiumChange(validators []uint64) ([]*types.ValidatorsDilithiumChange, error) {
-	change := make([]*types.ValidatorsDilithiumChange, 0, len(validators))
-
-	err := ReaderDb.Select(&change, `	
-	SELECT
-		dilithium.block_slot AS slot,
-		dilithium.block_root,
-		dilithium.signature,
-		dilithium.pubkey,
-		dilithium.validatorindex,
-		dilithium.address,
-		d.withdrawalcredentials
-	FROM blocks_dilithium_change dilithium
-	INNER JOIN blocks b ON b.blockroot = dilithium.block_root AND b.status = '1'
-	LEFT JOIN validators v ON v.validatorindex = dilithium.validatorindex
-	LEFT JOIN (
-		SELECT ROW_NUMBER() OVER (PARTITION BY publickey ORDER BY block_slot) AS rn, withdrawalcredentials, publickey, block_root FROM blocks_deposits d
-		INNER JOIN blocks b ON b.blockroot = d.block_root AND b.status = '1'
-	) AS d ON d.publickey = v.pubkey AND rn = 1
-	WHERE dilithium.validatorindex = ANY($1)
-	ORDER BY dilithium.block_slot DESC
-	`, pq.Array(validators))
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("error getting validators blocks_dilithium_change: %w", err)
 	}
 
 	return change, nil
@@ -2968,80 +2790,4 @@ func GetSyncParticipationBySlotRange(startSlot, endSlot uint64) (map[uint64]uint
 	}
 
 	return ret, nil
-}
-
-// Should be used when retrieving data for a very large amount of validators (for the notifications process)
-func GetValidatorAttestationHistoryForNotifications(startEpoch uint64, endEpoch uint64) (map[types.Epoch]map[types.ValidatorIndex]bool, error) {
-	// first retrieve activation & exit epoch for all validators
-	activityData := []struct {
-		ValidatorIndex  types.ValidatorIndex
-		ActivationEpoch types.Epoch
-		ExitEpoch       types.Epoch
-	}{}
-
-	err := ReaderDb.Select(&activityData, "SELECT validatorindex, activationepoch, exitepoch FROM validators ORDER BY validatorindex;")
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving activation & exit epoch for validators: %w", err)
-	}
-
-	logger.Info("retrieved activation & exit epochs")
-
-	// next retrieve all attestation data from the db (need to retrieve data for the endEpoch+1 epoch as that could still contain attestations for the endEpoch)
-	firstSlot := startEpoch * utils.Config.Chain.ClConfig.SlotsPerEpoch
-	lastSlot := ((endEpoch+1)*utils.Config.Chain.ClConfig.SlotsPerEpoch - 1)
-	lastQuerySlot := ((endEpoch+2)*utils.Config.Chain.ClConfig.SlotsPerEpoch - 1)
-
-	rows, err := ReaderDb.Query(`SELECT 
-	blocks_attestations.slot, 
-	validators 
-	FROM blocks_attestations 
-	LEFT JOIN blocks ON blocks_attestations.block_root = blocks.blockroot WHERE
-	blocks_attestations.block_slot >= $1 AND blocks_attestations.block_slot <= $2 AND blocks.status = '1' ORDER BY block_slot`, firstSlot, lastQuerySlot)
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving attestation data from the db: %w", err)
-	}
-	defer rows.Close()
-
-	logger.Info("retrieved attestation raw data")
-
-	// next process the data and fill up the epoch participation
-	// validators that participated in an epoch will have the flag set to true
-	// validators that missed their participation will have it set to false
-	epochParticipation := make(map[types.Epoch]map[types.ValidatorIndex]bool)
-	for rows.Next() {
-		var slot types.Slot
-		var attestingValidators pq.Int64Array
-
-		err := rows.Scan(&slot, &attestingValidators)
-		if err != nil {
-			return nil, fmt.Errorf("error scanning attestation data: %w", err)
-		}
-
-		if slot < types.Slot(firstSlot) || slot > types.Slot(lastSlot) {
-			continue
-		}
-
-		epoch := types.Epoch(utils.EpochOfSlot(uint64(slot)))
-
-		participation := epochParticipation[epoch]
-
-		if participation == nil {
-			epochParticipation[epoch] = make(map[types.ValidatorIndex]bool)
-
-			// logger.Infof("seeding validator duties for epoch %v", epoch)
-			for _, data := range activityData {
-				if data.ActivationEpoch <= epoch && epoch < data.ExitEpoch {
-					epochParticipation[epoch][types.ValidatorIndex(data.ValidatorIndex)] = false
-				}
-			}
-
-			participation = epochParticipation[epoch]
-		}
-
-		for _, validator := range attestingValidators {
-			participation[types.ValidatorIndex(validator)] = true
-		}
-	}
-
-	return epochParticipation, nil
 }

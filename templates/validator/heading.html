@@ -10,11 +10,6 @@
               <i class="fa fa-copy"></i>
             </button>
           </span>
-          <span class="mx-1" data-toggle="tooltip" title="Edit validator name">
-            <button class="btn btn-dark text-white btn-sm" type="button" id="edit-button" data-toggle="modal" data-target="#edit-validator-modal">
-              <i class="fa fa-edit"></i>
-            </button>
-          </span>
           {{ if (and (ne .Status "deposited") (ne .Status "deposited_invalid") (ne .Status "pending")) }}
             <span class="mx-1" data-toggle="tooltip" title="View daily statistics">
               <a class="btn btn-dark text-white btn-sm" href="/validator/{{ .Index }}/stats">

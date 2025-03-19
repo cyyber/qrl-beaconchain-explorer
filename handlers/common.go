@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"math"
 	"math/big"
 	"net/http"
@@ -464,62 +463,6 @@ func GetCurrencySymbol(r *http.Request) string {
 		return "USD"
 	}
 	return price.GetCurrencySymbol(cookie.Value)
-}
-
-func GetCurrentPrice(r *http.Request) uint64 {
-	cookie, err := r.Cookie("currency")
-	if err != nil {
-		return uint64(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))
-	}
-	if cookie.Value == utils.Config.Frontend.MainCurrency {
-		return uint64(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))
-	}
-	return uint64(price.GetPrice(utils.Config.Frontend.MainCurrency, cookie.Value))
-}
-
-func GetCurrentElPrice(r *http.Request) uint64 {
-	cookie, err := r.Cookie("currency")
-	if err != nil {
-		return uint64(price.GetPrice(utils.Config.Frontend.ElCurrency, "USD"))
-	}
-	if cookie.Value == utils.Config.Frontend.ElCurrency {
-		return uint64(price.GetPrice(utils.Config.Frontend.ElCurrency, "USD"))
-	}
-	return uint64(price.GetPrice(utils.Config.Frontend.ElCurrency, cookie.Value))
-}
-
-func GetCurrentPriceFormatted(r *http.Request) template.HTML {
-	userAgent := r.Header.Get("User-Agent")
-	userAgent = strings.ToLower(userAgent)
-	price := GetCurrentPrice(r)
-	if strings.Contains(userAgent, "android") || strings.Contains(userAgent, "iphone") || strings.Contains(userAgent, "windows phone") {
-		return utils.KFormatterEthPrice(price)
-	}
-	return utils.FormatAddCommas(uint64(price))
-}
-
-func GetCurrentElPriceFormatted(r *http.Request) template.HTML {
-	userAgent := r.Header.Get("User-Agent")
-	userAgent = strings.ToLower(userAgent)
-	price := GetCurrentElPrice(r)
-	if strings.Contains(userAgent, "android") || strings.Contains(userAgent, "iphone") || strings.Contains(userAgent, "windows phone") {
-		return utils.KFormatterEthPrice(price)
-	}
-	return utils.FormatAddCommas(uint64(price))
-}
-
-func GetCurrentPriceKFormatted(r *http.Request) template.HTML {
-	return utils.KFormatterEthPrice(GetCurrentPrice(r))
-}
-
-func GetCurrentElPriceKFormatted(r *http.Request) template.HTML {
-	return utils.KFormatterEthPrice(GetCurrentElPrice(r))
-}
-
-func GetTruncCurrentPriceFormatted(r *http.Request) string {
-	price := GetCurrentPrice(r)
-	symbol := GetCurrencySymbol(r)
-	return fmt.Sprintf("%s %s", symbol, utils.KFormatterEthPrice(price))
 }
 
 // GetValidatorKeysFrom gets the validator keys from users input

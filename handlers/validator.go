@@ -39,8 +39,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		"validator/validator.html",
 		"validator/heading.html",
 		"validator/tables.html",
-		"validator/modals.html",
-		"modals.html",
 		"validator/overview.html",
 		"validator/charts.html",
 		"validator/countdown.html",

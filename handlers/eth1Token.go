@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -26,12 +25,9 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
-	token := common.FromHex(strings.TrimPrefix(vars["token"], "0x"))
+	token := common.FromHex(strings.TrimPrefix(vars["token"], "Z"))
 
-	address := common.FromHex(strings.TrimPrefix(r.URL.Query().Get("a"), "0x"))
-
-	// priceEth := GetCurrentPrice(r)
-	// symbol := GetCurrencySymbol(r)
+	address := common.FromHex(strings.TrimPrefix(r.URL.Query().Get("a"), "Z"))
 
 	g := new(errgroup.Group)
 	g.SetLimit(3)
@@ -83,11 +79,11 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 	_ = ethDiv
 	_ = tokenDiv
 
-	ethPriceUsd := decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.ElCurrency, "USD"))
-	tokenPriceEth := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.Price), 0).DivRound(ethDiv, 18)
-	tokenPriceUsd := ethPriceUsd.Mul(tokenPriceEth).Mul(tokenDiv).DivRound(ethDiv, 18)
+	// ethPriceUsd := decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.ElCurrency, "USD"))
+	// tokenPriceEth := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.Price), 0).DivRound(ethDiv, 18)
+	// tokenPriceUsd := ethPriceUsd.Mul(tokenPriceEth).Mul(tokenDiv).DivRound(ethDiv, 18)
 	tokenSupply := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.TotalSupply), 0).DivRound(tokenDiv, 18)
-	tokenMarketCapUsd := tokenPriceUsd.Mul(tokenSupply)
+	// tokenMarketCapUsd := tokenPriceUsd.Mul(tokenSupply)
 
 	data.Data = types.Eth1TokenPageData{
 		Token:          fmt.Sprintf("%x", token),
@@ -97,9 +93,9 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 		Balance:        balance,
 		QRCode:         pngStr,
 		QRCodeInverse:  pngStrInverse,
-		MarketCap:      template.HTML("$" + utils.FormatThousandsEnglish(tokenMarketCapUsd.StringFixed(2))),
-		Supply:         template.HTML(utils.FormatThousandsEnglish(tokenSupply.StringFixed(6))),
-		Price:          template.HTML("$" + utils.FormatThousandsEnglish(tokenPriceUsd.StringFixed(6))),
+		// MarketCap:      template.HTML("$" + utils.FormatThousandsEnglish(tokenMarketCapUsd.StringFixed(2))),
+		Supply: template.HTML(utils.FormatThousandsEnglish(tokenSupply.StringFixed(6))),
+		// Price:          template.HTML("$" + utils.FormatThousandsEnglish(tokenPriceUsd.StringFixed(6))),
 	}
 
 	if handleTemplateError(w, r, "eth1Token.go", "Eth1Token", "Done", eth1TokenTemplate.ExecuteTemplate(w, "layout", data)) != nil {
@@ -113,8 +109,8 @@ func Eth1TokenTransfers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	vars := mux.Vars(r)
 
-	token := common.FromHex(strings.TrimPrefix(vars["token"], "0x"))
-	address := common.FromHex(strings.TrimPrefix(q.Get("a"), "0x"))
+	token := common.FromHex(strings.TrimPrefix(vars["token"], "Z"))
+	address := common.FromHex(strings.TrimPrefix(q.Get("a"), "Z"))
 	pageToken := q.Get("pageToken")
 
 	// logger.Infof("GETTING TRANSACTION table data for address: %v search: %v draw: %v start: %v length: %v", address, search, draw, start, length)

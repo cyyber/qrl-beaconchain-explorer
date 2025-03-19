@@ -6,7 +6,6 @@ require (
 	cloud.google.com/go/bigtable v1.16.0
 	cloud.google.com/go/secretmanager v1.10.0
 	github.com/alexedwards/scs/redisstore v0.0.0-20230217120314-6b1bedc0f08c
-	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aybabtme/uniplot v0.0.0-20151203143629-039c559e5e7e
 	github.com/carlmjohnson/requests v0.23.4
 	github.com/davecgh/go-spew v1.1.1
@@ -23,7 +22,6 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/juliangruber/go-intersect v1.1.0
 	github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5
-	github.com/kataras/i18n v0.0.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.7
 	github.com/mitchellh/mapstructure v1.5.0
@@ -51,7 +49,6 @@ require (
 
 require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/donovanhide/eventsource v0.0.0-20210830082556-c59027999da0
 	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
 )
 
@@ -112,7 +109,6 @@ require (
 )
 
 require (
-	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/attestantio/go-eth2-client v0.19.9
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
@@ -130,10 +126,8 @@ require (
 	github.com/googleapis/gax-go/v2 v2.11.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
-	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
-	github.com/jackc/pgtype v1.14.0
 	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -145,7 +139,7 @@ require (
 	github.com/prometheus/common v0.47.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
-	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d
+	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d // indirect
 	github.com/thomaso-mirodin/intmath v0.0.0-20160323211736-5dc6d854e46e // indirect
 	github.com/tklauser/go-sysconf v0.3.13 // indirect
 	github.com/tklauser/numcpus v0.7.0 // indirect
@@ -156,7 +150,6 @@ require (
 	golang.org/x/tools v0.18.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	k8s.io/client-go v0.25.0 // indirect
 )
