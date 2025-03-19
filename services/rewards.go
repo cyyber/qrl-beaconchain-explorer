@@ -18,26 +18,16 @@ import (
 )
 
 type rewardHistory struct {
-	History  [][]string `json:"history"`
-	TotalETH string     `json:"total_eth"`
-	// TotalCurrency string     `json:"total_currency"`
-	Validators []uint64 `json:"validators"`
+	History    [][]string `json:"history"`
+	TotalZND   string     `json:"total_znd"`
+	Validators []uint64   `json:"validators"`
 }
 
 func GetValidatorHist(validatorArr []uint64 /*currency string,*/, start uint64, end uint64) rewardHistory {
 	var err error
 
-	var pricesDb []types.Price
-	// we get prices with a 1 day buffer to so we have no problems in different time zones
-	var oneDay = uint64(24 * 60 * 60)
-
 	if start == end { // no date range was provided, use the current day as ending boundary
 		end = uint64(time.Now().Unix())
-	}
-	err = db.WriterDb.Select(&pricesDb,
-		`select ts, eur, usd, gbp, cad, jpy, cny, rub, aud from price where ts >= TO_TIMESTAMP($1) and ts <= TO_TIMESTAMP($2) order by ts desc`, start-oneDay, end+oneDay)
-	if err != nil {
-		logger.Errorf("error getting prices: %v", err)
 	}
 
 	lowerBound := utils.TimeToDay(start)
@@ -54,57 +44,24 @@ func GetValidatorHist(validatorArr []uint64 /*currency string,*/, start uint64, 
 		logger.Errorf("error getting income history for validator hist: %v", err)
 	}
 
-	// prices := map[string]float64{}
-	// for _, item := range pricesDb {
-	// 	date := fmt.Sprintf("%v", item.TS)
-	// 	date = strings.Split(date, " ")[0]
-	// 	switch currency {
-	// 	case "eur":
-	// 		prices[date] = item.EUR
-	// 	case "usd":
-	// 		prices[date] = item.USD
-	// 	case "gbp":
-	// 		prices[date] = item.GBP
-	// 	case "cad":
-	// 		prices[date] = item.CAD
-	// 	case "cny":
-	// 		prices[date] = item.CNY
-	// 	case "jpy":
-	// 		prices[date] = item.JPY
-	// 	case "rub":
-	// 		prices[date] = item.RUB
-	// 	case "aud":
-	// 		prices[date] = item.AUD
-	// 	default:
-	// 		prices[date] = item.USD
-	// 		currency = "usd"
-	// 	}
-	// }
-
 	data := make([][]string, len(income))
-	tETH := 0.0
-	// tCur := 0.0
+	tZND := 0.0
 
 	for i, item := range income {
 		key := fmt.Sprintf("%v", utils.DayToTime(item.Day))
 		key = strings.Split(key, " ")[0]
-		iETH := float64(item.ClRewards) / 1e9
-		tETH += iETH
-		// iCur := iETH * prices[key]
-		// tCur += iCur
+		iZND := float64(item.ClRewards) / 1e9
+		tZND += iZND
 		data[i] = []string{
 			key,
 			addCommas(float64(item.EndBalance.Int64)/1e9, "%.5f"), // end of day balance
-			addCommas(iETH, "%.5f"),                               // income of day ETH
-			// fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(prices[key], "%.2f")), //price will default to 0 if key does not exist
-			// fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(iCur, "%.2f")),        // income of day Currency
+			addCommas(iZND, "%.5f"),                               // income of day ZND
 		}
 	}
 
 	return rewardHistory{
-		History:  data,
-		TotalETH: addCommas(tETH, "%.5f"),
-		// TotalCurrency: fmt.Sprintf("%s %s", strings.ToUpper(currency), addCommas(tCur, "%.2f")),
+		History:    data,
+		TotalZND:   addCommas(tZND, "%.5f"),
 		Validators: validatorArr,
 	}
 }
@@ -155,7 +112,7 @@ func GeneratePdfReport(hist rewardHistory, currency string) []byte {
 		pdf.SetY(5)
 		pdf.SetFont("Arial", "B", 12)
 		pdf.Cell(80, 0, "")
-		pdf.CellFormat(30, 10, fmt.Sprintf("Beaconcha.in Income History (%s - %s)", data[len(data)-1][0], data[0][0]), "", 0, "C", false, 0, "")
+		pdf.CellFormat(30, 10, fmt.Sprintf("Income History (%s - %s)", data[len(data)-1][0], data[0][0]), "", 0, "C", false, 0, "")
 		// pdf.Ln(-1)
 	}, true)
 
@@ -174,9 +131,9 @@ func GeneratePdfReport(hist rewardHistory, currency string) []byte {
 	pdf.SetTextColor(24, 24, 24)
 	pdf.SetFillColor(255, 255, 255)
 	// pdf.Ln(-1)
-	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalETH), "", 0, "CM", true, 0, "")
+	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalZND), "", 0, "CM", true, 0, "")
 
-	header := [colCount]string{"Date", "Balance", "Income", "ETH Value", fmt.Sprintf("Income (%v)", currency)}
+	header := [colCount]string{"Date", "Balance", "Income", "ZND Value", fmt.Sprintf("Income (%v)", currency)}
 
 	// pdf.SetMargins(marginH, marginH, marginH)
 	pdf.Ln(10)

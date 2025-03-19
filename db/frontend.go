@@ -3,8 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -39,61 +37,6 @@ func addParamToQuery(query, param string) string {
 
 func NewTransaction() (*sql.Tx, error) {
 	return FrontendWriterDB.Begin()
-}
-
-func GetHistoricalPrice(chainId uint64, currency string, day uint64) (float64, error) {
-	if chainId != 1 && chainId != 100 {
-		// Don't show a historical price for testnets
-		return 0.0, nil
-	}
-	if currency == utils.Config.Frontend.ClCurrency {
-		currency = "USD"
-	}
-	currency = strings.ToLower(currency)
-
-	if currency != "eur" && currency != "usd" && currency != "rub" && currency != "cny" && currency != "cad" && currency != "jpy" && currency != "gbp" && currency != "aud" {
-		return 0.0, fmt.Errorf("currency %v not supported", currency)
-	}
-
-	// Convert day to ts
-	genesisTime := time.Unix(int64(utils.Config.Chain.GenesisTimestamp), 0)
-	dayStartGenesisTime := time.Date(genesisTime.Year(), genesisTime.Month(), genesisTime.Day(), 0, 0, 0, 0, time.UTC)
-	ts := dayStartGenesisTime.Add(utils.Day * time.Duration(day))
-
-	var value float64
-	err := ReaderDb.Get(&value, fmt.Sprintf("SELECT %s FROM price WHERE ts = $1", currency), ts)
-	if err != nil {
-		return 0.0, err
-	}
-	return value, nil
-}
-
-func GetUserAPIKeyStatistics(apikey *string) (*types.ApiStatistics, error) {
-	stats := &types.ApiStatistics{}
-
-	query := `
-	SELECT (
-		SELECT 
-			COALESCE(SUM(count), 0) as daily 
-		FROM 
-			api_statistics 
-		WHERE 
-			ts >= DATE_TRUNC('day', NOW()) AND apikey = $1 AND bucket = 'default'
-	), (
-		SELECT 
-			COALESCE(SUM(count),0) as monthly 
-		FROM 
-			api_statistics 
-		WHERE 
-			ts >= DATE_TRUNC('month', NOW()) AND apikey = $1 AND bucket = 'default'
-	)`
-
-	err := FrontendWriterDB.Get(stats, query, apikey)
-	if err != nil {
-		return nil, err
-	}
-
-	return stats, nil
 }
 
 // SaveDataTableState saves the state of the current datatable state update

@@ -19,7 +19,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/donovanhide/eventsource"
 	gtypes "github.com/theQRL/go-zond/core/types"
 	"golang.org/x/sync/errgroup"
 
@@ -52,52 +51,6 @@ func NewQrysmClient(endpoint string, chainID *big.Int) (*QrysmClient, error) {
 	client.slotsCache, _ = lru.New(128) // cache at most 128 slots
 
 	return client, nil
-}
-
-func (lc *QrysmClient) GetNewBlockChan() chan *types.Block {
-	blkCh := make(chan *types.Block, 10)
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/zond/v1/events?topics=head", lc.endpoint), nil)
-	if err != nil {
-		logger.Fatal(err, "error initializing event sse request", 0)
-	}
-	// disable gzip compression for sse
-	req.Header.Set("accept-encoding", "identity")
-
-	go func() {
-		stream, err := eventsource.SubscribeWithRequest("", req)
-
-		if err != nil {
-			utils.LogFatal(err, "getting eventsource stream error", 0)
-		}
-		defer stream.Close()
-
-		for {
-			select {
-			// It is important to register to Errors, otherwise the stream does not reconnect if the connection was lost
-			case err := <-stream.Errors:
-				utils.LogError(err, "Qrysm connection error (will automatically retry to connect)", 0)
-			case e := <-stream.Events:
-				// logger.Infof("retrieved %v via event stream", e.Data())
-				var parsed StreamedBlockEventData
-				err = json.Unmarshal([]byte(e.Data()), &parsed)
-				if err != nil {
-					logger.Warnf("failed to decode block event: %v", err)
-					continue
-				}
-
-				logger.Infof("retrieving data for slot %v", parsed.Slot)
-				block, err := lc.GetBlockBySlot(uint64(parsed.Slot))
-				if err != nil {
-					logger.Warnf("failed to fetch block for slot %d: %v", uint64(parsed.Slot), err)
-					continue
-				}
-				logger.Infof("retrieved block for slot %v", parsed.Slot)
-				// logger.Infof("pushing block %v", blk.Slot)
-				blkCh <- block
-			}
-		}
-	}()
-	return blkCh
 }
 
 // GetChainHead gets the chain head from Qrysm
@@ -621,38 +574,6 @@ func (lc *QrysmClient) GetBalancesForEpoch(epoch int64) (map[uint64]uint64, erro
 	}
 
 	return validatorBalances, nil
-}
-
-func (lc *QrysmClient) GetBlockByBlockroot(blockroot []byte) (*types.Block, error) {
-	resHeaders, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/0x%x", lc.endpoint, blockroot))
-	if err != nil {
-		if err == errNotFound {
-			// no block found
-			return &types.Block{}, nil
-		}
-		return nil, fmt.Errorf("error retrieving headers for blockroot 0x%x: %w", blockroot, err)
-	}
-	var parsedHeaders StandardBeaconHeaderResponse
-	err = json.Unmarshal(resHeaders, &parsedHeaders)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing header-response for blockroot 0x%x: %w", blockroot, err)
-	}
-
-	slot := uint64(parsedHeaders.Data.Header.Message.Slot)
-
-	resp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/blocks/%s", lc.endpoint, parsedHeaders.Data.Root))
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving block data at slot %v: %w", slot, err)
-	}
-
-	var parsedResponse StandardV2BlockResponse
-	err = json.Unmarshal(resp, &parsedResponse)
-	if err != nil {
-		logger.Errorf("error parsing block data at slot %v: %v", parsedHeaders.Data.Header.Message.Slot, err)
-		return nil, fmt.Errorf("error parsing block-response at slot %v: %w", slot, err)
-	}
-
-	return lc.blockFromResponse(&parsedHeaders, &parsedResponse)
 }
 
 // GetBlockHeader will get the block header by slot from Qrysm RPC api

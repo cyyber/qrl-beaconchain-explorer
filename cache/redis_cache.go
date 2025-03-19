@@ -9,7 +9,7 @@ import (
 
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/go-redis/redis/v8"
+	redis "github.com/go-redis/redis/v8"
 )
 
 type RedisCache struct {

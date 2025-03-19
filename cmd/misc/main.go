@@ -18,7 +18,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/exporter"
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/version"
@@ -69,7 +68,7 @@ func main() {
 	statsPartitionCommand := commands.StatsMigratorCommand{}
 
 	configPath := flag.String("config", "config/default.config.yml", "Path to the config file")
-	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, historic-prices-export, index-missing-blocks, export-epoch-missed-slots, migrate-last-attestation-slot-bigtable, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats, migrate-app-purchases")
+	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, historic-prices-export, index-missing-blocks, export-epoch-missed-slots, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats")
 	flag.Uint64Var(&opts.StartEpoch, "start-epoch", 0, "start epoch")
 	flag.Uint64Var(&opts.EndEpoch, "end-epoch", 0, "end epoch")
 	flag.Uint64Var(&opts.User, "user", 0, "user id")
@@ -303,12 +302,8 @@ func main() {
 		updateAggregationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
 	case "update-block-finalization-sequentially":
 		err = updateBlockFinalizationSequentially()
-	case "historic-prices-export":
-		exportHistoricPrices(opts.StartDay, opts.EndDay)
 	case "index-missing-blocks":
 		indexMissingBlocks(opts.StartBlock, opts.EndBlock, bt, gzondClient)
-	case "migrate-last-attestation-slot-bigtable":
-		migrateLastAttestationSlotToBigtable()
 	case "export-genesis-validators":
 		logrus.Infof("retrieving genesis validator state")
 		validators, err := rpcClient.GetValidatorState(0)
@@ -947,29 +942,6 @@ func nameValidatorsByRanges(rangesUrl string) error {
 	return nil
 }
 
-// one time migration of the last attestation slot values from postgres to bigtable
-// will write the last attestation slot that is currently in postgres to bigtable
-// this can safely be done for active validators as bigtable will only keep the most recent
-// last attestation slot
-func migrateLastAttestationSlotToBigtable() {
-	validators := []types.Validator{}
-
-	err := db.WriterDb.Select(&validators, "SELECT validatorindex, lastattestationslot FROM validators WHERE lastattestationslot IS NOT NULL ORDER BY validatorindex")
-
-	if err != nil {
-		utils.LogFatal(err, "error retrieving last attestation slot", 0)
-	}
-
-	for _, validator := range validators {
-		logrus.Infof("setting last attestation slot %v for validator %v", validator.LastAttestationSlot, validator.Index)
-
-		err := db.BigtableClient.SetLastAttestationSlot(validator.Index, uint64(validator.LastAttestationSlot.Int64))
-		if err != nil {
-			utils.LogFatal(err, "error setting last attestation slot", 0)
-		}
-	}
-}
-
 func updateAggregationBits(rpcClient *rpc.QrysmClient, startEpoch uint64, endEpoch uint64, concurency uint64) {
 	logrus.Infof("update-aggregation-bits epochs %v - %v", startEpoch, endEpoch)
 	for epoch := startEpoch; epoch <= endEpoch; epoch++ {
@@ -1364,28 +1336,6 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 	// }
 
 	logrus.Infof("index run completed")
-}
-
-func exportHistoricPrices(dayStart uint64, dayEnd uint64) {
-	logrus.Infof("exporting historic prices for days %v - %v", dayStart, dayEnd)
-	for day := dayStart; day <= dayEnd; day++ {
-		timeStart := time.Now()
-		ts := utils.DayToTime(int64(day)).UTC().Truncate(utils.Day)
-		err := services.WriteHistoricPricesForDay(ts)
-		if err != nil {
-			errMsg := fmt.Sprintf("error exporting historic prices for day %v", day)
-			utils.LogError(err, errMsg, 0)
-			return
-		}
-		logrus.Printf("finished export for day %v, took %v", day, time.Since(timeStart))
-
-		if day < dayEnd {
-			// Wait to not overload the API
-			time.Sleep(5 * time.Second)
-		}
-	}
-
-	logrus.Info("historic price update run completed")
 }
 
 func exportStatsTotals(columns string, dayStart, dayEnd, concurrency uint64) {

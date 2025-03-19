@@ -10,7 +10,6 @@ import (
 	"io"
 	"math/big"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -27,7 +26,6 @@ import (
 	"github.com/coocood/freecache"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
-	"github.com/theQRL/go-zond/common"
 	"golang.org/x/sync/errgroup"
 
 	_ "net/http/pprof"
@@ -658,6 +656,8 @@ func ImportMainnetZRC20TokenMetadataFromTokenDirectory(bt *db.Bigtable) {
 
 }
 
+// TODO(rgeraldes24): unused
+/*
 func ImportNameLabels(bt *db.Bigtable) {
 	type NameEntry struct {
 		Name string
@@ -687,3 +687,4 @@ func ImportNameLabels(bt *db.Bigtable) {
 		bt.SaveAddressName(common.FromHex(strings.TrimPrefix(address, "0x")), name.Name)
 	}
 }
+*/

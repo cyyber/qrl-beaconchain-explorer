@@ -3631,6 +3631,8 @@ func (bigtable *Bigtable) GetAddressContractInteractionsAtTransactions(transacti
 	return bigtable.GetAddressContractInteractionsAt(requests)
 }
 
+// TODO(rgeraldes24): unused
+/*
 func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
 	defer cancel()
@@ -3651,6 +3653,7 @@ func (bigtable *Bigtable) SaveContractMetadata(address []byte, metadata *types.C
 
 	return bigtable.tableMetadata.Apply(ctx, fmt.Sprintf("%s:%x", bigtable.chainId, address), mut)
 }
+*/
 
 func (bigtable *Bigtable) SaveBalances(balances []*types.Eth1AddressBalance, deleteKeys []string) error {
 	startTime := time.Now()
@@ -3704,6 +3707,8 @@ func (bigtable *Bigtable) SaveBalances(balances []*types.Eth1AddressBalance, del
 	return nil
 }
 
+// TODO(rgeraldes24): unused
+/*
 func (bigtable *Bigtable) SaveZRC20TokenPrices(prices []*types.ZRC20TokenPrice) error {
 	if len(prices) == 0 {
 		return nil
@@ -3731,6 +3736,7 @@ func (bigtable *Bigtable) SaveZRC20TokenPrices(prices []*types.ZRC20TokenPrice) 
 
 	return nil
 }
+*/
 
 func (bigtable *Bigtable) SaveBlockKeys(blockNumber uint64, blockHash []byte, keys string) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))

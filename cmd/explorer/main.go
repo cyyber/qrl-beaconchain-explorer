@@ -201,7 +201,6 @@ func main() {
 			logrus.Fatalf("invalid note type %v specified. supported node types are: qrysm", utils.Config.Indexer.Node.Type)
 		}
 
-		// go services.StartHistoricPriceService()
 		go exporter.Start(rpcClient)
 	}
 

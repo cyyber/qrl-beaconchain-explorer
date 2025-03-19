@@ -164,14 +164,6 @@ func main() {
 				}
 				return nil
 			})
-			g.Go(func() error {
-				err := db.BigtableClient.MigrateIncomeDataV1V2Schema(epoch)
-				if err != nil {
-					return fmt.Errorf("error migrating income data to v2 schema for epoch %v: %w", epoch, err)
-				}
-				return nil
-			})
-
 			err = g.Wait()
 			if err != nil {
 				return fmt.Errorf("error during bigtable export for epoch %v: %w", epoch, err)

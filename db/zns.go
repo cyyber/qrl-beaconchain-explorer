@@ -1,6 +1,6 @@
 package db
 
-// TODO(rgeraldes24)
+// TODO(rgeraldes24): unused for now
 /*
 import (
 	"bytes"

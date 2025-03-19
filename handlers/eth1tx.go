@@ -5,12 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strings"
 
 	"github.com/theQRL/go-zond"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/eth1data"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
@@ -18,10 +16,7 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
-	"github.com/shopspring/decimal"
 	"github.com/theQRL/go-zond/common"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 )
 
 // Tx will show the tx using a go template
@@ -75,40 +70,6 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 				txTemplate = txNotFoundTemplate
 			}
 		} else {
-			p := message.NewPrinter(language.English)
-
-			symbol := GetCurrencySymbol(r)
-			zndValue := utils.PlanckBytesToZND(txData.Value)
-
-			currentPrice := GetCurrentPrice(r)
-			currentZNDPrice := zndValue.Mul(decimal.NewFromInt(int64(currentPrice)))
-			txData.CurrentZNDPrice = template.HTML(p.Sprintf(`<span>%s%.2f</span>`, symbol, currentZNDPrice.InexactFloat64()))
-
-			txData.HistoricalZNDPrice = ""
-			if txData.Timestamp.Unix() >= int64(utils.Config.Chain.GenesisTimestamp) {
-				txDay := utils.TimeToDay(uint64(txData.Timestamp.Unix()))
-				errFields["txDay"] = txDay
-				latestEpoch, err := db.GetLatestEpoch()
-				if err != nil {
-					utils.LogError(err, "error retrieving latest epoch from db", 0, errFields)
-				}
-
-				currentDay := latestEpoch / utils.EpochsPerDay()
-
-				if txDay < currentDay {
-					// Do not show the historical price if it is the current day
-					currency := GetCurrency(r)
-					price, err := db.GetHistoricalPrice(utils.Config.Chain.ClConfig.DepositChainID, currency, txDay)
-					if err != nil {
-						errFields["currency"] = currency
-						utils.LogError(err, "error retrieving historical prices", 0, errFields)
-					} else {
-						historicalEthPrice := zndValue.Mul(decimal.NewFromFloat(price))
-						txData.HistoricalZNDPrice = template.HTML(p.Sprintf(`<span>%s%.2f <i class="far fa-clock"></i></span>`, symbol, historicalEthPrice.InexactFloat64()))
-					}
-				}
-			}
-
 			data = InitPageData(w, r, "blockchain", path, title, txTemplateFiles)
 			data.Data = txData
 		}

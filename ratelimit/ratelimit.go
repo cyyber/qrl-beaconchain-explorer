@@ -60,7 +60,7 @@ const (
 	statsTruncateDuration = time.Hour * 1 // ratelimit-stats are truncated to this duration
 )
 
-var updateInterval = time.Second * 60 // how often to update ratelimits, planckghts and stats
+var updateInterval = time.Second * 60 // how often to update ratelimits, weights and stats
 
 // var apiProducts = map[string]*ApiProduct{} // key: <bucket>:<product_name>
 // var apiProductsMu = &sync.RWMutex{}
@@ -81,9 +81,9 @@ var rateLimits = map[string]*RateLimit{}         // guarded by rateLimitsMu
 var rateLimitsByUserId = map[string]*RateLimit{} // guarded by rateLimitsMu, key: <bucket>:<userId>
 var userIdByApiKey = map[string]int64{}          // guarded by rateLimitsMu
 
-var planckghtsMu = &sync.RWMutex{}
-var planckghts = map[string]int64{}  // guarded by planckghtsMu
-var buckets = map[string]string{} // guarded by planckghtsMu
+var weightsMu = &sync.RWMutex{}
+var weights = map[string]int64{}  // guarded by weightsMu
+var buckets = map[string]string{} // guarded by weightsMu
 
 var logger = logrus.StandardLogger().WithField("module", "ratelimit")
 
@@ -219,7 +219,7 @@ func Init() {
 			for {
 				err := updateWeights(firstRun)
 				if err != nil {
-					logger.WithError(err).Errorf("error updating planckghts")
+					logger.WithError(err).Errorf("error updating weights")
 					time.Sleep(time.Second * 2)
 					continue
 				}
@@ -332,7 +332,7 @@ func HttpMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// updateWeights gets the planckghts and buckets from postgres and updates the planckghts and buckets maps.
+// updateWeights gets the weights and buckets from postgres and updates the weights and buckets maps.
 func updateWeights(firstRun bool) error {
 	start := time.Now()
 	defer func() {
@@ -346,18 +346,18 @@ func updateWeights(firstRun bool) error {
 		Bucket    string    `db:"bucket"`
 		ValidFrom time.Time `db:"valid_from"`
 	}{}
-	err := db.FrontendWriterDB.Select(&dbWeights, "SELECT DISTINCT ON (endpoint) endpoint, bucket, planckght, valid_from FROM api_planckghts WHERE valid_from <= NOW() ORDER BY endpoint, valid_from DESC")
+	err := db.FrontendWriterDB.Select(&dbWeights, "SELECT DISTINCT ON (endpoint) endpoint, bucket, planckght, valid_from FROM api_weights WHERE valid_from <= NOW() ORDER BY endpoint, valid_from DESC")
 	if err != nil {
 		return err
 	}
-	planckghtsMu.Lock()
-	defer planckghtsMu.Unlock()
-	oldWeights := planckghts
+	weightsMu.Lock()
+	defer weightsMu.Unlock()
+	oldWeights := weights
 	oldBuckets := buckets
-	planckghts = make(map[string]int64, len(dbWeights))
+	weights = make(map[string]int64, len(dbWeights))
 	for _, w := range dbWeights {
-		planckghts[w.Endpoint] = w.Weight
-		if !firstRun && oldWeights[w.Endpoint] != planckghts[w.Endpoint] {
+		weights[w.Endpoint] = w.Weight
+		if !firstRun && oldWeights[w.Endpoint] != weights[w.Endpoint] {
 			logger.WithFields(logrus.Fields{"endpoint": w.Endpoint, "planckght": w.Weight, "oldWeight": oldWeights[w.Endpoint]}).Infof("planckght changed")
 		}
 		buckets[w.Endpoint] = strings.ReplaceAll(w.Bucket, ":", "_")
@@ -925,10 +925,10 @@ func getKey(r *http.Request) (key, ip string) {
 // getWeight returns the planckght of an endpoint. if the planckght of the endpoint is not defined, it returns 1.
 func getWeight(r *http.Request) (cost int64, identifier, bucket string) {
 	route := getRoute(r)
-	planckghtsMu.RLock()
-	planckght, planckghtOk := planckghts[route]
+	weightsMu.RLock()
+	planckght, planckghtOk := weights[route]
 	bucket, bucketOk := buckets[route]
-	planckghtsMu.RUnlock()
+	weightsMu.RUnlock()
 	if !planckghtOk {
 		planckght = 1
 	}

@@ -1365,8 +1365,6 @@ type Eth1TxData struct {
 	Events                      []*Eth1EventData
 	Transfers                   []*Transfer
 	DepositContractInteractions []DepositContractInteraction
-	CurrentZNDPrice             template.HTML
-	HistoricalZNDPrice          template.HTML
 }
 
 type Eth1EventData struct {
@@ -1382,74 +1380,6 @@ type Eth1DecodedEventData struct {
 	Value   string
 	Raw     string
 	Address common.Address
-}
-
-type SourcifyContractMetadata struct {
-	Compiler struct {
-		Version string `json:"version"`
-	} `json:"compiler"`
-	Language string `json:"language"`
-	Output   struct {
-		Abi []struct {
-			Anonymous bool `json:"anonymous"`
-			Inputs    []struct {
-				Indexed      bool   `json:"indexed"`
-				InternalType string `json:"internalType"`
-				Name         string `json:"name"`
-				Type         string `json:"type"`
-			} `json:"inputs"`
-			Name    string `json:"name"`
-			Outputs []struct {
-				InternalType string `json:"internalType"`
-				Name         string `json:"name"`
-				Type         string `json:"type"`
-			} `json:"outputs"`
-			StateMutability string `json:"stateMutability"`
-			Type            string `json:"type"`
-		} `json:"abi"`
-	} `json:"output"`
-	Settings struct {
-		CompilationTarget struct {
-			Browser_Stakehavens_sol string `json:"browser/Stakehavens.sol"`
-		} `json:"compilationTarget"`
-		EvmVersion string   `json:"evmVersion"`
-		Libraries  struct{} `json:"libraries"`
-		Metadata   struct {
-			BytecodeHash string `json:"bytecodeHash"`
-		} `json:"metadata"`
-		Optimizer struct {
-			Enabled bool  `json:"enabled"`
-			Runs    int64 `json:"runs"`
-		} `json:"optimizer"`
-		Remappings []interface{} `json:"remappings"`
-	} `json:"settings"`
-	Sources struct {
-		Browser_Stakehavens_sol struct {
-			Keccak256 string   `json:"keccak256"`
-			Urls      []string `json:"urls"`
-		} `json:"browser/Stakehavens.sol"`
-	} `json:"sources"`
-	Version int64 `json:"version"`
-}
-
-type EtherscanContractMetadata struct {
-	Message string `json:"message"`
-	Result  []struct {
-		Abi                  string `json:"ABI"`
-		CompilerVersion      string `json:"CompilerVersion"`
-		ConstructorArguments string `json:"ConstructorArguments"`
-		ContractName         string `json:"ContractName"`
-		EVMVersion           string `json:"EVMVersion"`
-		Implementation       string `json:"Implementation"`
-		Library              string `json:"Library"`
-		LicenseType          string `json:"LicenseType"`
-		OptimizationUsed     string `json:"OptimizationUsed"`
-		Proxy                string `json:"Proxy"`
-		Runs                 string `json:"Runs"`
-		SourceCode           string `json:"SourceCode"`
-		SwarmSource          string `json:"SwarmSource"`
-	} `json:"result"`
-	Status string `json:"status"`
 }
 
 type Eth1BlockPageData struct {
