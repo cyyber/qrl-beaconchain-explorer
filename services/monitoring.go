@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -165,6 +163,8 @@ func startRedisMonitoringService() {
 	}
 }
 
+// TODO(rgeraldes24)
+/*
 func startApiMonitoringService() {
 
 	name := "monitoring_api"
@@ -242,6 +242,7 @@ func startAppMonitoringService() {
 		ReportStatus(name, "OK", nil)
 	}
 }
+*/
 
 func startServicesMonitoringService() {
 

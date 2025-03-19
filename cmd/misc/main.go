@@ -1725,27 +1725,3 @@ func reExportSyncCommittee(rpcClient rpc.Client, p uint64, dryRun bool) error {
 		return tx.Commit()
 	}
 }
-
-func askForConfirmation(q string) bool {
-	if opts.Yes {
-		return true
-	}
-	var s string
-
-	fmt.Printf("%s (y/N): ", q)
-	_, err := fmt.Scanln(&s)
-	if err != nil {
-		if err.Error() == "unexpected newline" {
-			return false
-		}
-		panic(err)
-	}
-
-	// s = strings.TrimSpace(s)
-	s = strings.ToLower(s)
-
-	if s == "y" || s == "yes" {
-		return true
-	}
-	return false
-}

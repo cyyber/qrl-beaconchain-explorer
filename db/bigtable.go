@@ -43,9 +43,6 @@ const (
 	MAX_EL_BLOCK_NUMBER = 1000000000
 	MAX_EPOCH           = 1000000000 - 1
 
-	max_block_number_v1 = 1000000000
-	max_epoch_v1        = 1000000000
-
 	MAX_BATCH_MUTATIONS   = 100000
 	DEFAULT_BATCH_INSERTS = 10000
 
@@ -1698,10 +1695,6 @@ func GetCurrentDayClIncome(validator_indices []uint64) (map[uint64]int64, error)
 	}
 
 	return dayIncome, nil
-}
-
-func (bigtable *Bigtable) reversePaddedUserID(userID uint64) string {
-	return fmt.Sprintf("%09d", ^uint64(0)-userID)
 }
 
 func (bigtable *Bigtable) reversedPaddedEpoch(epoch uint64) string {

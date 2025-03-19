@@ -445,10 +445,13 @@ func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, er
 	return strings.ToLower(strings.Replace(address, "Z", "", -1)), nil
 }
 
+// NOTE(rgeraldes24): unused for now(zns)
+/*
 func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {
 	logger.Errorf("error getting address for ZNS name [%v] not found for %v route: %v", address, r.URL.String(), err)
 	http.Error(w, "Invalid ZNS name", http.StatusInternalServerError)
 }
+*/
 
 func handleNotFoundHtml(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/addressNotFound.html")

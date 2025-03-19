@@ -26,15 +26,6 @@ func GetUserEmailById(id uint64) (string, error) {
 	return mail, err
 }
 
-func addParamToQuery(query, param string) string {
-	var result = query
-	if result != "" {
-		result += ","
-	}
-	result += param
-	return result
-}
-
 func NewTransaction() (*sql.Tx, error) {
 	return FrontendWriterDB.Begin()
 }

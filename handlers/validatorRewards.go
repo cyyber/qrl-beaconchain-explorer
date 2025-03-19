@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -56,24 +55,6 @@ func ValidatorRewards(w http.ResponseWriter, r *http.Request) {
 	if handleTemplateError(w, r, "validatorRewards.go", "ValidatorRewards", "", validatorRewardsServicesTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
-}
-
-func isValidCurrency(currency string) bool {
-	var count uint64
-	err := db.ReaderDb.Get(&count,
-		`select count(column_name) 
-		from information_schema.columns 
-		where table_name = 'price' AND column_name=$1;`, currency)
-	if err != nil {
-		logger.Errorf("error checking currency: %v", err)
-		return false
-	}
-
-	if count > 0 {
-		return true
-	}
-
-	return false
 }
 
 func RewardsHistoricalData(w http.ResponseWriter, r *http.Request) {
