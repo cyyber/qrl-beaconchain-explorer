@@ -1,6 +1,4 @@
 .idea/
-cmd/playground
-cmd/monitor
 cmd/explorer/explorer
 cmd/explorer/__debug_bin
 modd.conf
@@ -9,8 +7,6 @@ docker/
 templates/imprint.html
 config.yml
 frontend.yml
-config-staging.yml
-config-pyrmont.yml
 .*swp
 bootstrap/node_modules
 private/
@@ -25,7 +21,6 @@ webassembly
 static/monaco-editor
 tokenlists/
 lastAttestationCache
-cmd/forkwatch
 **/.DS_Store
 _gitignore/
 local-deployment/config.yml

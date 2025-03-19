@@ -1,5 +1,4 @@
 config.yml
 cmd/test
-cmd/playground
 bin
 _gitignore
