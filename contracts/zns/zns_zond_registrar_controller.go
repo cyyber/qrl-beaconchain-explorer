@@ -70,22 +70,22 @@ type ZNSZONDRegistrarControllerFilterer struct {
 // with pre-set call and transact options.
 type ZNSZONDRegistrarControllerSession struct {
 	Contract     *ZNSZONDRegistrarController // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts              // Call options to use throughout this session
-	TransactOpts bind.TransactOpts          // Transaction auth options to use throughout this session
+	CallOpts     bind.CallOpts               // Call options to use throughout this session
+	TransactOpts bind.TransactOpts           // Transaction auth options to use throughout this session
 }
 
 // ZNSZONDRegistrarControllerCallerSession is an auto generated read-only Go binding around a Zond contract,
 // with pre-set call options.
 type ZNSZONDRegistrarControllerCallerSession struct {
 	Contract *ZNSZONDRegistrarControllerCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts                    // Call options to use throughout this session
+	CallOpts bind.CallOpts                     // Call options to use throughout this session
 }
 
 // ZNSZONDRegistrarControllerTransactorSession is an auto generated write-only Go binding around a Zond contract,
 // with pre-set transact options.
 type ZNSZONDRegistrarControllerTransactorSession struct {
 	Contract     *ZNSZONDRegistrarControllerTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts                    // Transaction auth options to use throughout this session
+	TransactOpts bind.TransactOpts                     // Transaction auth options to use throughout this session
 }
 
 // ZNSZONDRegistrarControllerRaw is an auto generated low-level Go binding around a Zond contract.
@@ -743,10 +743,10 @@ type ZNSZONDRegistrarControllerNameRegisteredIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log        // Log channel receiving the found contract events
+	logs chan types.Log    // Log channel receiving the found contract events
 	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	done bool              // Whether the subscription completed delivering logs
+	fail error             // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -900,10 +900,10 @@ type ZNSZONDRegistrarControllerNameRenewedIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log        // Log channel receiving the found contract events
+	logs chan types.Log    // Log channel receiving the found contract events
 	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	done bool              // Whether the subscription completed delivering logs
+	fail error             // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1047,10 +1047,10 @@ type ZNSZONDRegistrarControllerOwnershipTransferredIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log        // Log channel receiving the found contract events
+	logs chan types.Log    // Log channel receiving the found contract events
 	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	done bool              // Whether the subscription completed delivering logs
+	fail error             // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
