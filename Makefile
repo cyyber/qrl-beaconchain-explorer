@@ -7,7 +7,8 @@ LDFLAGS="-X ${PACKAGE}/version.Version=${VERSION} -X ${PACKAGE}/version.BuildDat
 CGO_CFLAGS=""
 CGO_CFLAGS_ALLOW=""
 
-all: explorer stats frontend-data-updater el-indexer rewards-exporter node-jobs-processor signatures misc
+# all: explorer stats frontend-data-updater el-indexer rewards-exporter node-jobs-processor signatures misc
+all: explorer stats frontend-data-updater el-indexer rewards-exporter signatures misc
 
 lint:
 	echo 
@@ -34,14 +35,11 @@ rewards-exporter:
 el-indexer:
 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/el-indexer cmd/el-indexer/main.go
 
-node-jobs-processor:
-	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/node-jobs-processor cmd/node-jobs-processor/main.go
+# node-jobs-processor:
+# 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/node-jobs-processor cmd/node-jobs-processor/main.go
 
 signatures:
 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/signatures cmd/signatures/main.go
 
 misc:
 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/misc cmd/misc/main.go
-
-addhooks:
-	git config core.hooksPath hooks
