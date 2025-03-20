@@ -1,5 +1,7 @@
 package main
 
+// NOTE(rgeraldes24): unused for now
+/*
 import (
 	"flag"
 	"fmt"
@@ -109,3 +111,4 @@ func (njp *NodeJobsProcessor) Process() error {
 	}
 	return nil
 }
+*/
