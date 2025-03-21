@@ -1,6 +1,6 @@
 # Zond Beacon Chain Explorer
 
-The explorer provides a comprehensive and easy to use interface for the upcoming Zond beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
+The explorer provides a comprehensive and easy to use interface for the Zond beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
 
 ## About
 
