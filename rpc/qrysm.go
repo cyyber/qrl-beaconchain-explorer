@@ -15,14 +15,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/go-bitfield"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
+	lru "github.com/hashicorp/golang-lru"
+	"github.com/theQRL/go-bitfield"
 	gtypes "github.com/theQRL/go-zond/core/types"
 	"golang.org/x/sync/errgroup"
-
-	lru "github.com/hashicorp/golang-lru"
 )
 
 // QrysmLatestHeadEpoch is used to cache the latest head epoch for participation requests
@@ -1143,7 +1142,6 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 
 		prevEpochActiveGplanck := parsedResponse.Data.PreviousEpochActiveGplanck
 		if prevEpochActiveGplanck == 0 {
-			// lh@5.2.0+ has no previous_epoch_active_gplanck field anymore, see https://github.com/sigp/lighthouse/pull/5279
 			prevResp, err := lc.get(fmt.Sprintf("%s/zond/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch-1))
 			if err != nil {
 				return nil, fmt.Errorf("error retrieving validator participation data for prevEpoch %v: %w", request_epoch-1, err)

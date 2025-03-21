@@ -49,6 +49,14 @@ import (
 	qrysm_params "github.com/theQRL/qrysm/config/params"
 )
 
+// TODO(rgeraldes24): move?
+const (
+	ClCurrencyDivisor = 1e9
+	ElCurrencyDivisor = 1e18
+	CurrencyDecimals  = 18
+	MainCurrency      = "ZND"
+)
+
 // Config is the globally accessible configuration
 var Config *types.Config
 
@@ -110,11 +118,9 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatAttestationInclusionEffectiveness": FormatAttestationInclusionEffectiveness,
 		"formatValidatorTags":                     FormatValidatorTags,
 		"formatValidatorTag":                      FormatValidatorTag,
-		"formatRPL":                               FormatRPL,
-		"formatETH":                               FormatETH,
+		"formatZND":                               FormatZND,
 		"formatFloat":                             FormatFloat,
 		"formatAmount":                            FormatAmount,
-		"formatBytes":                             FormatBytes,
 		"formatBigAmount":                         FormatBigAmount,
 		"formatBytesAmount":                       FormatBytesAmount,
 		"formatYesNo":                             FormatYesNo,
@@ -124,7 +130,6 @@ func GetTemplateFuncs() template.FuncMap {
 		"epochOfSlot":                             EpochOfSlot,
 		"dayToTime":                               DayToTime,
 		"contains":                                strings.Contains,
-		"roundDecimals":                           RoundDecimals,
 		"bigIntCmp":                               func(i *big.Int, j int) int { return i.Cmp(big.NewInt(int64(j))) },
 		"mod":                                     func(i, j int) bool { return i%j == 0 },
 		"sub":                                     func(i, j int) int { return i - j },
@@ -341,22 +346,13 @@ func TimeToEpoch(ts time.Time) int64 {
 	return (ts.Unix() - int64(Config.Chain.GenesisTimestamp)) / int64(Config.Chain.ClConfig.SecondsPerSlot) / int64(Config.Chain.ClConfig.SlotsPerEpoch)
 }
 
+// TODO(now.youtrack.cloud/issue/TZB-4)
 func PlanckToZND(planck *big.Int) decimal.Decimal {
-	// TODO(rgeraldes24): params.Ether
 	return decimal.NewFromBigInt(planck, 0).DivRound(decimal.NewFromInt(params.Ether), 18)
 }
 
 func PlanckBytesToZND(planck []byte) decimal.Decimal {
 	return PlanckToZND(new(big.Int).SetBytes(planck))
-}
-
-func GPlanckToEther(gplanck *big.Int) decimal.Decimal {
-	// TODO(rgeraldes24): params.GPlanck
-	return decimal.NewFromBigInt(gplanck, 0).Div(decimal.NewFromInt(params.GWei))
-}
-
-func GPlanckBytesToEther(gplanck []byte) decimal.Decimal {
-	return GPlanckToEther(new(big.Int).SetBytes(gplanck))
 }
 
 // WaitForCtrlC will block/wait until a control-c is pressed
@@ -584,25 +580,6 @@ func ReadConfig(cfg *types.Config, path string) error {
 		cfg.Chain.DomainVoluntaryExit = "0x04000000"
 	}
 
-	if cfg.Frontend.ClCurrency == "" {
-		switch cfg.Chain.Name {
-		default:
-			cfg.Frontend.MainCurrency = "ZND"
-			cfg.Frontend.ClCurrency = "ZND"
-			cfg.Frontend.ClCurrencyDecimals = 18
-			cfg.Frontend.ClCurrencyDivisor = 1e9
-		}
-	}
-
-	if cfg.Frontend.ElCurrency == "" {
-		switch cfg.Chain.Name {
-		default:
-			cfg.Frontend.ElCurrency = "ZND"
-			cfg.Frontend.ElCurrencyDecimals = 18
-			cfg.Frontend.ElCurrencyDivisor = 1e18
-		}
-	}
-
 	if cfg.Frontend.SiteTitle == "" {
 		cfg.Frontend.SiteTitle = "Zond Explorer"
 	}
@@ -637,9 +614,6 @@ func ReadConfig(cfg *types.Config, path string) error {
 		"depositChainID":         cfg.Chain.ClConfig.DepositChainID,
 		"depositNetworkID":       cfg.Chain.ClConfig.DepositNetworkID,
 		"depositContractAddress": cfg.Chain.ClConfig.DepositContractAddress,
-		"clCurrency":             cfg.Frontend.ClCurrency,
-		"elCurrency":             cfg.Frontend.ElCurrency,
-		"mainCurrency":           cfg.Frontend.MainCurrency,
 	}).Infof("did init config")
 
 	return nil
@@ -738,13 +712,6 @@ func IsHash(s string) bool {
 // IsValidWithdrawalCredentials verifies whether a string represents valid withdrawal credentials.
 func IsValidWithdrawalCredentials(s string) bool {
 	return withdrawalCredentialsRE.MatchString(s) || withdrawalCredentialsAddressRE.MatchString(s)
-}
-
-// TODO(rgeraldes24): remove?
-// RoundDecimals rounds (nearest) a number to the specified number of digits after comma
-func RoundDecimals(f float64, n int) float64 {
-	d := math.Pow10(n)
-	return math.Round(f*d) / d
 }
 
 // Glob walks through a directory and returns files with a given extension
@@ -910,7 +877,7 @@ func isMaliciousToken(symbol string) bool {
 	containsUrls := len(xurls.Relaxed.FindAllString(symbol, -1)) > 0
 	isConfusable := len(confusables.IsConfusable(symbol, false, []string{"LATIN", "COMMON"})) > 0
 	isMixedScript := confusables.IsMixedScript(symbol, nil)
-	return containsUrls || isConfusable || isMixedScript || strings.ToUpper(symbol) == "ETH"
+	return containsUrls || isConfusable || isMixedScript || strings.ToUpper(symbol) == "ZND"
 }
 
 func ReverseSlice[S ~[]E, E any](s S) {

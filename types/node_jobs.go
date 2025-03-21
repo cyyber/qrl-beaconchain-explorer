@@ -1,5 +1,7 @@
 package types
 
+// TODO(now.youtrack.cloud/issue/TZB-2)
+/*
 import (
 	"database/sql"
 	"encoding/json"
@@ -68,20 +70,19 @@ func (nj *NodeJob) ParseData() error {
 		return CreateNodeJobUserError{Message: "data is empty"}
 	}
 	{
-		// TODO(rgeraldes24)
-		// d := []*capella.SignedDilithiumToExecutionChange{}
-		// err := json.Unmarshal(nj.RawData, &d)
-		// if err == nil {
-		// 	if nj.Type != "" && nj.Type != UnknownNodeJobType && nj.Type != DilithiumToExecutionChangesNodeJobType {
-		// 		return fmt.Errorf("nodejob.RawData mismatches nodejob.Type (%v)", nj.Type)
-		// 	}
-		// 	// sort.Slice(d, func(i, j int) bool {
-		// 	// 	return d[i].Message.ValidatorIndex < d[j].Message.ValidatorIndex
-		// 	// })
-		// 	nj.Type = DilithiumToExecutionChangesNodeJobType
-		// 	// nj.Data = d
-		// 	return nj.SanitizeRawData()
-		// }
+		d := []*capella.SignedDilithiumToExecutionChange{}
+		err := json.Unmarshal(nj.RawData, &d)
+		if err == nil {
+			if nj.Type != "" && nj.Type != UnknownNodeJobType && nj.Type != DilithiumToExecutionChangesNodeJobType {
+				return fmt.Errorf("nodejob.RawData mismatches nodejob.Type (%v)", nj.Type)
+			}
+			// sort.Slice(d, func(i, j int) bool {
+			// 	return d[i].Message.ValidatorIndex < d[j].Message.ValidatorIndex
+			// })
+			nj.Type = DilithiumToExecutionChangesNodeJobType
+			// nj.Data = d
+			return nj.SanitizeRawData()
+		}
 	}
 	{
 		//var d *VoluntaryExitsNodeJobData
@@ -126,3 +127,4 @@ type SignedVoluntaryExit struct {
 
 // DilithiumSignature is a Dilithium signature.
 type DilithiumSignature [4595]byte
+*/

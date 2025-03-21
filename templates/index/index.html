@@ -47,7 +47,7 @@
                             }
                         },
                         yAxis: [{
-                            title: {text: 'Balance [{{config.Frontend.MainCurrency}}]'},
+                            title: {text: 'Balance [ZND]'},
                             labels: {
                                 formatter: function () {
                                     return this.value.toFixed(0);
@@ -65,7 +65,7 @@
                         }],
                         series: [
                             {
-                                name: "Staked {{config.Frontend.MainCurrency}}",
+                                name: "Staked ZND",
                                 yAxis: 0,
                                 data: {{.StakedZNDChartData}}
                             },

@@ -187,7 +187,7 @@ func main() {
 			notExportedEpochs := []uint64{}
 			err = db.WriterDb.Select(&notExportedEpochs, "SELECT epoch FROM epochs WHERE NOT rewards_exported AND epoch > $1 AND epoch <= $2 ORDER BY epoch desc LIMIT 10", lastExportedEpoch, latestFinalizedEpoch)
 			if err != nil {
-				utils.LogFatal(err, "getting chain head from lighthouse error", 0)
+				utils.LogFatal(err, "getting chain head from qrysm error", 0)
 			}
 			for _, e := range notExportedEpochs {
 				err := export(e, bt, client, enAddress)

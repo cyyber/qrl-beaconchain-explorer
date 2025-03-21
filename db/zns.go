@@ -1,6 +1,6 @@
 package db
 
-// NOTE(rgeraldes24): unused for now(zns)
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 import (
 	"bytes"

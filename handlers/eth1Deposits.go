@@ -49,7 +49,8 @@ func Eth1Deposits(w http.ResponseWriter, r *http.Request) {
 
 // Eth1DepositsData will return eth1-deposits as json
 func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -164,7 +165,8 @@ func Eth1DepositsLeaderboard(w http.ResponseWriter, r *http.Request) {
 
 // Eth1DepositsData will return eth1-deposits as json
 func Eth1DepositsLeaderboardData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 

@@ -27,7 +27,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
 	address := template.HTMLEscapeString(vars["address"])
-	// TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// znsData, err := GetZnsDomain(address)
 	// if err != nil && utils.IsValidZnsDomain(address) {
 	// 	handleNotFoundHtml(w, r)
@@ -43,12 +43,13 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	address = strings.Replace(address, "Z", "", -1)
-	address = strings.ToLower(address)
+	addressHex := strings.Replace(address, "Z", "", -1)
+	addressHex = strings.ToLower(addressHex)
 
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 
-	addressBytes := common.FromHex(address)
+	addressBytes := common.FromHex(addressHex)
 	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address Z%x", addressBytes), templateFiles)
 
 	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.ZRC20TokensPerAddressLimit)
@@ -211,6 +212,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 
 	data.Data = types.Eth1AddressPageData{
 		Address: address,
+		// TODO(now.youtrack.cloud/issue/TZB-1)
 		// ZnsName:            znsData.Domain,
 		IsContract:         isContract,
 		QRCode:             pngStr,
@@ -224,7 +226,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		Zrc1155Table:       zrc1155,
 		WithdrawalsTable:   withdrawals,
 		BlocksMinedTable:   blocksMined,
-		ZNDValue:           utils.FormatPricedValue(utils.PlanckBytesToZND(metadata.EthBalance.Balance), utils.Config.Frontend.ElCurrency, currency),
+		ZNDValue:           utils.FormatPricedValue(utils.PlanckBytesToZND(metadata.EthBalance.Balance), utils.MainCurrency, currency),
 		Tabs:               tabs,
 	}
 
@@ -292,7 +294,8 @@ func Eth1AddressBlocksMined(w http.ResponseWriter, r *http.Request) {
 func Eth1AddressWithdrawals(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	q := r.URL.Query()
 	address, err := lowerAddressFromRequest(w, r)
 	if err != nil {
@@ -446,7 +449,7 @@ func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, er
 	return strings.ToLower(strings.Replace(address, "Z", "", -1)), nil
 }
 
-// NOTE(rgeraldes24): unused for now(zns)
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {
 	logger.Errorf("error getting address for ZNS name [%v] not found for %v route: %v", address, r.URL.String(), err)

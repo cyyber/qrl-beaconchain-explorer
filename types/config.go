@@ -1,7 +1,6 @@
 package types
 
 import (
-	"html/template"
 	"time"
 
 	"github.com/theQRL/go-zond/params"
@@ -72,15 +71,13 @@ type Config struct {
 		// } `yaml:"znsTransformer"`
 	} `yaml:"indexer"`
 	Frontend struct {
-		Debug                          bool   `yaml:"debug" envconfig:"FRONTEND_DEBUG"`
-		BeaconchainETHPoolBridgeSecret string `yaml:"beaconchainETHPoolBridgeSecret" envconfig:"FRONTEND_BEACONCHAIN_ETHPOOL_BRIDGE_SECRET"`
-		OnlyAPI                        bool   `yaml:"onlyAPI" envconfig:"FRONTEND_ONLY_API"`
-		DisableCharts                  bool   `yaml:"disableCharts" envconfig:"disableCharts"`
-		RecaptchaSiteKey               string `yaml:"recaptchaSiteKey" envconfig:"FRONTEND_RECAPTCHA_SITEKEY"`
-		RecaptchaSecretKey             string `yaml:"recaptchaSecretKey" envconfig:"FRONTEND_RECAPTCHA_SECRETKEY"`
-		Enabled                        bool   `yaml:"enabled" envconfig:"FRONTEND_ENABLED"`
-		SiteBrand                      string `yaml:"siteBrand" envconfig:"FRONTEND_SITE_BRAND"`
-		Keywords                       string `yaml:"keywords" envconfig:"FRONTEND_KEYWORDS"`
+		Debug              bool   `yaml:"debug" envconfig:"FRONTEND_DEBUG"`
+		DisableCharts      bool   `yaml:"disableCharts" envconfig:"disableCharts"`
+		RecaptchaSiteKey   string `yaml:"recaptchaSiteKey" envconfig:"FRONTEND_RECAPTCHA_SITEKEY"`
+		RecaptchaSecretKey string `yaml:"recaptchaSecretKey" envconfig:"FRONTEND_RECAPTCHA_SECRETKEY"`
+		Enabled            bool   `yaml:"enabled" envconfig:"FRONTEND_ENABLED"`
+		SiteBrand          string `yaml:"siteBrand" envconfig:"FRONTEND_SITE_BRAND"`
+		Keywords           string `yaml:"keywords" envconfig:"FRONTEND_KEYWORDS"`
 		// Imprint is deprdecated place imprint file into the legal directory
 		Imprint string `yaml:"imprint" envconfig:"FRONTEND_IMPRINT"`
 		Legal   struct {
@@ -123,22 +120,17 @@ type Config struct {
 		SessionCookieDeriveDomainFromRequest bool          `yaml:"sessionCookieDeriveDomainFromRequest" envconfig:"FRONTEND_SESSION_COOKIE_DERIVE_DOMAIN_FROM_REQUEST"`
 		GATag                                string        `yaml:"gatag" envconfig:"GATAG"`
 		DisableStatsInserts                  bool          `yaml:"disableStatsInserts" envconfig:"FRONTEND_DISABLE_STATS_INSERTS"`
-		Countdown                            struct {
-			Enabled   bool          `yaml:"enabled" envconfig:"FRONTEND_COUNTDOWN_ENABLED"`
-			Title     template.HTML `yaml:"title" envconfig:"FRONTEND_COUNTDOWN_TITLE"`
-			Timestamp uint64        `yaml:"timestamp" envconfig:"FRONTEND_COUNTDOWN_TIMESTAMP"`
-			Info      string        `yaml:"info" envconfig:"FRONTEND_COUNTDOWN_INFO"`
-		} `yaml:"countdown"`
-		HttpReadTimeout    time.Duration `yaml:"httpReadTimeout" envconfig:"FRONTEND_HTTP_READ_TIMEOUT"`
-		HttpWriteTimeout   time.Duration `yaml:"httpWriteTimeout" envconfig:"FRONTEND_HTTP_WRITE_TIMEOUT"`
-		HttpIdleTimeout    time.Duration `yaml:"httpIdleTimeout" envconfig:"FRONTEND_HTTP_IDLE_TIMEOUT"`
-		ClCurrency         string        `yaml:"clCurrency" envconfig:"FRONTEND_CL_CURRENCY"`
-		ClCurrencyDivisor  int64         `yaml:"clCurrencyDivisor" envconfig:"FRONTEND_CL_CURRENCY_DIVISOR"`
-		ClCurrencyDecimals int64         `yaml:"clCurrencyDecimals" envconfig:"FRONTEND_CL_CURRENCY_DECIMALS"`
-		ElCurrency         string        `yaml:"elCurrency" envconfig:"FRONTEND_EL_CURRENCY"`
-		ElCurrencyDivisor  int64         `yaml:"elCurrencyDivisor" envconfig:"FRONTEND_EL_CURRENCY_DIVISOR"`
-		ElCurrencyDecimals int64         `yaml:"elCurrencyDecimals" envconfig:"FRONTEND_EL_CURRENCY_DECIMALS"`
-		MainCurrency       string        `yaml:"mainCurrency" envconfig:"FRONTEND_MAIN_CURRENCY"`
+		HttpReadTimeout                      time.Duration `yaml:"httpReadTimeout" envconfig:"FRONTEND_HTTP_READ_TIMEOUT"`
+		HttpWriteTimeout                     time.Duration `yaml:"httpWriteTimeout" envconfig:"FRONTEND_HTTP_WRITE_TIMEOUT"`
+		HttpIdleTimeout                      time.Duration `yaml:"httpIdleTimeout" envconfig:"FRONTEND_HTTP_IDLE_TIMEOUT"`
+		// TODO(rgeraldes24): remove
+		// ClCurrency                           string        `yaml:"clCurrency" envconfig:"FRONTEND_CL_CURRENCY"`
+		// ClCurrencyDivisor                    int64         `yaml:"clCurrencyDivisor" envconfig:"FRONTEND_CL_CURRENCY_DIVISOR"`
+		// ClCurrencyDecimals                   int64         `yaml:"clCurrencyDecimals" envconfig:"FRONTEND_CL_CURRENCY_DECIMALS"`
+		// ElCurrency                           string        `yaml:"elCurrency" envconfig:"FRONTEND_EL_CURRENCY"`
+		// ElCurrencyDivisor                    int64         `yaml:"elCurrencyDivisor" envconfig:"FRONTEND_EL_CURRENCY_DIVISOR"`
+		// ElCurrencyDecimals                   int64         `yaml:"elCurrencyDecimals" envconfig:"FRONTEND_EL_CURRENCY_DECIMALS"`
+		// MainCurrency                         string        `yaml:"mainCurrency" envconfig:"FRONTEND_MAIN_CURRENCY"`
 	} `yaml:"frontend"`
 	Metrics struct {
 		Enabled bool   `yaml:"enabled" envconfig:"METRICS_ENABLED"`
@@ -153,10 +145,12 @@ type Config struct {
 		Enabled bool   `yaml:"enabled" envconfig:"PPROF_ENABLED"`
 		Port    string `yaml:"port" envconfig:"PPROF_PORT"`
 	} `yaml:"pprof"`
-	NodeJobsProcessor struct {
-		ElEndpoint string `yaml:"elEndpoint" envconfig:"NODE_JOBS_PROCESSOR_EL_ENDPOINT"`
-		ClEndpoint string `yaml:"clEndpoint" envconfig:"NODE_JOBS_PROCESSOR_CL_ENDPOINT"`
-	} `yaml:"nodeJobsProcessor"`
+	/*
+		NodeJobsProcessor struct {
+			ElEndpoint string `yaml:"elEndpoint" envconfig:"NODE_JOBS_PROCESSOR_EL_ENDPOINT"`
+			ClEndpoint string `yaml:"clEndpoint" envconfig:"NODE_JOBS_PROCESSOR_CL_ENDPOINT"`
+		} `yaml:"nodeJobsProcessor"`
+	*/
 	Monitoring struct {
 		ApiKey                          string                           `yaml:"apiKey" envconfig:"MONITORING_API_KEY"`
 		ServiceMonitoringConfigurations []ServiceMonitoringConfiguration `yaml:"serviceMonitoringConfigurations" envconfig:"SERVICE_MONITORING_CONFIGURATIONS"`

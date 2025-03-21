@@ -17,7 +17,6 @@ import (
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -465,7 +464,8 @@ func DashboardDataBalanceCombined(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -523,7 +523,8 @@ func DashboardDataBalanceCombined(w http.ResponseWriter, r *http.Request) {
 
 // DashboardDataBalance retrieves the income history of a set of validators
 func DashboardDataBalance(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -605,7 +606,8 @@ func DashboardDataProposals(w http.ResponseWriter, r *http.Request) {
 func DashboardDataWithdrawals(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	reqCurrency := GetCurrency(r)
+	// reqCurrency := GetCurrency(r)
+	reqCurrency := "ZND"
 	q := r.URL.Query()
 
 	validatorIndices, _, redirect, err := handleValidatorsQuery(w, r, true)
@@ -706,7 +708,8 @@ func DashboardDataWithdrawals(w http.ResponseWriter, r *http.Request) {
 }
 
 func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -870,8 +873,8 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 			fmt.Sprintf("%x", v.PublicKey),
 			indexInfo,
 			[]interface{}{
-				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9)*price.GetPrice(utils.Config.Frontend.ClCurrency, currency), currency),
-				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9)*price.GetPrice(utils.Config.Frontend.ClCurrency, currency), currency),
+				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9), currency),
+				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9), currency),
 			},
 			[]interface{}{
 				v.ValidatorIndex,
@@ -960,7 +963,8 @@ func DashboardDataEarnings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	earnings, _, err := GetValidatorEarnings(queryValidatorIndices, GetCurrency(r))
+	// earnings, _, err := GetValidatorEarnings(queryValidatorIndices, GetCurrency(r))
+	earnings, _, err := GetValidatorEarnings(queryValidatorIndices, "ZND")
 	if err != nil {
 		utils.LogError(err, "error retrieving validator earnings", 0, errFieldMap)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

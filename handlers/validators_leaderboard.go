@@ -29,7 +29,8 @@ func ValidatorsLeaderboard(w http.ResponseWriter, r *http.Request) {
 
 // ValidatorsLeaderboardData returns the leaderboard of validators according to their income in json
 func ValidatorsLeaderboardData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 
 	w.Header().Set("Content-Type", "application/json")
 

@@ -14,7 +14,6 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -129,7 +128,9 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		return nil, nil, err
 	}
 
-	clElPrice := price.GetPrice(utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
+	// TODO(rgeraldes24)
+	// clElPrice := price.GetPrice(utils.MainCurrency, utils.MainCurrency)
+	clElPrice := 1.0
 
 	if totalDeposits == 0 {
 		totalDeposits = utils.Config.Chain.ClConfig.MaxEffectiveBalance * uint64(len(validators))
@@ -447,22 +448,22 @@ func LatestState(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetCurrency(r *http.Request) string {
-	return utils.Config.Frontend.MainCurrency
-}
+// func GetCurrency(r *http.Request) string {
+// 	return utils.Config.Frontend.MainCurrency
+// }
 
 // TODO(rgeraldes24)
-func GetCurrencySymbol(r *http.Request) string {
-	cookie, err := r.Cookie("currency")
-	if err != nil {
-		logger.WithError(err).Tracef("error in handlers.GetCurrencySymbol")
-		return "$"
-	}
-	if cookie.Value == utils.Config.Frontend.MainCurrency {
-		return "USD"
-	}
-	return price.GetCurrencySymbol(cookie.Value)
-}
+// func GetCurrencySymbol(r *http.Request) string {
+// 	cookie, err := r.Cookie("currency")
+// 	if err != nil {
+// 		logger.WithError(err).Tracef("error in handlers.GetCurrencySymbol")
+// 		return "$"
+// 	}
+// 	if cookie.Value == utils.Config.Frontend.MainCurrency {
+// 		return "USD"
+// 	}
+// 	return price.GetCurrencySymbol(cookie.Value)
+// }
 
 func GetDataTableStateChanges(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -588,12 +589,11 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 	}
 
 	// Now populate the chartData array using the dayRewardMap
-	exchangeRate := price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
 	for day, reward := range dayRewardMap {
 		ts := float64(utils.DayToTime(day).Unix() * 1000)
 		chartData = append(chartData, &types.ChartDataPoint{
 			X:     ts,
-			Y:     exchangeRate * reward,
+			Y:     reward,
 			Color: color,
 		})
 	}

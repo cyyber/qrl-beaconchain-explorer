@@ -1,5 +1,7 @@
 package handlers
 
+// TODO(now.youtrack.cloud/issue/TZB-2)
+/*
 import (
 	"database/sql"
 	"errors"
@@ -148,3 +150,4 @@ func FormatNodeJobTitle(nodeJobType types.NodeJobType) string {
 	}
 	return label
 }
+*/

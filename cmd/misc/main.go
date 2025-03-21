@@ -132,7 +132,7 @@ func main() {
 		var err error
 		rpcClient, err = rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
 		if err != nil {
-			utils.LogFatal(err, "lighthouse client error", 0)
+			utils.LogFatal(err, "qrysm client error", 0)
 		}
 		qrysmClient = rpcClient
 	}()
@@ -856,7 +856,7 @@ func debugBlocks() error {
 		}
 		// logrus.WithFields(logrus.Fields{"block": i, "data": fmt.Sprintf("%+v", b)}).Infof("block from bt")
 
-		elBlock, _, err := elClient.GetBlock(int64(i) /*"parity/geth"*/)
+		elBlock, _, err := elClient.GetBlock(int64(i) /*"parity/gzond"*/)
 		if err != nil {
 			return err
 		}
@@ -1227,7 +1227,7 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.G
 			if _, err := db.BigtableClient.GetBlockFromBlocksTable(block); err != nil {
 				logrus.Infof("could not load [%v] from blocks table, will try to fetch it from the node and save it", block)
 
-				bc, _, err := client.GetBlock(int64(block) /*, "parity/geth"*/)
+				bc, _, err := client.GetBlock(int64(block) /*, "parity/gzond"*/)
 				if err != nil {
 					utils.LogError(err, fmt.Sprintf("error getting block %v from the node", block), 0)
 					return

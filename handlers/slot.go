@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"html/template"
 	"math"
-	"math/big"
 	"net/http"
 	"strconv"
 	"strings"
@@ -365,7 +364,8 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 
 // SlotDepositData returns the deposits for a specific slot
 func SlotDepositData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -677,8 +677,8 @@ func BlockTransactionsData(w http.ResponseWriter, r *http.Request) {
 			Method:        methodFormatted,
 			FromFormatted: v.FromFormatted,
 			ToFormatted:   v.ToFormatted,
-			Value:         utils.FormatAmountFormatted(v.Value, utils.Config.Frontend.ElCurrency, 5, 0, true, true, false),
-			Fee:           utils.FormatAmountFormatted(v.Fee, utils.Config.Frontend.ElCurrency, 5, 0, true, true, false),
+			Value:         utils.FormatAmountFormatted(v.Value, utils.MainCurrency, 5, 0, true, true, false),
+			Fee:           utils.FormatAmountFormatted(v.Fee, utils.MainCurrency, 5, 0, true, true, false),
 			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GPlanck", 5, 0, true, true, false),
 		}
 	}
@@ -759,7 +759,8 @@ func SlotAttestationsData(w http.ResponseWriter, r *http.Request) {
 func SlotWithdrawalData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	slot, err := strconv.ParseUint(vars["slot"], 10, 64)
 	if err != nil || slot > math.MaxInt32 {
 		logger.Warnf("error parsing slot url parameter %v: %v", vars["slot"], err)
@@ -833,24 +834,4 @@ func SlotDilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-}
-
-// ToPlanck converts the big.Int planck to its gplanck string representation.
-func ToPlanck(planck *big.Int) string {
-	return planck.String()
-}
-
-// ToGPlanck converts the big.Int planck to its gplanck string representation.
-func ToGPlanck(planck *big.Int) string {
-	return ToZND(new(big.Int).Mul(planck, big.NewInt(1e9)))
-}
-
-// ToZND converts the big.Int planck to its ZND string representation.
-func ToZND(planck *big.Int) string {
-	z, m := new(big.Int).DivMod(planck, big.NewInt(1e18), new(big.Int))
-	if m.Cmp(new(big.Int)) == 0 {
-		return z.String()
-	}
-	s := strings.TrimRight(fmt.Sprintf("%018s", m.String()), "0")
-	return z.String() + "." + s
 }

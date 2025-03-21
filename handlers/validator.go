@@ -19,16 +19,12 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
-
-	protomath "github.com/protolambda/zrnt/eth2/util/math"
-	"github.com/theQRL/go-zond/accounts"
-	"github.com/theQRL/go-zond/crypto"
-	"golang.org/x/sync/errgroup"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 
 	"github.com/gorilla/mux"
 	"github.com/juliangruber/go-intersect"
-
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	protomath "github.com/protolambda/zrnt/eth2/util/math"
+	"golang.org/x/sync/errgroup"
 )
 
 var validatorEditFlash = "edit_validator_flash"
@@ -46,7 +42,8 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		"components/rocket.html")
 	var validatorTemplate = templates.GetTemplate(validatorTemplateFiles...)
 
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 
 	timings := struct {
 		Start         time.Time
@@ -746,10 +743,6 @@ func hasMultipleWithdrawalCredentials(deposits *types.ValidatorDeposits) bool {
 
 	credential := make([]byte, 0)
 
-	if deposits == nil {
-		return false
-	}
-
 	// check Eth1Deposits
 	for _, deposit := range deposits.Eth1Deposits {
 		if len(credential) == 0 {
@@ -1103,7 +1096,8 @@ func ValidatorAttestations(w http.ResponseWriter, r *http.Request) {
 func ValidatorWithdrawals(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	reqCurrency := GetCurrency(r)
+	// reqCurrency := GetCurrency(r)
+	reqCurrency := "currency"
 
 	vars := mux.Vars(r)
 	index, err := strconv.ParseUint(vars["index"], 10, 64)
@@ -1323,164 +1317,11 @@ func ValidatorSlashings(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Function checks if the generated ECDSA signature has correct lentgth and if needed sets recovery byte to 0 or 1
-func sanitizeSignature(sig string) ([]byte, error) {
-	sig = strings.Replace(sig, "0x", "", -1)
-	decodedSig, _ := hex.DecodeString(sig)
-	if len(decodedSig) != 65 {
-		return nil, fmt.Errorf("signature is less than 65 bytes (len = %v)", len(decodedSig))
-	}
-	// TODO(rgeraldes24)
-	// if decodedSig[crypto.RecoveryIDOffset] == 27 || decodedSig[crypto.RecoveryIDOffset] == 28 {
-	// 	decodedSig[crypto.RecoveryIDOffset] -= 27
-	// }
-	return []byte(decodedSig), nil
-}
-
-// Function tries to find the substring.
-//
-// If successful it turns string into []byte value and returns it
-//
-// If it fails, it will try to decode `msg`value from Hexadecimal to string and retry search again
-func sanitizeMessage(msg string) ([]byte, error) {
-	subString := "beaconcha.in"
-
-	if strings.Contains(msg, subString) {
-		return []byte(msg), nil
-	} else {
-		decoded := strings.Replace(msg, "0x", "", -1)
-		dec, _ := hex.DecodeString(decoded)
-		decodedString := (string(dec))
-		if strings.Contains(decodedString, subString) {
-			return []byte(decodedString), nil
-		}
-		return nil, fmt.Errorf("%v was not found", subString)
-	}
-}
-
-func SaveValidatorName(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	pubkey := vars["pubkey"]
-	pubkey = strings.ToLower(pubkey)
-	pubkey = strings.Replace(pubkey, "0x", "", -1)
-
-	pubkeyDecoded, err := hex.DecodeString(pubkey)
-	if err != nil {
-		logger.Warnf("error parsing submitted pubkey %v: %v", pubkey, err)
-		utils.SetFlash(w, r, validatorEditFlash, "Error: the provided signature is invalid")
-		http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-		return
-	}
-
-	name := r.FormValue("name")
-	if len(name) > 40 {
-		name = name[:40]
-	}
-
-	applyNameToAll := r.FormValue("apply-to-all")
-
-	signature := r.FormValue("signature")
-	signatureWrapper := &types.MyCryptoSignature{}
-	err = json.Unmarshal([]byte(signature), signatureWrapper)
-	if err != nil {
-		logger.Warnf("error decoding submitted signature %v: %v", signature, err)
-		utils.SetFlash(w, r, validatorEditFlash, "Error: the provided signature is invalid")
-		http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-		return
-	}
-
-	msg, err := sanitizeMessage(signatureWrapper.Msg)
-	if err != nil {
-		logger.Warnf("Message is invalid %v: %v", signatureWrapper.Msg, err)
-		utils.SetFlash(w, r, validatorEditFlash, "Error: the provided message is invalid")
-		http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-		return
-	}
-	msgHash := accounts.TextHash(msg)
-
-	sig, err := sanitizeSignature(signatureWrapper.Sig)
-	if err != nil {
-		logger.Warnf("error parsing submitted signature %v: %v", signatureWrapper.Sig, err)
-		utils.SetFlash(w, r, validatorEditFlash, "Error: the provided signature is invalid")
-		http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-		return
-	}
-
-	recoveredPubkey, err := crypto.SigToPub(msgHash, sig)
-	if err != nil {
-		logger.Warnf("error recovering pubkey: %v", err)
-		utils.SetFlash(w, r, validatorEditFlash, "Error: the provided signature is invalid")
-		http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-		return
-	}
-
-	recoveredAddress := crypto.PubkeyToAddress(*recoveredPubkey)
-
-	errFields := map[string]interface{}{
-		"route":            r.URL.String(),
-		"pubkey":           pubkey,
-		"name":             name,
-		"applyNameToAll":   applyNameToAll,
-		"recoveredAddress": recoveredAddress}
-
-	var depositedAddress string
-	deposits, err := db.GetValidatorDeposits(pubkeyDecoded)
-	if err != nil {
-		utils.LogError(err, "error getting validator-deposits from db for signature verification", 0, errFields)
-		utils.SetFlash(w, r, validatorEditFlash, "Error: the provided signature is invalid")
-		http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-	}
-	for _, deposit := range deposits.Eth1Deposits {
-		if deposit.ValidSignature {
-			depositedAddress = "0x" + fmt.Sprintf("%x", deposit.FromAddress)
-			break
-		}
-	}
-
-	if strings.EqualFold(depositedAddress, recoveredAddress.Hex()) {
-		if applyNameToAll == "on" {
-			res, err := db.WriterDb.Exec(`
-				INSERT INTO validator_names (publickey, name)
-				SELECT publickey, $1 as name
-				FROM (SELECT DISTINCT publickey FROM eth1_deposits WHERE from_address = $2 AND valid_signature) a
-				ON CONFLICT (publickey) DO UPDATE SET name = excluded.name`, name, recoveredAddress.Bytes())
-			if err != nil {
-				utils.LogError(err, "error saving validator name", 0, errFields)
-				utils.SetFlash(w, r, validatorEditFlash, "Error: Db error while updating validator names")
-				http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-				return
-			}
-
-			rowsAffected, _ := res.RowsAffected()
-			utils.SetFlash(w, r, validatorEditFlash, fmt.Sprintf("Your custom name has been saved for %v validator(s).", rowsAffected))
-			http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-		} else {
-			_, err := db.WriterDb.Exec(`
-				INSERT INTO validator_names (publickey, name) 
-				VALUES($2, $1) 
-				ON CONFLICT (publickey) DO UPDATE SET name = excluded.name`, name, pubkeyDecoded)
-			if err != nil {
-				utils.LogError(err, "error saving validator name", 0, errFields)
-				utils.SetFlash(w, r, validatorEditFlash, "Error: Db error while updating validator name")
-				http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-				return
-			}
-
-			utils.SetFlash(w, r, validatorEditFlash, "Your custom name has been saved.")
-			http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-		}
-
-	} else {
-		utils.SetFlash(w, r, validatorEditFlash, "Error: the provided signature is invalid")
-		http.Redirect(w, r, "/validator/"+pubkey, http.StatusMovedPermanently)
-	}
-}
-
 // ValidatorHistory returns a validators history in json
 func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	pageLength := 10
 	maxPages := 10
 

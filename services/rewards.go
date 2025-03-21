@@ -252,11 +252,6 @@ func GeneratePdfReport(hist rewardHistory, currency string) []byte {
 
 }
 
-func GetPdfReport(validatorArr []uint64, currency string, start uint64, end uint64) []byte {
-	hist := GetValidatorHist(validatorArr /*currency,*/, start, end)
-	return GeneratePdfReport(hist, currency)
-}
-
 func getValidatorDetails(validators []uint64) [][]string {
 	validatorFilter := pq.Array(validators)
 	var data []types.ValidatorPageData

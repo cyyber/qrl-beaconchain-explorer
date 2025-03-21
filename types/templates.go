@@ -379,7 +379,6 @@ type ValidatorPageData struct {
 	Deposits                        *ValidatorDeposits
 	Eth1DepositAddress              []byte
 	FlashMessage                    string
-	SubscriptionFlash               []interface{}
 	// User                                     *User
 	AttestationInclusionEffectiveness        float64
 	CsrfField                                template.HTML
@@ -1455,8 +1454,8 @@ type BurnPageData struct {
 	BurnRate24h      float64              `json:"burn_rate_24_h"`
 	BlockUtilization float64              `json:"block_utilization"`
 	Emission         float64              `json:"emission"`
-	Price            float64              `json:"price_usd"`
-	Currency         string               `json:"currency"`
+	// Price            float64              `json:"price_usd"`
+	// Currency         string               `json:"currency"`
 }
 
 type DilithiumChange struct {
@@ -1539,6 +1538,8 @@ type ChangeWithdrawalCredentialsPageData struct {
 	RecaptchaKey string
 }
 
+// TODO(now.youtrack.cloud/issue/TZB-2)
+/*
 type BroadcastPageData struct {
 	Stats        *Stats
 	FlashMessage string
@@ -1554,6 +1555,7 @@ type BroadcastStatusPageData struct {
 	JobJson      string
 	Validators   *[]NodeJobValidatorInfo
 }
+*/
 
 type ValidatorIncomePerformance struct {
 	ClIncomePlanck1d    decimal.Decimal `db:"cl_performance_planck_1d"`

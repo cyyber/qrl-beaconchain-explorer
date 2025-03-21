@@ -16,19 +16,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-bitfield"
-
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
-
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
 const CalculatingHint = `Calculating…`
@@ -100,8 +97,7 @@ func FormatAttestorAssignmentKey(AttesterSlot, CommitteeIndex, MemberIndex uint6
 
 // FormatBalance will return a string for a balance
 func FormatBalance(balanceInt uint64, currency string) template.HTML {
-	exchangeRate := price.GetPrice(Config.Frontend.ClCurrency, currency)
-	balance := FormatFloat((float64(balanceInt)/float64(Config.Frontend.ClCurrencyDivisor))*float64(exchangeRate), 2)
+	balance := FormatFloat((float64(balanceInt) / float64(ClCurrencyDivisor)), 2)
 
 	return template.HTML(balance + " " + currency)
 }
@@ -111,8 +107,7 @@ func FormatEligibleBalance(balanceInt uint64, currency string) template.HTML {
 	if balanceInt == 0 {
 		return `<span class="text-small text-muted">` + CalculatingHint + `</span>`
 	}
-	exchangeRate := price.GetPrice(Config.Frontend.ClCurrency, currency)
-	balance := FormatFloat((float64(balanceInt)/float64(Config.Frontend.ClCurrencyDivisor))*float64(exchangeRate), 2)
+	balance := FormatFloat((float64(balanceInt) / float64(ClCurrencyDivisor)), 2)
 
 	return template.HTML(balance)
 }
@@ -121,100 +116,50 @@ func FormatBalanceSql(balanceInt sql.NullInt64, currency string) template.HTML {
 	if !balanceInt.Valid {
 		return template.HTML("0 " + currency)
 	}
-	exchangeRate := price.GetPrice(Config.Frontend.ClCurrency, currency)
-	balance := FormatFloat((float64(balanceInt.Int64)/float64(Config.Frontend.ClCurrencyDivisor))*float64(exchangeRate), 5)
+	balance := FormatFloat((float64(balanceInt.Int64) / float64(ClCurrencyDivisor)), 5)
 
 	return template.HTML(balance + " " + currency)
 }
 
-func FormatBalanceGplanck(balance *int64, currency string) template.HTML {
-	if currency == Config.Frontend.ClCurrency {
-		if balance == nil {
-			return template.HTML("<span> 0.00000 " + currency + "</span>")
-		} else if *balance == 0 {
-			return template.HTML("0")
-		}
-
-		balanceF := float64(*balance)
-		if balanceF < 0 {
-			return template.HTML(fmt.Sprintf("<span class=\"text-danger\">%.0f GPlanck</span>", balanceF))
-		}
-		return template.HTML(fmt.Sprintf("<span class=\"text-success\">+%.0f GPlanck</span>", balanceF))
-	}
-	return FormatBalanceChange(balance, currency)
-}
-
 func ClToMainCurrency(valIf interface{}) decimal.Decimal {
 	val := IfToDec(valIf)
-	res := val.DivRound(decimal.NewFromInt(Config.Frontend.ClCurrencyDivisor), 18)
-	if Config.Frontend.ClCurrency == Config.Frontend.MainCurrency {
-		return res
-	}
-	return res.Mul(decimal.NewFromFloat(price.GetPrice(Config.Frontend.ClCurrency, Config.Frontend.MainCurrency)))
-}
-
-func ElToMainCurrency(valIf interface{}) decimal.Decimal {
-	val := IfToDec(valIf)
-	res := val.DivRound(decimal.NewFromInt(Config.Frontend.ElCurrencyDivisor), 18)
-	if Config.Frontend.ElCurrency == Config.Frontend.MainCurrency {
-		return res
-	}
-	return res.Mul(decimal.NewFromFloat(price.GetPrice(Config.Frontend.ElCurrency, Config.Frontend.MainCurrency)))
+	return val.DivRound(decimal.NewFromInt(ClCurrencyDivisor), 18)
 }
 
 func ClToCurrency(valIf interface{}, currency string) decimal.Decimal {
 	val := IfToDec(valIf)
-	res := val.DivRound(decimal.NewFromInt(Config.Frontend.ClCurrencyDivisor), 18)
-	if currency == Config.Frontend.ClCurrency {
-		return res
-	}
-	return res.Mul(decimal.NewFromFloat(price.GetPrice(Config.Frontend.ClCurrency, currency)))
+	return val.DivRound(decimal.NewFromInt(ClCurrencyDivisor), 18)
 }
 
 func ElToCurrency(valIf interface{}, currency string) decimal.Decimal {
 	val := IfToDec(valIf)
-	res := val.DivRound(decimal.NewFromInt(Config.Frontend.ElCurrencyDivisor), 18)
-	if currency == Config.Frontend.ElCurrency {
-		return res
-	}
-	return res.Mul(decimal.NewFromFloat(price.GetPrice(Config.Frontend.ElCurrency, currency)))
+	return val.DivRound(decimal.NewFromInt(ElCurrencyDivisor), 18)
 }
 
 func ClToCurrencyGplanck(valIf interface{}, currency string) decimal.Decimal {
-	val := IfToDec(valIf)
-	if currency == Config.Frontend.ClCurrency {
-		return val
-	}
-	return val.Mul(decimal.NewFromFloat(price.GetPrice(Config.Frontend.ClCurrency, currency)))
+	return IfToDec(valIf)
 }
 
 func FormatElCurrency(value interface{}, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
-	return formatCurrency(ElToCurrency(value, Config.Frontend.ElCurrency), Config.Frontend.ElCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
+	return formatCurrency(ElToCurrency(value, MainCurrency), MainCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
 }
 
 func FormatClCurrency(value interface{}, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
-	return formatCurrency(ClToCurrency(value, Config.Frontend.ClCurrency), Config.Frontend.ClCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
-}
-
-func FormatElCurrencyString(value interface{}, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, truncateAndAddTooltip bool) string {
-	return formatCurrencyString(ElToCurrency(value, Config.Frontend.ElCurrency), Config.Frontend.ElCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, truncateAndAddTooltip)
-}
-
-func FormatClCurrencyString(value interface{}, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, truncateAndAddTooltip bool) string {
-	return formatCurrencyString(ClToCurrency(value, Config.Frontend.ClCurrency), Config.Frontend.ClCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, truncateAndAddTooltip)
+	return formatCurrency(ClToCurrency(value, MainCurrency), MainCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
 }
 
 func formatCurrencyString(valIf interface{}, valueCurrency, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, truncateAndAddTooltip bool) string {
 	val := IfToDec(valIf)
 
 	valPriced := val
-	if valueCurrency != targetCurrency {
-		valPriced = val.Mul(decimal.NewFromFloat(price.GetPrice(valueCurrency, targetCurrency)))
-	}
+	// if valueCurrency != targetCurrency {
+	// 	valPriced = val.Mul(decimal.NewFromFloat(price.GetPrice(valueCurrency, targetCurrency)))
+	// }
 
 	currencyStr := ""
 	if showCurrencySymbol {
-		currencyStr = " " + price.GetCurrencySymbol(targetCurrency)
+		// currencyStr = " " + price.GetCurrencySymbol(targetCurrency)
+		currencyStr = " ZND"
 	}
 
 	amountStr := ""
@@ -300,7 +245,7 @@ func IfToDec(valIf interface{}) decimal.Decimal {
 func FormatBalanceChangeFormatted(balance *int64, currencyName string, details *itypes.ValidatorEpochIncome) template.HTML {
 	currencySymbol := "GPlanck"
 	currencyFunc := ClToCurrencyGplanck
-	if currencyName != Config.Frontend.MainCurrency {
+	if currencyName != MainCurrency {
 		currencySymbol = currencyName
 		currencyFunc = ClToCurrency
 	}
@@ -360,7 +305,7 @@ func FormatBalanceChangeFormatted(balance *int64, currencyName string, details *
 
 // FormatBalanceChange will return a string for a balance change
 func FormatBalanceChange(balance *int64, currency string) template.HTML {
-	if currency == Config.Frontend.ClCurrency {
+	if currency == MainCurrency {
 		if balance == nil || *balance == 0 {
 			return template.HTML("<span> 0 " + currency + "</span>")
 		}
@@ -384,8 +329,7 @@ func FormatBalanceChange(balance *int64, currency string) template.HTML {
 
 // FormatBalance will return a string for a balance
 func FormatBalanceShort(balanceInt uint64, currency string) template.HTML {
-	exchangeRate := price.GetPrice(Config.Frontend.ClCurrency, currency)
-	balance := FormatFloat((float64(balanceInt)/float64(1e9))*float64(exchangeRate), 2)
+	balance := FormatFloat((float64(balanceInt) / float64(1e9)), 2)
 
 	return template.HTML(balance)
 }
@@ -525,7 +469,7 @@ func FormatBlockStatusShort(status, slot uint64) template.HTML {
 
 // FormatBlockStatusShort will return an html status for a block.
 func FormatWithdrawalShort(slot uint64, amount uint64) template.HTML {
-	return template.HTML(fmt.Sprintf("<span title=\"Withdrawal processed in epoch %v during slot %v for %v\" data-toggle=\"tooltip\" class=\"mx-1 badge badge-pill bg-success text-white\" style=\"font-size: 12px; font-weight: 500;\"><i class=\"fas fa-money-bill\"></i></span>", EpochOfSlot(slot), slot, FormatCurrentBalance(amount, Config.Frontend.ClCurrency)))
+	return template.HTML(fmt.Sprintf("<span title=\"Withdrawal processed in epoch %v during slot %v for %v\" data-toggle=\"tooltip\" class=\"mx-1 badge badge-pill bg-success text-white\" style=\"font-size: 12px; font-weight: 500;\"><i class=\"fas fa-money-bill\"></i></span>", EpochOfSlot(slot), slot, FormatCurrentBalance(amount, MainCurrency)))
 }
 
 func FormatTransactionType(txnType uint8) string {
@@ -539,21 +483,19 @@ func FormatTransactionType(txnType uint8) string {
 
 // FormatCurrentBalance will return the current balance formated as string with 9 digits after the comma (1 gplanck = 1e9 eth)
 func FormatCurrentBalance(balanceInt uint64, currency string) template.HTML {
-	return template.HTML(fmt.Sprintf(`%s %v`, exchangeAndTrim(Config.Frontend.ClCurrency, currency, float64(balanceInt), false), currency))
+	return template.HTML(fmt.Sprintf(`%s %v`, exchangeAndTrim(MainCurrency, currency, float64(balanceInt), false), currency))
 }
 
 // FormatDepositAmount will return the deposit amount formated as string
 func FormatDepositAmount(balanceInt uint64, currency string) template.HTML {
-	exchangeRate := price.GetPrice(Config.Frontend.ClCurrency, currency)
-	balance := float64(balanceInt) / float64(Config.Frontend.ClCurrencyDivisor)
-	return template.HTML(fmt.Sprintf("%.0f %v", balance*exchangeRate, currency))
+	balance := float64(balanceInt) / float64(ClCurrencyDivisor)
+	return template.HTML(fmt.Sprintf("%.0f %v", balance, currency))
 }
 
 // FormatEffectiveBalance will return the effective balance formated as string with 1 digit after the comma
 func FormatEffectiveBalance(balanceInt uint64, currency string) template.HTML {
-	exchangeRate := price.GetPrice(Config.Frontend.ClCurrency, currency)
-	balance := float64(balanceInt) / float64(Config.Frontend.ClCurrencyDivisor)
-	return template.HTML(fmt.Sprintf("%.1f %v", balance*exchangeRate, currency))
+	balance := float64(balanceInt) / float64(ClCurrencyDivisor)
+	return template.HTML(fmt.Sprintf("%.1f %v", balance, currency))
 }
 
 // FormatEpoch will return the epoch formated as html
@@ -604,7 +546,7 @@ func FormatGlobalParticipationRate(e uint64, r float64, currency string) templat
 		<div class="progress-bar" role="progressbar" style="width: %[2]v;" aria-valuenow="%[2]v" aria-valuemin="0" aria-valuemax="100"></div>
 	  </div>
 	</div>`
-	return template.HTML(p.Sprintf(tpl, float64(e)/float64(Config.Frontend.ClCurrencyDivisor)*price.GetPrice(Config.Frontend.ClCurrency, currency), rr))
+	return template.HTML(p.Sprintf(tpl, float64(e)/float64(ClCurrencyDivisor), rr))
 }
 
 // When 'finalized' is false and 'count' is 0, a in-progress hint is returned (three dots if 'shortenCalcHint' is true)
@@ -619,20 +561,25 @@ func FormatCount(count uint64, finalized bool, shortenCalcHint bool) template.HT
 	return template.HTML(CalculatingHint)
 }
 
-func FormatZNDValue(currency string, ethPrice decimal.Decimal, currentPrice template.HTML) template.HTML {
+func FormatZNDValue(currency string, zndPrice decimal.Decimal, currentPrice template.HTML) template.HTML {
 	p := message.NewPrinter(language.English)
-	currencySymbol := price.GetCurrencySymbol(currency)
-	return template.HTML(p.Sprintf(`<span>%[1]s %[2]s</span> <span class="text-muted">@ %[1]s%[3]s/%[4]s</span>`, currencySymbol, ethPrice.StringFixed(2), currentPrice, Config.Frontend.ElCurrency))
+	// currencySymbol := price.GetCurrencySymbol(currency)
+	currencySymbol := "ZND"
+	return template.HTML(p.Sprintf(`<span>%[1]s %[2]s</span> <span class="text-muted">@ %[1]s%[3]s/%[4]s</span>`, currencySymbol, zndPrice.StringFixed(2), currentPrice, MainCurrency))
 }
 
 func FormatPricedValue(val interface{}, valueCurrency, targetCurrency string) template.HTML {
 	p := message.NewPrinter(language.English)
-	pp := IfToDec(price.GetPrice(valueCurrency, targetCurrency))
+	// pp := IfToDec(price.GetPrice(valueCurrency, targetCurrency))
 	v := IfToDec(val)
-	targetBalance := v.Mul(pp)
-	valueSymbol := price.GetCurrencySymbol(valueCurrency)
-	targetSymbol := price.GetCurrencySymbol(targetCurrency)
-	return template.HTML(p.Sprintf(`<span>%[1]s %[2]s</span> <span class="text-muted">@ %[3]s %[4]s/%[5]s`, targetSymbol, targetBalance.StringFixed(2), valueSymbol, pp.StringFixed(2), targetSymbol))
+	// targetBalance := v.Mul(pp)
+	targetBalance := v
+	// valueSymbol := price.GetCurrencySymbol(valueCurrency)
+	// targetSymbol := price.GetCurrencySymbol(targetCurrency)
+	valueSymbol := "ZND"
+	targetSymbol := "ZND"
+	// TODO(rgeraldes24)
+	return template.HTML(p.Sprintf(`<span>%[1]s %[2]s</span> <span class="text-muted">@ %[3]s %[4]s/%[5]s`, targetSymbol, targetBalance.StringFixed(2), valueSymbol /*pp.StringFixed(2)*/, "  ", targetSymbol))
 }
 
 // FormatGraffiti will return the graffiti formated as html
@@ -859,7 +806,7 @@ func FormatIncomeClEl(income types.ClEl, currency string) template.HTML {
 }
 
 func FormatIncomeClElInt64(income types.ClElInt64, currency string) template.HTML {
-	var incomeTrimmed string = exchangeAndTrim(Config.Frontend.ClCurrency, currency, income.Total, true)
+	var incomeTrimmed string = exchangeAndTrim(MainCurrency, currency, income.Total, true)
 	className := "text-success"
 	if income.Total < 0 {
 		className = "text-danger"
@@ -886,7 +833,7 @@ func FormatIncomeClElInt64(income types.ClElInt64, currency string) template.HTM
 
 func FormatIncome(balance interface{}, currency string, includeCurrency bool) template.HTML {
 	balanceFloat64 := IfToDec(balance).InexactFloat64()
-	var income string = exchangeAndTrim(Config.Frontend.ElCurrency, currency, balanceFloat64, true)
+	var income string = exchangeAndTrim(MainCurrency, currency, balanceFloat64, true)
 
 	if includeCurrency {
 		currency = " " + currency
@@ -907,15 +854,13 @@ func exchangeAndTrim(valueCurrency, exCurrency string, amount float64, addPositi
 	decimals := 5
 	preCommaDecimals := 2
 
-	if valueCurrency != Config.Frontend.ClCurrency {
+	if valueCurrency != MainCurrency {
 		decimals = 4
 		preCommaDecimals = 4
 	}
 
-	exchangeRate := price.GetPrice(valueCurrency, exCurrency)
-	exchangedAmount := float64(amount) * exchangeRate
 	// lost precision here but we don't need it for frontend
-	income, _ := trimAmount(big.NewInt(int64(exchangedAmount)), 9, preCommaDecimals, decimals, addPositiveSign)
+	income, _ := trimAmount(big.NewInt(int64(amount)), 9, preCommaDecimals, decimals, addPositiveSign)
 	return income
 }
 
@@ -925,15 +870,14 @@ func FormatIncomeSql(balanceInt sql.NullInt64, currency string) template.HTML {
 		return template.HTML(fmt.Sprintf(`<b>0 %v</b>`, currency))
 	}
 
-	exchangeRate := price.GetPrice(Config.Frontend.ClCurrency, currency)
 	balance := float64(balanceInt.Int64) / float64(1e9)
 
 	if balance > 0 {
-		return template.HTML(fmt.Sprintf(`<span class="text-success"><b>+%v %v</b></span>`, FormatFloat(balance*exchangeRate, 5), currency))
+		return template.HTML(fmt.Sprintf(`<span class="text-success"><b>+%v %v</b></span>`, FormatFloat(balance, 5), currency))
 	} else if balance < 0 {
-		return template.HTML(fmt.Sprintf(`<span class="text-danger"><b>%v %v</b></span>`, FormatFloat(balance*exchangeRate, 5), currency))
+		return template.HTML(fmt.Sprintf(`<span class="text-danger"><b>%v %v</b></span>`, FormatFloat(balance, 5), currency))
 	} else {
-		return template.HTML(fmt.Sprintf(`<b>%v %v</b>`, balance*exchangeRate, currency))
+		return template.HTML(fmt.Sprintf(`<b>%v %v</b>`, balance, currency))
 	}
 }
 
@@ -1195,14 +1139,9 @@ func KFormatterEthPrice(price uint64) template.HTML {
 	return template.HTML(fmt.Sprint(price))
 }
 
-func FormatRPL(num string) string {
+func FormatZND(num string) string {
 	floatNum, _ := strconv.ParseFloat(num, 64)
-	return fmt.Sprintf("%.2f", floatNum/math.Pow10(18)) + " RPL"
-}
-
-func FormatETH(num string) string {
-	floatNum, _ := strconv.ParseFloat(num, 64)
-	return fmt.Sprintf("%.4f", floatNum/math.Pow10(18)) + " " + Config.Frontend.ClCurrency
+	return fmt.Sprintf("%.4f", floatNum/math.Pow10(18)) + " " + MainCurrency
 }
 
 func FormatFloat(num float64, precision int) string {
@@ -1217,19 +1156,19 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 	p := message.NewPrinter(language.English)
 
 	tokenDecimals := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Metadata.Decimals), 0)
-	ethDiv := decimal.NewFromInt(Config.Frontend.ElCurrencyDivisor)
+	// ethDiv := decimal.NewFromInt(ElCurrencyDivisor)
 	tokenDiv := decimal.NewFromInt(10).Pow(tokenDecimals)
 
 	tokenBalance := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0).DivRound(tokenDiv, 18)
 
-	tokenPriceEth := decimal.New(0, 0)
-	if len(balance.Metadata.Price) > 0 {
-		tokenPriceEth = decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Metadata.Price), 0).DivRound(decimal.NewFromInt(Config.Frontend.ElCurrencyDivisor), 18)
-	}
+	// tokenPriceEth := decimal.New(0, 0)
+	// if len(balance.Metadata.Price) > 0 {
+	// 	tokenPriceEth = decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Metadata.Price), 0).DivRound(decimal.NewFromInt(Config.Frontend.ElCurrencyDivisor), 18)
+	// }
 
-	ethPriceUsd := decimal.NewFromFloat(price.GetPrice(Config.Frontend.ElCurrency, "USD"))
-	tokenPriceUsd := ethPriceUsd.Mul(tokenPriceEth).Mul(tokenDiv).DivRound(ethDiv, 18)
-	tokenBalanceUsd := tokenBalance.Mul(tokenPriceUsd)
+	// ethPriceUsd := decimal.NewFromFloat(price.GetPrice(Config.Frontend.ElCurrency, "USD"))
+	// tokenPriceUsd := ethPriceUsd.Mul(tokenPriceEth).Mul(tokenDiv).DivRound(ethDiv, 18)
+	// tokenBalanceUsd := tokenBalance.Mul(tokenPriceUsd)
 
 	symbolTitle := FormatTokenSymbolTitle(balance.Metadata.Symbol)
 	symbol := FormatTokenSymbol(balance.Metadata.Symbol)
@@ -1245,18 +1184,22 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 				<span>%s</span> <span title="%s">%s</span>
 			</a> 
 		</div>
+		<!--
 		<div class="token-price-balance p-1">
 			<span class="text-muted" style="font-size: 90%%;">$ %s</span>
 		</div>
+		-->
 	</div> 
 	<div class="token-balance-col token-balance d-flex align-items-center justify-content-between flex-wrap">
 		<div class="token-holdings p-1">
 			<span class="token-holdings">%s</span>
 		</div>
+		<!--
 		<div class="token-price p-1">
 			<span class="text-muted" style="font-size: 90%%;">$ %s</span>
 		</div>
-	</div>`, balance.Token, balance.Address, logo, symbolTitle, symbol, tokenPriceUsd.StringFixed(2), FormatThousandsEnglish(tokenBalance.String()), tokenBalanceUsd.StringFixed(2)))
+		-->
+	</div>`, balance.Token, balance.Address, logo, symbolTitle, symbol /*tokenPriceUsd.StringFixed(2),*/, FormatThousandsEnglish(tokenBalance.String()) /*, tokenBalanceUsd.StringFixed(2)*/))
 }
 
 func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
@@ -1268,8 +1211,8 @@ func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
 	p := message.NewPrinter(language.English)
 	return template.HTML(p.Sprintf(`
 		<div class="d-flex align-items-center">
-			<span class="token-holdings">%v %v</span>
-		</div>`, balZND, Config.Frontend.ElCurrency))
+			<span class="token-holdings">%v ZND</span>
+		</div>`, balZND))
 }
 
 func FormatTokenValue(balance *types.Eth1AddressBalance, fullAmountTooltip bool) template.HTML {

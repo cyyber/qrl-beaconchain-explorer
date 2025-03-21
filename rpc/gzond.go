@@ -8,21 +8,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
-	zond "github.com/theQRL/go-zond"
-	"github.com/theQRL/go-zond/common/hexutil"
-	"github.com/theQRL/go-zond/zondclient"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/sirupsen/logrus"
+	zond "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/common/hexutil"
+	gzond_types "github.com/theQRL/go-zond/core/types"
 	gzond_rpc "github.com/theQRL/go-zond/rpc"
+	"github.com/theQRL/go-zond/zondclient"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/types/known/timestamppb"
-
-	gzond_types "github.com/theQRL/go-zond/core/types"
 )
 
 type GzondClient struct {

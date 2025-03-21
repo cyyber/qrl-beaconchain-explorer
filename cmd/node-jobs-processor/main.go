@@ -1,6 +1,6 @@
 package main
 
-// NOTE(rgeraldes24): unused for now
+// TODO(now.youtrack.cloud/issue/TZB-2)
 /*
 import (
 	"flag"

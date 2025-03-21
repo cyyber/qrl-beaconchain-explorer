@@ -13,7 +13,7 @@ type ApiResponse struct {
 	Data   interface{} `json:"data"`
 }
 
-// NOTE(rgeraldes24): unused for now
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 type ZnsDomainResponse struct {
 	Address string `json:"address"`

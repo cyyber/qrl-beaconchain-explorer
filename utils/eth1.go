@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"encoding/hex"
 	"fmt"
 	"html/template"
 	"math/big"
@@ -19,10 +18,6 @@ import (
 // TODO(rgeraldes24)
 func Eth1TotalReward(block *types.Eth1BlockIndexed) *big.Int {
 	return new(big.Int).SetBytes(block.GetTxReward())
-}
-
-func StripPrefix(hexStr string) string {
-	return strings.Replace(hexStr, "0x", "", 1)
 }
 
 func FormatBlockNumber(number uint64) template.HTML {
@@ -47,13 +42,6 @@ func FormatTxHash(hash string) template.HTML {
 // func FormatTimestamp(ts int64) template.HTML {
 // 	return template.HTML(fmt.Sprintf("<span class=\"timestamp\" title=\"%v\" data-toggle=\"tooltip\" data-placement=\"top\" data-timestamp=\"%d\"></span>", time.Unix(ts, 0), ts))
 // }
-
-func FormatBlockHash(hash []byte) template.HTML {
-	if len(hash) < 20 {
-		return template.HTML("N/A")
-	}
-	return template.HTML(fmt.Sprintf(`<a class="text-monospace" href="/block/0x%x">0x%x…%x</a> %v`, hash, hash[:2], hash[len(hash)-2:], CopyButton(hex.EncodeToString(hash))))
-}
 
 func FormatTransactionHash(hash []byte, successful bool) template.HTML {
 	if len(hash) < 20 {
@@ -86,23 +74,6 @@ func FormatAddress(address []byte, token []byte, name string, verified bool, isC
 		return formatAddress(address, token, name, isContract, "address", 17, 0, false)
 	}
 	return formatAddress(address, token, name, isContract, "", 17, 0, false)
-}
-
-func FormatBytes(b []byte, addCopyToClipboard bool, link string) template.HTML {
-	bStr := fmt.Sprintf("%#x", b)
-	ret := ""
-	if len(bStr) <= 10 {
-		ret += fmt.Sprintf(`<span class="text-monospace">%s</span>`, bStr)
-	} else {
-		ret += fmt.Sprintf(`<span class="text-monospace" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s" data-container="body">%s…%s</span>`, bStr, bStr[0:6], bStr[len(bStr)-4:])
-	}
-	if len(link) > 0 {
-		ret = fmt.Sprintf(`<a href="%s" target="_parent">%s</a>`, link, ret)
-	}
-	if addCopyToClipboard {
-		ret += ` <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="` + bStr + `"></i>`
-	}
-	return template.HTML(ret)
 }
 
 func FormatTxHashWithLimits(hash []byte, name string, isContract bool, link string, digitsLimit int, nameLimit int, addCopyToClipboard bool) template.HTML {
@@ -297,10 +268,11 @@ func FormatHashLong(hash common.Hash) template.HTML {
 }
 
 func FormatAddressLong(address string) template.HTML {
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// if IsValidZnsDomain(address) {
 	// 	return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.eth`, strings.TrimSuffix(address, ".eth")))
 	// }
-	address = FixAddressCasing(fmt.Sprintf("Z%s", address))
+	address = FixAddressCasing(address)
 	if len(address) > 4 {
 		htmlFormat := `
 		<span class="text-monospace mw-100">%s<span class="text-primary">%s</span>%s<span class="text-primary">%s</span></span>`

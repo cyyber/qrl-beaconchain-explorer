@@ -81,15 +81,3 @@ func headBlockRootHashUpdater(wg *sync.WaitGroup) {
 		time.Sleep(time.Second * 10)
 	}
 }
-
-// Eth1HeadBlockRootHash will return the hash of the current chain head block
-func Eth1HeadBlockRootHash() []byte {
-	cacheKey := fmt.Sprintf("%d:frontend:%s", utils.Config.Chain.ClConfig.DepositChainID, latestBlockHashRootCacheKey)
-
-	if wanted, err := cache.TieredCache.GetStringWithLocalTimeout(cacheKey, time.Second*5); err == nil {
-		return []byte(wanted)
-	} else {
-		utils.LogError(err, fmt.Sprintf("error retrieving latest blockroot hash from cache with key %s", latestBlockHashRootCacheKey), 0)
-	}
-	return []byte{}
-}

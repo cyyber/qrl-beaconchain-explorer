@@ -19,6 +19,6 @@ echo "Wallet Dir: $wallet_dir";
 echo "BN Endpoint: $bn_endpoint";
 
 echo "submitting exit message"
-prysmctl validator exit \
+qrysmctl validator exit \
     --wallet-dir="$wallet_dir" \
     --beacon-rpc-provider="$bn_endpoint"

@@ -1,5 +1,6 @@
 package db
 
+/*
 import (
 	"bytes"
 	"database/sql"
@@ -361,18 +362,16 @@ func CreateVoluntaryExitNodeJob(nj *types.NodeJob) (*types.NodeJob, error) {
 	}
 
 	// TODO(rgeraldes24)
-	/*
-		forkVersion := utils.MustParseHex(utils.Config.Chain.ClConfig.GenesisForkVersion)
-		err = utils.VerifyVoluntaryExitSignature(njd, forkVersion, vali.Pubkey)
-		if err != nil {
-			return nil, err
-		}
-		_, err = WriterDb.Exec(`insert into node_jobs (id, type, status, data, created_time) values ($1, $2, $3, $4, now())`, nj.ID, nj.Type, nj.Status, nj.RawData)
-		if err != nil {
-			return nil, err
-		}
-		logrus.WithFields(logrus.Fields{"id": nj.ID, "type": nj.Type}).Infof("created node_job")
-	*/
+	// forkVersion := utils.MustParseHex(utils.Config.Chain.ClConfig.GenesisForkVersion)
+	// err = utils.VerifyVoluntaryExitSignature(njd, forkVersion, vali.Pubkey)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// _, err = WriterDb.Exec(`insert into node_jobs (id, type, status, data, created_time) values ($1, $2, $3, $4, now())`, nj.ID, nj.Type, nj.Status, nj.RawData)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// logrus.WithFields(logrus.Fields{"id": nj.ID, "type": nj.Type}).Infof("created node_job")
 
 	return nj, nil
 }
@@ -469,3 +468,4 @@ func SubmitVoluntaryExitNodeJob(job *types.NodeJob) error {
 	logrus.WithFields(logrus.Fields{"id": job.ID, "type": job.Type}).Infof("submitted node_job")
 	return nil
 }
+*/

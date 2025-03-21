@@ -58,7 +58,7 @@ func main() {
 
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
-	// NOTE(rgeraldes24): unused for now(zns)
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// enableZnsUpdater := flag.Bool("zns.enabled", false, "Enable zns update process")
 	// znsBatchSize := flag.Int64("zns.batch", 200, "Batch size for zns updates")
 
@@ -352,7 +352,7 @@ func main() {
 			ProcessMetadataUpdates(bt, client, balanceUpdaterPrefix, *balanceUpdaterBatchSize, 10)
 		}
 
-		// NOTE(rgeraldes24): unused for now(zns)
+		// TODO(now.youtrack.cloud/issue/TZB-1)
 		/*
 			if *enableZnsUpdater {
 				err := bt.ImportZnsUpdates(client.GetNativeClient(), *znsBatchSize)

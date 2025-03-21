@@ -73,7 +73,7 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 
 	tokenDecimals := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.Decimals), 0)
 
-	ethDiv := decimal.NewFromInt(utils.Config.Frontend.ElCurrencyDivisor)
+	ethDiv := decimal.NewFromInt(utils.ElCurrencyDivisor)
 	tokenDiv := decimal.NewFromInt(10).Pow(tokenDecimals)
 
 	_ = ethDiv

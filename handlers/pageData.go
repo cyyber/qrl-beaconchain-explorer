@@ -127,21 +127,26 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 							Icon:  "fa-user-slash",
 						},
 					},
-				}, {
-					Links: []types.NavigationLink{
-						{
-							Label: "Validator Leaderboard",
-							Path:  "/validators/leaderboard",
-							Icon:  "fa-medal",
-						},
-						{
-							Label: "Deposit Leaderboard",
-							Path:  "/validators/deposit-leaderboard",
-							Icon:  "fa-file-import",
+				},
+				/*
+					{
+						Links: []types.NavigationLink{
+							{
+								Label: "Validator Leaderboard",
+								Path:  "/validators/leaderboard",
+								Icon:  "fa-medal",
+							},
+							{
+								Label: "Deposit Leaderboard",
+								Path:  "/validators/deposit-leaderboard",
+								Icon:  "fa-file-import",
+							},
 						},
 					},
-				}, {
+				*/
+				{
 					Links: []types.NavigationLink{
+
 						{
 							Label: "Deposits",
 							Path:  "/validators/deposits",
@@ -208,11 +213,14 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 							Path:  "/gasnow",
 							Icon:  "fa-gas-pump",
 						},
-						{
-							Label: "Broadcast Signed Messages",
-							Path:  "/tools/broadcast",
-							Icon:  "fa-bullhorn",
-						},
+						// TODO(now.youtrack.cloud/issue/TZB-2)
+						/*
+							{
+								Label: "Broadcast Signed Messages",
+								Path:  "/tools/broadcast",
+								Icon:  "fa-bullhorn",
+							},
+						*/
 					},
 				}, {
 					Label: "Services",

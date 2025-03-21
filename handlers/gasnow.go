@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -78,12 +77,13 @@ func GasNowData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	currency := GetCurrency(r)
-	if currency == utils.Config.Frontend.ElCurrency {
-		currency = "USD"
-	}
-	gasnowData.Data.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
-	gasnowData.Data.Currency = currency
+	// currency := GetCurrency(r)
+	// currency := "ZND"
+	// if currency == utils.MainCurrency {
+	// 	currency = "USD"
+	// }
+	// gasnowData.Data.Price = price.GetPrice(utils.MainCurrency, currency)
+	// gasnowData.Data.Currency = currency
 
 	err := json.NewEncoder(w).Encode(gasnowData)
 	if err != nil {

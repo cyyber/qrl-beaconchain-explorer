@@ -18,7 +18,8 @@ func Eth2Deposits(w http.ResponseWriter, r *http.Request) {
 
 // Eth2DepositsData will return information eth1-deposits in json
 func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()

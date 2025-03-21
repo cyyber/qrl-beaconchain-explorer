@@ -92,7 +92,8 @@ func Eth1TransactionTxData(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	txHashString := vars["hash"]
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, currency))
 	if err != nil {
 		logger.Errorf("error enconding json response for %v route: %v", r.URL.String(), err)

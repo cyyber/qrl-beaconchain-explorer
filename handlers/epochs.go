@@ -31,7 +31,8 @@ func Epochs(w http.ResponseWriter, r *http.Request) {
 
 // EpochsData will return the epoch data using a go template
 func EpochsData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()

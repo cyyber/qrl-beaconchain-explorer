@@ -25,7 +25,6 @@ type GasNowPageData struct {
 		Slow      *big.Int `json:"slow"`
 		Timestamp int64    `json:"timestamp"`
 		Price     float64  `json:"price,omitempty"`
-		PriceUSD  float64  `json:"priceUSD"`
 		Currency  string   `json:"currency,omitempty"`
 	} `json:"data"`
 }

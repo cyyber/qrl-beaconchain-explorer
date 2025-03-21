@@ -17,13 +17,11 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/db"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
-
-	"github.com/shopspring/decimal"
 	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 
+	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/common"
-
 	gzond_types "github.com/theQRL/go-zond/core/types"
 	gzond_rpc "github.com/theQRL/go-zond/rpc"
 )
@@ -258,7 +256,9 @@ func slotVizUpdater(wg *sync.WaitGroup) {
 }
 
 func getIndexPageData() (*types.IndexPageData, error) {
-	currency := utils.Config.Frontend.MainCurrency
+	// TODO(rgeraldes24)
+	// currency := utils.Config.Frontend.MainCurrency
+	currency := "ZND"
 
 	data := &types.IndexPageData{}
 	data.Mainnet = utils.Config.Chain.ClConfig.ConfigName == "mainnet"
@@ -880,7 +880,7 @@ func getGasNowData() (*types.GasNowPageData, error) {
 	}
 
 	// TODO(rgeraldes24): params.Ether
-	// gpoData.Data.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
+	// gpoData.Data.Price = price.GetPrice(utils.MainCurrency, "USD")
 	// gpoData.Data.Currency = "USD"
 
 	// gpoData.RapidUSD = gpoData.Rapid * 21000 * params.GPlanck / params.Ether * usd

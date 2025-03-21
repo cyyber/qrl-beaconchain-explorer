@@ -323,16 +323,16 @@ func stakedZNDChartData() (*types.GenericChartData, error) {
 	}
 
 	chartData := &types.GenericChartData{
-		Title:                           fmt.Sprintf("Staked %v", utils.Config.Frontend.ClCurrency),
-		Subtitle:                        fmt.Sprintf("History of daily staked %v, which is the sum of all Effective Balances.", utils.Config.Frontend.ClCurrency),
+		Title:                           fmt.Sprintf("Staked %v", utils.MainCurrency),
+		Subtitle:                        fmt.Sprintf("History of daily staked %v, which is the sum of all Effective Balances.", utils.MainCurrency),
 		XAxisTitle:                      "",
-		YAxisTitle:                      utils.Config.Frontend.ClCurrency,
+		YAxisTitle:                      "ZND",
 		StackingMode:                    "false",
 		Type:                            "column",
 		ColumnDataGroupingApproximation: "close",
 		Series: []*types.GenericChartDataSeries{
 			{
-				Name: fmt.Sprintf("Staked %v", utils.Config.Frontend.ClCurrency),
+				Name: fmt.Sprintf("Staked %v", utils.MainCurrency),
 				Data: series,
 			},
 		},
@@ -352,7 +352,7 @@ func averageBalanceChartData() (*types.GenericChartData, error) {
 		Value     float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'AVG_VALIDATOR_BALANCE_ETH' ORDER BY time")
+	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'AVG_VALIDATOR_BALANCE_ZND' ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -366,13 +366,13 @@ func averageBalanceChartData() (*types.GenericChartData, error) {
 		Title:                           "Validator Balance",
 		Subtitle:                        "Average Daily Validator Balance.",
 		XAxisTitle:                      "",
-		YAxisTitle:                      utils.Config.Frontend.ClCurrency,
+		YAxisTitle:                      utils.MainCurrency,
 		StackingMode:                    "false",
 		Type:                            "column",
 		ColumnDataGroupingApproximation: "average",
 		Series: []*types.GenericChartDataSeries{
 			{
-				Name: fmt.Sprintf("Average Balance [%s]", utils.Config.Frontend.ClCurrency),
+				Name: fmt.Sprintf("Average Balance [%s]", utils.MainCurrency),
 				Data: series,
 			},
 		},
@@ -539,7 +539,7 @@ func balanceDistributionChartData() (*types.GenericChartData, error) {
 		Subtitle:             fmt.Sprintf("Histogram of Balances at epoch %d.", epoch),
 		XAxisTitle:           "Balance",
 		YAxisTitle:           "# of Validators",
-		XAxisLabelsFormatter: template.JS(fmt.Sprintf(`function(){ return this.value+' %s' }`, utils.Config.Frontend.ClCurrency)),
+		XAxisLabelsFormatter: template.JS(fmt.Sprintf(`function(){ return this.value+' %s' }`, utils.MainCurrency)),
 		StackingMode:         "false",
 		Type:                 "column",
 		Series: []*types.GenericChartDataSeries{
@@ -590,7 +590,7 @@ func effectiveBalanceDistributionChartData() (*types.GenericChartData, error) {
 		Subtitle:             fmt.Sprintf("Histogram of Effective Balances at epoch %d.", epoch),
 		XAxisTitle:           "Effective Balance",
 		YAxisTitle:           "# of Validators",
-		XAxisLabelsFormatter: template.JS(fmt.Sprintf(`function(){ return this.value+' %s' }`, utils.Config.Frontend.ClCurrency)),
+		XAxisLabelsFormatter: template.JS(fmt.Sprintf(`function(){ return this.value+' %s' }`, utils.MainCurrency)),
 		StackingMode:         "false",
 		Type:                 "column",
 		Series: []*types.GenericChartDataSeries{
@@ -657,7 +657,7 @@ func performanceDistribution365dChartData() (*types.GenericChartData, error) {
 		XAxisLabelsFormatter: template.JS(fmt.Sprintf(`function(){
   if (this.value < 0) return '<span style="color:var(--danger)">'+this.value+' %[1]v<span>'
   return '<span style="color:var(--success)">'+this.value+' %[1]v<span>'
-}`, utils.Config.Frontend.ClCurrency)),
+}`, utils.MainCurrency)),
 		YAxisTitle:   "# of Validators",
 		StackingMode: "false",
 		Type:         "column",
@@ -683,7 +683,7 @@ func depositsChartData() (*types.GenericChartData, error) {
 		Value     float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = any('{EL_VALID_DEPOSITS_ETH, EL_INVALID_DEPOSITS_ETH, CL_DEPOSITS_ETH}') ORDER BY time")
+	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = any('{EL_VALID_DEPOSITS_ZND, EL_INVALID_DEPOSITS_ZND, CL_DEPOSITS_ZND}') ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -694,11 +694,11 @@ func depositsChartData() (*types.GenericChartData, error) {
 
 	for _, d := range data {
 		switch d.Indicator {
-		case "EL_VALID_DEPOSITS_ETH":
+		case "EL_VALID_DEPOSITS_ZND":
 			elValidSeries = append(elValidSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
-		case "EL_INVALID_DEPOSITS_ETH":
+		case "EL_INVALID_DEPOSITS_ZND":
 			elInvalidSeries = append(elInvalidSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
-		case "CL_DEPOSITS_ETH":
+		case "CL_DEPOSITS_ZND":
 			clSeries = append(clSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
 		default:
 			return nil, fmt.Errorf("unexpected indicator %v when generating depositsChartData", d.Indicator)
@@ -707,9 +707,9 @@ func depositsChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:        "Deposits",
-		Subtitle:     "Daily Amount of deposited ETH.",
+		Subtitle:     "Daily Amount of deposited ZND.",
 		XAxisTitle:   "Income",
-		YAxisTitle:   "Deposited ETH",
+		YAxisTitle:   "Deposited ZND",
 		StackingMode: "normal",
 		Type:         "column",
 		Series: []*types.GenericChartDataSeries{
@@ -747,7 +747,7 @@ func withdrawalsChartData() (*types.GenericChartData, error) {
 		Value float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&rows, "SELECT time, value FROM chart_series WHERE indicator = 'WITHDRAWALS_ETH' ORDER BY time")
+	err := db.ReaderDb.Select(&rows, "SELECT time, value FROM chart_series WHERE indicator = 'WITHDRAWALS_ZND' ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -763,9 +763,9 @@ func withdrawalsChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:        "Withdrawals",
-		Subtitle:     fmt.Sprintf("Daily Amount of withdrawals in %s.", utils.Config.Frontend.ClCurrency),
+		Subtitle:     "Daily Amount of withdrawals in ZND.",
 		XAxisTitle:   "",
-		YAxisTitle:   fmt.Sprintf("Withdrawals %s", utils.Config.Frontend.ClCurrency),
+		YAxisTitle:   "Withdrawals ZND",
 		StackingMode: "normal",
 		Type:         "column",
 		Series: []*types.GenericChartDataSeries{
@@ -845,9 +845,9 @@ func BurnedFeesChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:                           "Burned Fees",
-		Subtitle:                        "Evolution of the total number of Ether burned with EIP 1559",
+		Subtitle:                        "Evolution of the total number of ZND burned with EIP 1559",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Burned Fees [ETH]",
+		YAxisTitle:                      "Burned Fees [ZND]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",
@@ -1040,10 +1040,10 @@ func TotalEmissionChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		// IsNormalChart: true,
-		Title:                           "Total Ether Supply",
-		Subtitle:                        "Evolution of the total Ether supply",
+		Title:                           "Total ZND Supply",
+		Subtitle:                        "Evolution of the total ZND supply",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Total Supply [ETH]",
+		YAxisTitle:                      "Total Supply [ZND]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",

@@ -1,12 +1,10 @@
 package utils
 
 import (
-	"fmt"
-
-	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/theQRL/go-zond/common"
 )
 
+// TODO(now.youtrack.cloud/issue/TZB-2)
 // VerifyDilithiumToExecutionChangeSignature verifies the signature of an dilithium_to_execution_change message
 // see: https://github.com/wealdtech/ethdo/blob/master/cmd/validator/credentials/set/process.go
 // see: https://github.com/prysmaticlabs/prysm/blob/76ed634f7386609f0d1ee47b703eb0143c995464/beacon-chain/core/blocks/withdrawals.go
@@ -64,7 +62,7 @@ func VerifyDilithiumToExecutionChangeSignature(op *capella.SignedDilithiumToExec
 
 	return nil
 }
-*/
+
 
 // VerifyVoluntaryExitSignature verifies the signature of an voluntary_exit message
 func VerifyVoluntaryExitSignature(op *phase0.SignedVoluntaryExit, forkVersion, pubkeyBytes []byte) error {
@@ -118,6 +116,7 @@ func VerifyVoluntaryExitSignature(op *phase0.SignedVoluntaryExit, forkVersion, p
 
 	return nil
 }
+*/
 
 func FixAddressCasing(add string) string {
 	addr, _ := common.NewAddressFromString(add)

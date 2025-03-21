@@ -21,12 +21,13 @@ import (
 const searchValidatorsResultLimit = 300
 
 var transactionLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{64}$`)
+
+// TODO(rgeraldes24)
 var searchLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{0,96}$`)
 var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,96}$`)
 
 // Search handles search requests
 func Search(w http.ResponseWriter, r *http.Request) {
-
 	search := r.FormValue("search")
 
 	_, err := strconv.Atoi(search)
@@ -181,6 +182,7 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			ORDER BY index LIMIT 10`, search+"%")
 		}
 	case "eth1_addresses":
+		// TODO(rgeraldes24)
 		// if utils.IsValidZnsDomain(search) {
 		// 	ensData, _ := GetZnsDomain(search)
 		// 	if len(ensData.Address) > 0 {
@@ -235,12 +237,14 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			LEFT JOIN validators ON validators.pubkey = eth1_deposits.publickey
 			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_eth1_addresses":
+		// TODO(rgeraldes24)
 		// search = ReplaceZnsNameWithAddress(search)
 		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
 	case "count_indexed_validators_by_eth1_address":
+		// TODO(rgeraldes24)
 		// var ensData *types.ZnsDomainResponse
 		// if utils.IsValidZnsDomain(search) {
 		// 	ensData, _ = GetZnsDomain(search)
@@ -268,6 +272,7 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
+		// TODO(rgeraldes24)
 		// var ensData *types.ZnsDomainResponse
 		// if utils.IsValidZnsDomain(search) {
 		// 	ensData, _ = GetZnsDomain(search)

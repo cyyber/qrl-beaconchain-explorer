@@ -2113,7 +2113,7 @@ func (bigtable *Bigtable) GetAddressTransactionsTableData(address []byte, pageTo
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.From, fromName, false, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
 			utils.FormatInOutSelf(address, t.From, t.To),
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.To, BigtableClient.GetAddressLabel(names[string(t.To)], contractInteraction), contractInteraction != types.CONTRACT_NONE, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
-			utils.FormatAmount(new(big.Int).SetBytes(t.Value), utils.Config.Frontend.ElCurrency, 6),
+			utils.FormatAmount(new(big.Int).SetBytes(t.Value), "ZND", 6),
 		}
 	}
 
@@ -2219,7 +2219,7 @@ func (bigtable *Bigtable) GetAddressBlocksMinedTableData(address string, pageTok
 			utils.FormatBlockNumber(b.Number),
 			utils.FormatTimestamp(b.Time.AsTime().Unix()),
 			utils.FormatBlockUsage(b.GasUsed, b.GasLimit),
-			utils.FormatAmount(reward, utils.Config.Frontend.ElCurrency, 6),
+			utils.FormatAmount(reward, "ZND", 6), // TODO(rgeraldes24): formatAmount currency
 		}
 	}
 
@@ -2273,7 +2273,7 @@ func (bigtable *Bigtable) GetEth1ItxsForAddress(prefix string, limit int64) ([]*
 			logrus.Fatalf("error parsing Eth1InternalTransactionIndexed data: %v", err)
 		}
 
-		// geth traces include zero-value staticalls
+		// gzond traces include zero-value staticalls
 		if bytes.Equal(b.Value, []byte{}) {
 			return true
 		}
@@ -2372,7 +2372,7 @@ func (bigtable *Bigtable) GetAddressInternalTableData(address []byte, pageToken 
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.From, BigtableClient.GetAddressLabel(fromName, from_contractInteraction), from_contractInteraction != types.CONTRACT_NONE, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
 			utils.FormatInOutSelf(address, t.From, t.To),
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.To, BigtableClient.GetAddressLabel(toName, to_contractInteraction), to_contractInteraction != types.CONTRACT_NONE, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
-			utils.FormatAmount(new(big.Int).SetBytes(t.Value), utils.Config.Frontend.ElCurrency, 6),
+			utils.FormatAmount(new(big.Int).SetBytes(t.Value), "ZND", 6),
 			t.Type,
 		}
 	}
@@ -3062,9 +3062,9 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 
 				token := common.FromHex(strings.TrimPrefix(column.Column, "a:B:"))
 
-				isNativeEth := bytes.Equal([]byte{0x00}, token)
-				if !isNativeEth {
-					// token is not ETH, check if token limit is reached
+				isNativeZnd := bytes.Equal([]byte{0x00}, token)
+				if !isNativeZnd {
+					// token is not ZND, check if token limit is reached
 					if tokenCount >= limit {
 						ret.ZRC20TokenLimitExceeded = true
 						continue
@@ -3099,7 +3099,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 					balance.Metadata = metadata
 
 					mux.Lock()
-					if isNativeEth {
+					if isNativeZnd {
 						ret.EthBalance = balance
 					} else {
 						ret.Balances = append(ret.Balances, balance)
@@ -3185,7 +3185,7 @@ func (bigtable *Bigtable) GetZRC20MetadataForAddress(address []byte) (*types.ZRC
 	if len(address) == 1 {
 		return &types.ZRC20Metadata{
 			Decimals:    big.NewInt(18).Bytes(),
-			Symbol:      utils.Config.Frontend.ElCurrency,
+			Symbol:      "ZND",
 			TotalSupply: []byte{},
 		}, nil
 	}
@@ -3310,7 +3310,7 @@ func (bigtable *Bigtable) SaveZRC20Metadata(address []byte, metadata *types.ZRC2
 	return bigtable.tableMetadata.Apply(ctx, rowKey, mut)
 }
 
-// NOTE(rgeraldes24): unused for now(zns)
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
@@ -3619,7 +3619,7 @@ func (bigtable *Bigtable) GetAddressContractInteractionsAtTransactions(transacti
 	return bigtable.GetAddressContractInteractionsAt(requests)
 }
 
-// TODO(rgeraldes24): unused for now(zns)
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
@@ -3695,7 +3695,7 @@ func (bigtable *Bigtable) SaveBalances(balances []*types.Eth1AddressBalance, del
 	return nil
 }
 
-// TODO(rgeraldes24): unused for now(zns)
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 func (bigtable *Bigtable) SaveZRC20TokenPrices(prices []*types.ZRC20TokenPrice) error {
 	if len(prices) == 0 {

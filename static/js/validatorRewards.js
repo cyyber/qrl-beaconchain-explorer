@@ -1,5 +1,5 @@
 const VALLIMIT = 200
-const DECIMAL_POINTS_ETH = 6
+const DECIMAL_POINTS_ZND = 6
 const DECIMAL_POINTS_CURRENCY = 3
 var csrfToken = ""
 var currency = ""
@@ -216,7 +216,7 @@ function showTable(data) {
       $("#form-div").removeClass("d-flex").addClass("d-none")
       $("#table-div").removeClass("d-none")
       $("#subscriptions-div").addClass("d-none")
-      $("#total-income-eth-span").html("ETH " + data.total_eth)
+      $("#total-income-eth-span").html("ZND " + data.total_eth)
       $("#total-income-currency-span").html(data.total_currency)
       $("#totals-div").removeClass("d-none")
       $(".dt-button").addClass("ml-2 ")
@@ -241,7 +241,7 @@ function showTable(data) {
         data: "1",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ETH))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZND))
           return data
         },
       },
@@ -250,7 +250,7 @@ function showTable(data) {
         data: "2",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ETH))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZND))
           return data
         },
       },
@@ -281,24 +281,6 @@ function showTable(data) {
         //     }
       },
     ],
-  })
-}
-
-function unSubUser(filter) {
-  // console.log(filter)
-  showSpinner()
-  fetch(`/user/rewards/unsubscribe?${filter}`, {
-    method: "POST",
-    headers: { "X-CSRF-Token": csrfToken },
-    credentials: "include",
-    body: "",
-  }).then((res) => {
-    if (res.status == 200) {
-      res.json().then((data) => {
-        console.log(data.msg)
-        fetchSubscriptions()
-      })
-    }
   })
 }
 
@@ -390,7 +372,6 @@ function updateSubscriptionTable(data, container) {
                         <div class="d-flex justify-content-between align-item-center">
                             <i class="far fa-clone mr-2" style="cursor: pointer;" onClick='loadValInForm("${row[2]}")' data-toggle="tooltip" data-placement="top" title="Load validators in the form"></i>
                             <a href="${downloadQueryUrl}" download><i class="fas fa-file-download mr-2" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Download the last month report"></i></a>
-                            <i class="fas fa-times text-danger mr-2" onClick='unSubUser("${data}")' style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Unsubscribe"></i>
                         </div>
                         `
         },
@@ -401,28 +382,6 @@ function updateSubscriptionTable(data, container) {
 
 function loadValInForm(val) {
   $("#validator-index-view").val(val.replace(/([a-zA-Z ])/g, ""))
-}
-
-function fetchSubscriptions() {
-  fetch(`/user/rewards/subscriptions/data`, {
-    method: "POST",
-    headers: { "X-CSRF-Token": csrfToken },
-    credentials: "include",
-    body: "",
-  })
-    .then((res) => {
-      if (res.status == 200) {
-        res.json().then((data) => {
-          // console.log(data.msg)
-          updateSubscriptionTable(data, "subscriptions-table")
-        })
-      } else {
-        console.error("error getting subscriptions", res)
-      }
-    })
-    .catch((err) => {
-      console.error("error getting subscriptions", err)
-    })
 }
 
 $(document).ready(function () {
@@ -480,41 +439,6 @@ $(document).ready(function () {
   create_typeahead(".typeahead-validators")
   let qry = getValidatorQueryString()
   // console.log(qry, qry.length)
-
-  $("#report-sub-btn").on("click", function () {
-    var form = document.getElementById("hits-form")
-    if (!form.reportValidity()) {
-      return
-    }
-    let btn_content = $(this).html()
-    $(this).html(`<div class="spinner-border text-dark spinner-border-sm" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>`)
-
-    fetch(`/user/rewards/subscribe?validators=${$("#validator-index-view").val()}&currency=${$("#currency").val()}`, {
-      method: "POST",
-      headers: { "X-CSRF-Token": csrfToken },
-      credentials: "include",
-      body: "",
-    })
-      .then((res) => {
-        if (res.status == 200) {
-          res.json().then((data) => {
-            // console.log(data.msg)
-            fetchSubscriptions()
-            $(this).html(btn_content)
-          })
-        } else {
-          console.error("error subscribing", res)
-          alert("Subscription limit is reached")
-          $(this).html(btn_content)
-        }
-      })
-      .catch((err) => {
-        console.error("error subscribing", err)
-        $(this).html(btn_content)
-      })
-  })
 
   if (qry.length > 1) {
     fetch(`/rewards/hist${qry}`, {

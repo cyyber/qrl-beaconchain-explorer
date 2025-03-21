@@ -16,7 +16,7 @@ import (
 	"github.com/theQRL/go-zond/event"
 )
 
-// TODO(rgeraldes24): generate new bindings
+// TODO(now.youtrack.cloud/issue/TZB-3)
 // Reference imports to suppress errors if they are not otherwise used.
 var (
 	_ = errors.New

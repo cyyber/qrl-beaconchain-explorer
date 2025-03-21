@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/price"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -93,6 +92,7 @@ type ValidatorsDataQueryParams struct {
 	StateFilter       string
 }
 
+// TODO(rgeraldes24): pub key size
 var searchPubkeyExactRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{96}`) // only search for pubkeys if string consists of 96 hex-chars
 var searchPubkeyLikeRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{2,96}`)
 
@@ -229,7 +229,8 @@ func parseValidatorsDataQueryParams(r *http.Request) (*ValidatorsDataQueryParams
 
 // ValidatorsData returns all validators and basic information about them based on a StateFilter
 func ValidatorsData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -309,8 +310,8 @@ func ValidatorsData(w http.ResponseWriter, r *http.Request) {
 				fmt.Sprintf("%x", v.PublicKey),
 				fmt.Sprintf("%v", v.ValidatorIndex),
 				[]interface{}{
-					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.Config.Frontend.ClCurrencyDivisor)*price.GetPrice(utils.Config.Frontend.ClCurrency, currency), currency),
-					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.Config.Frontend.ClCurrencyDivisor)*price.GetPrice(utils.Config.Frontend.ClCurrency, currency), currency),
+					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), currency),
+					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), currency),
 				},
 				v.State,
 				[]interface{}{

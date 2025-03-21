@@ -53,7 +53,8 @@ func Withdrawals(w http.ResponseWriter, r *http.Request) {
 // WithdrawalsData will return eth1-deposits as json
 func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	currency := GetCurrency(r)
+	// currency := GetCurrency(r)
+	currency := "ZND"
 	q := r.URL.Query()
 
 	// TODO(rgeraldes24)
