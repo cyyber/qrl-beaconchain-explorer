@@ -38,29 +38,29 @@ var ZNSRegistryMetaData = &bind.MetaData{
 // Deprecated: Use ZNSRegistryMetaData.ABI instead.
 var ZNSRegistryABI = ZNSRegistryMetaData.ABI
 
-// ZNSRegistry is an auto generated Go binding around an Zond contract.
+// ZNSRegistry is an auto generated Go binding around a Zond contract.
 type ZNSRegistry struct {
 	ZNSRegistryCaller     // Read-only binding to the contract
 	ZNSRegistryTransactor // Write-only binding to the contract
 	ZNSRegistryFilterer   // Log filterer for contract events
 }
 
-// ZNSRegistryCaller is an auto generated read-only Go binding around an Zond contract.
+// ZNSRegistryCaller is an auto generated read-only Go binding around a Zond contract.
 type ZNSRegistryCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSRegistryTransactor is an auto generated write-only Go binding around an Zond contract.
+// ZNSRegistryTransactor is an auto generated write-only Go binding around a Zond contract.
 type ZNSRegistryTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSRegistryFilterer is an auto generated log filtering Go binding around an Zond contract events.
+// ZNSRegistryFilterer is an auto generated log filtering Go binding around a Zond contract events.
 type ZNSRegistryFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSRegistrySession is an auto generated Go binding around an Zond contract,
+// ZNSRegistrySession is an auto generated Go binding around a Zond contract,
 // with pre-set call and transact options.
 type ZNSRegistrySession struct {
 	Contract     *ZNSRegistry      // Generic contract binding to set the session for
@@ -68,31 +68,31 @@ type ZNSRegistrySession struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// ZNSRegistryCallerSession is an auto generated read-only Go binding around an Zond contract,
+// ZNSRegistryCallerSession is an auto generated read-only Go binding around a Zond contract,
 // with pre-set call options.
 type ZNSRegistryCallerSession struct {
 	Contract *ZNSRegistryCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts      // Call options to use throughout this session
 }
 
-// ZNSRegistryTransactorSession is an auto generated write-only Go binding around an Zond contract,
+// ZNSRegistryTransactorSession is an auto generated write-only Go binding around a Zond contract,
 // with pre-set transact options.
 type ZNSRegistryTransactorSession struct {
 	Contract     *ZNSRegistryTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts      // Transaction auth options to use throughout this session
 }
 
-// ZNSRegistryRaw is an auto generated low-level Go binding around an Zond contract.
+// ZNSRegistryRaw is an auto generated low-level Go binding around a Zond contract.
 type ZNSRegistryRaw struct {
 	Contract *ZNSRegistry // Generic contract binding to access the raw methods on
 }
 
-// ZNSRegistryCallerRaw is an auto generated low-level read-only Go binding around an Zond contract.
+// ZNSRegistryCallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
 type ZNSRegistryCallerRaw struct {
 	Contract *ZNSRegistryCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ZNSRegistryTransactorRaw is an auto generated low-level write-only Go binding around an Zond contract.
+// ZNSRegistryTransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
 type ZNSRegistryTransactorRaw struct {
 	Contract *ZNSRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }

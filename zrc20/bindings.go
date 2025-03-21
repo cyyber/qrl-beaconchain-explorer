@@ -30,29 +30,29 @@ var (
 // Zrc20ABI is the input ABI used to generate the binding from.
 const Zrc20ABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"version\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"balance\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_extraData\",\"type\":\"bytes\"}],\"name\":\"approveAndCall\",\"outputs\":[{\"name\":\"success\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"remaining\",\"type\":\"uint256\"}],\"payable\":false,\"type\":\"function\"},{\"inputs\":[{\"name\":\"_initialAmount\",\"type\":\"uint256\"},{\"name\":\"_tokenName\",\"type\":\"string\"},{\"name\":\"_decimalUnits\",\"type\":\"uint8\"},{\"name\":\"_tokenSymbol\",\"type\":\"string\"}],\"type\":\"constructor\"},{\"payable\":false,\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"}]"
 
-// Zrc20 is an auto generated Go binding around an Zond contract.
+// Zrc20 is an auto generated Go binding around a Zond contract.
 type Zrc20 struct {
 	Zrc20Caller     // Read-only binding to the contract
 	Zrc20Transactor // Write-only binding to the contract
 	Zrc20Filterer   // Log filterer for contract events
 }
 
-// Zrc20Caller is an auto generated read-only Go binding around an Zond contract.
+// Zrc20Caller is an auto generated read-only Go binding around a Zond contract.
 type Zrc20Caller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc20Transactor is an auto generated write-only Go binding around an Zond contract.
+// Zrc20Transactor is an auto generated write-only Go binding around a Zond contract.
 type Zrc20Transactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc20Filterer is an auto generated log filtering Go binding around an Zond contract events.
+// Zrc20Filterer is an auto generated log filtering Go binding around a Zond contract events.
 type Zrc20Filterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc20Session is an auto generated Go binding around an Zond contract,
+// Zrc20Session is an auto generated Go binding around a Zond contract,
 // with pre-set call and transact options.
 type Zrc20Session struct {
 	Contract     *Zrc20            // Generic contract binding to set the session for
@@ -60,31 +60,31 @@ type Zrc20Session struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Zrc20CallerSession is an auto generated read-only Go binding around an Zond contract,
+// Zrc20CallerSession is an auto generated read-only Go binding around a Zond contract,
 // with pre-set call options.
 type Zrc20CallerSession struct {
 	Contract *Zrc20Caller  // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts // Call options to use throughout this session
 }
 
-// Zrc20TransactorSession is an auto generated write-only Go binding around an Zond contract,
+// Zrc20TransactorSession is an auto generated write-only Go binding around a Zond contract,
 // with pre-set transact options.
 type Zrc20TransactorSession struct {
 	Contract     *Zrc20Transactor  // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Zrc20Raw is an auto generated low-level Go binding around an Zond contract.
+// Zrc20Raw is an auto generated low-level Go binding around a Zond contract.
 type Zrc20Raw struct {
 	Contract *Zrc20 // Generic contract binding to access the raw methods on
 }
 
-// Zrc20CallerRaw is an auto generated low-level read-only Go binding around an Zond contract.
+// Zrc20CallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
 type Zrc20CallerRaw struct {
 	Contract *Zrc20Caller // Generic read-only contract binding to access the raw methods on
 }
 
-// Zrc20TransactorRaw is an auto generated low-level write-only Go binding around an Zond contract.
+// Zrc20TransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
 type Zrc20TransactorRaw struct {
 	Contract *Zrc20Transactor // Generic write-only contract binding to access the raw methods on
 }
