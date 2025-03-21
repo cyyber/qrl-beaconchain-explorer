@@ -402,7 +402,7 @@ $(document).ready(function () {
   $("#validators").on("page.dt", function () {
     showSelectedValidator()
   })
-  
+
   $(document).on("mouseenter", ".hoverCheck[data-track=hover]", function () {
     $(this).data("hover", true)
   })
