@@ -343,7 +343,6 @@ func (bigtable *Bigtable) GetLastBlockInDataTable() (int, error) {
 }
 
 func (bigtable *Bigtable) getLastBlockInDataTableFromBigtable() (int, error) {
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 

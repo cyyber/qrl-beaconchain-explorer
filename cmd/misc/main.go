@@ -53,7 +53,6 @@ var opts = struct {
 	Family              string
 	Key                 string
 	ValidatorNameRanges string
-	Email               string
 	Name                string
 	DryRun              bool
 	Yes                 bool
@@ -87,7 +86,6 @@ func main() {
 	flag.StringVar(&opts.ValidatorNameRanges, "validator-name-ranges", "https://config.dencun-devnet-8.ethpandaops.io/api/v1/nodes/validator-ranges", "url to or json of validator-ranges (format must be: {'ranges':{'X-Y':'name'}})")
 	flag.StringVar(&opts.Addresses, "addresses", "", "Comma separated list of addresses that should be processed by the command")
 	flag.StringVar(&opts.Columns, "columns", "", "Comma separated list of columns that should be affected by the command")
-	flag.StringVar(&opts.Email, "email", "", "Email of the user")
 	flag.StringVar(&opts.Name, "name", "", "Name")
 	flag.BoolVar(&opts.Yes, "yes", false, "Answer yes to all questions")
 	dryRun := flag.String("dry-run", "true", "if 'false' it deletes all rows starting with the key, per default it only logs the rows that would be deleted, but does not really delete them")
@@ -1664,10 +1662,6 @@ func UpdateValidatorStatisticsSyncData(day uint64, client rpc.Client, dryRun boo
 				data.OrphanedSync,
 				data.Day, data.ValidatorIndex)
 		}
-	}
-
-	if err != nil {
-		return err
 	}
 
 	err = tx.Commit()
