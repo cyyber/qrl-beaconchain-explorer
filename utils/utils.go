@@ -573,12 +573,13 @@ func ReadConfig(cfg *types.Config, path string) error {
 		}
 	}
 
-	if cfg.Chain.DomainDilithiumToExecutionChange == "" {
-		cfg.Chain.DomainDilithiumToExecutionChange = "0x0A000000"
-	}
-	if cfg.Chain.DomainVoluntaryExit == "" {
-		cfg.Chain.DomainVoluntaryExit = "0x04000000"
-	}
+	// TODO(now.youtrack.cloud/issue/TZB-2)
+	// if cfg.Chain.DomainDilithiumToExecutionChange == "" {
+	// 	cfg.Chain.DomainDilithiumToExecutionChange = "0x0A000000"
+	// }
+	// if cfg.Chain.DomainVoluntaryExit == "" {
+	// 	cfg.Chain.DomainVoluntaryExit = "0x04000000"
+	// }
 
 	if cfg.Frontend.SiteTitle == "" {
 		cfg.Frontend.SiteTitle = "Zond Explorer"

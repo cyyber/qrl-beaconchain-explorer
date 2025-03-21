@@ -36,16 +36,16 @@ type Config struct {
 		EmulatorHost string `yaml:"emulatorHost" envconfig:"BIGTABLE_EMULATOR_HOST"`
 	} `yaml:"bigtable"`
 	Chain struct {
-		Name                             string `yaml:"name" envconfig:"CHAIN_NAME"`
-		Id                               uint64 `yaml:"id" envconfig:"CHAIN_ID"`
-		GenesisTimestamp                 uint64 `yaml:"genesisTimestamp" envconfig:"CHAIN_GENESIS_TIMESTAMP"`
-		GenesisValidatorsRoot            string `yaml:"genesisValidatorsRoot" envconfig:"CHAIN_GENESIS_VALIDATORS_ROOT"`
-		DomainDilithiumToExecutionChange string `yaml:"domainDilithiumToExecutionChange" envconfig:"CHAIN_DOMAIN_DILITHIUM_TO_EXECUTION_CHANGE"`
-		DomainVoluntaryExit              string `yaml:"domainVoluntaryExit" envconfig:"CHAIN_DOMAIN_VOLUNTARY_EXIT"`
-		ClConfigPath                     string `yaml:"clConfigPath" envconfig:"CHAIN_CL_CONFIG_PATH"`
-		ElConfigPath                     string `yaml:"elConfigPath" envconfig:"CHAIN_EL_CONFIG_PATH"`
-		ClConfig                         ClChainConfig
-		ElConfig                         *params.ChainConfig
+		Name                  string `yaml:"name" envconfig:"CHAIN_NAME"`
+		Id                    uint64 `yaml:"id" envconfig:"CHAIN_ID"`
+		GenesisTimestamp      uint64 `yaml:"genesisTimestamp" envconfig:"CHAIN_GENESIS_TIMESTAMP"`
+		GenesisValidatorsRoot string `yaml:"genesisValidatorsRoot" envconfig:"CHAIN_GENESIS_VALIDATORS_ROOT"`
+		// DomainDilithiumToExecutionChange string `yaml:"domainDilithiumToExecutionChange" envconfig:"CHAIN_DOMAIN_DILITHIUM_TO_EXECUTION_CHANGE"`
+		// DomainVoluntaryExit              string `yaml:"domainVoluntaryExit" envconfig:"CHAIN_DOMAIN_VOLUNTARY_EXIT"`
+		ClConfigPath string `yaml:"clConfigPath" envconfig:"CHAIN_CL_CONFIG_PATH"`
+		ElConfigPath string `yaml:"elConfigPath" envconfig:"CHAIN_EL_CONFIG_PATH"`
+		ClConfig     ClChainConfig
+		ElConfig     *params.ChainConfig
 	} `yaml:"chain"`
 	ELNodeEndpoint string `yaml:"elNodeEndpoint" envconfig:"EL_NODE_ENDPOINT"`
 	// EtherscanAPIKey           string `yaml:"etherscanApiKey" envconfig:"ETHERSCAN_API_KEY"`
@@ -66,6 +66,7 @@ type Config struct {
 		PubKeyTagsExporter        struct {
 			Enabled bool `yaml:"enabled" envconfig:"PUBKEY_TAGS_EXPORTER_ENABLED"`
 		} `yaml:"pubkeyTagsExporter"`
+		// TODO(now.youtrack.cloud/issue/TZB-1)
 		// ZnsTransformer struct {
 		// 	ValidRegistrarContracts []string `yaml:"validRegistrarContracts" envconfig:"ZNS_VALID_REGISTRAR_CONTRACTS"`
 		// } `yaml:"znsTransformer"`
@@ -113,24 +114,15 @@ type Config struct {
 			MaxIdleConns int    `yaml:"maxIdleConns" envconfig:"FRONTEND_WRITER_DB_MAX_IDLE_CONNS"`
 			SSL          bool   `yaml:"ssl" envconfig:"FRONTEND_WRITER_DB_SSL"`
 		} `yaml:"writerDatabase"`
-		RatelimitUpdateInterval              time.Duration `yaml:"ratelimitUpdateInterval" envconfig:"FRONTEND_RATELIMIT_UPDATE_INTERVAL"`
+		// RatelimitUpdateInterval              time.Duration `yaml:"ratelimitUpdateInterval" envconfig:"FRONTEND_RATELIMIT_UPDATE_INTERVAL"`
 		SessionSameSiteNone                  bool          `yaml:"sessionSameSiteNone" envconfig:"FRONTEND_SESSION_SAMESITE_NONE"`
 		SessionSecret                        string        `yaml:"sessionSecret" envconfig:"FRONTEND_SESSION_SECRET"`
 		SessionCookieDomain                  string        `yaml:"sessionCookieDomain" envconfig:"FRONTEND_SESSION_COOKIE_DOMAIN"`
 		SessionCookieDeriveDomainFromRequest bool          `yaml:"sessionCookieDeriveDomainFromRequest" envconfig:"FRONTEND_SESSION_COOKIE_DERIVE_DOMAIN_FROM_REQUEST"`
 		GATag                                string        `yaml:"gatag" envconfig:"GATAG"`
-		DisableStatsInserts                  bool          `yaml:"disableStatsInserts" envconfig:"FRONTEND_DISABLE_STATS_INSERTS"`
 		HttpReadTimeout                      time.Duration `yaml:"httpReadTimeout" envconfig:"FRONTEND_HTTP_READ_TIMEOUT"`
 		HttpWriteTimeout                     time.Duration `yaml:"httpWriteTimeout" envconfig:"FRONTEND_HTTP_WRITE_TIMEOUT"`
 		HttpIdleTimeout                      time.Duration `yaml:"httpIdleTimeout" envconfig:"FRONTEND_HTTP_IDLE_TIMEOUT"`
-		// TODO(rgeraldes24): remove
-		// ClCurrency                           string        `yaml:"clCurrency" envconfig:"FRONTEND_CL_CURRENCY"`
-		// ClCurrencyDivisor                    int64         `yaml:"clCurrencyDivisor" envconfig:"FRONTEND_CL_CURRENCY_DIVISOR"`
-		// ClCurrencyDecimals                   int64         `yaml:"clCurrencyDecimals" envconfig:"FRONTEND_CL_CURRENCY_DECIMALS"`
-		// ElCurrency                           string        `yaml:"elCurrency" envconfig:"FRONTEND_EL_CURRENCY"`
-		// ElCurrencyDivisor                    int64         `yaml:"elCurrencyDivisor" envconfig:"FRONTEND_EL_CURRENCY_DIVISOR"`
-		// ElCurrencyDecimals                   int64         `yaml:"elCurrencyDecimals" envconfig:"FRONTEND_EL_CURRENCY_DECIMALS"`
-		// MainCurrency                         string        `yaml:"mainCurrency" envconfig:"FRONTEND_MAIN_CURRENCY"`
 	} `yaml:"frontend"`
 	Metrics struct {
 		Enabled bool   `yaml:"enabled" envconfig:"METRICS_ENABLED"`
@@ -145,6 +137,7 @@ type Config struct {
 		Enabled bool   `yaml:"enabled" envconfig:"PPROF_ENABLED"`
 		Port    string `yaml:"port" envconfig:"PPROF_PORT"`
 	} `yaml:"pprof"`
+	// TODO(now.youtrack.cloud/issue/TZB-2)
 	/*
 		NodeJobsProcessor struct {
 			ElEndpoint string `yaml:"elEndpoint" envconfig:"NODE_JOBS_PROCESSOR_EL_ENDPOINT"`
