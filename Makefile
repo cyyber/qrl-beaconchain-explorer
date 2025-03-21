@@ -7,6 +7,7 @@ LDFLAGS="-X ${PACKAGE}/version.Version=${VERSION} -X ${PACKAGE}/version.BuildDat
 CGO_CFLAGS=""
 CGO_CFLAGS_ALLOW=""
 
+# TODO(now.youtrack.cloud/issue/TZB-2)
 # all: explorer stats frontend-data-updater el-indexer rewards-exporter node-jobs-processor signatures misc
 all: explorer stats frontend-data-updater el-indexer rewards-exporter signatures misc
 
@@ -35,6 +36,7 @@ rewards-exporter:
 el-indexer:
 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/el-indexer cmd/el-indexer/main.go
 
+# TODO(now.youtrack.cloud/issue/TZB-2)
 # node-jobs-processor:
 # 	CGO_CFLAGS=${CGO_CFLAGS} CGO_CFLAGS_ALLOW=${CGO_CFLAGS_ALLOW} go build --ldflags=${LDFLAGS} -o bin/node-jobs-processor cmd/node-jobs-processor/main.go
 
