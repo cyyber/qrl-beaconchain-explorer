@@ -1454,8 +1454,6 @@ type BurnPageData struct {
 	BurnRate24h      float64              `json:"burn_rate_24_h"`
 	BlockUtilization float64              `json:"block_utilization"`
 	Emission         float64              `json:"emission"`
-	// Price            float64              `json:"price_usd"`
-	// Currency         string               `json:"currency"`
 }
 
 type DilithiumChange struct {

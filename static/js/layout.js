@@ -848,7 +848,7 @@ function trimCurrency(value) {
 }
 
 function getIncomeChartValueString(value, currency, priceCurrency, price) {
-  if (currency == priceCurrency || (currency == "xDAI" && priceCurrency == "DAI")) {
+  if (currency == priceCurrency) {
     return `${trimToken(value)} ${currency}`
   }
 

@@ -216,7 +216,7 @@ function showTable(data) {
       $("#form-div").removeClass("d-flex").addClass("d-none")
       $("#table-div").removeClass("d-none")
       $("#subscriptions-div").addClass("d-none")
-      $("#total-income-eth-span").html("ZND " + data.total_eth)
+      $("#total-income-znd-span").html("ZND " + data.total_znd)
       $("#total-income-currency-span").html(data.total_currency)
       $("#totals-div").removeClass("d-none")
       $(".dt-button").addClass("ml-2 ")
@@ -254,32 +254,32 @@ function showTable(data) {
           return data
         },
       },
-      {
-        targets: 3,
-        data: "3",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          // return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
-          return data
-        },
-      },
-      {
-        targets: 4,
-        data: "4",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          //    return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
-          return data
-        },
-        // }, {
-        //     targets: 5,
-        //     data: '5',
-        //     "orderable": false,
-        //     visible: false,
-        //     render: function (data, type, row, meta) {
-        //         return data.toUpperCase()
-        //     }
-      },
+      // {
+      //   targets: 3,
+      //   data: "3",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     // return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
+      //     return data
+      //   },
+      // },
+      // {
+      //   targets: 4,
+      //   data: "4",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     //    return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
+      //     return data
+      //   },
+      //   // }, {
+      //   //     targets: 5,
+      //   //     data: '5',
+      //   //     "orderable": false,
+      //   //     visible: false,
+      //   //     render: function (data, type, row, meta) {
+      //   //         return data.toUpperCase()
+      //   //     }
+      // },
     ],
   })
 }
@@ -362,20 +362,20 @@ function updateSubscriptionTable(data, container) {
           return data
         },
       },
-      {
-        targets: 3,
-        data: "3",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          downloadQueryUrl = `${window.location.origin}/rewards/hist/download?validators=${row[2]}&currency=${row[1]}&days=${moment().subtract(1, "month").startOf("month").unix()}-${moment().subtract(1, "month").endOf("month").unix()}`
-          return `
-                        <div class="d-flex justify-content-between align-item-center">
-                            <i class="far fa-clone mr-2" style="cursor: pointer;" onClick='loadValInForm("${row[2]}")' data-toggle="tooltip" data-placement="top" title="Load validators in the form"></i>
-                            <a href="${downloadQueryUrl}" download><i class="fas fa-file-download mr-2" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Download the last month report"></i></a>
-                        </div>
-                        `
-        },
-      },
+      // {
+      //   targets: 3,
+      //   data: "3",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     downloadQueryUrl = `${window.location.origin}/rewards/hist/download?validators=${row[2]}&currency=${row[1]}&days=${moment().subtract(1, "month").startOf("month").unix()}-${moment().subtract(1, "month").endOf("month").unix()}`
+      //     return `
+      //                   <div class="d-flex justify-content-between align-item-center">
+      //                       <i class="far fa-clone mr-2" style="cursor: pointer;" onClick='loadValInForm("${row[2]}")' data-toggle="tooltip" data-placement="top" title="Load validators in the form"></i>
+      //                       <a href="${downloadQueryUrl}" download><i class="fas fa-file-download mr-2" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Download the last month report"></i></a>
+      //                   </div>
+      //                   `
+      //   },
+      // },
     ],
   })
 }

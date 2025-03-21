@@ -36,13 +36,14 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// var ensData *types.ZnsDomainResponse
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// var znsData *types.ZnsDomainResponse
 	// if utils.IsValidZnsDomain(search) {
-	// 	ensData, _ = GetZnsDomain(search)
+	// 	znsData, _ = GetZnsDomain(search)
 	// }
 	search = strings.Replace(search, "0x", "", -1)
-	// if ensData != nil && len(ensData.Address) > 0 {
-	// 	http.Redirect(w, r, "/address/"+ensData.Domain, http.StatusMovedPermanently)
+	// if znsData != nil && len(znsData.Address) > 0 {
+	// 	http.Redirect(w, r, "/address/"+znsData.Domain, http.StatusMovedPermanently)
 	// } else if utils.IsValidWithdrawalCredentials(search) {
 	if utils.IsValidWithdrawalCredentials(search) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
@@ -182,13 +183,13 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			ORDER BY index LIMIT 10`, search+"%")
 		}
 	case "eth1_addresses":
-		// TODO(rgeraldes24)
+		// TODO(now.youtrack.cloud/issue/TZB-1)
 		// if utils.IsValidZnsDomain(search) {
-		// 	ensData, _ := GetZnsDomain(search)
-		// 	if len(ensData.Address) > 0 {
+		// 	znsData, _ := GetZnsDomain(search)
+		// 	if len(znsData.Address) > 0 {
 		// 		result = []*types.Eth1AddressSearchItem{{
-		// 			Address: ensData.Address,
-		// 			Name:    ensData.Domain,
+		// 			Address: znsData.Address,
+		// 			Name:    znsData.Domain,
 		// 			Token:   "",
 		// 		}}
 		// 		break
@@ -237,19 +238,19 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			LEFT JOIN validators ON validators.pubkey = eth1_deposits.publickey
 			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_eth1_addresses":
-		// TODO(rgeraldes24)
+		// TODO(now.youtrack.cloud/issue/TZB-1)
 		// search = ReplaceZnsNameWithAddress(search)
 		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
 	case "count_indexed_validators_by_eth1_address":
-		// TODO(rgeraldes24)
-		// var ensData *types.ZnsDomainResponse
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// var znsData *types.ZnsDomainResponse
 		// if utils.IsValidZnsDomain(search) {
-		// 	ensData, _ = GetZnsDomain(search)
-		// 	if len(ensData.Address) > 0 {
-		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
+		// 	znsData, _ = GetZnsDomain(search)
+		// 	if len(znsData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(znsData.Address, "Z", "", -1))
 		// 	}
 		// }
 		if !searchLikeRE.MatchString(lowerStrippedSearch) {
@@ -272,12 +273,12 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
-		// TODO(rgeraldes24)
-		// var ensData *types.ZnsDomainResponse
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// var znsData *types.ZnsDomainResponse
 		// if utils.IsValidZnsDomain(search) {
-		// 	ensData, _ = GetZnsDomain(search)
-		// 	if len(ensData.Address) > 0 {
-		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
+		// 	znsData, _ = GetZnsDomain(search)
+		// 	if len(znsData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(znsData.Address, "0x", "", -1))
 		// 	}
 		// }
 		if len(lowerStrippedSearch) == 40 {
