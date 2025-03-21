@@ -190,8 +190,8 @@ func GetRequestFilter() func(req *http.Request) bool {
 
 var maxBadRequestWeight int64 = 1
 
-func SetMaxBadRquestWeight(planckght int64) {
-	atomic.StoreInt64(&maxBadRequestWeight, planckght)
+func SetMaxBadRquestWeight(weight int64) {
+	atomic.StoreInt64(&maxBadRequestWeight, weight)
 }
 
 func GetMaxBadRquestWeight() int64 {
@@ -343,11 +343,11 @@ func updateWeights(firstRun bool) error {
 
 	dbWeights := []struct {
 		Endpoint  string    `db:"endpoint"`
-		Weight    int64     `db:"planckght"`
+		Weight    int64     `db:"weight"`
 		Bucket    string    `db:"bucket"`
 		ValidFrom time.Time `db:"valid_from"`
 	}{}
-	err := db.FrontendWriterDB.Select(&dbWeights, "SELECT DISTINCT ON (endpoint) endpoint, bucket, planckght, valid_from FROM api_weights WHERE valid_from <= NOW() ORDER BY endpoint, valid_from DESC")
+	err := db.FrontendWriterDB.Select(&dbWeights, "SELECT DISTINCT ON (endpoint) endpoint, bucket, weight, valid_from FROM api_weights WHERE valid_from <= NOW() ORDER BY endpoint, valid_from DESC")
 	if err != nil {
 		return err
 	}
@@ -359,7 +359,7 @@ func updateWeights(firstRun bool) error {
 	for _, w := range dbWeights {
 		weights[w.Endpoint] = w.Weight
 		if !firstRun && oldWeights[w.Endpoint] != weights[w.Endpoint] {
-			logger.WithFields(logrus.Fields{"endpoint": w.Endpoint, "planckght": w.Weight, "oldWeight": oldWeights[w.Endpoint]}).Infof("planckght changed")
+			logger.WithFields(logrus.Fields{"endpoint": w.Endpoint, "weight": w.Weight, "oldWeight": oldWeights[w.Endpoint]}).Infof("weight changed")
 		}
 		buckets[w.Endpoint] = strings.ReplaceAll(w.Bucket, ":", "_")
 		if buckets[w.Endpoint] == "" {
@@ -718,8 +718,8 @@ func rateLimitRequest(r *http.Request) (*RateLimitResult, error) {
 	res.Key = key
 	res.IP = ip
 
-	planckght, route, bucket := getWeight(r)
-	res.Weight = planckght
+	weight, route, bucket := getWeight(r)
+	res.Weight = weight
 	res.Route = route
 	res.Bucket = bucket
 
@@ -770,18 +770,18 @@ func rateLimitRequest(r *http.Request) (*RateLimitResult, error) {
 	var rateLimitSecond, rateLimitHour, rateLimitMonth *redis.IntCmd
 
 	if res.RateLimit.Second > 0 {
-		rateLimitSecond = pipe.IncrBy(ctx, rateLimitSecondKey, planckght)
+		rateLimitSecond = pipe.IncrBy(ctx, rateLimitSecondKey, weight)
 		pipe.ExpireNX(ctx, rateLimitSecondKey, time.Second)
 	}
 
 	if res.RateLimit.Hour > 0 {
-		rateLimitHour = pipe.IncrBy(ctx, rateLimitHourKey, planckght)
+		rateLimitHour = pipe.IncrBy(ctx, rateLimitHourKey, weight)
 		pipe.ExpireAt(ctx, rateLimitHourKey, nextHourUtc.Add(time.Second*60)) // expire 1 minute after the window to make sure we do not miss any requests due to time-sync
 		res.RedisKeys = append(res.RedisKeys, RedisKey{rateLimitHourKey, nextHourUtc.Add(time.Second * 60)})
 	}
 
 	if res.RateLimit.Month > 0 {
-		rateLimitMonth = pipe.IncrBy(ctx, rateLimitMonthKey, planckght)
+		rateLimitMonth = pipe.IncrBy(ctx, rateLimitMonthKey, weight)
 		pipe.ExpireAt(ctx, rateLimitMonthKey, nextMonthUtc.Add(time.Second*60)) // expire 1 minute after the window to make sure we do not miss any requests due to time-sync
 		res.RedisKeys = append(res.RedisKeys, RedisKey{rateLimitMonthKey, nextMonthUtc.Add(time.Second * 60)})
 	}
@@ -908,35 +908,23 @@ func max(vals ...int64) int64 {
 // getKey returns the key used for RateLimiting. It first checks the query params, then the header and finally the ip address.
 func getKey(r *http.Request) (key, ip string) {
 	ip = getIP(r)
-	key = r.URL.Query().Get("apikey")
-	if key != "" {
-		return key, ip
-	}
-	key = r.Header.Get("apikey")
-	if key != "" {
-		return key, ip
-	}
-	key = r.Header.Get("X-API-KEY")
-	if key != "" {
-		return key, ip
-	}
 	return "nokey", ip
 }
 
-// getWeight returns the planckght of an endpoint. if the planckght of the endpoint is not defined, it returns 1.
+// getWeight returns the weight of an endpoint. if the weight of the endpoint is not defined, it returns 1.
 func getWeight(r *http.Request) (cost int64, identifier, bucket string) {
 	route := getRoute(r)
 	weightsMu.RLock()
-	planckght, planckghtOk := weights[route]
+	weight, weightOk := weights[route]
 	bucket, bucketOk := buckets[route]
 	weightsMu.RUnlock()
-	if !planckghtOk {
-		planckght = 1
+	if !weightOk {
+		weight = 1
 	}
 	if !bucketOk {
 		bucket = defaultBucket
 	}
-	return planckght, route, bucket
+	return weight, route, bucket
 }
 
 func getRoute(r *http.Request) string {
@@ -1026,19 +1014,6 @@ func (rl *FallbackRateLimiter) Handle(w http.ResponseWriter, r *http.Request, ne
 	}
 	rl.mu.Unlock()
 	next(w, r)
-}
-
-func DBGetUserApiRateLimit(userId int64) (*RateLimit, error) {
-	rl := &RateLimit{}
-	err := db.FrontendWriterDB.Get(rl, `
-        select second, hour, month
-        from api_ratelimits
-        where user_id = $1 and bucket = 'default'`, userId)
-	if err != nil && err == sql.ErrNoRows {
-		_, freeRatelimit := getDefaultRatelimit("default")
-		return freeRatelimit, nil
-	}
-	return rl, err
 }
 
 /*

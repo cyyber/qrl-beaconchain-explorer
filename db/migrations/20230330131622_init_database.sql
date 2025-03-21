@@ -496,19 +496,6 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    api_statistics (
-        ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        apikey VARCHAR(64) NOT NULL,
-        CALL VARCHAR(64) NOT NULL,
-        COUNT INT NOT NULL DEFAULT 0,
-        PRIMARY KEY (
-            ts,
-            apikey,
-            CALL
-        )
-    );
-
-CREATE TABLE IF NOT EXISTS
     price (
         ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
         eur NUMERIC(20, 10) NOT NULL,

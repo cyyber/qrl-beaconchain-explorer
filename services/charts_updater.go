@@ -786,11 +786,11 @@ func graffitiCloudChartData() (*types.GenericChartData, error) {
 
 	rows := []struct {
 		Name       string `json:"name"`
-		Weight     uint64 `json:"planckght"`
+		Weight     uint64 `json:"weight"`
 		Validators uint64 `json:"validators"`
 	}{}
 
-	err := db.ReaderDb.Select(&rows, `select graffiti_text as name, count(*) as planckght, sum(proposer_count) as validators from graffiti_stats group by graffiti_text order by planckght desc limit 25`)
+	err := db.ReaderDb.Select(&rows, `select graffiti_text as name, count(*) as weight, sum(proposer_count) as validators from graffiti_stats group by graffiti_text order by weight desc limit 25`)
 	if err != nil {
 		return nil, fmt.Errorf("error getting graffiti-occurrences: %w", err)
 	}
@@ -804,7 +804,7 @@ func graffitiCloudChartData() (*types.GenericChartData, error) {
 		Type:                         "wordcloud",
 		Title:                        "Graffiti Word Cloud",
 		Subtitle:                     "Word Cloud of the 25 most occurring graffities.",
-		TooltipFormatter:             `function(){ return '<b>'+this.point.name+'</b><br\>Occurrences: '+this.point.planckght+'<br\>Validators: '+this.point.validators }`,
+		TooltipFormatter:             `function(){ return '<b>'+this.point.name+'</b><br\>Occurrences: '+this.point.weight+'<br\>Validators: '+this.point.validators }`,
 		PlotOptionsSeriesEventsClick: `function(event){ window.location.href = '/slots?q='+encodeURIComponent(event.point.name) }`,
 		PlotOptionsSeriesCursor:      "pointer",
 		Series: []*types.GenericChartDataSeries{
