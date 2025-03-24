@@ -692,9 +692,6 @@ func DashboardDataWithdrawals(w http.ResponseWriter, r *http.Request) {
 }
 
 func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
-	// currency := GetCurrency(r)
-	currency := "ZND"
-
 	w.Header().Set("Content-Type", "application/json")
 
 	validatorIndexArr, validatorPubkeyArr, redirect, err := handleValidatorsQuery(w, r, true)
@@ -854,8 +851,8 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 			fmt.Sprintf("%x", v.PublicKey),
 			indexInfo,
 			[]interface{}{
-				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9), currency),
-				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9), currency),
+				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9), "ZND"),
+				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9), "ZND"),
 			},
 			[]interface{}{
 				v.ValidatorIndex,
@@ -906,7 +903,7 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 			v.MissedProposals,
 		})
 
-		tableData[i] = append(tableData[i], utils.FormatIncome(v.Performance7d, currency, true))
+		tableData[i] = append(tableData[i], utils.FormatIncome(v.Performance7d, "ZND", true))
 
 		validatorDeposits := validatorsDepositsMap[hex.EncodeToString(v.PublicKey)]
 		if validatorDeposits != nil {

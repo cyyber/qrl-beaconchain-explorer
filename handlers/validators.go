@@ -229,9 +229,6 @@ func parseValidatorsDataQueryParams(r *http.Request) (*ValidatorsDataQueryParams
 
 // ValidatorsData returns all validators and basic information about them based on a StateFilter
 func ValidatorsData(w http.ResponseWriter, r *http.Request) {
-	// currency := GetCurrency(r)
-	currency := "ZND"
-
 	w.Header().Set("Content-Type", "application/json")
 
 	dataQuery, err := parseValidatorsDataQueryParams(r)
@@ -310,8 +307,8 @@ func ValidatorsData(w http.ResponseWriter, r *http.Request) {
 				fmt.Sprintf("%x", v.PublicKey),
 				fmt.Sprintf("%v", v.ValidatorIndex),
 				[]interface{}{
-					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), currency),
-					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), currency),
+					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), "ZND"),
+					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), "ZND"),
 				},
 				v.State,
 				[]interface{}{

@@ -364,8 +364,6 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 
 // SlotDepositData returns the deposits for a specific slot
 func SlotDepositData(w http.ResponseWriter, r *http.Request) {
-	// currency := GetCurrency(r)
-	currency := "ZND"
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -463,7 +461,7 @@ func SlotDepositData(w http.ResponseWriter, r *http.Request) {
 		tableData = append(tableData, []interface{}{
 			i + 1 + int(start),
 			utils.FormatPublicKey(deposit.PublicKey),
-			utils.FormatBalance(deposit.Amount, currency),
+			utils.FormatBalance(deposit.Amount, "ZND"),
 			utils.FormatWithdawalCredentials(deposit.WithdrawalCredentials, true),
 			fmt.Sprintf("0x%v", hex.EncodeToString(deposit.Signature)),
 			utils.FormatHash(deposit.Signature, true),
@@ -759,8 +757,6 @@ func SlotAttestationsData(w http.ResponseWriter, r *http.Request) {
 func SlotWithdrawalData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	// currency := GetCurrency(r)
-	currency := "ZND"
 	slot, err := strconv.ParseUint(vars["slot"], 10, 64)
 	if err != nil || slot > math.MaxInt32 {
 		logger.Warnf("error parsing slot url parameter %v: %v", vars["slot"], err)
@@ -778,7 +774,7 @@ func SlotWithdrawalData(w http.ResponseWriter, r *http.Request) {
 			template.HTML(fmt.Sprintf("%v", w.Index)),
 			utils.FormatValidator(w.ValidatorIndex),
 			utils.FormatAddress(w.Address, nil, "", false, false, true),
-			utils.FormatClCurrency(w.Amount, currency, 6, true, false, false, true),
+			utils.FormatClCurrency(w.Amount, "ZND", 6, true, false, false, true),
 		})
 	}
 

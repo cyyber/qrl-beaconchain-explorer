@@ -42,9 +42,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		"components/rocket.html")
 	var validatorTemplate = templates.GetTemplate(validatorTemplateFiles...)
 
-	// currency := GetCurrency(r)
-	currency := "ZND"
-
 	timings := struct {
 		Start         time.Time
 		BasicInfo     time.Duration
@@ -354,7 +351,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			timings.Earnings = time.Since(start)
 		}()
-		earnings, balances, err := GetValidatorEarnings([]uint64{index}, currency)
+		earnings, balances, err := GetValidatorEarnings([]uint64{index}, "ZND")
 		if err != nil {
 			return fmt.Errorf("error getting validator earnings: %w", err)
 		}
@@ -445,7 +442,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 					template.HTML(fmt.Sprintf(`<span class="text-muted">~ %s</span>`, utils.FormatBlockSlot(utils.TimeToSlot(uint64(timeToWithdrawal.Unix()))))),
 					template.HTML(fmt.Sprintf(`<span class="">~ %s</span>`, utils.FormatTimestamp(timeToWithdrawal.Unix()))),
 					withdrawalCredentialsTemplate,
-					template.HTML(fmt.Sprintf(`<span class="text-muted"><span data-toggle="tooltip" title="If the withdrawal were to be processed at this very moment, this amount would be withdrawn"><i class="far ml-1 fa-question-circle" style="margin-left: 0px !important;"></i></span> %s</span>`, utils.FormatClCurrency(withdrawalAmount, currency, 6, true, false, false, true))),
+					template.HTML(fmt.Sprintf(`<span class="text-muted"><span data-toggle="tooltip" title="If the withdrawal were to be processed at this very moment, this amount would be withdrawn"><i class="far ml-1 fa-question-circle" style="margin-left: 0px !important;"></i></span> %s</span>`, utils.FormatClCurrency(withdrawalAmount, "ZND", 6, true, false, false, true))),
 				})
 
 				validatorPageData.NextWithdrawalRow = tableData
@@ -1319,8 +1316,7 @@ func ValidatorSlashings(w http.ResponseWriter, r *http.Request) {
 // ValidatorHistory returns a validators history in json
 func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// currency := GetCurrency(r)
-	currency := "ZND"
+
 	pageLength := 10
 	maxPages := 10
 
@@ -1442,7 +1438,7 @@ func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 			} else if len(tableData) >= pageLength {
 				continue
 			}
-			tableData = append(tableData, incomeToTableData(i, incomeDetails[index][i], withdrawalMap[i], currency))
+			tableData = append(tableData, incomeToTableData(i, incomeDetails[index][i], withdrawalMap[i], "ZND"))
 		}
 	}
 
@@ -1483,7 +1479,7 @@ func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 				}
 				continue
 			}
-			tableData = append(tableData, incomeToTableData(epoch, incomeDetails[index][epoch], withdrawalMap[epoch], currency))
+			tableData = append(tableData, incomeToTableData(epoch, incomeDetails[index][epoch], withdrawalMap[epoch], "ZND"))
 
 		}
 	}
