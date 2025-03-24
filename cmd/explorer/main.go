@@ -16,6 +16,7 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/exporter"
 	"github.com/theQRL/zond-beaconchain-explorer/handlers"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
+	"github.com/theQRL/zond-beaconchain-explorer/ratelimit"
 	"github.com/theQRL/zond-beaconchain-explorer/rpc"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/static"
@@ -349,9 +350,8 @@ func main() {
 			router.Use(metrics.HttpMiddleware)
 		}
 
-		// TODO(rgeraldes24)
-		// ratelimit.Init()
-		// router.Use(ratelimit.HttpMiddleware)
+		ratelimit.Init()
+		router.Use(ratelimit.HttpMiddleware)
 
 		n := negroni.New(negroni.NewRecovery())
 		n.Use(gzip.Gzip(gzip.DefaultCompression))
