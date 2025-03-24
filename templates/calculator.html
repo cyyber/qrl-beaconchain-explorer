@@ -258,11 +258,12 @@
         this.result.start = null
         this.result.numberOfPossibleValidators = "0"
 
-        // TODO(rgeraldes24)
+        // TODO(now.youtrack.cloud/issue/TZB-5)
         // this.fetchStats().then(() => {
         //   this.readUrlSearchParams()
         //   this.run()
         // })
+        this.readUrlSearchParams()
         this.run()
 
         $(".staking-variable").on("input", () => {
@@ -350,7 +351,7 @@
         this.setUrlParams()
       }
 
-      // TODO(rgeraldes24)
+      // TODO(now.youtrack.cloud/issue/TZB-5)
       /*
       fetchStats() {
         return new Promise((resolve, reject) => {
@@ -397,7 +398,6 @@
               // reject(err)
             })
 
-          // TODO(rgeraldes24)
           fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR,GBP,JPY,RUB,CNY,AUD,CAD,CZK")
             .then((res) => res.json())
             .then((data) => {

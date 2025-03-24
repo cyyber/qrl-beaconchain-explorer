@@ -23,7 +23,7 @@ func StakingCalculator(w http.ResponseWriter, r *http.Request) {
 	}
 
 	calculatorPageData.TotalStaked = total
-	// TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-5)
 	// calculatorPageData.EtherscanApiBaseUrl = utils.GetEtherscanAPIBaseUrl(true)
 
 	w.Header().Set("Content-Type", "text/html")

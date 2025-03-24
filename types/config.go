@@ -40,6 +40,7 @@ type Config struct {
 		Id                    uint64 `yaml:"id" envconfig:"CHAIN_ID"`
 		GenesisTimestamp      uint64 `yaml:"genesisTimestamp" envconfig:"CHAIN_GENESIS_TIMESTAMP"`
 		GenesisValidatorsRoot string `yaml:"genesisValidatorsRoot" envconfig:"CHAIN_GENESIS_VALIDATORS_ROOT"`
+		// TODO(now.youtrack.cloud/issue/TZB-2)
 		// DomainDilithiumToExecutionChange string `yaml:"domainDilithiumToExecutionChange" envconfig:"CHAIN_DOMAIN_DILITHIUM_TO_EXECUTION_CHANGE"`
 		// DomainVoluntaryExit              string `yaml:"domainVoluntaryExit" envconfig:"CHAIN_DOMAIN_VOLUNTARY_EXIT"`
 		ClConfigPath string `yaml:"clConfigPath" envconfig:"CHAIN_CL_CONFIG_PATH"`
@@ -48,6 +49,7 @@ type Config struct {
 		ElConfig     *params.ChainConfig
 	} `yaml:"chain"`
 	ELNodeEndpoint string `yaml:"elNodeEndpoint" envconfig:"EL_NODE_ENDPOINT"`
+	// TODO(now.youtrack.cloud/issue/TZB-5)
 	// EtherscanAPIKey           string `yaml:"etherscanApiKey" envconfig:"ETHERSCAN_API_KEY"`
 	// EtherscanAPIBaseURL       string `yaml:"etherscanApiBaseUrl" envconfig:"ETHERSCAN_API_BASEURL"`
 	RedisCacheEndpoint        string `yaml:"redisCacheEndpoint" envconfig:"REDIS_CACHE_ENDPOINT"`

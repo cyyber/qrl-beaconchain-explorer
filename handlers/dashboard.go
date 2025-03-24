@@ -455,8 +455,6 @@ func DashboardDataBalanceCombined(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// currency := GetCurrency(r)
-	currency := "ZND"
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -475,7 +473,7 @@ func DashboardDataBalanceCombined(w http.ResponseWriter, r *http.Request) {
 	var incomeHistoryChartData []*types.ChartDataPoint
 	var executionChartData []*types.ChartDataPoint
 	g.Go(func() error {
-		incomeHistoryChartData, err = db.GetValidatorIncomeHistoryChart(queryValidatorIndices, currency, services.LatestFinalizedEpoch(), lowerBoundDay)
+		incomeHistoryChartData, err = db.GetValidatorIncomeHistoryChart(queryValidatorIndices, services.LatestFinalizedEpoch(), lowerBoundDay)
 		if err != nil {
 			return fmt.Errorf("error in GetValidatorIncomeHistoryChart: %w", err)
 		}
@@ -483,7 +481,7 @@ func DashboardDataBalanceCombined(w http.ResponseWriter, r *http.Request) {
 	})
 
 	g.Go(func() error {
-		executionChartData, err = getExecutionChartData(queryValidatorIndices, currency, lowerBoundDay)
+		executionChartData, err = getExecutionChartData(queryValidatorIndices, lowerBoundDay)
 		if err != nil {
 			return fmt.Errorf("error in getExecutionChartData: %w", err)
 		}
@@ -514,8 +512,6 @@ func DashboardDataBalanceCombined(w http.ResponseWriter, r *http.Request) {
 
 // DashboardDataBalance retrieves the income history of a set of validators
 func DashboardDataBalance(w http.ResponseWriter, r *http.Request) {
-	// currency := GetCurrency(r)
-	currency := "ZND"
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -532,7 +528,7 @@ func DashboardDataBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	incomeHistoryChartData, err := db.GetValidatorIncomeHistoryChart(queryValidatorIndices, currency, services.LatestFinalizedEpoch(), 0)
+	incomeHistoryChartData, err := db.GetValidatorIncomeHistoryChart(queryValidatorIndices, services.LatestFinalizedEpoch(), 0)
 	if err != nil {
 		utils.LogError(err, "failed to genereate income history chart data for dashboard view", 0, errFieldMap)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

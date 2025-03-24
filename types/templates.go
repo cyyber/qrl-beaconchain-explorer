@@ -991,7 +991,8 @@ type StakingCalculatorPageData struct {
 	BestValidatorBalanceHistory *[]ValidatorBalanceHistory
 	WatchlistBalanceHistory     [][]interface{}
 	TotalStaked                 uint64
-	EtherscanApiBaseUrl         string
+	// TODO(now.youtrack.cloud/issue/TZB-5)
+	// EtherscanApiBaseUrl         string
 }
 
 type DepositsPageData struct {

@@ -530,7 +530,7 @@ func GetWithdrawableCountFromCursor(epoch uint64, validatorindex uint64, cursor 
 	}
 }
 
-func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint64) ([]*types.ChartDataPoint, error) {
+func getExecutionChartData(indices []uint64, lowerBoundDay uint64) ([]*types.ChartDataPoint, error) {
 	var limit uint64 = 300
 	blockList, consMap, err := findExecBlockNumbersByProposerIndex(indices, 0, limit, false, true, lowerBoundDay)
 	if err != nil {
