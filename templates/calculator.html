@@ -74,7 +74,7 @@
           RUB: 15277.44,
           USD: 208.96,
         }
-        this.config.totalEthSupply = 105000000000000000
+        this.config.totalZNDSupply = 105000000000000000
         this.config.showCosts = false
 
         // the param key, encoding function, decoding function, include in url params bool, update element function
@@ -241,7 +241,7 @@
         this.params.stakingFee = 0
         this.params.reinvest = false
         this.params.networkStake = 0
-        this.params.networkStakePercent = this.config.minNetworkStake / this.config.totalEthSupply
+        this.params.networkStakePercent = this.config.minNetworkStake / this.config.totalZNDSupply
         this.params.networkOnlineProbability = 0
         this.params.totalStakeMonthlyChange = 0
 
@@ -271,7 +271,7 @@
         })
 
         document.getElementById("staking-variable-totalStake-slider").oninput = function () {
-          document.getElementById("staking-variable-totalStake-percentage").innerText = `${(((this.value * 1e9) / self.config.totalEthSupply) * 100).toFixed(2)} %`
+          document.getElementById("staking-variable-totalStake-percentage").innerText = `${(((this.value * 1e9) / self.config.totalZNDSupply) * 100).toFixed(2)} %`
           document.getElementById("staking-variable-totalStake").value = this.value
         }
         document.getElementById("staking-variable-totalStake-slider").onchange = () => {
@@ -364,20 +364,20 @@
                   data.result = parseFloat(data.result)
                   console.log("parsed", data.result)
                 } catch (e) {
-                  console.err("could not pare eth supply", e)
+                  console.err("could not parse znd supply", e)
                 }
               }
-              if (data && data.result && data.result > this.config.totalEthSupply) {
+              if (data && data.result && data.result > this.config.totalZNDSupply) {
                 console.log("updating totalsupply")
-                this.config.totalEthSupply = data.result / 1e9
+                this.config.totalZNDSupply = data.result / 1e9
               }
-              var ethSupply = this.config.totalEthSupply / 1e9
-              document.getElementById("staking-variable-totalStake").setAttribute("max", ethSupply)
+              var zndSupply = this.config.totalZNDSupply / 1e9
+              document.getElementById("staking-variable-totalStake").setAttribute("max", zndSupply)
               if (document.getElementById("staking-variable-totalStake").getAttribute("value") === "0") {
-                document.getElementById("staking-variable-totalStake").setAttribute("value", ethSupply * 0.01)
+                document.getElementById("staking-variable-totalStake").setAttribute("value", zndSupply * 0.01)
               }
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", ethSupply)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", ethSupply * 0.0025)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", zndSupply)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", zndSupply * 0.0025)
               count += 1
               if (count == 2) {
                 resolve()
@@ -385,11 +385,11 @@
             })
             .catch((err) => {
               console.error(err)
-              var ethSupply = this.config.totalEthSupply / 1e9
-              document.getElementById("staking-variable-totalStake").setAttribute("max", ethSupply)
-              document.getElementById("staking-variable-totalStake").setAttribute("value", ethSupply * 0.01)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", ethSupply)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", ethSupply * 0.0025)
+              var zndSupply = this.config.totalZNDSupply / 1e9
+              document.getElementById("staking-variable-totalStake").setAttribute("max", zndSupply)
+              document.getElementById("staking-variable-totalStake").setAttribute("value", zndSupply * 0.01)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", zndSupply)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", zndSupply * 0.0025)
               count += 1
               if (count == 2) {
                 resolve()
@@ -518,7 +518,7 @@
         if (p.stakingFee > 1) {
           p.stakingFee = 1
         }
-        p.networkStakePercent = p.networkStake / this.config.totalEthSupply
+        p.networkStakePercent = p.networkStake / this.config.totalZNDSupply
       }
 
       calculate() {

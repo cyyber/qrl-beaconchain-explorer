@@ -31,14 +31,11 @@ var ErrTooManyValidators = errors.New("too many validators")
 
 func handleValidatorsQuery(w http.ResponseWriter, r *http.Request, checkValidatorLimit bool) ([]uint64, [][]byte, bool, error) {
 	q := r.URL.Query()
-	// TODO(rgeraldes24)
-	// validatorLimit := getUserPremium(r).MaxValidators
-	validatorLimit := 10
 
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	// Parse all the validator indices and pubkeys from the query string
-	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), validatorLimit)
+	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), ValidatorLimit)
 	if err != nil && (checkValidatorLimit || err != ErrTooManyValidators) {
 		logger.Warnf("could not parse validators from query string: %v; Route: %v", err, r.URL.String())
 		http.Error(w, "Invalid query", http.StatusBadRequest)
@@ -204,12 +201,9 @@ func Heatmap(w http.ResponseWriter, r *http.Request) {
 	var heatmapTemplate = templates.GetTemplate(templateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
-	// TODO(rgeraldes24
-	// validatorLimit := getUserPremium(r).MaxValidators
-	validatorLimit := 10
 
 	heatmapData := types.HeatmapData{}
-	heatmapData.ValidatorLimit = validatorLimit
+	heatmapData.ValidatorLimit = ValidatorLimit
 
 	min := 1
 	max := 400000
@@ -301,13 +295,10 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dashboardData := types.DashboardData{}
-	// TODO(rgeraldes24)
-	// dashboardData.ValidatorLimit = getUserPremium(r).MaxValidators
-	dashboardData.ValidatorLimit = 10
-
 	data := InitPageData(w, r, "dashboard", "/dashboard", "Dashboard", templateFiles)
-	data.Data = dashboardData
+	data.Data = types.DashboardData{
+		ValidatorLimit: ValidatorLimit,
+	}
 
 	if handleTemplateError(w, r, "dashboard.go", "Dashboard", "", dashboardTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
@@ -530,10 +521,7 @@ func DashboardDataBalance(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
-	// TODO(rgeraldes24)
-	// validatorLimit := getUserPremium(r).MaxValidators
-	validatorLimit := 10
-	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), validatorLimit)
+	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), ValidatorLimit)
 	if err != nil || len(queryValidatorPubkeys) > 0 {
 		utils.LogError(err, "error parsing validators from query string", 0, errFieldMap)
 		http.Error(w, "Invalid query", http.StatusBadRequest)
@@ -721,9 +709,6 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	filter := pq.Array(validatorIndexArr)
-	// TODO(rgeraldes24)
-	// validatorLimit := getUserPremium(r).MaxValidators
-	validatorLimit := 10
 
 	var validatorsByIndex []*types.ValidatorsData
 	err = db.ReaderDb.Select(&validatorsByIndex, `
@@ -744,7 +729,7 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 		LEFT JOIN validator_names ON validators.pubkey = validator_names.publickey
 		LEFT JOIN validator_performance ON validators.validatorindex = validator_performance.validatorindex
 		WHERE validators.validatorindex = ANY($1)
-		LIMIT $2`, filter, validatorLimit)
+		LIMIT $2`, filter, ValidatorLimit)
 
 	if err != nil {
 		utils.LogError(err, "error retrieving validator data", 0, errFieldMap)
