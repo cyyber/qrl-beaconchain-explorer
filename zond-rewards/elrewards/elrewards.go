@@ -6,11 +6,12 @@ import (
 	"math/big"
 	"time"
 
+	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/rpc"
 	"github.com/theQRL/go-zond/zondclient"
-	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 )
 
 func GetELRewardForBlock(executionBlockNumber uint64, endpoint string) (*big.Int, error) {

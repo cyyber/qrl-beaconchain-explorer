@@ -7,9 +7,9 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/beacon"
 	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/elrewards"
 	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
-	"golang.org/x/sync/errgroup"
 
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
 )
 
 func GetRewardsForEpoch(epoch uint64, client *beacon.Client, elEndpoint string) (map[uint64]*types.ValidatorEpochIncome, error) {
