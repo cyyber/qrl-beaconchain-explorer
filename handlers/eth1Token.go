@@ -72,18 +72,8 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 	data := InitPageData(w, r, "blockchain", "/token", fmt.Sprintf("Token 0x%x", token), templateFiles)
 
 	tokenDecimals := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.Decimals), 0)
-
-	ethDiv := decimal.NewFromInt(utils.ElCurrencyDivisor)
 	tokenDiv := decimal.NewFromInt(10).Pow(tokenDecimals)
-
-	_ = ethDiv
-	_ = tokenDiv
-
-	// ethPriceUsd := decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.ElCurrency, "USD"))
-	// tokenPriceEth := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.Price), 0).DivRound(ethDiv, 18)
-	// tokenPriceUsd := ethPriceUsd.Mul(tokenPriceEth).Mul(tokenDiv).DivRound(ethDiv, 18)
 	tokenSupply := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.TotalSupply), 0).DivRound(tokenDiv, 18)
-	// tokenMarketCapUsd := tokenPriceUsd.Mul(tokenSupply)
 
 	data.Data = types.Eth1TokenPageData{
 		Token:          fmt.Sprintf("%x", token),
@@ -93,9 +83,7 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 		Balance:        balance,
 		QRCode:         pngStr,
 		QRCodeInverse:  pngStrInverse,
-		// MarketCap:      template.HTML("$" + utils.FormatThousandsEnglish(tokenMarketCapUsd.StringFixed(2))),
-		Supply: template.HTML(utils.FormatThousandsEnglish(tokenSupply.StringFixed(6))),
-		// Price:          template.HTML("$" + utils.FormatThousandsEnglish(tokenPriceUsd.StringFixed(6))),
+		Supply:         template.HTML(utils.FormatThousandsEnglish(tokenSupply.StringFixed(6))),
 	}
 
 	if handleTemplateError(w, r, "eth1Token.go", "Eth1Token", "Done", eth1TokenTemplate.ExecuteTemplate(w, "layout", data)) != nil {

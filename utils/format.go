@@ -148,6 +148,7 @@ func FormatClCurrency(value interface{}, targetCurrency string, digitsAfterComma
 	return formatCurrency(ClToCurrency(value, MainCurrency), MainCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
 }
 
+// TODO(rgeraldes24)
 func formatCurrencyString(valIf interface{}, valueCurrency, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, truncateAndAddTooltip bool) string {
 	val := IfToDec(valIf)
 
@@ -1156,19 +1157,8 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 	p := message.NewPrinter(language.English)
 
 	tokenDecimals := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Metadata.Decimals), 0)
-	// ethDiv := decimal.NewFromInt(ElCurrencyDivisor)
 	tokenDiv := decimal.NewFromInt(10).Pow(tokenDecimals)
-
 	tokenBalance := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0).DivRound(tokenDiv, 18)
-
-	// tokenPriceEth := decimal.New(0, 0)
-	// if len(balance.Metadata.Price) > 0 {
-	// 	tokenPriceEth = decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Metadata.Price), 0).DivRound(decimal.NewFromInt(Config.Frontend.ElCurrencyDivisor), 18)
-	// }
-
-	// ethPriceUsd := decimal.NewFromFloat(price.GetPrice(Config.Frontend.ElCurrency, "USD"))
-	// tokenPriceUsd := ethPriceUsd.Mul(tokenPriceEth).Mul(tokenDiv).DivRound(ethDiv, 18)
-	// tokenBalanceUsd := tokenBalance.Mul(tokenPriceUsd)
 
 	symbolTitle := FormatTokenSymbolTitle(balance.Metadata.Symbol)
 	symbol := FormatTokenSymbol(balance.Metadata.Symbol)
@@ -1199,7 +1189,7 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 			<span class="text-muted" style="font-size: 90%%;">$ %s</span>
 		</div>
 		-->
-	</div>`, balance.Token, balance.Address, logo, symbolTitle, symbol /*tokenPriceUsd.StringFixed(2),*/, FormatThousandsEnglish(tokenBalance.String()) /*, tokenBalanceUsd.StringFixed(2)*/))
+	</div>`, balance.Token, balance.Address, logo, symbolTitle, symbol, FormatThousandsEnglish(tokenBalance.String())))
 }
 
 func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
