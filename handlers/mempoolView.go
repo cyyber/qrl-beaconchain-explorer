@@ -41,6 +41,7 @@ func _isContractCreation(tx *common.Address) string {
 // This makes all calculations faster, reducing browser's rendering time.
 func formatToTable(content *types.RawMempoolResponse) *types.DataTableResponse {
 	dataTable := &types.DataTableResponse{}
+
 	for _, txs := range content.Pending {
 		for _, tx := range txs {
 			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
