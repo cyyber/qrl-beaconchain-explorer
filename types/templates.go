@@ -904,12 +904,6 @@ type ClEl struct {
 	Total decimal.Decimal
 }
 
-type ClElInt64 struct {
-	El    int64
-	Cl    int64
-	Total float64
-}
-
 type ClElFloat64 struct {
 	El    float64
 	Cl    float64
@@ -1040,32 +1034,6 @@ type ValidatorDeposits struct {
 	Eth2Deposits      []Eth2Deposit
 }
 
-type MyCryptoSignature struct {
-	Address string `json:"address"`
-	Msg     string `json:"msg"`
-	Sig     string `json:"sig"`
-	Version string `json:"version"`
-}
-
-type FilterSubscription struct {
-	User     uint64
-	PriceIds []string
-}
-
-type PasswordResetNotAllowedError struct{}
-
-func (e *PasswordResetNotAllowedError) Error() string {
-	return "password reset not allowed for this account"
-}
-
-type RateLimitError struct {
-	TimeLeft time.Duration
-}
-
-func (e *RateLimitError) Error() string {
-	return fmt.Sprintf("rate limit has been exceeded, %v left", e.TimeLeft)
-}
-
 type Empty struct {
 }
 
@@ -1077,25 +1045,6 @@ type GoogleRecaptchaResponse struct {
 	ErrorCodes         []string `json:"error-codes"`
 	Score              float32  `json:"score,omitempty"`
 	Action             string   `json:"action,omitempty"`
-}
-
-type Price struct {
-	TS  time.Time `db:"ts"`
-	EUR float64   `db:"eur"`
-	USD float64   `db:"usd"`
-	GBP float64   `db:"gbp"`
-	CAD float64   `db:"cad"`
-	JPY float64   `db:"jpy"`
-	CNY float64   `db:"cny"`
-	RUB float64   `db:"rub"`
-	AUD float64   `db:"aud"`
-}
-
-type ApiStatistics struct {
-	Daily      *int `db:"daily"`
-	Monthly    *int `db:"monthly"`
-	MaxDaily   *int
-	MaxMonthly *int
 }
 
 type DataTableSaveState struct {
@@ -1158,10 +1107,9 @@ type Eth1AddressPageData struct {
 type ContractInteractionType uint8
 
 const (
-	CONTRACT_NONE        ContractInteractionType = 0
-	CONTRACT_CREATION    ContractInteractionType = 1
-	CONTRACT_PRESENT     ContractInteractionType = 2
-	CONTRACT_DESTRUCTION ContractInteractionType = 3
+	CONTRACT_NONE     ContractInteractionType = 0
+	CONTRACT_CREATION ContractInteractionType = 1
+	CONTRACT_PRESENT  ContractInteractionType = 2
 )
 
 type Eth1AddressPageTabs struct {
@@ -1186,12 +1134,6 @@ type Eth1AddressBalance struct {
 	Token    []byte
 	Balance  []byte
 	Metadata *ZRC20Metadata
-}
-
-type ZRC20TokenPrice struct {
-	Token       []byte
-	Price       []byte
-	TotalSupply []byte
 }
 
 type ZRC20Metadata struct {
@@ -1408,16 +1350,6 @@ type DilithiumChange struct {
 	Signature       []byte `db:"signature" json:"signature,omitempty"`
 }
 
-type ValidatorsDilithiumChange struct {
-	Slot                     uint64 `db:"slot" json:"slot,omitempty"`
-	BlockRoot                []byte `db:"block_root" json:"blockroot,omitempty"`
-	Validatorindex           uint64 `db:"validatorindex" json:"validatorindex,omitempty"`
-	DilithiumPubkey          []byte `db:"pubkey" json:"pubkey,omitempty"`
-	Address                  []byte `db:"address" json:"address,omitempty"`
-	Signature                []byte `db:"signature" json:"signature,omitempty"`
-	WithdrawalCredentialsOld []byte `db:"withdrawalcredentials" json:"withdrawalcredentials,omitempty"`
-}
-
 type ExplorerConfigurationCategory string
 type ExplorerConfigurationKey string
 type ExplorerConfigValue struct {
@@ -1464,19 +1396,6 @@ func (configMap ExplorerConfigurationMap) GetStringValue(category ExplorerConfig
 type WithdrawalsPageData struct {
 	Stats           *Stats
 	WithdrawalChart *ChartsPageDataChart
-}
-
-type WithdrawalStats struct {
-	WithdrawalsCount                   uint64
-	WithdrawalsTotal                   uint64
-	DilithiumChangeCount               uint64
-	ValidatorsWithDilithiumCredentials uint64
-}
-
-type ChangeWithdrawalCredentialsPageData struct {
-	FlashMessage string
-	CsrfField    template.HTML
-	RecaptchaKey string
 }
 
 // TODO(now.youtrack.cloud/issue/TZB-2)

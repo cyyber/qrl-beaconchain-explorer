@@ -806,32 +806,6 @@ func FormatIncomeClEl(income types.ClEl, currency string) template.HTML {
 	}
 }
 
-func FormatIncomeClElInt64(income types.ClElInt64, currency string) template.HTML {
-	var incomeTrimmed string = exchangeAndTrim(MainCurrency, currency, income.Total, true)
-	className := "text-success"
-	if income.Total < 0 {
-		className = "text-danger"
-	}
-
-	if income.Cl != 0 || income.El != 0 {
-		return template.HTML(fmt.Sprintf(`
-		<span class="%s" data-toggle="tooltip"
-			data-html="true"
-			title="
-			CL: %s <br> 
-			EL: %s">
-			<b>%s %s</b>
-		</span>`,
-			className,
-			FormatClCurrency(income.Cl, currency, 5, true, true, false, false),
-			FormatClCurrency(income.El, currency, 5, true, true, false, false), // we use FormatClCurrency here because all values in income-struct are in Gplanck
-			incomeTrimmed,
-			currency))
-	} else {
-		return template.HTML(fmt.Sprintf(`<span>%s %s</span>`, incomeTrimmed, currency))
-	}
-}
-
 func FormatIncome(balance interface{}, currency string, includeCurrency bool) template.HTML {
 	balanceFloat64 := IfToDec(balance).InexactFloat64()
 	var income string = exchangeAndTrim(MainCurrency, currency, balanceFloat64, true)

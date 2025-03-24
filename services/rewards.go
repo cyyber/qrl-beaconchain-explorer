@@ -23,7 +23,7 @@ type rewardHistory struct {
 	Validators []uint64   `json:"validators"`
 }
 
-func GetValidatorHist(validatorArr []uint64 /*currency string,*/, start uint64, end uint64) rewardHistory {
+func GetValidatorHist(validatorArr []uint64, start uint64, end uint64) rewardHistory {
 	var err error
 
 	if start == end { // no date range was provided, use the current day as ending boundary

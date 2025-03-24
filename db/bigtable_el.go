@@ -3506,7 +3506,6 @@ func (bigtable *Bigtable) GetAddressContractInteractionsAt(requests []contractIn
 		exact_match := request.block == -1 || request.block == int64(b) && (request.txIdx == -1 || request.txIdx == int64(tx) && (request.traceIdx == -1 || request.traceIdx == int64(trace)))
 
 		if exact_match {
-			results[i] = types.CONTRACT_DESTRUCTION
 			if history[latestUpdateIdxBeforeReq].update.IsContract {
 				results[i] = types.CONTRACT_CREATION
 			}
@@ -3693,37 +3692,6 @@ func (bigtable *Bigtable) SaveBalances(balances []*types.Eth1AddressBalance, del
 
 	return nil
 }
-
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
-func (bigtable *Bigtable) SaveZRC20TokenPrices(prices []*types.ZRC20TokenPrice) error {
-	if len(prices) == 0 {
-		return nil
-	}
-
-	mutsWrite := &types.BulkMutations{
-		Keys: make([]string, 0, len(prices)),
-		Muts: make([]*gcp_bigtable.Mutation, 0, len(prices)),
-	}
-
-	for _, price := range prices {
-		rowKey := fmt.Sprintf("%s:%x", bigtable.chainId, price.Token)
-		mut := gcp_bigtable.NewMutation()
-		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_PRICE, gcp_bigtable.Timestamp(0), price.Price)
-		mut.Set(ZRC20_METADATA_FAMILY, ZRC20_COLUMN_TOTALSUPPLY, gcp_bigtable.Timestamp(0), price.TotalSupply)
-		mutsWrite.Keys = append(mutsWrite.Keys, rowKey)
-		mutsWrite.Muts = append(mutsWrite.Muts, mut)
-	}
-
-	err := bigtable.WriteBulk(mutsWrite, bigtable.tableMetadata, DEFAULT_BATCH_INSERTS)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-*/
 
 func (bigtable *Bigtable) SaveBlockKeys(blockNumber uint64, blockHash []byte, keys string) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
@@ -4165,8 +4133,6 @@ func (bigtable *Bigtable) GetMethodLabel(data []byte, interaction types.Contract
 		return "Transfer"
 	case types.CONTRACT_CREATION:
 		return "Constructor"
-	case types.CONTRACT_DESTRUCTION:
-		return "Destruction"
 	case types.CONTRACT_PRESENT:
 		if len(id) == 4 {
 			cacheKey := fmt.Sprintf("M:H2L:%s", method)
@@ -4190,8 +4156,6 @@ func (bigtable *Bigtable) GetAddressLabel(id string, invoke_overwrite types.Cont
 	switch invoke_overwrite {
 	case types.CONTRACT_CREATION:
 		return "Contract Creation"
-	case types.CONTRACT_DESTRUCTION:
-		return "Contract Destruction"
 	default:
 		return id
 	}
