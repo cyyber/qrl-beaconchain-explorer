@@ -42,7 +42,7 @@ type ZnsNameRegistered struct {
 func (x *ZnsNameRegistered) Reset() {
 	*x = ZnsNameRegistered{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_ens_proto_msgTypes[0]
+		mi := &file_types_zns_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -55,7 +55,7 @@ func (x *ZnsNameRegistered) String() string {
 func (*ZnsNameRegistered) ProtoMessage() {}
 
 func (x *ZnsNameRegistered) ProtoReflect() protoreflect.Message {
-	mi := &file_types_ens_proto_msgTypes[0]
+	mi := &file_types_zns_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -68,7 +68,7 @@ func (x *ZnsNameRegistered) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ZnsNameRegistered.ProtoReflect.Descriptor instead.
 func (*ZnsNameRegistered) Descriptor() ([]byte, []int) {
-	return file_types_ens_proto_rawDescGZIP(), []int{0}
+	return file_types_zns_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ZnsNameRegistered) GetParentHash() []byte {
@@ -164,7 +164,7 @@ type ZnsNameRenewed struct {
 func (x *ZnsNameRenewed) Reset() {
 	*x = ZnsNameRenewed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_ens_proto_msgTypes[1]
+		mi := &file_types_zns_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -177,7 +177,7 @@ func (x *ZnsNameRenewed) String() string {
 func (*ZnsNameRenewed) ProtoMessage() {}
 
 func (x *ZnsNameRenewed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_ens_proto_msgTypes[1]
+	mi := &file_types_zns_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -190,7 +190,7 @@ func (x *ZnsNameRenewed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ZnsNameRenewed.ProtoReflect.Descriptor instead.
 func (*ZnsNameRenewed) Descriptor() ([]byte, []int) {
-	return file_types_ens_proto_rawDescGZIP(), []int{1}
+	return file_types_zns_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ZnsNameRenewed) GetParentHash() []byte {
@@ -252,7 +252,7 @@ type ZnsAddressChanged struct {
 func (x *ZnsAddressChanged) Reset() {
 	*x = ZnsAddressChanged{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_ens_proto_msgTypes[2]
+		mi := &file_types_zns_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -265,7 +265,7 @@ func (x *ZnsAddressChanged) String() string {
 func (*ZnsAddressChanged) ProtoMessage() {}
 
 func (x *ZnsAddressChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_types_ens_proto_msgTypes[2]
+	mi := &file_types_zns_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -278,7 +278,7 @@ func (x *ZnsAddressChanged) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ZnsAddressChanged.ProtoReflect.Descriptor instead.
 func (*ZnsAddressChanged) Descriptor() ([]byte, []int) {
-	return file_types_ens_proto_rawDescGZIP(), []int{2}
+	return file_types_zns_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ZnsAddressChanged) GetParentHash() []byte {
@@ -346,7 +346,7 @@ type ZnsNameChanged struct {
 func (x *ZnsNameChanged) Reset() {
 	*x = ZnsNameChanged{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_ens_proto_msgTypes[3]
+		mi := &file_types_zns_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -359,7 +359,7 @@ func (x *ZnsNameChanged) String() string {
 func (*ZnsNameChanged) ProtoMessage() {}
 
 func (x *ZnsNameChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_types_ens_proto_msgTypes[3]
+	mi := &file_types_zns_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -372,7 +372,7 @@ func (x *ZnsNameChanged) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ZnsNameChanged.ProtoReflect.Descriptor instead.
 func (*ZnsNameChanged) Descriptor() ([]byte, []int) {
-	return file_types_ens_proto_rawDescGZIP(), []int{3}
+	return file_types_zns_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ZnsNameChanged) GetParentHash() []byte {
@@ -417,9 +417,9 @@ func (x *ZnsNameChanged) GetNewName() []byte {
 	return nil
 }
 
-var File_types_ens_proto protoreflect.FileDescriptor
+var File_types_zns_proto protoreflect.FileDescriptor
 
-var file_types_ens_proto_rawDesc = []byte{
+var file_types_zns_proto_rawDesc = []byte{
 	0x0a, 0x0f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2f, 0x65, 0x6e, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x12, 0x05, 0x74, 0x79, 0x70, 0x65, 0x73, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
 	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74,
@@ -498,26 +498,26 @@ var file_types_ens_proto_rawDesc = []byte{
 }
 
 var (
-	file_types_ens_proto_rawDescOnce sync.Once
-	file_types_ens_proto_rawDescData = file_types_ens_proto_rawDesc
+	file_types_zns_proto_rawDescOnce sync.Once
+	file_types_zns_proto_rawDescData = file_types_zns_proto_rawDesc
 )
 
-func file_types_ens_proto_rawDescGZIP() []byte {
-	file_types_ens_proto_rawDescOnce.Do(func() {
-		file_types_ens_proto_rawDescData = protoimpl.X.CompressGZIP(file_types_ens_proto_rawDescData)
+func file_types_zns_proto_rawDescGZIP() []byte {
+	file_types_zns_proto_rawDescOnce.Do(func() {
+		file_types_zns_proto_rawDescData = protoimpl.X.CompressGZIP(file_types_zns_proto_rawDescData)
 	})
-	return file_types_ens_proto_rawDescData
+	return file_types_zns_proto_rawDescData
 }
 
-var file_types_ens_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_types_ens_proto_goTypes = []interface{}{
+var file_types_zns_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_types_zns_proto_goTypes = []interface{}{
 	(*ZnsNameRegistered)(nil),     // 0: types.ZnsNameRegistered
 	(*ZnsNameRenewed)(nil),        // 1: types.ZnsNameRenewed
 	(*ZnsAddressChanged)(nil),     // 2: types.ZnsAddressChanged
 	(*ZnsNameChanged)(nil),        // 3: types.ZnsNameChanged
 	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
 }
-var file_types_ens_proto_depIdxs = []int32{
+var file_types_zns_proto_depIdxs = []int32{
 	4, // 0: types.ZnsNameRegistered.time:type_name -> google.protobuf.Timestamp
 	4, // 1: types.ZnsNameRegistered.expires:type_name -> google.protobuf.Timestamp
 	4, // 2: types.ZnsNameRenewed.time:type_name -> google.protobuf.Timestamp
@@ -531,13 +531,13 @@ var file_types_ens_proto_depIdxs = []int32{
 	0, // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_types_ens_proto_init() }
-func file_types_ens_proto_init() {
-	if File_types_ens_proto != nil {
+func init() { file_types_zns_proto_init() }
+func file_types_zns_proto_init() {
+	if File_types_zns_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_types_ens_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_types_zns_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ZnsNameRegistered); i {
 			case 0:
 				return &v.state
@@ -549,7 +549,7 @@ func file_types_ens_proto_init() {
 				return nil
 			}
 		}
-		file_types_ens_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_types_zns_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ZnsNameRenewed); i {
 			case 0:
 				return &v.state
@@ -561,7 +561,7 @@ func file_types_ens_proto_init() {
 				return nil
 			}
 		}
-		file_types_ens_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_types_zns_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ZnsAddressChanged); i {
 			case 0:
 				return &v.state
@@ -573,7 +573,7 @@ func file_types_ens_proto_init() {
 				return nil
 			}
 		}
-		file_types_ens_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_types_zns_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ZnsNameChanged); i {
 			case 0:
 				return &v.state
@@ -590,18 +590,18 @@ func file_types_ens_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_types_ens_proto_rawDesc,
+			RawDescriptor: file_types_zns_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_types_ens_proto_goTypes,
-		DependencyIndexes: file_types_ens_proto_depIdxs,
-		MessageInfos:      file_types_ens_proto_msgTypes,
+		GoTypes:           file_types_zns_proto_goTypes,
+		DependencyIndexes: file_types_zns_proto_depIdxs,
+		MessageInfos:      file_types_zns_proto_msgTypes,
 	}.Build()
-	File_types_ens_proto = out.File
-	file_types_ens_proto_rawDesc = nil
-	file_types_ens_proto_goTypes = nil
-	file_types_ens_proto_depIdxs = nil
+	File_types_zns_proto = out.File
+	file_types_zns_proto_rawDesc = nil
+	file_types_zns_proto_goTypes = nil
+	file_types_zns_proto_depIdxs = nil
 }
