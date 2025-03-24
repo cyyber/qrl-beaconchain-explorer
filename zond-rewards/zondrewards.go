@@ -1,4 +1,4 @@
-package ethrewards
+package zondrewards
 
 import (
 	"fmt"

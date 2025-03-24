@@ -77,14 +77,6 @@ func GasNowData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// currency := GetCurrency(r)
-	// currency := "ZND"
-	// if currency == utils.MainCurrency {
-	// 	currency = "USD"
-	// }
-	// gasnowData.Data.Price = price.GetPrice(utils.MainCurrency, currency)
-	// gasnowData.Data.Currency = currency
-
 	err := json.NewEncoder(w).Encode(gasnowData)
 	if err != nil {
 		logger.Errorf("error serializing json data for API %v route: %v", r.URL.String(), err)

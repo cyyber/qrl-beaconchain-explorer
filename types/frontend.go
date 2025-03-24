@@ -8,6 +8,7 @@ import (
 	"github.com/theQRL/go-zond/common/hexutil"
 )
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 type ZnsSearchPageData = struct {
 	Error  string
@@ -24,8 +25,6 @@ type GasNowPageData struct {
 		Standard  *big.Int `json:"standard"`
 		Slow      *big.Int `json:"slow"`
 		Timestamp int64    `json:"timestamp"`
-		Price     float64  `json:"price,omitempty"`
-		Currency  string   `json:"currency,omitempty"`
 	} `json:"data"`
 }
 
