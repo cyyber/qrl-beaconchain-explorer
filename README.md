@@ -20,7 +20,6 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
   - Validator Dashboard with status, income, balance, attestations, proposals and charts
   - Overviews about blocks, slots, epochs, transactions, validators, slashings and the mempool
   - Stats and info about Zond clients
-  - Leaderboards about validators and deposits
   - Charts about various stats
 
 - Tools

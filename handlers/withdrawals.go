@@ -53,11 +53,9 @@ func Withdrawals(w http.ResponseWriter, r *http.Request) {
 // WithdrawalsData will return eth1-deposits as json
 func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// currency := GetCurrency(r)
-	currency := "ZND"
 	q := r.URL.Query()
 
-	// TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 
@@ -90,7 +88,7 @@ func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	orderBy := q.Get("order[0][column]")
 	orderDir := q.Get("order[0][dir]")
 
-	data, err := WithdrawalsTableData(draw, search, length, start, orderBy, orderDir, currency)
+	data, err := WithdrawalsTableData(draw, search, length, start, orderBy, orderDir)
 	if err != nil {
 		logger.Errorf("error getting withdrawal table data: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -105,7 +103,7 @@ func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func WithdrawalsTableData(draw uint64, search string, length, start uint64, orderBy, orderDir string, currency string) (*types.DataTableResponse, error) {
+func WithdrawalsTableData(draw uint64, search string, length, start uint64, orderBy, orderDir string) (*types.DataTableResponse, error) {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Minute*10))
 	defer cancel()
 
@@ -183,12 +181,6 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 		filteredCount = withdrawalCount
 	}
 
-	formatCurrency := currency
-	// TODO(rgeraldes24)
-	if currency == "ZND" {
-		formatCurrency = "ZND"
-	}
-
 	var err error
 	names := make(map[string]string)
 	for _, v := range withdrawals {
@@ -208,7 +200,7 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 			utils.FormatValidator(w.ValidatorIndex),
 			utils.FormatTimestamp(utils.SlotToTime(w.Slot).Unix()),
 			utils.FormatAddressWithLimits(w.Address, names[string(w.Address)], false, "address", visibleDigitsForHash+5, 18, true),
-			utils.FormatAmount(new(big.Int).Mul(new(big.Int).SetUint64(w.Amount), big.NewInt(1e9)), formatCurrency, 6),
+			utils.FormatAmount(new(big.Int).Mul(new(big.Int).SetUint64(w.Amount), big.NewInt(1e9)), "ZND", 6),
 		}
 	}
 
@@ -235,7 +227,7 @@ func DilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 
-	// TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 

@@ -142,10 +142,8 @@
     <div class="overview-container d-flex flex-wrap justify-content-center">
       <div class="m-3 position-relative" style="flex-basis: 4rem; white-space: nowrap;">
         <span style="top:-1.2rem; white-space: nowrap;" class="text-muted font-weight-lighter position-absolute"><small>{{ if gtf .RankPercentage 0.0 }}{{ if gtf .RankPercentage 0.001 }}Rank {{ formatPercentageWithGPrecision .RankPercentage 3 }} %{{ else }}Top 0.1%{{ end }}{{ else }}Rank{{ end }}</small></span>
-        <a class="no-highlight" href="/validators/leaderboard">
-          <i style="font-size: 16px;" class="fas fa-medal"></i>
-          <span id="validatorRank" style="font-weight: bold; font-size:16px;">{{ if gt .Rank7d 0 }}{{ .Rank7d }}{{ else }}N/A{{ end }}</span>
-        </a>
+        <i style="font-size: 16px;" class="fas fa-medal"></i>
+        <span id="validatorRank" style="font-weight: bold; font-size:16px;">{{ if gt .Rank7d 0 }}{{ .Rank7d }}{{ else }}N/A{{ end }}</span>
       </div>
       <div class="m-3 position-relative" style="flex-basis: 4rem; white-space: nowrap;">
         <span style="top:-1.2rem; white-space: nowrap;" class="text-muted font-weight-lighter position-absolute"><small>Status</small></span>

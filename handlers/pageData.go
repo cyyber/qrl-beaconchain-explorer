@@ -127,22 +127,6 @@ func createMenuItems(active string, isMain bool) []types.MainMenuItem {
 						},
 					},
 				},
-				/*
-					{
-						Links: []types.NavigationLink{
-							{
-								Label: "Validator Leaderboard",
-								Path:  "/validators/leaderboard",
-								Icon:  "fa-medal",
-							},
-							{
-								Label: "Deposit Leaderboard",
-								Path:  "/validators/deposit-leaderboard",
-								Icon:  "fa-file-import",
-							},
-						},
-					},
-				*/
 				{
 					Links: []types.NavigationLink{
 

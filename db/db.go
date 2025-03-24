@@ -296,68 +296,6 @@ func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy
 	return deposits, totalCount, nil
 }
 
-func GetEth1DepositsLeaderboard(query string, length, start uint64, orderBy, orderDir string) ([]*types.EthOneDepositLeaderboardData, uint64, error) {
-	deposits := []*types.EthOneDepositLeaderboardData{}
-
-	if orderDir != "desc" && orderDir != "asc" {
-		orderDir = "desc"
-	}
-	columns := []string{
-		"from_address",
-		"amount",
-		"validcount",
-		"invalidcount",
-		"slashedcount",
-		"totalcount",
-		"activecount",
-		"pendingcount",
-		"voluntary_exit_count",
-	}
-	hasColumn := false
-	for _, column := range columns {
-		if orderBy == column {
-			hasColumn = true
-			break
-		}
-	}
-	if !hasColumn {
-		orderBy = "amount"
-	}
-
-	var err error
-	var totalCount uint64
-	if query != "" {
-		err = ReaderDb.Get(&totalCount, `
-		SELECT COUNT(*) FROM eth1_deposits_aggregated WHERE ENCODE(from_address, 'hex') LIKE LOWER($1)`, query+"%")
-	} else {
-		err = ReaderDb.Get(&totalCount, "SELECT COUNT(*) FROM eth1_deposits_aggregated AS count")
-	}
-	if err != nil && err != sql.ErrNoRows {
-		return nil, 0, err
-	}
-
-	if query != "" {
-		err = ReaderDb.Select(&deposits, fmt.Sprintf(`
-			SELECT from_address, amount, validcount, invalidcount, slashedcount, totalcount, activecount, pendingcount, voluntary_exit_count
-			FROM eth1_deposits_aggregated
-			WHERE ENCODE(from_address, 'hex') LIKE LOWER($3)
-			ORDER BY %s %s
-			LIMIT $1
-			OFFSET $2`, orderBy, orderDir), length, start, query+"%")
-	} else {
-		err = ReaderDb.Select(&deposits, fmt.Sprintf(`
-			SELECT from_address, amount, validcount, invalidcount, slashedcount, totalcount, activecount, pendingcount, voluntary_exit_count
-			FROM eth1_deposits_aggregated
-			ORDER BY %s %s
-			LIMIT $1
-			OFFSET $2`, orderBy, orderDir), length, start)
-	}
-	if err != nil && err != sql.ErrNoRows {
-		return nil, 0, err
-	}
-	return deposits, totalCount, nil
-}
-
 func GetEth2Deposits(query string, length, start uint64, orderBy, orderDir string) ([]*types.EthTwoDepositData, uint64, error) {
 	// Initialize the return values
 	deposits := []*types.EthTwoDepositData{}

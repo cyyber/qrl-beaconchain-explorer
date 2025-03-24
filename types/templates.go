@@ -1006,10 +1006,6 @@ type DepositsPageData struct {
 	DepositChart    *ChartsPageDataChart
 }
 
-type EthOneDepositLeaderBoardPageData struct {
-	DepositContract string
-}
-
 // EpochsPageData is a struct to hold epoch data for the epochs page
 type EthOneDepositsData struct {
 	TxHash                []byte    `db:"tx_hash"`
@@ -1025,18 +1021,6 @@ type EthOneDepositsData struct {
 	MerkletreeIndex       []byte    `db:"merkletree_index"`
 	State                 string    `db:"state"`
 	ValidSignature        bool      `db:"valid_signature"`
-}
-
-type EthOneDepositLeaderboardData struct {
-	FromAddress        []byte `db:"from_address"`
-	Amount             uint64 `db:"amount"`
-	ValidCount         uint64 `db:"validcount"`
-	InvalidCount       uint64 `db:"invalidcount"`
-	TotalCount         uint64 `db:"totalcount"`
-	PendingCount       uint64 `db:"pendingcount"`
-	SlashedCount       uint64 `db:"slashedcount"`
-	ActiveCount        uint64 `db:"activecount"`
-	VoluntaryExitCount uint64 `db:"voluntary_exit_count"`
 }
 
 type EthTwoDepositData struct {

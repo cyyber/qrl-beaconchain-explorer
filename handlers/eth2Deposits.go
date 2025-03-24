@@ -18,12 +18,11 @@ func Eth2Deposits(w http.ResponseWriter, r *http.Request) {
 
 // Eth2DepositsData will return information eth1-deposits in json
 func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
-	// currency := GetCurrency(r)
-	currency := "ZND"
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
 
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 	search = strings.Replace(search, "0x", "", -1)
@@ -78,7 +77,7 @@ func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
 		tableData[i] = []interface{}{
 			utils.FormatBlockSlot(d.BlockSlot),
 			utils.FormatPublicKey(d.Publickey),
-			utils.FormatDepositAmount(d.Amount, currency),
+			utils.FormatDepositAmount(d.Amount, "ZND"),
 			utils.FormatWithdawalCredentials(d.Withdrawalcredentials, false),
 			utils.FormatHash(d.Signature),
 			utils.FormatHash(d.Withdrawalcredentials, false),
