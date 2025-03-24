@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -188,7 +187,7 @@ func startApiMonitoringService() {
 		}
 
 		if resp.StatusCode != 200 {
-			errorMsg := fmt.Errorf("error: api epoch / latest endpoint returned a non 200 status: %v", resp.StatusCode)
+			errorMsg := fmt.Errorf("error: api healthz endpoint returned a non 200 status: %v", resp.StatusCode)
 			utils.LogError(nil, errorMsg, 0, errFields)
 			ReportStatus(name, errorMsg.Error(), nil)
 			continue
@@ -216,9 +215,9 @@ func startAppMonitoringService() {
 		}
 		firstRun = false
 
-		resp, err := client.Post(url, "application/json", strings.NewReader(`{"indicesOrPubkey": "1,2"}`))
+		resp, err := client.Get(url)
 		if err != nil {
-			utils.LogError(err, "POST to dashboard URL error", 0, errFields)
+			utils.LogError(err, "getting client error", 0, errFields)
 			ReportStatus(name, err.Error(), nil)
 			continue
 		}
