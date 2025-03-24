@@ -1,6 +1,6 @@
 package db
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
+// TODO(now.youtrack.cloud/issue/TZB-2)
 /*
 import (
 	"bytes"
