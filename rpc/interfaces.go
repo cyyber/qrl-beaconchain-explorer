@@ -2,7 +2,6 @@ package rpc
 
 import (
 	"errors"
-	"math/big"
 	"strconv"
 
 	"github.com/theQRL/zond-beaconchain-explorer/types"
@@ -92,13 +91,6 @@ type Client interface {
 	GetBalancesForEpoch(epoch int64) (map[uint64]uint64, error)
 	GetValidatorState(epoch uint64) (*StandardValidatorsResponse, error)
 	GetBlockHeader(slot uint64) (*StandardBeaconHeaderResponse, error)
-}
-
-type Eth1Client interface {
-	GetBlock(number uint64) (*types.Eth1Block, *types.GetBlockTimings, error)
-	GetLatestEth1BlockNumber() (uint64, error)
-	GetChainID() *big.Int
-	Close()
 }
 
 var logger = logrus.New().WithField("module", "rpc")
