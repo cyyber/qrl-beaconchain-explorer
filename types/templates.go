@@ -75,10 +75,6 @@ type Meta struct {
 	Title       string
 	Description string
 	Path        string
-	Tlabel1     string
-	Tdata1      string
-	Tlabel2     string
-	Tdata2      string
 	GATag       string
 	NoTrack     bool
 	Templates   string
@@ -358,8 +354,7 @@ type ValidatorPageData struct {
 	DilithiumChange                          *DilithiumChange
 	IsWithdrawableAddress                    bool
 	EstimatedNextWithdrawal                  template.HTML
-	// AddValidatorWatchlistModal               *AddValidatorWatchlistModal
-	NextWithdrawalRow [][]interface{}
+	NextWithdrawalRow                        [][]interface{}
 	ValidatorProposalData
 }
 

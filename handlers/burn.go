@@ -15,21 +15,7 @@ func Burn(w http.ResponseWriter, r *http.Request) {
 
 	var burnTemplate = templates.GetTemplate(templateFiles...)
 
-	// data.Meta.Tdata1 = utils.FormatAmount((data.Data.(*types.BurnPageData).TotalBurned / 1e18) * data.Data.(*types.BurnPageData).Price)
-	// data.Meta.Tdata2 = utils.FormatAmount(data.Data.(*types.BurnPageData).BurnRate24h/1e18) + " ZND/min"
-	// data.Meta.Description = "The current zond burn rate is " + data.Meta.Tdata2 + ". A total of " + utils.FormatUSD(data.Data.(*types.BurnPageData).TotalBurned/1e18) + "ZND with a market value of $" + data.Meta.Tdata1 + " has been burned. " + data.Meta.Description
-
 	latestBurn := services.LatestBurnData()
-
-	// if currency == utils.MainCurrency {
-	// 	currency = "USD"
-	// }
-
-	// TODO(rgeraldes24)
-	// latestBurn.Price = price.GetPrice(utils.MainCurrency, currency)
-	// latestBurn.Price = 1.0
-	// latestBurn.Currency = currency
-
 	data.Data = latestBurn
 	if handleTemplateError(w, r, "burn.go", "Burn", "", burnTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
