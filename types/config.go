@@ -63,9 +63,6 @@ type Config struct {
 			PageSize int32  `yaml:"pageSize" envconfig:"INDEXER_NODE_PAGE_SIZE"`
 		} `yaml:"node"`
 		DepositContractFirstBlock uint64 `yaml:"depositContractFirstBlock" envconfig:"INDEXER_DEPOSIT_CONTRACT_FIRST_BLOCK"`
-		PubKeyTagsExporter        struct {
-			Enabled bool `yaml:"enabled" envconfig:"PUBKEY_TAGS_EXPORTER_ENABLED"`
-		} `yaml:"pubkeyTagsExporter"`
 		// TODO(now.youtrack.cloud/issue/TZB-1)
 		// ZnsTransformer struct {
 		// 	ValidRegistrarContracts []string `yaml:"validRegistrarContracts" envconfig:"ZNS_VALID_REGISTRAR_CONTRACTS"`

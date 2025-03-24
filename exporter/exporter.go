@@ -23,9 +23,6 @@ func Start(client rpc.Client) {
 	go syncCommitteesExporter(client)
 	go syncCommitteesCountExporter()
 
-	if utils.Config.Indexer.PubKeyTagsExporter.Enabled {
-		go UpdatePubkeyTag()
-	}
 	// wait until the beacon-node is available
 	for {
 		head, err := client.GetChainHead()
