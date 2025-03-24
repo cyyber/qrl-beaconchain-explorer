@@ -28,7 +28,6 @@ func NewClient(endpoint string, timeout time.Duration) *Client {
 }
 
 func (c *Client) Balance(slot uint64, validator uint64) (uint64, error) {
-
 	url := fmt.Sprintf("%s/zond/v1/beacon/states/%d/validator_balances?id=%d", c.endpoint, slot, validator)
 
 	resp, err := c.httpClient.Get(url)
