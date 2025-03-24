@@ -17,6 +17,7 @@ func UpdatePubkeyTag() {
 			logger.WithError(err).Error("Error connecting to DB")
 			// return err
 		}
+		// TODO(rgeraldes24)
 		_, err = tx.Exec(`INSERT INTO validator_tags (publickey, tag)
 		SELECT publickey, FORMAT('pool:%s', sps.name) tag
 		FROM eth1_deposits

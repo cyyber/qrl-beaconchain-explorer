@@ -55,7 +55,6 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		Effectiveness time.Duration
 		Statistics    time.Duration
 		SyncStats     time.Duration
-		Rocketpool    time.Duration
 	}{
 		Start: time.Now(),
 	}
