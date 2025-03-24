@@ -26,16 +26,6 @@ func BurnPageData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	latestBurn := services.LatestBurnData()
 
-	// currency := GetCurrency(r)
-
-	// if currency == "ZND" {
-	// 	currency = "USD"
-	// }
-
-	// latestBurn.Price = price.GetPrice(utils.MainCurrency, currency)
-	// latestBurn.Price = 1.0
-	// latestBurn.Currency = currency
-
 	err := json.NewEncoder(w).Encode(latestBurn)
 	if err != nil {
 		logger.Errorf("error sending latest burn page data: %v", err)
