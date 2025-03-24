@@ -165,9 +165,7 @@ func Epoch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	currency := "ZND"
-	// epochPageData.WithdrawalTotal = utils.FormatCurrentBalance(withdrawalTotal, GetCurrency(r))
-	epochPageData.WithdrawalTotal = utils.FormatCurrentBalance(withdrawalTotal, currency)
+	epochPageData.WithdrawalTotal = utils.FormatCurrentBalance(withdrawalTotal, "ZND")
 
 	epochPageData.SyncParticipationRate /= float64(epochPageData.ProposedCount)
 
