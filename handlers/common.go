@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"net/http"
 	"sort"
-	"strings"
 	"syscall"
 	"time"
 
@@ -128,10 +127,6 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		return nil, nil, err
 	}
 
-	// TODO(rgeraldes24)
-	// clElPrice := price.GetPrice(utils.MainCurrency, utils.MainCurrency)
-	clElPrice := 1.0
-
 	if totalDeposits == 0 {
 		totalDeposits = utils.Config.Chain.ClConfig.MaxEffectiveBalance * uint64(len(validators))
 	}
@@ -238,8 +233,8 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 	currentDayClIncome := decimal.NewFromInt(int64(totalBalance - lastBalance - lastDeposits + lastWithdrawals)).Mul(decimal.NewFromInt(1e9))
 	incomeToday := types.ClEl{
 		El:    decimal.NewFromInt(0),
-		Cl:    currentDayClIncome.Mul(decimal.NewFromFloat(clElPrice)),
-		Total: currentDayClIncome.Mul(decimal.NewFromFloat(clElPrice)),
+		Cl:    currentDayClIncome,
+		Total: currentDayClIncome,
 	}
 	if len(proposedToday) > 0 {
 		// get el data
@@ -265,23 +260,23 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		IncomeToday: incomeToday,
 		Income1d: types.ClEl{
 			El:    income.ElIncomePlanck1d,
-			Cl:    income.ClIncomePlanck1d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomePlanck1d.Add(income.ClIncomePlanck1d.Mul(decimal.NewFromFloat(clElPrice))),
+			Cl:    income.ClIncomePlanck1d,
+			Total: income.ElIncomePlanck1d.Add(income.ClIncomePlanck1d),
 		},
 		Income7d: types.ClEl{
 			El:    income.ElIncomePlanck7d,
-			Cl:    income.ClIncomePlanck7d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomePlanck7d.Add(income.ClIncomePlanck7d.Mul(decimal.NewFromFloat(clElPrice))),
+			Cl:    income.ClIncomePlanck7d,
+			Total: income.ElIncomePlanck7d.Add(income.ClIncomePlanck7d),
 		},
 		Income31d: types.ClEl{
 			El:    income.ElIncomePlanck31d,
-			Cl:    income.ClIncomePlanck31d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomePlanck31d.Add(income.ClIncomePlanck31d.Mul(decimal.NewFromFloat(clElPrice))),
+			Cl:    income.ClIncomePlanck31d,
+			Total: income.ElIncomePlanck31d.Add(income.ClIncomePlanck31d),
 		},
 		IncomeTotal: types.ClEl{
 			El:    income.ElIncomePlanckTotal.Add(incomeToday.El),
-			Cl:    income.ClIncomePlanckTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomePlanckTotal.Add(incomeToday.El).Add(income.ClIncomePlanckTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice))),
+			Cl:    income.ClIncomePlanckTotal.Add(incomeToday.Cl),
+			Total: income.ElIncomePlanckTotal.Add(incomeToday.El).Add(income.ClIncomePlanckTotal.Add(incomeToday.Cl)),
 		},
 		Apr7d: types.ClElFloat64{
 			El:    elApr7d,
@@ -433,13 +428,6 @@ func LatestState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", utils.Config.Chain.ClConfig.SecondsPerSlot)) // set local cache to the seconds per slot interval
 
 	data := services.LatestState()
-	// data.Rates = services.GetRates(GetCurrency(r))
-	userAgent := r.Header.Get("User-Agent")
-	userAgent = strings.ToLower(userAgent)
-	if strings.Contains(userAgent, "android") || strings.Contains(userAgent, "iphone") || strings.Contains(userAgent, "windows phone") {
-		data.Rates.MainCurrencyPriceFormatted = utils.KFormatterEthPrice(uint64(data.Rates.MainCurrencyPrice))
-	}
-
 	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
 		logger.Errorf("error sending latest index page data: %v", err)
@@ -447,23 +435,6 @@ func LatestState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-
-// func GetCurrency(r *http.Request) string {
-// 	return utils.Config.Frontend.MainCurrency
-// }
-
-// TODO(rgeraldes24)
-// func GetCurrencySymbol(r *http.Request) string {
-// 	cookie, err := r.Cookie("currency")
-// 	if err != nil {
-// 		logger.WithError(err).Tracef("error in handlers.GetCurrencySymbol")
-// 		return "$"
-// 	}
-// 	if cookie.Value == utils.Config.Frontend.MainCurrency {
-// 		return "USD"
-// 	}
-// 	return price.GetCurrencySymbol(cookie.Value)
-// }
 
 func GetDataTableStateChanges(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

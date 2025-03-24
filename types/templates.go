@@ -22,10 +22,9 @@ import (
 
 // PageData is a struct to hold web page data
 type PageData struct {
-	Active             string
-	Meta               *Meta
-	ShowSyncingMessage bool
-	// User                  *User
+	Active                string
+	Meta                  *Meta
+	ShowSyncingMessage    bool
 	Data                  interface{}
 	Version               string
 	Year                  int
@@ -38,12 +37,10 @@ type PageData struct {
 	FinalizationDelay     uint64
 	Mainnet               bool
 	DepositContract       string
-	Rates                 *Rates
-	InfoBanner            *template.HTML
 	ChainConfig           ClChainConfig
 	Debug                 bool
 	DebugTemplates        []string
-	DebugSession          map[string]interface{}
+	DebugSession          map[string]interface{} // TODO(rgeraldes24)
 	GasNow                *GasNowPageData
 	GlobalNotification    template.HTML
 	MainMenuItems         []MainMenuItem
@@ -73,38 +70,6 @@ type NavigationLink struct {
 	IsHighlighted bool
 }
 
-type Rates struct {
-	TickerCurrency                    string                `json:"tickerCurrency"`
-	TickerCurrencySymbol              string                `json:"tickerCurrencySymbol"`
-	SelectedCurrency                  string                `json:"selectedCurrency"`
-	SelectedCurrencySymbol            string                `json:"selectedCurrencySymbol"`
-	MainCurrency                      string                `json:"mainCurrency"`
-	MainCurrencySymbol                string                `json:"mainCurrencySymbol"`
-	MainCurrencyPrice                 float64               `json:"mainCurrencyPrice"`
-	MainCurrencyPriceFormatted        template.HTML         `json:"mainCurrencyPriceFormatted"`
-	MainCurrencyPriceKFormatted       template.HTML         `json:"mainCurrencyKFormatted"`
-	MainCurrencyTickerPrice           float64               `json:"mainCurrencyTickerPrice"`
-	MainCurrencyTickerPriceFormatted  template.HTML         `json:"mainCurrencyTickerPriceFormatted"`
-	MainCurrencyTickerPriceKFormatted template.HTML         `json:"mainCurrencyTickerPriceKFormatted"`
-	ElCurrency                        string                `json:"elCurrency"`
-	ElCurrencySymbol                  string                `json:"elCurrencySymbol"`
-	ElCurrencyPrice                   float64               `json:"elCurrencyPrice"`
-	ElCurrencyPriceFormatted          template.HTML         `json:"elCurrencyPriceFormatted"`
-	ElCurrencyPriceKFormatted         template.HTML         `json:"elCurrencyKFormatted"`
-	ClCurrency                        string                `json:"clCurrency"`
-	ClCurrencySymbol                  string                `json:"clCurrencySymbol"`
-	ClCurrencyPrice                   float64               `json:"clCurrencyPrice"`
-	ClCurrencyPriceFormatted          template.HTML         `json:"clCurrencyPriceFormatted"`
-	ClCurrencyPriceKFormatted         template.HTML         `json:"clCurrencyKFormatted"`
-	MainCurrencyPrices                map[string]RatesPrice `json:"mainCurrencyTickerPrices"`
-}
-
-type RatesPrice struct {
-	Symbol     string        `json:"symbol"`
-	RoundPrice uint64        `json:"roundPrice"`
-	TruncPrice template.HTML `json:"truncPrice"`
-}
-
 // Meta is a struct to hold metadata about the page
 type Meta struct {
 	Title       string
@@ -127,21 +92,19 @@ type LatestState struct {
 	CurrentFinalizedEpoch uint64 `json:"currentFinalizedEpoch"`
 	FinalityDelay         uint64 `json:"finalityDelay"`
 	IsSyncing             bool   `json:"syncing"`
-	Rates                 *Rates `json:"rates"`
 }
 
 type Stats struct {
-	TopDepositors                  *[]StatsTopDepositors
-	InvalidDepositCount            *uint64 `db:"count"`
-	UniqueValidatorCount           *uint64 `db:"count"`
-	TotalValidatorCount            *uint64 `db:"count"`
-	ActiveValidatorCount           *uint64 `db:"count"`
-	PendingValidatorCount          *uint64 `db:"count"`
-	ValidatorChurnLimit            *uint64
-	ValidatorActivationChurnLimit  *uint64
-	LatestValidatorWithdrawalIndex *uint64 `db:"index"`
-	WithdrawableValidatorCount     *uint64 `db:"count"`
-	// WithdrawableAmount             *uint64 `db:"amount"`
+	TopDepositors                        *[]StatsTopDepositors
+	InvalidDepositCount                  *uint64 `db:"count"`
+	UniqueValidatorCount                 *uint64 `db:"count"`
+	TotalValidatorCount                  *uint64 `db:"count"`
+	ActiveValidatorCount                 *uint64 `db:"count"`
+	PendingValidatorCount                *uint64 `db:"count"`
+	ValidatorChurnLimit                  *uint64
+	ValidatorActivationChurnLimit        *uint64
+	LatestValidatorWithdrawalIndex       *uint64 `db:"index"`
+	WithdrawableValidatorCount           *uint64 `db:"count"`
 	PendingDilithiumChangeValidatorCount *uint64 `db:"count"`
 	NonWithdrawableCount                 *uint64 `db:"count"`
 	TotalAmountWithdrawn                 *uint64 `db:"amount"`

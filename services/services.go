@@ -684,9 +684,6 @@ func LatestState() *types.LatestState {
 	data.LastProposedSlot = LatestProposedSlot()
 	data.FinalityDelay = FinalizationDelay()
 	data.IsSyncing = IsSyncing()
-	// TODO(rgeraldes24)
-	// data.Rates = GetRates(utils.Config.Frontend.MainCurrency)
-	data.Rates = &types.Rates{SelectedCurrency: "ZND"}
 
 	return data
 }

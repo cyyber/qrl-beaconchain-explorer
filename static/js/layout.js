@@ -38,12 +38,6 @@ function switchTheme(e) {
 }
 $("#toggleSwitch").on("change", switchTheme)
 
-function hideInfoBanner(msg) {
-  localStorage.setItem("infoBannerStatus", msg)
-  $("#infoBanner").attr("class", "d-none")
-}
-// $("#infoBannerDissBtn").on('click', hideInfoBanner)
-
 function setValidatorEffectiveness(elem, eff) {
   if (elem === undefined) return
   eff = parseInt(eff)

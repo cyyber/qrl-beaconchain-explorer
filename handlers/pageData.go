@@ -46,7 +46,6 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 		LatestFinalizedEpoch:  services.LatestFinalizedEpoch(),
 		CurrentSlot:           services.LatestSlot(),
 		FinalizationDelay:     services.FinalizationDelay(),
-		Rates:                 &types.Rates{SelectedCurrency: "ZND"},
 		Mainnet:               utils.Config.Chain.ClConfig.ConfigName == "mainnet",
 		DepositContract:       utils.Config.Chain.ClConfig.DepositContractAddress,
 		ChainConfig:           utils.Config.Chain.ClConfig,
