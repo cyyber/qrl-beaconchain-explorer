@@ -84,7 +84,6 @@ func ExportSyncCommitteeAtPeriod(rpcClient rpc.Client, p uint64, providedTx *sql
 		valueArgs[i*nArgs+2] = entry.CommitteeIndex
 		valueIds[i] = fmt.Sprintf("($%d,$%d,$%d)", i*nArgs+1, i*nArgs+2, i*nArgs+3)
 	}
-	fmt.Println(valueArgs...)
 	_, err = tx.Exec(
 		fmt.Sprintf(`
 			INSERT INTO sync_committees (period, validatorindex, committeeindex) 
