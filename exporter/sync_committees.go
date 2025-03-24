@@ -41,7 +41,7 @@ func exportSyncCommittees(rpcClient rpc.Client) error {
 		currEpoch = currEpoch - 1
 	}
 	lastPeriod := utils.SyncPeriodOfEpoch(uint64(currEpoch)) + 1 // we can look into the future
-	firstPeriod := uint64(0)
+	var firstPeriod uint64 = 0
 	for p := firstPeriod; p <= lastPeriod; p++ {
 		_, exists := dbPeriodsMap[p]
 		if !exists {

@@ -1471,9 +1471,11 @@ Instead of deleting entries from the sync_committee table in a prod environment 
 this method will replace each sync committee period one by one with the new one. Which is much nicer for a prod environment.
 */
 func exportSyncCommitteePeriods(rpcClient rpc.Client, startDay, endDay uint64, dryRun bool) {
-	var lastEpoch = uint64(0)
+	var (
+		lastEpoch   uint64 = 0
+		firstPeriod uint64 = 0
+	)
 
-	firstPeriod := uint64(0)
 	if startDay > 0 {
 		firstEpoch, _ := utils.GetFirstAndLastEpochForDay(startDay)
 		firstPeriod = utils.SyncPeriodOfEpoch(firstEpoch)
