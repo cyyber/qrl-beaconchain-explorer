@@ -31,11 +31,6 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/config"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
-	"gopkg.in/yaml.v3"
-
 	"github.com/carlmjohnson/requests"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/mvdan/xurls"
@@ -47,6 +42,10 @@ import (
 	"github.com/theQRL/go-zond/params"
 	"github.com/theQRL/qrysm/beacon-chain/core/signing"
 	qrysm_params "github.com/theQRL/qrysm/config/params"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
+	"gopkg.in/yaml.v3"
 )
 
 // TODO(rgeraldes24): move?
