@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/theQRL/go-zond"
 	"github.com/theQRL/zond-beaconchain-explorer/eth1data"
 	"github.com/theQRL/zond-beaconchain-explorer/services"
 	"github.com/theQRL/zond-beaconchain-explorer/templates"
@@ -16,6 +15,7 @@ import (
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
+	"github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common"
 )
 
