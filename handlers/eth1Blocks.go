@@ -220,10 +220,10 @@ func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.Da
 			proposer,                           // Proposer
 			template.HTML(fmt.Sprintf(`<span data-toggle="tooltip" data-placement="top" title="%d transactions (%d internal transactions)">%d<BR /><span style="font-size: .63rem; color: grey;">%d</span></span>`, b.GetTransactionCount(), b.GetInternalTransactionCount(), b.GetTransactionCount(), b.GetInternalTransactionCount())),                                                                                                                                                                               // Transactions
 			template.HTML(fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="Gas Used %%" style="font-size: .63rem; color: grey;">%.2f%%</span>&nbsp;<span data-toggle="tooltip" data-placement="top" title="%% of Gas Target" style="font-size: .63rem; color: grey;">(%+.2f%%)</span>`, utils.FormatAddCommas(b.GetGasUsed()), float64(int64(float64(b.GetGasUsed())/float64(b.GetGasLimit())*10000.0))/100.0, float64(int64(((float64(b.GetGasUsed())-gasHalf)/gasHalf)*10000.0))/100.0)), // Gas Used
-			utils.FormatAddCommas(b.GetGasLimit()),                                            // Gas Limit
-			utils.FormatAmountFormatted(baseFee, "GPlanck", 5, 4, true, true, true),           // Base Fee
-			utils.FormatAmountFormatted(txReward, utils.MainCurrency, 5, 4, true, true, true), // Reward
-			fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="%% of Transactions Fees" style="font-size: .63rem; color: grey;">%.2f%%</span>`, utils.FormatAmountFormatted(burned, utils.MainCurrency, 5, 4, true, true, false), float64(int64(burnedPercentage*10000.0))/100.0), // Burned Fees
+			utils.FormatAddCommas(b.GetGasLimit()),                                  // Gas Limit
+			utils.FormatAmountFormatted(baseFee, "GPlanck", 5, 4, true, true, true), // Base Fee
+			utils.FormatAmountFormatted(txReward, "ZND", 5, 4, true, true, true),    // Reward
+			fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="%% of Transactions Fees" style="font-size: .63rem; color: grey;">%.2f%%</span>`, utils.FormatAmountFormatted(burned, "ZND", 5, 4, true, true, false), float64(int64(burnedPercentage*10000.0))/100.0), // Burned Fees
 		}
 	}
 
