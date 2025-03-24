@@ -53,8 +53,6 @@ const (
 	FallbackRateLimitBurst  = 20 // RateLimit burst for when redis is offline
 
 	defaultBucket = "default" // if no bucket is set for a route, use this one
-
-	statsTruncateDuration = time.Hour * 1 // ratelimit-stats are truncated to this duration
 )
 
 var redisClient *redis.Client
