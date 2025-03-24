@@ -3,23 +3,6 @@
   <script type="text/javascript" src="/js/datatable_loader.js"></script>
 
   <script>
-    /*
-    function togglePriceContent(currentPrice, historicPrice) {
-      var content = document.getElementById("valuePriceButton")
-
-      if (content.hasAttribute("historic-price")) {
-        content.setAttribute("data-original-title", "Current Value")
-        content.innerHTML = currentPrice
-      } else {
-        content.setAttribute("data-original-title", "Estimated Value on Day of Txn")
-        content.innerHTML = historicPrice
-      }
-
-      $(content).tooltip("show")
-      content.toggleAttribute("historic-price")
-    }
-    */
-
     activateTabbarSwitcher("eth1tx-tab-content", "eth1TxTabs", "overview")
 
     const handleTabChange = (url) => {
