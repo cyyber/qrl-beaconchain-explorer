@@ -49,13 +49,11 @@ func Eth1Deposits(w http.ResponseWriter, r *http.Request) {
 
 // Eth1DepositsData will return eth1-deposits as json
 func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
-	// currency := GetCurrency(r)
-	currency := "ZND"
-
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
 
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 	search = strings.Replace(search, "0x", "", -1)
@@ -121,7 +119,7 @@ func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
 			utils.FormatEth1Address(d.FromAddress),
 			utils.FormatPublicKey(d.PublicKey),
 			utils.FormatWithdawalCredentials(d.WithdrawalCredentials, true),
-			utils.FormatDepositAmount(d.Amount, currency),
+			utils.FormatDepositAmount(d.Amount, "ZND"),
 			utils.FormatEth1TxHash(d.TxHash),
 			utils.FormatTimestamp(d.BlockTs.Unix()),
 			utils.FormatEth1Block(d.BlockNumber),
@@ -165,11 +163,10 @@ func Eth1DepositsLeaderboard(w http.ResponseWriter, r *http.Request) {
 
 // Eth1DepositsData will return eth1-deposits as json
 func Eth1DepositsLeaderboardData(w http.ResponseWriter, r *http.Request) {
-	// currency := GetCurrency(r)
-	currency := "ZND"
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 	search = strings.Replace(search, "0x", "", -1)
@@ -226,7 +223,7 @@ func Eth1DepositsLeaderboardData(w http.ResponseWriter, r *http.Request) {
 	for i, d := range deposits {
 		tableData[i] = []interface{}{
 			utils.FormatEth1Address(d.FromAddress),
-			utils.FormatBalance(d.Amount, currency),
+			utils.FormatBalance(d.Amount, "ZND"),
 			d.ValidCount,
 			d.InvalidCount,
 			d.PendingCount,
