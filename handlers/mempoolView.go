@@ -41,18 +41,11 @@ func _isContractCreation(tx *common.Address) string {
 // This makes all calculations faster, reducing browser's rendering time.
 func formatToTable(content *types.RawMempoolResponse) *types.DataTableResponse {
 	dataTable := &types.DataTableResponse{}
-
 	for _, txs := range content.Pending {
 		for _, tx := range txs {
 			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
 		}
 	}
-	// TODO(rgeraldes24): not available
-	// for _, txs := range content.BaseFee {
-	// 	for _, tx := range txs {
-	// 		dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
-	// 	}
-	// }
 	for _, txs := range content.Queued {
 		for _, tx := range txs {
 			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
@@ -66,7 +59,7 @@ func toTableDataRow(tx *types.RawMempoolTransaction) []interface{} {
 		utils.FormatTxHashWithLimits(tx.Hash.Bytes(), "", false, "tx", 15, 18, true),
 		utils.FormatAddressAll(tx.From.Bytes(), "", false, "address", int(12), int(12), true),
 		_isContractCreation(tx.To),
-		utils.FormatAmount((*big.Int)(tx.Value), utils.MainCurrency, 5),
+		utils.FormatAmount((*big.Int)(tx.Value), "ZND", 5),
 		utils.FormatAddCommasFormatted(float64(tx.Gas.ToInt().Int64()), 0),
 		utils.FormatAmountFormatted(tx.GasPrice.ToInt(), "GPlanck", 5, 0, true, true, false),
 		tx.Nonce.ToInt(),
