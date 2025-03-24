@@ -85,7 +85,6 @@ var SessionStore *CustomSessionStore
 
 // InitSessionStore initializes SessionStore with the given secret.
 func InitSessionStore(secret string) {
-
 	pool := &redis.Pool{
 		MaxIdle: 10,
 		Dial: func() (redis.Conn, error) {
