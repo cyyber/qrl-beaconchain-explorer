@@ -142,7 +142,6 @@ type Config struct {
 		} `yaml:"nodeJobsProcessor"`
 	*/
 	Monitoring struct {
-		ApiKey                          string                           `yaml:"apiKey" envconfig:"MONITORING_API_KEY"`
 		ServiceMonitoringConfigurations []ServiceMonitoringConfiguration `yaml:"serviceMonitoringConfigurations" envconfig:"SERVICE_MONITORING_CONFIGURATIONS"`
 	} `yaml:"monitoring"`
 	GithubApiHost string `yaml:"githubApiHost" envconfig:"GITHUB_API_HOST"`

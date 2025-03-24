@@ -323,8 +323,8 @@ func stakedZNDChartData() (*types.GenericChartData, error) {
 	}
 
 	chartData := &types.GenericChartData{
-		Title:                           fmt.Sprintf("Staked %v", utils.MainCurrency),
-		Subtitle:                        fmt.Sprintf("History of daily staked %v, which is the sum of all Effective Balances.", utils.MainCurrency),
+		Title:                           "Staked ZND",
+		Subtitle:                        "History of daily staked ZND, which is the sum of all Effective Balances.",
 		XAxisTitle:                      "",
 		YAxisTitle:                      "ZND",
 		StackingMode:                    "false",
@@ -332,7 +332,7 @@ func stakedZNDChartData() (*types.GenericChartData, error) {
 		ColumnDataGroupingApproximation: "close",
 		Series: []*types.GenericChartDataSeries{
 			{
-				Name: fmt.Sprintf("Staked %v", utils.MainCurrency),
+				Name: "Staked ZND",
 				Data: series,
 			},
 		},
@@ -366,13 +366,13 @@ func averageBalanceChartData() (*types.GenericChartData, error) {
 		Title:                           "Validator Balance",
 		Subtitle:                        "Average Daily Validator Balance.",
 		XAxisTitle:                      "",
-		YAxisTitle:                      utils.MainCurrency,
+		YAxisTitle:                      "ZND",
 		StackingMode:                    "false",
 		Type:                            "column",
 		ColumnDataGroupingApproximation: "average",
 		Series: []*types.GenericChartDataSeries{
 			{
-				Name: fmt.Sprintf("Average Balance [%s]", utils.MainCurrency),
+				Name: "Average Balance [ZND]",
 				Data: series,
 			},
 		},
@@ -539,7 +539,7 @@ func balanceDistributionChartData() (*types.GenericChartData, error) {
 		Subtitle:             fmt.Sprintf("Histogram of Balances at epoch %d.", epoch),
 		XAxisTitle:           "Balance",
 		YAxisTitle:           "# of Validators",
-		XAxisLabelsFormatter: template.JS(fmt.Sprintf(`function(){ return this.value+' %s' }`, utils.MainCurrency)),
+		XAxisLabelsFormatter: template.JS(`function(){ return this.value+' ZND' }`),
 		StackingMode:         "false",
 		Type:                 "column",
 		Series: []*types.GenericChartDataSeries{
@@ -590,7 +590,7 @@ func effectiveBalanceDistributionChartData() (*types.GenericChartData, error) {
 		Subtitle:             fmt.Sprintf("Histogram of Effective Balances at epoch %d.", epoch),
 		XAxisTitle:           "Effective Balance",
 		YAxisTitle:           "# of Validators",
-		XAxisLabelsFormatter: template.JS(fmt.Sprintf(`function(){ return this.value+' %s' }`, utils.MainCurrency)),
+		XAxisLabelsFormatter: template.JS(`function(){ return this.value+' ZND' }`),
 		StackingMode:         "false",
 		Type:                 "column",
 		Series: []*types.GenericChartDataSeries{

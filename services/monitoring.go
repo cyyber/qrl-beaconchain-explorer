@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -19,14 +21,13 @@ func startMonitoringService(wg *sync.WaitGroup) {
 	go startClDataMonitoringService()
 	go startElDataMonitoringService()
 	go startRedisMonitoringService()
-	// go startApiMonitoringService()
-	// go startAppMonitoringService()
+	go startApiMonitoringService()
+	go startAppMonitoringService()
 	go startServicesMonitoringService()
 }
 
 // The cl data monitoring service will check that the data in the validators, blocks & epochs tables is up to date
 func startClDataMonitoringService() {
-
 	name := "monitoring_cl_data"
 	firstRun := true
 	for {
@@ -91,7 +92,6 @@ func startClDataMonitoringService() {
 }
 
 func startElDataMonitoringService() {
-
 	name := "monitoring_el_data"
 	firstRun := true
 	for {
@@ -137,7 +137,6 @@ func startElDataMonitoringService() {
 }
 
 func startRedisMonitoringService() {
-
 	name := "monitoring_redis"
 	firstRun := true
 	for {
@@ -163,10 +162,7 @@ func startRedisMonitoringService() {
 	}
 }
 
-// TODO(rgeraldes24)
-/*
 func startApiMonitoringService() {
-
 	name := "monitoring_api"
 	firstRun := true
 
@@ -174,11 +170,9 @@ func startApiMonitoringService() {
 		Timeout: time.Second * 10,
 	}
 
-	url := "https://" + utils.Config.Frontend.SiteDomain + "/api/v1/epoch/latest"
-	// add apikey (if any) to url but don't log the api key when errors occur
+	url := "https://" + utils.Config.Frontend.SiteDomain + "/api/healthz"
 	errFields := map[string]interface{}{
 		"url": url}
-	url += "?apikey=" + utils.Config.Monitoring.ApiKey
 
 	for {
 		if !firstRun {
@@ -189,7 +183,7 @@ func startApiMonitoringService() {
 		resp, err := client.Get(url)
 		if err != nil {
 			utils.LogError(err, "getting client error", 0, errFields)
-			ReportStatus(name, strings.ReplaceAll(err.Error(), utils.Config.Monitoring.ApiKey, ""), nil)
+			ReportStatus(name, err.Error(), nil)
 			continue
 		}
 
@@ -205,7 +199,6 @@ func startApiMonitoringService() {
 }
 
 func startAppMonitoringService() {
-
 	name := "monitoring_app"
 	firstRun := true
 
@@ -213,11 +206,9 @@ func startAppMonitoringService() {
 		Timeout: time.Second * 10,
 	}
 
-	url := "https://" + utils.Config.Frontend.SiteDomain + "/api/v1/app/dashboard"
-	// add apikey (if any) to url but don't log the api key when errors occur
+	url := "https://" + utils.Config.Frontend.SiteDomain
 	errFields := map[string]interface{}{
 		"url": url}
-	url += "?apikey=" + utils.Config.Monitoring.ApiKey
 
 	for {
 		if !firstRun {
@@ -228,7 +219,7 @@ func startAppMonitoringService() {
 		resp, err := client.Post(url, "application/json", strings.NewReader(`{"indicesOrPubkey": "1,2"}`))
 		if err != nil {
 			utils.LogError(err, "POST to dashboard URL error", 0, errFields)
-			ReportStatus(name, strings.ReplaceAll(err.Error(), utils.Config.Monitoring.ApiKey, ""), nil)
+			ReportStatus(name, err.Error(), nil)
 			continue
 		}
 
@@ -242,7 +233,6 @@ func startAppMonitoringService() {
 		ReportStatus(name, "OK", nil)
 	}
 }
-*/
 
 func startServicesMonitoringService() {
 
