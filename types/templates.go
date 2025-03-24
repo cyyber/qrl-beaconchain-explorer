@@ -1285,7 +1285,6 @@ type Eth1BlockPageData struct {
 	Ts              time.Time
 	BaseFeePerGas   *big.Int
 	BurnedFees      *big.Int
-	BurnedTxFees    *big.Int
 	Extra           string
 	Txs             []Eth1BlockPageTransaction
 	State           string

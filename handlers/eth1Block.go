@@ -178,9 +178,8 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 	}
 
 	burnedTxFees := new(big.Int).Mul(new(big.Int).SetBytes(block.BaseFee), big.NewInt(int64(block.GasUsed)))
-	burnedFees := burnedTxFees
-	reward := big.NewInt(0)
-	reward.Add(reward, txFees).Sub(reward, burnedTxFees)
+	reward := new(big.Int).Sub(txFees, burnedTxFees)
+
 	nextBlock := number + 1
 	if nextBlock > services.LatestEth1BlockNumber() {
 		nextBlock = 0
@@ -201,8 +200,7 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		LowestGasPrice: lowestGasPrice,
 		Ts:             block.GetTime().AsTime(),
 		BaseFeePerGas:  new(big.Int).SetBytes(block.BaseFee),
-		BurnedFees:     burnedFees,
-		BurnedTxFees:   burnedTxFees,
+		BurnedFees:     burnedTxFees,
 		Extra:          fmt.Sprintf("%#x", block.Extra),
 		Txs:            txs,
 	}
