@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
 	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
@@ -128,23 +129,15 @@ func (client *GzondClient) Close() {
 	client.zondClient.Close()
 }
 
-func (client *GzondClient) GetChainID() *big.Int {
-	return client.chainID
-}
-
 func (client *GzondClient) GetNativeClient() *zondclient.Client {
 	return client.zondClient
 }
 
-func (client *GzondClient) GetRPCClient() *gzond_rpc.Client {
-	return client.rpcClient
-}
-
 func (client *GzondClient) GetBlockNumberByHash(hash string) (uint64, error) {
-	// startTime := time.Now()
-	// defer func() {
-	// 	metrics.TaskDuration.WithLabelValues("rpc_el_get_block_number_by_hash").Observe(time.Since(startTime).Seconds())
-	// }()
+	startTime := time.Now()
+	defer func() {
+		metrics.TaskDuration.WithLabelValues("rpc_el_get_block_number_by_hash").Observe(time.Since(startTime).Seconds())
+	}()
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
@@ -322,10 +315,7 @@ func toCallArg(msg zond.CallMsg) interface{} {
 	if msg.Gas != 0 {
 		arg["gas"] = hexutil.Uint64(msg.Gas)
 	}
-	// TODO(rgeraldes24)
-	// if msg.GasPrice != nil {
-	// 	arg["gasPrice"] = (*hexutil.Big)(msg.GasPrice)
-	// }
+
 	return arg
 }
 
