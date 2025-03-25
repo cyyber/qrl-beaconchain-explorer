@@ -119,15 +119,12 @@ func main() {
 	defer db.WriterDb.Close()
 
 	if gzondEndpoint == nil || *gzondEndpoint == "" {
-
 		if utils.Config.ELNodeEndpoint == "" {
-
-			utils.LogFatal(nil, "no gzond node url provided", 0)
+			utils.LogFatal(nil, "no EL node url provided", 0)
 		} else {
-			logrus.Info("applying gzond endpoint from config")
+			logrus.Info("applying EL endpoint from config")
 			*gzondEndpoint = utils.Config.ELNodeEndpoint
 		}
-
 	}
 
 	logrus.Infof("using gzond node at %v", *gzondEndpoint)
@@ -358,15 +355,13 @@ func main() {
 		}
 
 		// TODO(now.youtrack.cloud/issue/TZB-1)
-		/*
-			if *enableZnsUpdater {
-				err := bt.ImportZnsUpdates(client.GetNativeClient(), *znsBatchSize)
-				if err != nil {
-					utils.LogError(err, "error importing zns updates", 0, nil)
-					continue
-				}
-			}
-		*/
+		// if *enableZnsUpdater {
+		// 	err := bt.ImportZnsUpdates(client.GetNativeClient(), *znsBatchSize)
+		// 	if err != nil {
+		// 		utils.LogError(err, "error importing zns updates", 0, nil)
+		// 		continue
+		// 	}
+		// }
 
 		logrus.Infof("index run completed")
 		services.ReportStatus("elIndexer", "Running", nil)
@@ -468,7 +463,7 @@ func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.GzondClient, prefix str
 
 			logrus.Infof("processing batch %v with start %v and end %v", b, start, end)
 
-			b, err := client.GetBalances(pairs[start:end] /*, 2, 4*/) // TODO(rgeraldes24): remove, not used
+			b, err := client.GetBalances(pairs[start:end])
 
 			if err != nil {
 				logrus.Errorf("error retrieving balances from node: %v", err)
