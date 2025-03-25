@@ -1410,9 +1410,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 			accumulatedBlockTime = accumulatedBlockTime.Add(decimal.NewFromInt(prevBlock.Time.AsTime().UnixMicro() - blk.Time.AsTime().UnixMicro()))
 		}
 
-		// TODO(rgeraldes24)
-		// totalBaseBlockReward = totalBaseBlockReward.Add(decimal.NewFromBigInt(utils.Eth1BlockReward(blk.Number, blk.Difficulty), 0))
-
 		for _, tx := range blk.Transactions {
 			// for _, itx := range tx.Itx {
 			// }
@@ -1541,9 +1538,7 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	case 1:
 		crowdSale := 72009990.50
 		p := 1.0
-		// logger.Infof("Exporting MARKET_CAP: %v", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
 		logger.Infof("Exporting MARKET_CAP: %v", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(p)).String())
-		// err = SaveChartSeriesPoint(dateTrunc, "MARKET_CAP", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
 		err = SaveChartSeriesPoint(dateTrunc, "MARKET_CAP", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(p)).String())
 		if err != nil {
 			return fmt.Errorf("error calculating MARKET_CAP chart_series: %w", err)
