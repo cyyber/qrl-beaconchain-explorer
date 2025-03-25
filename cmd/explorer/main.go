@@ -319,7 +319,8 @@ func main() {
 
 	router.HandleFunc("/zondClients", handlers.ZondClientsServices).Methods("GET")
 
-	router.HandleFunc("/rewards", handlers.ValidatorRewards).Methods("GET")
+	// TODO(now.youtrack.cloud/issue/TZB-13)
+	// router.HandleFunc("/rewards", handlers.ValidatorRewards).Methods("GET")
 	router.HandleFunc("/rewards/hist", handlers.RewardsHistoricalData).Methods("GET")
 	router.HandleFunc("/rewards/hist/download", handlers.DownloadRewardsHistoricalData).Methods("GET")
 

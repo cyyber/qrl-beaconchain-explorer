@@ -160,11 +160,14 @@ func createMenuItems(active string) []types.MainMenuItem {
 							Path:  "/charts",
 							Icon:  "fa-chart-bar",
 						},
-						{
-							Label: "Income History",
-							Path:  "/rewards",
-							Icon:  "fa-money-bill-alt",
-						},
+						// TODO(now.youtrack.cloud/issue/TZB-13)
+						/*
+							{
+								Label: "Income History",
+								Path:  "/rewards",
+								Icon:  "fa-money-bill-alt",
+							},
+						*/
 						{
 							Label: "Profit Calculator",
 							Path:  "/calculator",
