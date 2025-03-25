@@ -19,36 +19,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// @title Zond Explorer API Documentation
-// @version 1.1
-// @description High performance API for querying information about Zond
-// @description The API is currently free to use. A fair use policy applies. Calls are rate limited to
-// @description 10 requests / 1 minute / IP. All API results are cached for 1 minute.
-// @description The API key can be provided in the Header or as a query string parameter.
-// @description
-// @description Key as a query string parameter: `curl https://explorer.zond.theqrl.org/api/v1/slot/1?apikey=<your_key>`
-// @description
-// @description Key in a request header:  `curl -H 'apikey: <your_key>' https://explorer.zond.theqrl.org/api/v1/slot/1`
-// @tag.name Epoch
-// @tag.description Consensus layer information about epochs
-// @tag.docs.url https://example.com
-// @tag.name Slot
-// @tag.description Consensus layer information about slots
-// @tag.name Validator
-// @tag.description Consensus layer information about validators
-// @tag.name SyncCommittee
-// @tag.name Execution
-// @tag.description layer information about addresses, blocks and transactions
-// @tag.name Misc
-// @tag.name User
-// @tag.description provided for Oauth applications (public OAuth support is a work in progress).
-// @securitydefinitions.oauth2.accessCode OAuthAccessCode
-// @tokenurl https://explorer.zond.theqrl.org/user/token
-// @authorizationurl https://explorer.zond.theqrl.org/user/authorize
-// @securitydefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-
 // ApiHealthz godoc
 // @Summary Health of the explorer
 // @Tags Misc
