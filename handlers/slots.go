@@ -139,7 +139,7 @@ func GetSlotsTableData(draw, start, length uint64, search string, searchForEmpty
 		// - block-slot (exact when number)
 		// - block-graffiti (infix)
 		// - proposer-index (exact when number)
-		// - proposer-publickey (prefix when hex, exact when hex and 96 chars) // TODO(rgeraldes24)
+		// - proposer-publickey (prefix when hex, exact when hex and 5184 chars)
 		// - proposer-name (infix)
 		//
 		// the resulting query will look like this:
