@@ -1,7 +1,6 @@
-version: '3.7'
+version: '3'
 x-service: &default-service
   image: golang:1.24
-  # network_mode: host
   working_dir: /app
   volumes:
     - ../.:/app
@@ -49,6 +48,6 @@ services:
       - redis-sessions:/data
     ports:
       - "$REDIS_SESSIONS_PORT:6379"
-  
+
 volumes:
   redis-sessions:
