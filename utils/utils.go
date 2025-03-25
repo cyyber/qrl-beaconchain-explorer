@@ -51,8 +51,6 @@ import (
 // Config is the globally accessible configuration
 var Config *types.Config
 
-var ErrRateLimit = errors.New("## RATE LIMIT ##")
-
 var logger = logrus.New().WithField("module", "oauth")
 
 var HashLikeRegex = regexp.MustCompile(`^[0-9a-fA-F]{0,96}$`)
@@ -508,6 +506,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 
 	if cfg.Chain.GenesisTimestamp == 0 {
 		switch cfg.Chain.Name {
+		// TODO(rgeraldes24)
 		case "mainnet":
 			cfg.Chain.GenesisTimestamp = 1606824023
 		default:

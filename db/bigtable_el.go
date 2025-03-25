@@ -1979,7 +1979,7 @@ func (bigtable *Bigtable) GetAddressesNamesArMetadata(names *map[string]string, 
 	g.SetLimit(25)
 	mux := sync.Mutex{}
 
-	// TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-7)
 	// if names != nil {
 	// 	g.Go(func() error {
 	// 		err := bigtable.GetAddressNames(*names)
@@ -2211,14 +2211,12 @@ func (bigtable *Bigtable) GetAddressBlocksMinedTableData(address string, pageTok
 
 	tableData := make([][]interface{}, len(blocks))
 	for i, b := range blocks {
-		// TODO(rgeraldes24)
 		reward := new(big.Int).SetBytes(b.TxReward)
-
 		tableData[i] = []interface{}{
 			utils.FormatBlockNumber(b.Number),
 			utils.FormatTimestamp(b.Time.AsTime().Unix()),
 			utils.FormatBlockUsage(b.GasUsed, b.GasLimit),
-			utils.FormatAmount(reward, "ZND", 6), // TODO(rgeraldes24): formatAmount currency
+			utils.FormatAmount(reward, "ZND", 6),
 		}
 	}
 
@@ -2398,7 +2396,7 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 		names[string(to)] = ""
 	}
 
-	// TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// err := bigtable.GetAddressNames(names)
 	// if err != nil {
 	// 	return nil, err
@@ -2504,7 +2502,7 @@ func (bigtable *Bigtable) GetArbitraryTokenTransfersForTransaction(transaction [
 	}
 	g := new(errgroup.Group)
 	g.SetLimit(25)
-	// TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-7)
 	// g.Go(func() error {
 	// 	err := bigtable.GetAddressNames(names)
 	// 	if err != nil {

@@ -178,13 +178,6 @@ function create_typeahead(input_container) {
   })
 }
 
-function updateCurrencies(currencies, container) {
-  for (item of currencies) {
-    if (item === "ts") continue
-    $("#" + container).append(`<option value="${item}">${item.toUpperCase()}</option>`)
-  }
-}
-
 function getValidatorQueryString() {
   return window.location.href.slice(window.location.href.indexOf("?"), window.location.href.length)
 }
@@ -217,7 +210,6 @@ function showTable(data) {
       $("#table-div").removeClass("d-none")
       $("#subscriptions-div").addClass("d-none")
       $("#total-income-znd-span").html("ZND " + data.total_znd)
-      $("#total-income-currency-span").html(data.total_currency)
       $("#totals-div").removeClass("d-none")
       $(".dt-button").addClass("ml-2 ")
       hideSpinner()

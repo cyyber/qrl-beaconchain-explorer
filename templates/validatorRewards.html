@@ -10,11 +10,6 @@
   {{ .CsrfField }}
 <script> const MIN_TIMESTAMP = {{.MinDateTimestamp }}</script>
   <script src="/js/validatorRewards.js"></script>
-<script>
-    // $(document).ready(function () {
-    //     updateCurrencies({{.Currencies }}, "currency")
-    // })
-</script>
 {{ end }}
 
 {{ define "css" }}
@@ -45,9 +40,6 @@
         <div class="card-body">
           <span>Total Income </span>
           <span id="total-income-znd-span" class="ml-1"></span>
-          <!-- <span class="mx-2">|</span> -->
-          <!-- <span>Total</span>  -->
-          <!-- <span id="total-income-currency-span"></span> -->
         </div>
       </div>
     </div>
@@ -64,9 +56,6 @@
                 <th>Date</th>
                 <th>Balance</th>
                 <th>Income</th>
-                <!-- <th>ZND Value</th> -->
-                <!-- <th>Income</th> -->
-                <!-- <th>Currency</th> -->
               </tr>
             </thead>
           </table>
