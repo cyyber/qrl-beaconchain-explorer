@@ -984,7 +984,6 @@ type ValidatorSlashing struct {
 }
 
 type StakingCalculatorPageData struct {
-	// TODO(rgeraldes24)
 	TotalStaked uint64
 	// TODO(now.youtrack.cloud/issue/TZB-5)
 	// EtherscanApiBaseUrl         string
