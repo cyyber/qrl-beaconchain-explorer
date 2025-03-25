@@ -24,5 +24,6 @@ lastAttestationCache
 **/.DS_Store
 _gitignore/
 local-deployment/config.yml
+local-deployment/config-host.yml
 local-deployment/.env
 __gitignore

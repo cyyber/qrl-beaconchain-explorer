@@ -107,7 +107,7 @@ bigtable:
   emulatorHost: host.docker.internal
 elNodeEndpoint: 'http://host.docker.internal:$EL_PORT'
 redisCacheEndpoint: 'host.docker.internal:$REDIS_PORT'
-redisSessionStoreEndpoint: 'host.docker.internal:$$REDIS_PORT'
+redisSessionStoreEndpoint: 'host.docker.internal:$REDIS_PORT'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"

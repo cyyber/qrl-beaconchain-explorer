@@ -146,7 +146,7 @@ func (bigtable *Bigtable) SaveValidatorBalances(epoch uint64, validators []*type
 
 		balanceEncoded := make([]byte, 8)
 		binary.LittleEndian.PutUint64(balanceEncoded, validator.Balance)
-		effectiveBalanceEncoded := make([]byte, 2)
+		effectiveBalanceEncoded := make([]byte, 8)
 		binary.LittleEndian.PutUint64(effectiveBalanceEncoded, validator.EffectiveBalance/1e9)
 
 		combined := append(balanceEncoded, effectiveBalanceEncoded...)
@@ -447,7 +447,7 @@ func (bigtable *Bigtable) getValidatorBalanceHistoryV2(validators []uint64, star
 
 					balanceBytes := balances[0:8]
 					balance := binary.LittleEndian.Uint64(balanceBytes)
-					effectiveBalanceBytes := balances[8:10]
+					effectiveBalanceBytes := balances[8:16]
 					effectiveBalance := binary.LittleEndian.Uint64(effectiveBalanceBytes)
 
 					resMux.Lock()
