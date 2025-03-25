@@ -1,4 +1,5 @@
 #! /bin/bash
+# TODO(now.youtrack.cloud/issue/TZB-6)
 set -e
 
 clean_up () {
@@ -14,43 +15,24 @@ do
         a) el_address=${OPTARG};;
         b) bn_endpoint=${OPTARG};;
         i) index=${OPTARG};;
-        m) seed=${OPTARG};;
+        m) mnemonic=${OPTARG};;
     esac
 done
 echo "Validator Index: $index";
-echo "Seed: $seed";
+echo "Mnemonic: $mnemonic";
 echo "BN Endpoint: $bn_endpoint";
 echo "EL Withdrawal Address: $el_address";
 
-
-mkdir -p /tmp/set_withdrawal_addr
-deposit_contract_address=$(curl --silent $bn_endpoint/zond/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
-
-staking-deposit-cli generate-dilithium-to-execution-change \
-    --chain=mainnet \
-    --seed="$seed" \
-    --dilithium-withdrawal-credentials-list="<Your old Dilithium withdrawal credentials>" \
-    --validator-start-index=0 \
-    --validator_indices="<Your validator indices>" \
-    --execution_address="<The execution address for withdrawals>"
-
-curl -X POST $bn_endpoint/zond/v1/beacon/pool/dilithium_to_execution_changes \
-    -H "Content-Type: application/json" \
-    --data-binary "@/tmp/set_withdrawal_addr/change_operations.json"
-
-rm -rf /tmp/set_withdrawal_addr
-
-
 mkdir -p /tmp/set_withdrawal_addr
 echo "retrieving metadata"
-genesis_validators_root=$(curl --silent $bn_endpoint/zond/v1/beacon/genesis | jq -r '.data.genesis_validators_root')
-fork_version=$(curl --silent $bn_endpoint/zond/v1/beacon/genesis | jq -r '.data.genesis_fork_version')
-deposit_contract_address=$(curl --silent $bn_endpoint/zond/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
-echo "generating dilithium-el change message"
-eth2-val-tools dilithium-address-change --withdrawals-mnemonic="$mnemonic" --execution-address="$el_address" --source-min="$index" --source-max="$(($index + 1))" --genesis-validators-root="$genesis_validators_root" --fork-version="$fork_version" --as-json-list=true > "/tmp/set_withdrawal_addr/change_operations.json"
+genesis_validators_root=$(curl --silent $bn_endpoint/eth/v1/beacon/genesis | jq -r '.data.genesis_validators_root')
+fork_version=$(curl --silent $bn_endpoint/eth/v1/beacon/genesis | jq -r '.data.genesis_fork_version')
+deposit_contract_address=$(curl --silent $bn_endpoint/eth/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
+echo "generating bls-el change message"
+eth2-val-tools bls-address-change --withdrawals-mnemonic="$mnemonic" --execution-address="$el_address" --source-min="$index" --source-max="$(($index + 1))" --genesis-validators-root="$genesis_validators_root" --fork-version="$fork_version" --as-json-list=true > "/tmp/set_withdrawal_addr/change_operations.json"
 cat /tmp/set_withdrawal_addr/change_operations.json
-echo "publishing dilithium-el change message"
-curl -X POST $bn_endpoint/zond/v1/beacon/pool/dilithium_to_execution_changes \
+echo "publishing bls-el change message"
+curl -X POST $bn_endpoint/eth/v1/beacon/pool/bls_to_execution_changes \
                -H "Content-Type: application/json" \
                --data-binary "@/tmp/set_withdrawal_addr/change_operations.json"
 rm -rf /tmp/set_withdrawal_addr

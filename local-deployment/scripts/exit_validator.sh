@@ -1,4 +1,5 @@
 #! /bin/bash
+# TODO(now.youtrack.cloud/issue/TZB-6)
 set -e
 
 clean_up () {
@@ -12,13 +13,22 @@ while getopts b:i:m: flag
 do
     case "${flag}" in
         b) bn_endpoint=${OPTARG};;
-        w) wallet_dir=${OPTARG};;
+        i) index=${OPTARG};;
+        m) mnemonic=${OPTARG};;
     esac
 done
-echo "Wallet Dir: $wallet_dir";
+echo "Validator Index: $index";
+echo "Mnemonic: $mnemonic";
 echo "BN Endpoint: $bn_endpoint";
 
+mkdir -p /tmp/full_withdrawal
+echo "creating wallet"
+ethdo wallet create --base-dir=/tmp/full_withdrawal --type=hd --wallet=withdrawal-validators --mnemonic="$mnemonic" --wallet-passphrase="superSecure" --allow-weak-passphrases
+echo "deriving account wallet"
+ethdo account create --base-dir=/tmp/full_withdrawal --account=withdrawal-validators/$index --wallet-passphrase="superSecure" --passphrase="superSecure" --allow-weak-passphrases --path="m/12381/3600/$index/0/0"
+echo "creating exit message"
+ethdo validator exit --base-dir=/tmp/full_withdrawal --json --account=withdrawal-validators/$index --passphrase="superSecure" --connection=$bn_endpoint > /tmp/full_withdrawal/withdrawal-$index.json
 echo "submitting exit message"
-qrysmctl validator exit \
-    --wallet-dir="$wallet_dir" \
-    --beacon-rpc-provider="$bn_endpoint"
+ethdo validator exit --signed-operations=$(cat /tmp/full_withdrawal/withdrawal-$index.json) --connection=$bn_endpoint
+ethdo wallet delete --base-dir=/tmp/full_withdrawal --wallet=withdrawal-validators
+rm -rf /tmp/full_withdrawal

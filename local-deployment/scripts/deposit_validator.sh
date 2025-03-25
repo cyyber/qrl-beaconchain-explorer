@@ -1,4 +1,5 @@
 #! /bin/bash
+# TODO(now.youtrack.cloud/issue/TZB-6)
 set -e
 
 clean_up () {
@@ -24,24 +25,26 @@ echo "BN Endpoint: $bn_endpoint";
 echo "EL Endpoint: $el_endpoint";
 
 mkdir -p /tmp/deposit
-
-deposit_contract_address=$(curl -s $bn_endpoint/zond/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
-
-deposit new-seed \
-    --validator-start-index="$index" \
-    --num-validators=1 \
-    --folder="/tmp/deposit" \
-    --chain-name="mainnet" \
-    --execution-address="$deposit_contract_address" \
-    --mnemonic="$mnemonic"
-
-echo "" > /tmp/deposit/staking_wallet.seed
-
-deposit submit \
-    --validator-keys-dir=/tmp/deposit/validator_keys \
-    --zond-seed-file=/tmp/deposit/staking_wallet.seed \
-    --http-web3provider="$el_endpoint" \
-    --deposit-contract="$deposit_contract_address"
-
+deposit_path="m/44'/60'/0'/0/3"
+privatekey="ef5177cd0b6b21c87db5a0bf35d4084a8a57a9d6a064f86d51ac85f2b873a4e2"
+publickey="0x878705ba3f8Bc32FCf7F4CAa1A35E72AF65CF766"
+fork_version=$(curl -s $bn_endpoint/eth/v1/beacon/genesis | jq -r '.data.genesis_fork_version')
+deposit_contract_address=$(curl -s $bn_endpoint/eth/v1/config/spec | jq -r '.data.DEPOSIT_CONTRACT_ADDRESS')
+eth2-val-tools deposit-data --source-min=192 --source-max=200 --amount=32000000000 --fork-version=$fork_version --withdrawals-mnemonic="$mnemonic" --validators-mnemonic="$mnemonic" > /tmp/deposit/deposits_0-9.txt
+while read x; do
+    account_name="$(echo "$x" | jq '.account')"
+    pubkey="$(echo "$x" | jq '.pubkey')"
+    echo "Sending deposit for validator $account_name $pubkey"
+    ethereal beacon deposit \
+        --allow-unknown-contract=true \
+        --address="$deposit_contract_address" \
+        --connection=$el_endpoint \
+        --data="$x" \
+        --value="32000000000" \
+        --from="$publickey" \
+        --privatekey="$privatekey"
+    echo "Sent deposit for validator $account_name $pubkey"
+    sleep 3
+done < /tmp/deposit/deposits_0-9.txt
 exit;
 rm -rf /tmp/deposit
