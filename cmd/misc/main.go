@@ -408,6 +408,7 @@ func main() {
 	case "partition-validator-stats":
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// case "fix-zns":
 	// 	err = fixZns(gzondClient)
 	// case "fix-zns-addresses":
@@ -453,6 +454,7 @@ func fixEpoch(e uint64) error {
 	return tx.Commit()
 }
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
 /*
 func fixZns(gzondClient *rpc.GzondClient) error {
 	logrus.WithField("dry", opts.DryRun).Infof("command: fix-zns")
@@ -851,7 +853,7 @@ func debugBlocks() error {
 			return err
 		}
 		// logrus.WithFields(logrus.Fields{"block": i, "data": fmt.Sprintf("%+v", b)}).Infof("block from bt")
-
+		// TODO(now.youtrack.cloud/issue/TZB-7)
 		elBlock, _, err := elClient.GetBlock(int64(i) /*"parity/gzond"*/)
 		if err != nil {
 			return err
@@ -1221,7 +1223,7 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.G
 			logrus.Infof("block [%v] not found, will index it", block)
 			if _, err := db.BigtableClient.GetBlockFromBlocksTable(block); err != nil {
 				logrus.Infof("could not load [%v] from blocks table, will try to fetch it from the node and save it", block)
-
+				// TODO(now.youtrack.cloud/issue/TZB-7)
 				bc, _, err := client.GetBlock(int64(block) /*, "parity/gzond"*/)
 				if err != nil {
 					utils.LogError(err, fmt.Sprintf("error getting block %v from the node", block), 0)
@@ -1265,6 +1267,7 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 		return
 	}
 	logrus.Infof("transformers: %v", transformerList)
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// importZNSChanges := false
 	/**
 	* Add additional transformers you want to sync to this switch case
@@ -1285,6 +1288,7 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformZRC1155)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
+		// TODO(now.youtrack.cloud/issue/TZB-1)
 		// case "TransformZnsNameRegistered":
 		// 	transforms = append(transforms, bt.TransformZnsNameRegistered)
 		// 	importZNSChanges = true
@@ -1323,6 +1327,7 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 
 	}
 
+	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// if importZNSChanges {
 	// 	if err := bt.ImportZnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
 	// 		utils.LogError(err, "error importing zns from events", 0)
