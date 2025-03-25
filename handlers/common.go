@@ -39,7 +39,7 @@ func GetValidatorOnlineThresholdSlot() uint64 {
 }
 
 // GetValidatorEarnings will return the earnings (last day, week, month and total) of selected validators, including proposal and statisic information - infused with data from the current day. all values are
-func GetValidatorEarnings(validators []uint64, currency string) (*types.ValidatorEarnings, map[uint64]*types.Validator, error) {
+func GetValidatorEarnings(validators []uint64) (*types.ValidatorEarnings, map[uint64]*types.Validator, error) {
 	if len(validators) == 0 {
 		return nil, nil, errors.New("no validators provided")
 	}
@@ -296,11 +296,11 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		TotalDeposits: int64(totalDeposits),
 		ProposalData:  validatorProposalData,
 	}
-	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, currency)
-	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, currency)
-	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, currency)
-	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, currency)
-	earnings.TotalBalance = "<b>" + utils.FormatClCurrency(totalBalance, currency, 5, true, false, false, false) + "</b>"
+	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, "ZND")
+	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, "ZND")
+	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, "ZND")
+	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, "ZND")
+	earnings.TotalBalance = "<b>" + utils.FormatClCurrency(totalBalance, "ZND", 5, true, false, false, false) + "</b>"
 	return earnings, balancesMap, nil
 }
 
