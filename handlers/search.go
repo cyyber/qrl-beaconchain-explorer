@@ -23,7 +23,10 @@ const searchValidatorsResultLimit = 300
 var transactionLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{64}$`)
 
 var searchLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{0,96}$`)
-var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,5184}$`)
+
+// TODO(now.youtrack.cloud/issue/TZB-9)
+// var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,5184}$`)
+var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,96}$`)
 
 // Search handles search requests
 func Search(w http.ResponseWriter, r *http.Request) {
