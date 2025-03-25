@@ -15,7 +15,6 @@ import (
 )
 
 func (bigtable *Bigtable) WriteBulk(mutations *types.BulkMutations, table *gcp_bigtable.Table, batchSize int) error {
-
 	callingFunctionName := utils.GetParentFuncName()
 
 	ctx, done := context.WithTimeout(context.Background(), time.Minute*5)

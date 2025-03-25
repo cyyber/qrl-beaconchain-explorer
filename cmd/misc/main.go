@@ -1136,7 +1136,6 @@ func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Big
 }
 
 func clearBigtable(table string, family string, columns string, key string, dryRun bool, bt *db.Bigtable) {
-
 	if !dryRun {
 		confirmation := utils.CmdPrompt(fmt.Sprintf("Are you sure you want to delete all big table entries starting with [%v] for family [%v] and columns [%v]?", key, family, columns))
 		if confirmation != "yes" {

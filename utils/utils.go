@@ -48,14 +48,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// TODO(rgeraldes24): move?
-const (
-	ClCurrencyDivisor = 1e9
-	ElCurrencyDivisor = 1e18
-	CurrencyDecimals  = 18
-	MainCurrency      = "ZND"
-)
-
 // Config is the globally accessible configuration
 var Config *types.Config
 
@@ -249,22 +241,6 @@ func FormatGraffitiString(graffiti string) string {
 	return strings.Map(fixUtf, template.HTMLEscapeString(graffiti))
 }
 
-func HasProblematicUtfCharacters(s string) bool {
-	// Check for null character ('\x00')
-	if utf8.ValidString(s) && utf8.Valid([]byte(s)) {
-		// Check for control characters ('\x01' to '\x1F' and '\x7F')
-		for _, r := range s {
-			if r <= 0x1F || r == 0x7F {
-				return true
-			}
-		}
-	} else {
-		return true // Invalid UTF-8 sequence
-	}
-
-	return false
-}
-
 func fixUtf(r rune) rune {
 	if r == utf8.RuneError {
 		return -1
@@ -283,10 +259,6 @@ func FirstEpochOfSyncPeriod(syncPeriod uint64) uint64 {
 	return syncPeriod * Config.Chain.ClConfig.EpochsPerSyncCommitteePeriod
 }
 
-func TimeToSyncPeriod(t time.Time) uint64 {
-	return SyncPeriodOfEpoch(uint64(TimeToEpoch(t)))
-}
-
 // EpochOfSlot returns the corresponding epoch of a slot
 func EpochOfSlot(slot uint64) uint64 {
 	return slot / Config.Chain.ClConfig.SlotsPerEpoch
@@ -295,11 +267,6 @@ func EpochOfSlot(slot uint64) uint64 {
 // DayOfSlot returns the corresponding day of a slot
 func DayOfSlot(slot uint64) uint64 {
 	return Config.Chain.ClConfig.SecondsPerSlot * slot / (24 * 3600)
-}
-
-// WeekOfSlot returns the corresponding week of a slot
-func WeekOfSlot(slot uint64) uint64 {
-	return Config.Chain.ClConfig.SecondsPerSlot * slot / (7 * 24 * 3600)
 }
 
 // SlotToTime returns a time.Time to slot
@@ -363,7 +330,6 @@ func WaitForCtrlC() {
 
 // ReadConfig will process a configuration
 func ReadConfig(cfg *types.Config, path string) error {
-
 	configPathFromEnv := os.Getenv("BEACONCHAIN_CONFIG")
 
 	if configPathFromEnv != "" { // allow the location of the config file to be passed via env args
@@ -620,7 +586,6 @@ func ReadConfig(cfg *types.Config, path string) error {
 }
 
 func mustParseUint(str string) uint64 {
-
 	if str == "" {
 		return 0
 	}
@@ -767,24 +732,6 @@ func BitAtVector(b []byte, i int) bool {
 	return (bb & (1 << uint(i%8))) > 0
 }
 
-func BitAtVectorReversed(b []byte, i int) bool {
-	bb := b[i/8]
-	return (bb & (1 << uint(7-(i%8)))) > 0
-}
-
-func GetNetwork() string {
-	return strings.ToLower(Config.Chain.ClConfig.ConfigName)
-}
-
-func ElementExists(arr []string, el string) bool {
-	for _, e := range arr {
-		if e == el {
-			return true
-		}
-	}
-	return false
-}
-
 func FormatThousandsEnglish(number string) string {
 	runes := []rune(number)
 	cnt := 0
@@ -849,16 +796,6 @@ func GenerateQRCodeForAddress(address []byte) (string, string, error) {
 	return base64.StdEncoding.EncodeToString(png), base64.StdEncoding.EncodeToString(pngInverse), nil
 }
 
-// sliceContains reports whether the provided string is present in the given slice of strings.
-func SliceContains(list []string, target string) bool {
-	for _, s := range list {
-		if s == target {
-			return true
-		}
-	}
-	return false
-}
-
 func FormatTokenSymbolTitle(symbol string) string {
 	if isMaliciousToken(symbol) {
 		return fmt.Sprintf("The token symbol (%s) has been hidden because it contains a URL or a confusable character", symbol)
@@ -914,15 +851,6 @@ func GetFirstAndLastEpochForDay(day uint64) (firstEpoch uint64, lastEpoch uint64
 
 func GetLastBalanceInfoSlotForDay(day uint64) uint64 {
 	return ((day+1)*EpochsPerDay() - 1) * Config.Chain.ClConfig.SlotsPerEpoch
-}
-
-// ForkVersionAtEpoch returns the forkversion active a specific epoch
-func ForkVersionAtEpoch(epoch uint64) *types.ForkVersion {
-	return &types.ForkVersion{
-		Epoch:           0,
-		CurrentVersion:  MustParseHex(Config.Chain.ClConfig.GenesisForkVersion),
-		PreviousVersion: MustParseHex(Config.Chain.ClConfig.GenesisForkVersion),
-	}
 }
 
 // LogFatal logs a fatal error with callstack info that skips callerSkip many levels with arbitrarily many additional infos.
@@ -1111,20 +1039,6 @@ func RemoveRoundBracketsIncludingContent(input string) string {
 	return result
 }
 
-func Int64Min(x, y int64) int64 {
-	if x < y {
-		return x
-	}
-	return y
-}
-
-func Int64Max(x, y int64) int64 {
-	if x > y {
-		return x
-	}
-	return y
-}
-
 // Prompt asks for a string value using the label. For comand line interactions.
 func CmdPrompt(label string) string {
 	var s string
@@ -1137,19 +1051,6 @@ func CmdPrompt(label string) string {
 		}
 	}
 	return strings.TrimSpace(s)
-}
-
-// UniqueStrings returns an array of strings containing each value of s only once
-func UniqueStrings(s []string) []string {
-	seen := make(map[string]bool)
-	var result []string
-	for _, str := range s {
-		if _, ok := seen[str]; !ok {
-			seen[str] = true
-			result = append(result, str)
-		}
-	}
-	return result
 }
 
 func SortedUniqueUint64(arr []uint64) []uint64 {
