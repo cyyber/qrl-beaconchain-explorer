@@ -37,7 +37,6 @@ type Eth1AddressSearchItem struct {
 type RawMempoolResponse struct {
 	Pending map[string]map[string]*RawMempoolTransaction `json:"pending"`
 	Queued  map[string]map[string]*RawMempoolTransaction `json:"queued"`
-	// BaseFee map[string]map[string]*RawMempoolTransaction `json:"baseFee"`
 
 	TxsByHash map[common.Hash]*RawMempoolTransaction
 }
