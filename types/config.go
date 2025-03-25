@@ -75,7 +75,6 @@ type Config struct {
 		DisableCharts      bool   `yaml:"disableCharts" envconfig:"disableCharts"`
 		RecaptchaSiteKey   string `yaml:"recaptchaSiteKey" envconfig:"FRONTEND_RECAPTCHA_SITEKEY"`
 		RecaptchaSecretKey string `yaml:"recaptchaSecretKey" envconfig:"FRONTEND_RECAPTCHA_SECRETKEY"`
-		Enabled            bool   `yaml:"enabled" envconfig:"FRONTEND_ENABLED"`
 		SiteBrand          string `yaml:"siteBrand" envconfig:"FRONTEND_SITE_BRAND"`
 		Keywords           string `yaml:"keywords" envconfig:"FRONTEND_KEYWORDS"`
 		// Imprint is deprdecated place imprint file into the legal directory

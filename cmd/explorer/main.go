@@ -201,183 +201,181 @@ func main() {
 		go exporter.Start(rpcClient)
 	}
 
-	if cfg.Frontend.Enabled {
-		services.ReportStatus("frontend", "Running", nil)
+	services.ReportStatus("frontend", "Running", nil)
 
-		router := mux.NewRouter()
+	router := mux.NewRouter()
 
-		router.HandleFunc("/api/healthz", handlers.ApiHealthz).Methods("GET", "HEAD")
-		router.HandleFunc("/api/healthz-loadbalancer", handlers.ApiHealthzLoadbalancer).Methods("GET", "HEAD")
+	router.HandleFunc("/api/healthz", handlers.ApiHealthz).Methods("GET", "HEAD")
+	router.HandleFunc("/api/healthz-loadbalancer", handlers.ApiHealthzLoadbalancer).Methods("GET", "HEAD")
 
-		if !utils.Config.Frontend.Debug {
-			logrus.Infof("initializing zondclients")
-			zondclients.Init()
-			logrus.Infof("zondclients initialized")
-		}
-
-		if cfg.Frontend.SessionSecret == "" {
-			logrus.Fatal("session secret is empty, please provide a secure random string.")
-			return
-		}
-
-		utils.InitSessionStore(cfg.Frontend.SessionSecret)
-
-		if utils.Config.Frontend.SiteDomain == "" {
-			utils.Config.Frontend.SiteDomain = "explorer.zond.theqrl.org"
-		}
-
-		router.HandleFunc("/", handlers.Index).Methods("GET")
-		router.HandleFunc("/latestState", handlers.LatestState).Methods("GET")
-		router.HandleFunc("/launchMetrics", handlers.SlotVizMetrics).Methods("GET")
-		router.HandleFunc("/index/data", handlers.IndexPageData).Methods("GET")
-		router.HandleFunc("/slot/{slotOrHash}", handlers.Slot).Methods("GET")
-		router.HandleFunc("/slot/{slotOrHash}/deposits", handlers.SlotDepositData).Methods("GET")
-		router.HandleFunc("/slot/{slotOrHash}/votes", handlers.SlotVoteData).Methods("GET")
-		router.HandleFunc("/slot/{slot}/attestations", handlers.SlotAttestationsData).Methods("GET")
-		router.HandleFunc("/slot/{slot}/withdrawals", handlers.SlotWithdrawalData).Methods("GET")
-		router.HandleFunc("/slot/{slot}/dilithiumChange", handlers.SlotDilithiumChangeData).Methods("GET")
-		router.HandleFunc("/slots/finder", handlers.SlotFinder).Methods("GET")
-		router.HandleFunc("/slots", handlers.Slots).Methods("GET")
-		router.HandleFunc("/slots/data", handlers.SlotsData).Methods("GET")
-		router.HandleFunc("/blocks", handlers.Eth1Blocks).Methods("GET")
-		router.HandleFunc("/blocks/data", handlers.Eth1BlocksData).Methods("GET")
-		router.HandleFunc("/address/{address}", handlers.Eth1Address).Methods("GET")
-		router.HandleFunc("/address/{address}/blocks", handlers.Eth1AddressBlocksMined).Methods("GET")
-		router.HandleFunc("/address/{address}/withdrawals", handlers.Eth1AddressWithdrawals).Methods("GET")
-		router.HandleFunc("/address/{address}/transactions", handlers.Eth1AddressTransactions).Methods("GET")
-		router.HandleFunc("/address/{address}/internalTxns", handlers.Eth1AddressInternalTransactions).Methods("GET")
-		router.HandleFunc("/address/{address}/zrc20", handlers.Eth1AddressZrc20Transactions).Methods("GET")
-		router.HandleFunc("/address/{address}/zrc721", handlers.Eth1AddressZrc721Transactions).Methods("GET")
-		router.HandleFunc("/address/{address}/zrc1155", handlers.Eth1AddressZrc1155Transactions).Methods("GET")
-		router.HandleFunc("/token/{token}", handlers.Eth1Token).Methods("GET")
-		router.HandleFunc("/token/{token}/transfers", handlers.Eth1TokenTransfers).Methods("GET")
-		router.HandleFunc("/transactions", handlers.Eth1Transactions).Methods("GET")
-		router.HandleFunc("/transactions/data", handlers.Eth1TransactionsData).Methods("GET")
-		router.HandleFunc("/block/{block}", handlers.Eth1Block).Methods("GET")
-		router.HandleFunc("/block/{block}/transactions", handlers.BlockTransactionsData).Methods("GET")
-		router.HandleFunc("/tx/{hash}", handlers.Eth1TransactionTx).Methods("GET")
-		router.HandleFunc("/tx/{hash}/data", handlers.Eth1TransactionTxData).Methods("GET")
-		router.HandleFunc("/mempool", handlers.MempoolView).Methods("GET")
-		router.HandleFunc("/burn", handlers.Burn).Methods("GET")
-		router.HandleFunc("/burn/data", handlers.BurnPageData).Methods("GET")
-		router.HandleFunc("/gasnow", handlers.GasNow).Methods("GET")
-		router.HandleFunc("/gasnow/data", handlers.GasNowData).Methods("GET")
-
-		router.HandleFunc("/vis", handlers.Vis).Methods("GET")
-		router.HandleFunc("/charts", handlers.Charts).Methods("GET")
-		router.HandleFunc("/charts/{chart}", handlers.Chart).Methods("GET")
-		router.HandleFunc("/charts/{chart}/data", handlers.GenericChartData).Methods("GET")
-		router.HandleFunc("/vis/blocks", handlers.VisBlocks).Methods("GET")
-		router.HandleFunc("/epoch/{epoch}", handlers.Epoch).Methods("GET")
-		router.HandleFunc("/epochs", handlers.Epochs).Methods("GET")
-		router.HandleFunc("/epochs/data", handlers.EpochsData).Methods("GET")
-
-		router.HandleFunc("/validator/{index}", handlers.Validator).Methods("GET")
-		router.HandleFunc("/validator/{index}/proposedblocks", handlers.ValidatorProposedBlocks).Methods("GET")
-		router.HandleFunc("/validator/{index}/attestations", handlers.ValidatorAttestations).Methods("GET")
-		router.HandleFunc("/validator/{index}/withdrawals", handlers.ValidatorWithdrawals).Methods("GET")
-		router.HandleFunc("/validator/{index}/sync", handlers.ValidatorSync).Methods("GET")
-		router.HandleFunc("/validator/{index}/history", handlers.ValidatorHistory).Methods("GET")
-		router.HandleFunc("/validator/{pubkey}/deposits", handlers.ValidatorDeposits).Methods("GET")
-		router.HandleFunc("/validator/{index}/slashings", handlers.ValidatorSlashings).Methods("GET")
-		router.HandleFunc("/validator/{index}/effectiveness", handlers.ValidatorAttestationInclusionEffectiveness).Methods("GET")
-		router.HandleFunc("/validator/{index}/stats", handlers.ValidatorStatsTable).Methods("GET")
-		router.HandleFunc("/validators", handlers.Validators).Methods("GET")
-		router.HandleFunc("/validators/data", handlers.ValidatorsData).Methods("GET")
-		router.HandleFunc("/validators/slashings", handlers.ValidatorsSlashings).Methods("GET")
-		router.HandleFunc("/validators/slashings/data", handlers.ValidatorsSlashingsData).Methods("GET")
-		router.HandleFunc("/validators/withdrawals", handlers.Withdrawals).Methods("GET")
-		router.HandleFunc("/validators/withdrawals/data", handlers.WithdrawalsData).Methods("GET")
-		router.HandleFunc("/validators/withdrawals/dilithium", handlers.DilithiumChangeData).Methods("GET")
-		router.HandleFunc("/validators/deposits", handlers.Deposits).Methods("GET")
-		router.HandleFunc("/validators/initiated-deposits/data", handlers.Eth1DepositsData).Methods("GET")
-		router.HandleFunc("/validators/included-deposits/data", handlers.Eth2DepositsData).Methods("GET")
-
-		router.HandleFunc("/heatmap", handlers.Heatmap).Methods("GET")
-
-		router.HandleFunc("/dashboard", handlers.Dashboard).Methods("GET")
-		router.HandleFunc("/dashboard/data/allbalances", handlers.DashboardDataBalanceCombined).Methods("GET")
-		router.HandleFunc("/dashboard/data/proposals", handlers.DashboardDataProposals).Methods("GET")
-		router.HandleFunc("/dashboard/data/proposalshistory", handlers.DashboardDataProposalsHistory).Methods("GET")
-		router.HandleFunc("/dashboard/data/validators", handlers.DashboardDataValidators).Methods("GET")
-		router.HandleFunc("/dashboard/data/withdrawal", handlers.DashboardDataWithdrawals).Methods("GET")
-		router.HandleFunc("/dashboard/data/effectiveness", handlers.DashboardDataEffectiveness).Methods("GET")
-		router.HandleFunc("/dashboard/data/earnings", handlers.DashboardDataEarnings).Methods("GET")
-		router.HandleFunc("/calculator", handlers.StakingCalculator).Methods("GET")
-		router.HandleFunc("/search", handlers.Search).Methods("POST")
-		router.HandleFunc("/search/{type}/{search}", handlers.SearchAhead).Methods("GET")
-		router.HandleFunc("/imprint", handlers.Imprint).Methods("GET")
-		router.HandleFunc("/tools/unitConverter", handlers.UnitConverter).Methods("GET")
-		// TODO(now.youtrack.cloud/issue/TZB-2)
-		// router.HandleFunc("/tools/broadcast", handlers.Broadcast).Methods("GET")
-		// router.HandleFunc("/tools/broadcast", handlers.BroadcastPost).Methods("POST")
-		// router.HandleFunc("/tools/broadcast/status/{jobID}", handlers.BroadcastStatus).Methods("GET")
-
-		router.HandleFunc("/tables/{tableId}/state", handlers.GetDataTableStateChanges).Methods("GET")
-		router.HandleFunc("/tables/{tableId}/state", handlers.SetDataTableStateChanges).Methods("PUT")
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// router.HandleFunc("/zns/{search}", handlers.ZnsSearch).Methods("GET")
-
-		router.HandleFunc("/zondClients", handlers.ZondClientsServices).Methods("GET")
-
-		router.HandleFunc("/rewards", handlers.ValidatorRewards).Methods("GET")
-		router.HandleFunc("/rewards/hist", handlers.RewardsHistoricalData).Methods("GET")
-		router.HandleFunc("/rewards/hist/download", handlers.DownloadRewardsHistoricalData).Methods("GET")
-
-		router.HandleFunc("/monitoring/{module}", handlers.Monitoring).Methods("GET", "OPTIONS")
-
-		if utils.Config.Frontend.Debug {
-			// serve files from local directory when debugging, instead of from go embed file
-			templatesHandler := http.FileServer(http.Dir("templates"))
-			router.PathPrefix("/templates").Handler(http.StripPrefix("/templates/", templatesHandler))
-
-			cssHandler := http.FileServer(http.Dir("static/css"))
-			router.PathPrefix("/css").Handler(http.StripPrefix("/css/", cssHandler))
-
-			jsHandler := http.FileServer(http.Dir("static/js"))
-			router.PathPrefix("/js").Handler(http.StripPrefix("/js/", jsHandler))
-		}
-		fileSys := http.FS(static.Files)
-		router.PathPrefix("/").Handler(handlers.CustomFileServer(http.FileServer(fileSys), fileSys, handlers.NotFound))
-
-		if utils.Config.Metrics.Enabled {
-			router.Use(metrics.HttpMiddleware)
-		}
-
-		ratelimit.Init()
-		router.Use(ratelimit.HttpMiddleware)
-
-		n := negroni.New(negroni.NewRecovery())
-		n.Use(gzip.Gzip(gzip.DefaultCompression))
-		pa := &proxyaddr.ProxyAddr{}
-		pa.Init(proxyaddr.CIDRLoopback)
-		n.Use(pa)
-
-		n.UseHandler(utils.SessionStore.SCS.LoadAndSave(router))
-		if utils.Config.Frontend.HttpWriteTimeout == 0 {
-			utils.Config.Frontend.HttpWriteTimeout = time.Second * 15
-		}
-		if utils.Config.Frontend.HttpReadTimeout == 0 {
-			utils.Config.Frontend.HttpReadTimeout = time.Second * 15
-		}
-		if utils.Config.Frontend.HttpIdleTimeout == 0 {
-			utils.Config.Frontend.HttpIdleTimeout = time.Minute
-		}
-		srv := &http.Server{
-			Addr:         cfg.Frontend.Server.Host + ":" + cfg.Frontend.Server.Port,
-			WriteTimeout: utils.Config.Frontend.HttpWriteTimeout,
-			ReadTimeout:  utils.Config.Frontend.HttpReadTimeout,
-			IdleTimeout:  utils.Config.Frontend.HttpIdleTimeout,
-			Handler:      n,
-		}
-
-		logrus.Printf("http server listening on %v", srv.Addr)
-		go func() {
-			if err := srv.ListenAndServe(); err != nil {
-				logrus.WithError(err).Fatal("Error serving frontend")
-			}
-		}()
+	if !utils.Config.Frontend.Debug {
+		logrus.Infof("initializing zondclients")
+		zondclients.Init()
+		logrus.Infof("zondclients initialized")
 	}
+
+	if cfg.Frontend.SessionSecret == "" {
+		logrus.Fatal("session secret is empty, please provide a secure random string.")
+		return
+	}
+
+	utils.InitSessionStore(cfg.Frontend.SessionSecret)
+
+	if utils.Config.Frontend.SiteDomain == "" {
+		utils.Config.Frontend.SiteDomain = "explorer.zond.theqrl.org"
+	}
+
+	router.HandleFunc("/", handlers.Index).Methods("GET")
+	router.HandleFunc("/latestState", handlers.LatestState).Methods("GET")
+	router.HandleFunc("/launchMetrics", handlers.SlotVizMetrics).Methods("GET")
+	router.HandleFunc("/index/data", handlers.IndexPageData).Methods("GET")
+	router.HandleFunc("/slot/{slotOrHash}", handlers.Slot).Methods("GET")
+	router.HandleFunc("/slot/{slotOrHash}/deposits", handlers.SlotDepositData).Methods("GET")
+	router.HandleFunc("/slot/{slotOrHash}/votes", handlers.SlotVoteData).Methods("GET")
+	router.HandleFunc("/slot/{slot}/attestations", handlers.SlotAttestationsData).Methods("GET")
+	router.HandleFunc("/slot/{slot}/withdrawals", handlers.SlotWithdrawalData).Methods("GET")
+	router.HandleFunc("/slot/{slot}/dilithiumChange", handlers.SlotDilithiumChangeData).Methods("GET")
+	router.HandleFunc("/slots/finder", handlers.SlotFinder).Methods("GET")
+	router.HandleFunc("/slots", handlers.Slots).Methods("GET")
+	router.HandleFunc("/slots/data", handlers.SlotsData).Methods("GET")
+	router.HandleFunc("/blocks", handlers.Eth1Blocks).Methods("GET")
+	router.HandleFunc("/blocks/data", handlers.Eth1BlocksData).Methods("GET")
+	router.HandleFunc("/address/{address}", handlers.Eth1Address).Methods("GET")
+	router.HandleFunc("/address/{address}/blocks", handlers.Eth1AddressBlocksMined).Methods("GET")
+	router.HandleFunc("/address/{address}/withdrawals", handlers.Eth1AddressWithdrawals).Methods("GET")
+	router.HandleFunc("/address/{address}/transactions", handlers.Eth1AddressTransactions).Methods("GET")
+	router.HandleFunc("/address/{address}/internalTxns", handlers.Eth1AddressInternalTransactions).Methods("GET")
+	router.HandleFunc("/address/{address}/zrc20", handlers.Eth1AddressZrc20Transactions).Methods("GET")
+	router.HandleFunc("/address/{address}/zrc721", handlers.Eth1AddressZrc721Transactions).Methods("GET")
+	router.HandleFunc("/address/{address}/zrc1155", handlers.Eth1AddressZrc1155Transactions).Methods("GET")
+	router.HandleFunc("/token/{token}", handlers.Eth1Token).Methods("GET")
+	router.HandleFunc("/token/{token}/transfers", handlers.Eth1TokenTransfers).Methods("GET")
+	router.HandleFunc("/transactions", handlers.Eth1Transactions).Methods("GET")
+	router.HandleFunc("/transactions/data", handlers.Eth1TransactionsData).Methods("GET")
+	router.HandleFunc("/block/{block}", handlers.Eth1Block).Methods("GET")
+	router.HandleFunc("/block/{block}/transactions", handlers.BlockTransactionsData).Methods("GET")
+	router.HandleFunc("/tx/{hash}", handlers.Eth1TransactionTx).Methods("GET")
+	router.HandleFunc("/tx/{hash}/data", handlers.Eth1TransactionTxData).Methods("GET")
+	router.HandleFunc("/mempool", handlers.MempoolView).Methods("GET")
+	router.HandleFunc("/burn", handlers.Burn).Methods("GET")
+	router.HandleFunc("/burn/data", handlers.BurnPageData).Methods("GET")
+	router.HandleFunc("/gasnow", handlers.GasNow).Methods("GET")
+	router.HandleFunc("/gasnow/data", handlers.GasNowData).Methods("GET")
+
+	router.HandleFunc("/vis", handlers.Vis).Methods("GET")
+	router.HandleFunc("/charts", handlers.Charts).Methods("GET")
+	router.HandleFunc("/charts/{chart}", handlers.Chart).Methods("GET")
+	router.HandleFunc("/charts/{chart}/data", handlers.GenericChartData).Methods("GET")
+	router.HandleFunc("/vis/blocks", handlers.VisBlocks).Methods("GET")
+	router.HandleFunc("/epoch/{epoch}", handlers.Epoch).Methods("GET")
+	router.HandleFunc("/epochs", handlers.Epochs).Methods("GET")
+	router.HandleFunc("/epochs/data", handlers.EpochsData).Methods("GET")
+
+	router.HandleFunc("/validator/{index}", handlers.Validator).Methods("GET")
+	router.HandleFunc("/validator/{index}/proposedblocks", handlers.ValidatorProposedBlocks).Methods("GET")
+	router.HandleFunc("/validator/{index}/attestations", handlers.ValidatorAttestations).Methods("GET")
+	router.HandleFunc("/validator/{index}/withdrawals", handlers.ValidatorWithdrawals).Methods("GET")
+	router.HandleFunc("/validator/{index}/sync", handlers.ValidatorSync).Methods("GET")
+	router.HandleFunc("/validator/{index}/history", handlers.ValidatorHistory).Methods("GET")
+	router.HandleFunc("/validator/{pubkey}/deposits", handlers.ValidatorDeposits).Methods("GET")
+	router.HandleFunc("/validator/{index}/slashings", handlers.ValidatorSlashings).Methods("GET")
+	router.HandleFunc("/validator/{index}/effectiveness", handlers.ValidatorAttestationInclusionEffectiveness).Methods("GET")
+	router.HandleFunc("/validator/{index}/stats", handlers.ValidatorStatsTable).Methods("GET")
+	router.HandleFunc("/validators", handlers.Validators).Methods("GET")
+	router.HandleFunc("/validators/data", handlers.ValidatorsData).Methods("GET")
+	router.HandleFunc("/validators/slashings", handlers.ValidatorsSlashings).Methods("GET")
+	router.HandleFunc("/validators/slashings/data", handlers.ValidatorsSlashingsData).Methods("GET")
+	router.HandleFunc("/validators/withdrawals", handlers.Withdrawals).Methods("GET")
+	router.HandleFunc("/validators/withdrawals/data", handlers.WithdrawalsData).Methods("GET")
+	router.HandleFunc("/validators/withdrawals/dilithium", handlers.DilithiumChangeData).Methods("GET")
+	router.HandleFunc("/validators/deposits", handlers.Deposits).Methods("GET")
+	router.HandleFunc("/validators/initiated-deposits/data", handlers.Eth1DepositsData).Methods("GET")
+	router.HandleFunc("/validators/included-deposits/data", handlers.Eth2DepositsData).Methods("GET")
+
+	router.HandleFunc("/heatmap", handlers.Heatmap).Methods("GET")
+
+	router.HandleFunc("/dashboard", handlers.Dashboard).Methods("GET")
+	router.HandleFunc("/dashboard/data/allbalances", handlers.DashboardDataBalanceCombined).Methods("GET")
+	router.HandleFunc("/dashboard/data/proposals", handlers.DashboardDataProposals).Methods("GET")
+	router.HandleFunc("/dashboard/data/proposalshistory", handlers.DashboardDataProposalsHistory).Methods("GET")
+	router.HandleFunc("/dashboard/data/validators", handlers.DashboardDataValidators).Methods("GET")
+	router.HandleFunc("/dashboard/data/withdrawal", handlers.DashboardDataWithdrawals).Methods("GET")
+	router.HandleFunc("/dashboard/data/effectiveness", handlers.DashboardDataEffectiveness).Methods("GET")
+	router.HandleFunc("/dashboard/data/earnings", handlers.DashboardDataEarnings).Methods("GET")
+	router.HandleFunc("/calculator", handlers.StakingCalculator).Methods("GET")
+	router.HandleFunc("/search", handlers.Search).Methods("POST")
+	router.HandleFunc("/search/{type}/{search}", handlers.SearchAhead).Methods("GET")
+	router.HandleFunc("/imprint", handlers.Imprint).Methods("GET")
+	router.HandleFunc("/tools/unitConverter", handlers.UnitConverter).Methods("GET")
+	// TODO(now.youtrack.cloud/issue/TZB-2)
+	// router.HandleFunc("/tools/broadcast", handlers.Broadcast).Methods("GET")
+	// router.HandleFunc("/tools/broadcast", handlers.BroadcastPost).Methods("POST")
+	// router.HandleFunc("/tools/broadcast/status/{jobID}", handlers.BroadcastStatus).Methods("GET")
+
+	router.HandleFunc("/tables/{tableId}/state", handlers.GetDataTableStateChanges).Methods("GET")
+	router.HandleFunc("/tables/{tableId}/state", handlers.SetDataTableStateChanges).Methods("PUT")
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// router.HandleFunc("/zns/{search}", handlers.ZnsSearch).Methods("GET")
+
+	router.HandleFunc("/zondClients", handlers.ZondClientsServices).Methods("GET")
+
+	router.HandleFunc("/rewards", handlers.ValidatorRewards).Methods("GET")
+	router.HandleFunc("/rewards/hist", handlers.RewardsHistoricalData).Methods("GET")
+	router.HandleFunc("/rewards/hist/download", handlers.DownloadRewardsHistoricalData).Methods("GET")
+
+	router.HandleFunc("/monitoring/{module}", handlers.Monitoring).Methods("GET", "OPTIONS")
+
+	if utils.Config.Frontend.Debug {
+		// serve files from local directory when debugging, instead of from go embed file
+		templatesHandler := http.FileServer(http.Dir("templates"))
+		router.PathPrefix("/templates").Handler(http.StripPrefix("/templates/", templatesHandler))
+
+		cssHandler := http.FileServer(http.Dir("static/css"))
+		router.PathPrefix("/css").Handler(http.StripPrefix("/css/", cssHandler))
+
+		jsHandler := http.FileServer(http.Dir("static/js"))
+		router.PathPrefix("/js").Handler(http.StripPrefix("/js/", jsHandler))
+	}
+	fileSys := http.FS(static.Files)
+	router.PathPrefix("/").Handler(handlers.CustomFileServer(http.FileServer(fileSys), fileSys, handlers.NotFound))
+
+	if utils.Config.Metrics.Enabled {
+		router.Use(metrics.HttpMiddleware)
+	}
+
+	ratelimit.Init()
+	router.Use(ratelimit.HttpMiddleware)
+
+	n := negroni.New(negroni.NewRecovery())
+	n.Use(gzip.Gzip(gzip.DefaultCompression))
+	pa := &proxyaddr.ProxyAddr{}
+	pa.Init(proxyaddr.CIDRLoopback)
+	n.Use(pa)
+
+	n.UseHandler(utils.SessionStore.SCS.LoadAndSave(router))
+	if utils.Config.Frontend.HttpWriteTimeout == 0 {
+		utils.Config.Frontend.HttpWriteTimeout = time.Second * 15
+	}
+	if utils.Config.Frontend.HttpReadTimeout == 0 {
+		utils.Config.Frontend.HttpReadTimeout = time.Second * 15
+	}
+	if utils.Config.Frontend.HttpIdleTimeout == 0 {
+		utils.Config.Frontend.HttpIdleTimeout = time.Minute
+	}
+	srv := &http.Server{
+		Addr:         cfg.Frontend.Server.Host + ":" + cfg.Frontend.Server.Port,
+		WriteTimeout: utils.Config.Frontend.HttpWriteTimeout,
+		ReadTimeout:  utils.Config.Frontend.HttpReadTimeout,
+		IdleTimeout:  utils.Config.Frontend.HttpIdleTimeout,
+		Handler:      n,
+	}
+
+	logrus.Printf("http server listening on %v", srv.Addr)
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			logrus.WithError(err).Fatal("Error serving frontend")
+		}
+	}()
 
 	if utils.Config.Metrics.Enabled {
 		go func(addr string) {

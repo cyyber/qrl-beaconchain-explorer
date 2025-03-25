@@ -36,8 +36,6 @@ services:
   frontend:
     <<: *default-service
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
-    environment:
-      - FRONTEND_ENABLED=true
     ports:
       - "8080:8080"
   

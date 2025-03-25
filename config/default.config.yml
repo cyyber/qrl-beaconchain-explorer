@@ -19,7 +19,6 @@ chain:
 # Note: It is possible to run either the frontend or the indexer or both at the same time
 # Frontend config
 frontend:
-  enabled: true # Enable or disable to web frontend
   siteName: "Zond Explorer" # Name of the site, displayed in the title tag
   siteSubtitle: "Showing the <a href='https://theqrl.org'>Zond Testnet</a>" # Subtitle shown on the main page
   server:
