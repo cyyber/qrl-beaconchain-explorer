@@ -15,7 +15,6 @@ import (
 	"golang.org/x/text/message"
 )
 
-// TODO(rgeraldes24)
 func Eth1TotalReward(block *types.Eth1BlockIndexed) *big.Int {
 	return new(big.Int).SetBytes(block.GetTxReward())
 }

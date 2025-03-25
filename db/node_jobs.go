@@ -35,7 +35,6 @@ func GetNodeJob(id string) (*types.NodeJob, error) {
 func GetNodeJobValidatorInfos(job *types.NodeJob) ([]types.NodeJobValidatorInfo, error) {
 	indicesArr := []uint64{}
 	if job.Type == types.DilithiumToExecutionChangesNodeJobType {
-		// TODO(rgeraldes24)
 		// jobData, ok := job.GetDilithiumToExecutionChangesNodeJobData()
 		// if !ok {
 		// 	return nil, fmt.Errorf("invalid dilithium to execution job-data")
@@ -362,7 +361,6 @@ func CreateVoluntaryExitNodeJob(nj *types.NodeJob) (*types.NodeJob, error) {
 	default:
 	}
 
-	// TODO(rgeraldes24)
 	// forkVersion := utils.MustParseHex(utils.Config.Chain.ClConfig.GenesisForkVersion)
 	// err = utils.VerifyVoluntaryExitSignature(njd, forkVersion, vali.Pubkey)
 	// if err != nil {

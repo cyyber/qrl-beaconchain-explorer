@@ -24,9 +24,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// QrysmLatestHeadEpoch is used to cache the latest head epoch for participation requests
-var QrysmLatestHeadEpoch uint64 = 0
-
 // QrysmClient holds the Qrysm client info
 type QrysmClient struct {
 	endpoint            string
@@ -70,7 +67,8 @@ func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
 		id = "genesis"
 	}
 
-	// TODO(rgeraldes24)
+	// TODO(rgeraldes24): test without this now
+	// TODO(now.youtrack.cloud/issue/TZB-7)
 	time.Sleep(60 * time.Second)
 
 	finalityResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/finality_checkpoints", lc.endpoint, id))
@@ -543,7 +541,6 @@ func uint64List(li []uint64Str) []uint64 {
 }
 
 func (lc *QrysmClient) GetBalancesForEpoch(epoch int64) (map[uint64]uint64, error) {
-
 	if epoch < 0 {
 		epoch = 0
 	}
@@ -1102,14 +1099,13 @@ func syncCommitteeParticipation(bits []byte) float64 {
 
 // GetValidatorParticipation will get the validator participation from the Qrysm RPC api
 func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.ValidatorParticipation, error) {
-
 	head, err := lc.GetChainHead()
 	if err != nil {
 		return nil, err
 	}
 
 	if epoch > head.HeadEpoch {
-		return nil, fmt.Errorf("epoch %v is newer than the latest head %v", epoch, QrysmLatestHeadEpoch)
+		return nil, fmt.Errorf("epoch %v is newer than the latest head %v", epoch, head.HeadEpoch)
 	}
 	if epoch == head.HeadEpoch {
 		// participation stats are calculated at the end of an epoch,
@@ -1258,12 +1254,6 @@ type StandardFinalityCheckpointsResponse struct {
 			Root  string    `json:"root"`
 		} `json:"finalized"`
 	} `json:"data"`
-}
-
-type StreamedBlockEventData struct {
-	Slot                uint64Str `json:"slot"`
-	Block               string    `json:"block"`
-	ExecutionOptimistic bool      `json:"execution_optimistic"`
 }
 
 type StandardProposerDuty struct {
@@ -1475,20 +1465,6 @@ type StandardV2BlockResponse struct {
 	ExecutionOptimistic bool           `json:"execution_optimistic"`
 	Finalized           bool           `json:"finalized"`
 	Data                AnySignedBlock `json:"data"`
-}
-
-type StandardV1BlockRootResponse struct {
-	Data struct {
-		Root string `json:"root"`
-	} `json:"data"`
-}
-
-type StandardSyncingResponse struct {
-	Data struct {
-		IsSyncing    bool      `json:"is_syncing"`
-		HeadSlot     uint64Str `json:"head_slot"`
-		SyncDistance uint64Str `json:"sync_distance"`
-	} `json:"data"`
 }
 
 type StandardValidatorBalancesResponse struct {

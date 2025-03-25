@@ -800,27 +800,7 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 	txReward := big.NewInt(0)
 
 	for _, t := range block.GetTransactions() {
-		// TODO(rgeraldes24)
-		// price := new(big.Int).SetBytes(t.GasPrice)
-
-		// if minGasPrice == nil {
-		// 	minGasPrice = price
-		// }
-		// if maxGasPrice == nil {
-		// 	maxGasPrice = price
-		// }
-
-		// if price.Cmp(maxGasPrice) > 0 {
-		// 	maxGasPrice = price
-		// }
-
-		// if price.Cmp(minGasPrice) < 0 {
-		// 	minGasPrice = price
-		// }
-
-		// txFee := new(big.Int).Mul(new(big.Int).SetBytes(t.GasPrice), big.NewInt(int64(t.GasUsed)))
-		txFee := new(big.Int)
-
+		txFee := big.NewInt(0)
 		if len(block.BaseFee) > 0 {
 			effectiveGasPrice := math.BigMin(new(big.Int).Add(new(big.Int).SetBytes(t.MaxPriorityFeePerGas), new(big.Int).SetBytes(block.BaseFee)), new(big.Int).SetBytes(t.MaxFeePerGas))
 			proposerGasPricePart := new(big.Int).Sub(effectiveGasPrice, new(big.Int).SetBytes(block.BaseFee))
@@ -831,7 +811,6 @@ func (bigtable *Bigtable) TransformBlock(block *types.Eth1Block, cache *freecach
 				logger.Errorf("error minerGasPricePart is below 0 for tx %v: %v", t.Hash, proposerGasPricePart)
 				txFee = big.NewInt(0)
 			}
-
 		}
 
 		txReward.Add(txReward, txFee)

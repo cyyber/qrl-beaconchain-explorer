@@ -8,7 +8,7 @@ import (
 	"github.com/theQRL/go-zond/common"
 )
 
-// TODO(rgeraldes24)
+// TODO(now.youtrack.cloud/issue/TZB-1)
 var ZNSCrontractAddressesZond = map[string]string{
 	"Z00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
 	"Z253553366Da8546fC250F225fe3d25d0C782303b": "ZONDRegistrarController",

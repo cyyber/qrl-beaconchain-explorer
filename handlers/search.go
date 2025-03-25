@@ -22,9 +22,8 @@ const searchValidatorsResultLimit = 300
 
 var transactionLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{64}$`)
 
-// TODO(rgeraldes24)
 var searchLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{0,96}$`)
-var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,96}$`)
+var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,5184}$`)
 
 // Search handles search requests
 func Search(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +50,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)
 	} else if len(search) == 5184 {
 		http.Redirect(w, r, "/validator/"+search, http.StatusMovedPermanently)
-	} else if utils.IsValidAddress(search) {
+	} else if utils.IsAddress(search) {
 		http.Redirect(w, r, "/address/"+search, http.StatusMovedPermanently)
 	} else {
 		w.Header().Set("Content-Type", "text/html")
@@ -404,7 +403,7 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
 	// search = strings.ToLower(strings.Replace(ReplaceZnsNameWithAddress(search), "0x", "", -1))
 	search = strings.ToLower(search)
-	if !utils.IsValidAddress(search) {
+	if !utils.IsAddress(search) {
 		return nil, fmt.Errorf("not a valid Zond address: %v", search)
 	}
 	// find validators per eth1-address (limit result by N addresses and M validators per address)

@@ -506,9 +506,9 @@ func ReadConfig(cfg *types.Config, path string) error {
 
 	if cfg.Chain.GenesisTimestamp == 0 {
 		switch cfg.Chain.Name {
-		// TODO(rgeraldes24)
-		case "mainnet":
-			cfg.Chain.GenesisTimestamp = 1606824023
+		// TODO(now.youtrack.cloud/issue/TZB-9)
+		// case "mainnet":
+		// 	cfg.Chain.GenesisTimestamp = 1606824023
 		default:
 			return fmt.Errorf("tried to set known genesis-timestamp, but unknown chain-name")
 		}
@@ -631,14 +631,7 @@ var txHashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{64}$")
 var zeroHashRE = regexp.MustCompile("^(0x)?0+$")
 var hashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{96}$")
 
-// IsValidAddress verifies whether a string represents a valid zond address.
-func IsValidAddress(s string) bool {
-	return zondAddressRE.MatchString(s)
-}
-
-// TODO(rgeraldes24)
 // IsAddress verifies whether a string represents a zond address.
-// In contrast to IsValidAddress, this also returns true for the 0x0 address
 func IsAddress(s string) bool {
 	return zondAddressRE.MatchString(s)
 }

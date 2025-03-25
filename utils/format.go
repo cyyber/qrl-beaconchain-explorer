@@ -641,7 +641,7 @@ func WithdrawalCredentialsToAddress(credentials []byte) ([]byte, error) {
 
 // AddressToWithdrawalCredentials converts a valid address to withdrawalCredentials
 func AddressToWithdrawalCredentials(address []byte) ([]byte, error) {
-	if IsValidAddress(fmt.Sprintf("%#x", address)) {
+	if IsAddress(fmt.Sprintf("Z%#x", address)) {
 		credentials := make([]byte, 12, 32)
 		credentials[0] = 0x01
 		credentials = append(credentials, address...)

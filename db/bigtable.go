@@ -146,10 +146,10 @@ func (bigtable *Bigtable) SaveValidatorBalances(epoch uint64, validators []*type
 
 		balanceEncoded := make([]byte, 8)
 		binary.LittleEndian.PutUint64(balanceEncoded, validator.Balance)
-		// TODO(rgeraldes24)
-		effectiveBalanceEncoded := uint8(validator.EffectiveBalance / 1e9) // we can encode the effective balance in 1 byte as it is capped at 32 ZND and only decrements in 1 ZND steps // TODO(rgeraldes24)
+		effectiveBalanceEncoded := make([]byte, 2)
+		binary.LittleEndian.PutUint64(effectiveBalanceEncoded, validator.EffectiveBalance/1e9)
 
-		combined := append(balanceEncoded, effectiveBalanceEncoded)
+		combined := append(balanceEncoded, effectiveBalanceEncoded...)
 		mut := &gcp_bigtable.Mutation{}
 		mut.Set(VALIDATOR_BALANCES_FAMILY, "b", ts, combined)
 		key := fmt.Sprintf("%s:%s:%s:%s", bigtable.chainId, bigtable.validatorIndexToKey(validator.Index), VALIDATOR_BALANCES_FAMILY, epochKey)
@@ -447,13 +447,8 @@ func (bigtable *Bigtable) getValidatorBalanceHistoryV2(validators []uint64, star
 
 					balanceBytes := balances[0:8]
 					balance := binary.LittleEndian.Uint64(balanceBytes)
-					var effectiveBalance uint64
-					if len(balances) == 9 { // in new schema the effective balance is encoded in 1 byte
-						effectiveBalance = uint64(balances[8]) * 1e9
-					} else {
-						effectiveBalanceBytes := balances[8:16]
-						effectiveBalance = binary.LittleEndian.Uint64(effectiveBalanceBytes)
-					}
+					effectiveBalanceBytes := balances[8:10]
+					effectiveBalance := binary.LittleEndian.Uint64(effectiveBalanceBytes)
 
 					resMux.Lock()
 					res[validator] = append(res[validator], &types.ValidatorBalance{
@@ -979,7 +974,7 @@ func (bigtable *Bigtable) GetValidatorEffectiveness(validators []uint64, epoch u
 				aggEffectiveness[validator].Sum += 1.0 / float64(attestation.InclusionSlot-attestation.AttesterSlot)
 				aggEffectiveness[validator].Count++
 			} else {
-				aggEffectiveness[validator].Sum += 0 // missed attestations get a penalty of 32 slots // TODO(rgeraldes24)
+				aggEffectiveness[validator].Sum += 0 // missed attestations get a penalty of 32 slots
 				aggEffectiveness[validator].Count++
 			}
 		}

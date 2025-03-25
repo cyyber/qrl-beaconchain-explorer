@@ -144,20 +144,6 @@
 			formatGasUsed(number) {
 				return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 			},
-			formatUSD(number) {
-				if (typeof Intl !== 'undefined') {
-					return new Intl.NumberFormat('en-US', { style: 'currency', currencyDisplay: 'narrowSymbol', currency: 'USD' }).format(number)
-				}
-				return number.toFixed(2)
-			},
-			toGasPrice(number, gasUsed, price, curr) {
-				number = number / 1e18 * price * gasUsed
-				if (typeof Intl !== 'undefined') {
-					// TODO(rgeraldes24)
-					return new Intl.NumberFormat('en-US', { style: 'currency', currencyDisplay: 'narrowSymbol', currency: curr && curr !== "ZND" ? curr : "USD" }).format(number)
-				}
-				return number.toFixed(2)
-			},
 			formatGPlanck(number, digits) {
 				let gplanck = number / 1e9
 				if (gplanck < 1) {
