@@ -40,7 +40,8 @@ func main() {
 	offsetBlocks := flag.Int64("blocks.offset", 100, "Blocks offset")
 	checkBlocksGaps := flag.Bool("blocks.gaps", false, "Check for gaps in the blocks table")
 	checkBlocksGapsLookback := flag.Int("blocks.gaps.lookback", 1000000, "Lookback for gaps check of the blocks table")
-	traceMode := flag.String("blocks.tracemode", "parity/gzond", "Trace mode to use, can bei either 'parity', 'gzond' or 'parity/gzond' for both") // TODO(rgeraldes24)
+	// TODO(now.youtrack.cloud/issue/TZB-7)
+	// traceMode := flag.String("blocks.tracemode", "parity/gzond", "Trace mode to use, can be either 'parity', 'gzond' or 'parity/gzond' for both")
 
 	concurrencyData := flag.Int64("data.concurrency", 30, "Concurrency to use when indexing data from bigtable")
 	startData := flag.Int64("data.start", 0, "Block to start indexing")
@@ -168,13 +169,15 @@ func main() {
 		bt.TransformZRC721,
 		bt.TransformZRC1155,
 		bt.TransformWithdrawals,
+		// TODO(now.youtrack.cloud/issue/TZB-1)
 		// bt.TransformZnsNameRegistered,
 		bt.TransformContract)
 
 	cache := freecache.NewCache(100 * 1024 * 1024) // 100 MB limit
 
 	if *block != 0 {
-		err = IndexFromNode(bt, client, *block, *block, *concurrencyBlocks, *traceMode)
+		// TODO(now.youtrack.cloud/issue/TZB-7)
+		err = IndexFromNode(bt, client, *block, *block, *concurrencyBlocks /*, *traceMode*/)
 		if err != nil {
 			logrus.WithError(err).Fatalf("error indexing from node, start: %v end: %v concurrency: %v", *block, *block, *concurrencyBlocks)
 		}
@@ -199,7 +202,8 @@ func main() {
 	}
 
 	if *endBlocks != 0 && *startBlocks < *endBlocks {
-		err = IndexFromNode(bt, client, *startBlocks, *endBlocks, *concurrencyBlocks, *traceMode)
+		// TODO(now.youtrack.cloud/issue/TZB-7)
+		err = IndexFromNode(bt, client, *startBlocks, *endBlocks, *concurrencyBlocks /*, *traceMode*/)
 		if err != nil {
 			logrus.WithError(err).Fatalf("error indexing from node, start: %v end: %v concurrency: %v", *startBlocks, *endBlocks, *concurrencyBlocks)
 		}
@@ -288,7 +292,8 @@ func main() {
 						endBlock = int64(lastBlockFromNode)
 					}
 
-					err = IndexFromNode(bt, client, startBlock, endBlock, *concurrencyBlocks, *traceMode)
+					// TODO(now.youtrack.cloud/issue/TZB-7)
+					err = IndexFromNode(bt, client, startBlock, endBlock, *concurrencyBlocks /*, *traceMode*/)
 					if err != nil {
 						errMsg := "error indexing from node"
 						errFields := map[string]interface{}{
@@ -489,7 +494,8 @@ func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.GzondClient, prefix str
 	}
 }
 
-func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurrency int64, traceMode string) error {
+// TODO(now.youtrack.cloud/issue/TZB-7)
+func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurrency int64 /*, traceMode string*/) error {
 	ctx := context.Background()
 	g, gCtx := errgroup.WithContext(ctx)
 	g.SetLimit(int(concurrency))
@@ -514,6 +520,7 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 			}()
 
 			blockStartTs := time.Now()
+			// TODO(now.youtrack.cloud/issue/TZB-7)
 			bc, timings, err := client.GetBlock(i /*, traceMode*/)
 			if err != nil {
 				return fmt.Errorf("error getting block: %v from zond node err: %w", i, err)
