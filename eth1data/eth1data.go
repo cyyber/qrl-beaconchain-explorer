@@ -123,12 +123,13 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 		txPageData.Gas.TxFee = msg.GasFeeCap.Mul(msg.GasFeeCap, big.NewInt(int64(receipt.GasUsed))).Bytes()
 	}
 
+	// TODO(now.youtrack.cloud/issue/TZB-9)
 	// data, err := rpc.CurrentGzondClient.TraceParityTx(tx.Hash().Hex())
 	// if err != nil {
 	// 	return nil, fmt.Errorf("failed to get parity trace for revert reason: %w", err)
 	// }
 	if receipt.Status != 1 {
-		// TODO(rgeraldes24)
+		// TODO(now.youtrack.cloud/issue/TZB-9)
 		// errorMsg, err := abi.UnpackRevert(utils.MustParseHex(data[0].Result.Output))
 		// if err == nil {
 		// 	txPageData.ErrorMsg = errorMsg
@@ -139,10 +140,12 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 			return nil, fmt.Errorf("error loading token transfers from tx: %w", err)
 		}
 	}
+	// TODO(now.youtrack.cloud/issue/TZB-9)
 	// txPageData.InternalTxns, err = db.BigtableClient.GetInternalTransfersForTransaction(tx.Hash().Bytes(), msg.From.Bytes(), data, currency)
 	// if err != nil {
 	// 	return nil, fmt.Errorf("error loading internal transfers from tx: %w", err)
 	// }
+	// TODO(now.youtrack.cloud/issue/TZB-7)
 	// txPageData.FromName, err = db.BigtableClient.GetAddressName(msg.From.Bytes())
 	// if err != nil {
 	// 	return nil, fmt.Errorf("error retrieveing from name for tx: %w", err)

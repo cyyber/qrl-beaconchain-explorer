@@ -92,9 +92,8 @@ type ValidatorsDataQueryParams struct {
 	StateFilter       string
 }
 
-// TODO(rgeraldes24): pub key size
-var searchPubkeyExactRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{96}`) // only search for pubkeys if string consists of 96 hex-chars
-var searchPubkeyLikeRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{2,96}`)
+var searchPubkeyExactRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{5184}`) // only search for pubkeys if string consists of 5184 hex-chars
+var searchPubkeyLikeRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{2,5184}`)
 
 func parseValidatorsDataQueryParams(r *http.Request) (*ValidatorsDataQueryParams, error) {
 	q := r.URL.Query()

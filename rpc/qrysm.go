@@ -67,7 +67,6 @@ func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
 		id = "genesis"
 	}
 
-	// TODO(rgeraldes24): test without this now
 	// TODO(now.youtrack.cloud/issue/TZB-7)
 	time.Sleep(60 * time.Second)
 

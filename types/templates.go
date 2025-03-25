@@ -39,7 +39,6 @@ type PageData struct {
 	ChainConfig           ClChainConfig
 	Debug                 bool
 	DebugTemplates        []string
-	DebugSession          map[string]interface{} // TODO(rgeraldes24)
 	GasNow                *GasNowPageData
 	GlobalNotification    template.HTML
 	MainMenuItems         []MainMenuItem
