@@ -1,3 +1,3 @@
 package handlers
 
-const ValidatorLimit = 10
+const validatorLimit = 10

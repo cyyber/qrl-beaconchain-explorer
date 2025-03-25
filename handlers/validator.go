@@ -351,7 +351,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			timings.Earnings = time.Since(start)
 		}()
-		earnings, balances, err := GetValidatorEarnings([]uint64{index}, "ZND")
+		earnings, balances, err := GetValidatorEarnings([]uint64{index})
 		if err != nil {
 			return fmt.Errorf("error getting validator earnings: %w", err)
 		}

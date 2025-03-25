@@ -35,7 +35,7 @@ func handleValidatorsQuery(w http.ResponseWriter, r *http.Request, checkValidato
 	errFieldMap := map[string]interface{}{"route": r.URL.String()}
 
 	// Parse all the validator indices and pubkeys from the query string
-	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), ValidatorLimit)
+	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), validatorLimit)
 	if err != nil && (checkValidatorLimit || err != ErrTooManyValidators) {
 		logger.Warnf("could not parse validators from query string: %v; Route: %v", err, r.URL.String())
 		http.Error(w, "Invalid query", http.StatusBadRequest)
@@ -203,7 +203,7 @@ func Heatmap(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	heatmapData := types.HeatmapData{}
-	heatmapData.ValidatorLimit = ValidatorLimit
+	heatmapData.ValidatorLimit = validatorLimit
 
 	min := 1
 	max := 400000
@@ -297,7 +297,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	data := InitPageData(w, r, "dashboard", "/dashboard", "Dashboard", templateFiles)
 	data.Data = types.DashboardData{
-		ValidatorLimit: ValidatorLimit,
+		ValidatorLimit: validatorLimit,
 	}
 
 	if handleTemplateError(w, r, "dashboard.go", "Dashboard", "", dashboardTemplate.ExecuteTemplate(w, "layout", data)) != nil {
@@ -517,7 +517,7 @@ func DashboardDataBalance(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
-	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), ValidatorLimit)
+	queryValidatorIndices, queryValidatorPubkeys, err := parseValidatorsFromQueryString(q.Get("validators"), validatorLimit)
 	if err != nil || len(queryValidatorPubkeys) > 0 {
 		utils.LogError(err, "error parsing validators from query string", 0, errFieldMap)
 		http.Error(w, "Invalid query", http.StatusBadRequest)
@@ -720,7 +720,7 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 		LEFT JOIN validator_names ON validators.pubkey = validator_names.publickey
 		LEFT JOIN validator_performance ON validators.validatorindex = validator_performance.validatorindex
 		WHERE validators.validatorindex = ANY($1)
-		LIMIT $2`, filter, ValidatorLimit)
+		LIMIT $2`, filter, validatorLimit)
 
 	if err != nil {
 		utils.LogError(err, "error retrieving validator data", 0, errFieldMap)
