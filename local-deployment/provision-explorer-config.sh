@@ -73,7 +73,6 @@ frontend:
     termsOfServiceUrl: "tos.pdf"
     privacyPolicyUrl: "privacy.pdf"
     imprintTemplate: '{{ define "js" }}{{ end }}{{ define "css" }}{{ end }}{{ define "content" }}Imprint{{ end }}'
-  ratelimitUpdateInterval: 1s
 
 indexer:
   # fullIndexOnStartup: false # Perform a one time full db index on startup
@@ -134,7 +133,6 @@ frontend:
     termsOfServiceUrl: "tos.pdf"
     privacyPolicyUrl: "privacy.pdf"
     imprintTemplate: '{{ define "js" }}{{ end }}{{ define "css" }}{{ end }}{{ define "content" }}Imprint{{ end }}'
-  ratelimitUpdateInterval: 1s
 
 indexer:
   # fullIndexOnStartup: false # Perform a one time full db index on startup
