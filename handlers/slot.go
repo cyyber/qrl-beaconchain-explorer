@@ -126,7 +126,7 @@ func Slot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if slotPageData.Status == 1 && (slotPageData.ExecBlockNumber.Int64 > 0) {
+	if slotPageData.Status == 1 && (slotPageData.ExecBlockNumber.Int64 > 0 || slotPageData.Slot == 0) {
 		// slot has corresponding execution block, fetch execution data
 		eth1BlockPageData, err := GetExecutionBlockPageData(uint64(slotPageData.ExecBlockNumber.Int64), 10)
 		// if err != nil, simply show slot view without block
@@ -674,8 +674,8 @@ func BlockTransactionsData(w http.ResponseWriter, r *http.Request) {
 			Method:        methodFormatted,
 			FromFormatted: v.FromFormatted,
 			ToFormatted:   v.ToFormatted,
-			Value:         utils.FormatAmountFormatted(v.Value, utils.MainCurrency, 5, 0, true, true, false),
-			Fee:           utils.FormatAmountFormatted(v.Fee, utils.MainCurrency, 5, 0, true, true, false),
+			Value:         utils.FormatAmountFormatted(v.Value, "ZND", 5, 0, true, true, false),
+			Fee:           utils.FormatAmountFormatted(v.Fee, "ZND", 5, 0, true, true, false),
 			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GPlanck", 5, 0, true, true, false),
 		}
 	}
