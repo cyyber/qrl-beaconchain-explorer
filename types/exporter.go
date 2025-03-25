@@ -318,12 +318,6 @@ type Eth2Deposit struct {
 	Signature             []byte `db:"signature"`
 }
 
-type BlockTag struct {
-	ID        string `db:"tag_id"`
-	BlockSlot uint64 `db:"slot"`
-	BlockRoot string `db:"blockroot"`
-}
-
 type TagMetadata struct {
 	Name        string `json:"name"`
 	Summary     string `json:"summary"`
