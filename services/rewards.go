@@ -82,8 +82,7 @@ func addCommas(balance float64, decimals string) string {
 	return string(rb)
 }
 
-func GeneratePdfReport(hist rewardHistory, currency string) []byte {
-
+func GeneratePdfReport(hist rewardHistory) []byte {
 	data := hist.History
 
 	if !(len(data) > 0) {
@@ -133,7 +132,7 @@ func GeneratePdfReport(hist rewardHistory, currency string) []byte {
 	// pdf.Ln(-1)
 	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalZND), "", 0, "CM", true, 0, "")
 
-	header := [colCount]string{"Date", "Balance", "Income", "ZND Value", fmt.Sprintf("Income (%v)", currency)}
+	header := [colCount]string{"Date", "Balance", "Income"}
 
 	// pdf.SetMargins(marginH, marginH, marginH)
 	pdf.Ln(10)
