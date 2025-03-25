@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"encoding/json"
+	"flag"
 	"fmt"
 	"math"
 	"math/big"
@@ -26,11 +27,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
 	utilMath "github.com/protolambda/zrnt/eth2/util/math"
-	"golang.org/x/sync/errgroup"
-
-	"flag"
-
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
 )
 
 var opts = struct {
