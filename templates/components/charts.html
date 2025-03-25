@@ -40,10 +40,9 @@
 
     {{if .WithdrawalChart}}
     var series = {{.WithdrawalChart.Data.Series}}
-    var selectedCurrency = {{$.Rates.SelectedCurrency}}
-    var ethPrice = {{$.Rates.MainCurrencyPrice}}
-    var clPrice = {{$.Rates.ClCurrencyPrice}}
-    var clCurrency = {{config.Frontend.ClCurrency}}
+    var selectedCurrency = "ZND"
+    var clPrice = 1
+    var clCurrency = "ZND"
 
     window.addEventListener('load', function() {
         Highcharts.stockChart('withdrawal-chart',{

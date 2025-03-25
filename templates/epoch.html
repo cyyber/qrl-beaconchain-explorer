@@ -196,11 +196,11 @@
             <div class="col-md-9">
               <div>
                 {{ if or .Finalized .VotedZND }}
-                  {{ formatBalance .VotedZND $.Rates.SelectedCurrency }} of
-                  {{ formatBalance .EligibleZND $.Rates.SelectedCurrency }}
+                  {{ formatBalance .VotedZND "ZND" }} of
+                  {{ formatBalance .EligibleZND "ZND" }}
                   <small class="text-muted ml-1">({{ formatPercentageWithPrecision .GlobalParticipationRate 1 }} %)</small>
                 {{ else }}
-                  Calculating… (total stake: {{ formatBalance .EligibleZND $.Rates.SelectedCurrency }})
+                  Calculating… (total stake: {{ formatBalance .EligibleZND "ZND" }})
                 {{ end }}
               </div>
               <div class="progress" style="height: 5px; width: 250px;">
@@ -223,7 +223,7 @@
           </div>
           <div class="row border-bottom p-3 mx-0">
             <div class="col-md-3">Avg. Validator Balance:</div>
-            <div class="col-md-9">{{ formatBalance .AverageValidatorBalance $.Rates.SelectedCurrency }}</div>
+            <div class="col-md-9">{{ formatBalance .AverageValidatorBalance "ZND" }}</div>
           </div>
           <div class="row p-3 mx-0 collapsed">
             <div style="position:relative" class="col-md-3">Slots:</div>
