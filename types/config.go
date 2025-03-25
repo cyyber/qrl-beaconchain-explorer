@@ -131,12 +131,10 @@ type Config struct {
 		Port    string `yaml:"port" envconfig:"PPROF_PORT"`
 	} `yaml:"pprof"`
 	// TODO(now.youtrack.cloud/issue/TZB-2)
-	/*
-		NodeJobsProcessor struct {
-			ElEndpoint string `yaml:"elEndpoint" envconfig:"NODE_JOBS_PROCESSOR_EL_ENDPOINT"`
-			ClEndpoint string `yaml:"clEndpoint" envconfig:"NODE_JOBS_PROCESSOR_CL_ENDPOINT"`
-		} `yaml:"nodeJobsProcessor"`
-	*/
+	// NodeJobsProcessor struct {
+	// 	ElEndpoint string `yaml:"elEndpoint" envconfig:"NODE_JOBS_PROCESSOR_EL_ENDPOINT"`
+	// 	ClEndpoint string `yaml:"clEndpoint" envconfig:"NODE_JOBS_PROCESSOR_CL_ENDPOINT"`
+	// } `yaml:"nodeJobsProcessor"`
 	Monitoring struct {
 		ServiceMonitoringConfigurations []ServiceMonitoringConfiguration `yaml:"serviceMonitoringConfigurations" envconfig:"SERVICE_MONITORING_CONFIGURATIONS"`
 	} `yaml:"monitoring"`

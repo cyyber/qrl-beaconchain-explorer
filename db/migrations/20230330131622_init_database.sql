@@ -496,20 +496,6 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    price (
-        ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        eur NUMERIC(20, 10) NOT NULL,
-        usd NUMERIC(20, 10) NOT NULL,
-        rub NUMERIC(20, 10) NOT NULL,
-        cny NUMERIC(20, 10) NOT NULL,
-        cad NUMERIC(20, 10) NOT NULL,
-        jpy NUMERIC(20, 10) NOT NULL,
-        gbp NUMERIC(20, 10) NOT NULL,
-        aud NUMERIC(20, 10) NOT NULL,
-        PRIMARY KEY (ts)
-    );
-
-CREATE TABLE IF NOT EXISTS
     finality_checkpoints (
         head_epoch INT NOT NULL,
         head_root bytea NOT NULL,
@@ -608,19 +594,20 @@ CREATE TABLE IF NOT EXISTS
         enabled bool NOT NULL
     );
 
-CREATE TABLE IF NOT EXISTS
-    node_jobs (
-        id VARCHAR(40),
-        TYPE VARCHAR(40) NOT NULL,
-        -- can be one of: DILITHIUM_TO_EXECUTION_CHANGES, VOLUNTARY_EXITS
-        status VARCHAR(40) NOT NULL,
-        -- can be one of: PENDING, SUBMITTED_TO_NODE, COMPLETED
-        created_time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-        submitted_to_node_time TIMESTAMP WITHOUT TIME ZONE,
-        completed_time TIMESTAMP WITHOUT TIME ZONE,
-        DATA jsonb NOT NULL,
-        PRIMARY KEY (id)
-    );
+-- TODO(now.youtrack.cloud/issue/TZB-2)
+-- CREATE TABLE IF NOT EXISTS
+--     node_jobs (
+--         id VARCHAR(40),
+--         TYPE VARCHAR(40) NOT NULL,
+--         -- can be one of: DILITHIUM_TO_EXECUTION_CHANGES, VOLUNTARY_EXITS
+--         status VARCHAR(40) NOT NULL,
+--         -- can be one of: PENDING, SUBMITTED_TO_NODE, COMPLETED
+--         created_time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+--         submitted_to_node_time TIMESTAMP WITHOUT TIME ZONE,
+--         completed_time TIMESTAMP WITHOUT TIME ZONE,
+--         DATA jsonb NOT NULL,
+--         PRIMARY KEY (id)
+--     );
 
 CREATE TABLE IF NOT EXISTS
     explorer_configurations (
