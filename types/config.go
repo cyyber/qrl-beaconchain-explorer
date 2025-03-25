@@ -113,7 +113,6 @@ type Config struct {
 			MaxIdleConns int    `yaml:"maxIdleConns" envconfig:"FRONTEND_WRITER_DB_MAX_IDLE_CONNS"`
 			SSL          bool   `yaml:"ssl" envconfig:"FRONTEND_WRITER_DB_SSL"`
 		} `yaml:"writerDatabase"`
-		// RatelimitUpdateInterval              time.Duration `yaml:"ratelimitUpdateInterval" envconfig:"FRONTEND_RATELIMIT_UPDATE_INTERVAL"`
 		SessionSameSiteNone                  bool          `yaml:"sessionSameSiteNone" envconfig:"FRONTEND_SESSION_SAMESITE_NONE"`
 		SessionSecret                        string        `yaml:"sessionSecret" envconfig:"FRONTEND_SESSION_SECRET"`
 		SessionCookieDomain                  string        `yaml:"sessionCookieDomain" envconfig:"FRONTEND_SESSION_COOKIE_DOMAIN"`
@@ -128,10 +127,6 @@ type Config struct {
 		Address string `yaml:"address" envconfig:"METRICS_ADDRESS"`
 		Pprof   bool   `yaml:"pprof" envconfig:"METRICS_PPROF"`
 	} `yaml:"metrics"`
-	// RatelimitUpdater struct {
-	// 	Enabled        bool          `yaml:"enabled" envconfig:"RATELIMIT_UPDATER_ENABLED"`
-	// 	UpdateInterval time.Duration `yaml:"updateInterval" envconfig:"RATELIMIT_UPDATER_UPDATE_INTERVAL"`
-	// }
 	Pprof struct {
 		Enabled bool   `yaml:"enabled" envconfig:"PPROF_ENABLED"`
 		Port    string `yaml:"port" envconfig:"PPROF_PORT"`

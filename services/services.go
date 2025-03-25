@@ -73,10 +73,6 @@ func Init() {
 	ready.Add(1)
 	go latestExportedStatisticDayUpdater(ready)
 
-	// if utils.Config.RatelimitUpdater.Enabled {
-	// 	go ratelimit.DBUpdater()
-	// }
-
 	ready.Wait()
 }
 
