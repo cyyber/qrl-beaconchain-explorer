@@ -42,12 +42,3 @@ services:
   misc:
     <<: *default-service
     command: /bin/bash -c "trap stopit SIGINT; stopit() { echo 'trapped SIGINT'; exit; }; while true; do date; sleep 1; done"
-  redis-sessions:
-    image: redis:7
-    volumes:
-      - redis-sessions:/data
-    ports:
-      - "$REDIS_SESSIONS_PORT:6379"
-
-volumes:
-  redis-sessions:

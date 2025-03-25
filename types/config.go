@@ -44,7 +44,6 @@ type Config struct {
 		// DomainDilithiumToExecutionChange string `yaml:"domainDilithiumToExecutionChange" envconfig:"CHAIN_DOMAIN_DILITHIUM_TO_EXECUTION_CHANGE"`
 		// DomainVoluntaryExit              string `yaml:"domainVoluntaryExit" envconfig:"CHAIN_DOMAIN_VOLUNTARY_EXIT"`
 		ClConfigPath string `yaml:"clConfigPath" envconfig:"CHAIN_CL_CONFIG_PATH"`
-		ElConfigPath string `yaml:"elConfigPath" envconfig:"CHAIN_EL_CONFIG_PATH"`
 		ClConfig     ClChainConfig
 		ElConfig     *params.ChainConfig
 	} `yaml:"chain"`

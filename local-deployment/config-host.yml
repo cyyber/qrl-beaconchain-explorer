@@ -1,7 +1,5 @@
 chain:
   clConfigPath: 'node'
-  elConfigPath: ''
-  # elConfigPath: 'local-deployment/elconfig.json'
 readerDatabase:
   name: db
   host: 127.0.0.1

@@ -1,6 +1,5 @@
 chain:
   clConfigPath: 'node'
-  elConfigPath: '' # Works for well known public networks like mainnet. Specify a file for custom chains
 readerDatabase:
   name: db
   host: {{.DBHost}}

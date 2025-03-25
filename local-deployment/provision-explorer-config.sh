@@ -9,9 +9,6 @@ echo "EL Node port is $EL_PORT"
 REDIS_PORT=$(kurtosis enclave inspect my-testnet | grep 6379/tcp | tr -s ' ' | cut -d " " -f 6 | sed -e 's/tcp\:\/\/127.0.0.1\://' | head -n 1)
 echo "Redis port is $REDIS_PORT"
 
-# REDIS_SESSIONS_PORT=$(comm -23 <(seq 49152 65535 | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
-# echo "Redis sessions port is $REDIS_SESSIONS_PORT"
-
 POSTGRES_PORT=$(kurtosis enclave inspect my-testnet | grep 5432/tcp | tr -s ' ' | cut -d " " -f 6 | sed -e 's/postgresql\:\/\/127.0.0.1\://' | head -n 1)
 echo "Postgres port is $POSTGRES_PORT"
 
@@ -22,26 +19,15 @@ cat <<EOF > .env
 CL_PORT=$CL_PORT
 EL_PORT=$EL_PORT
 REDIS_PORT=$REDIS_PORT
-REDIS_SESSIONS_PORT=$REDIS_SESSIONS_PORT
 POSTGRES_PORT=$POSTGRES_PORT
 LBT_PORT=$LBT_PORT
 EOF
-
-# touch elconfig.json
-# cat >elconfig.json <<EOL
-# {
-#     "byzantiumBlock": 0,
-#     "constantinopleBlock": 0
-# }
-# EOL
 
 touch config.yml
 
 cat >config-host.yml <<EOL
 chain:
   clConfigPath: 'node'
-  elConfigPath: ''
-  # elConfigPath: 'local-deployment/elconfig.json'
 readerDatabase:
   name: db
   host: 127.0.0.1
@@ -61,7 +47,7 @@ bigtable:
   emulatorPort: $LBT_PORT
 elNodeEndpoint: 'http://127.0.0.1:$EL_PORT'
 redisCacheEndpoint: '127.0.0.1:$REDIS_PORT'
-redisSessionStoreEndpoint: '127.0.0.1:$REDIS_SESSIONS_PORT'
+redisSessionStoreEndpoint: '127.0.0.1:$REDIS_PORT'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"
@@ -102,8 +88,6 @@ EOL
 cat >config.yml <<EOL
 chain:
   clConfigPath: 'node'
-  elConfigPath: ''
-  # elConfigPath: 'local-deployment/elconfig.json'
 readerDatabase:
   name: db
   host: host.docker.internal
@@ -124,7 +108,7 @@ bigtable:
   emulatorHost: host.docker.internal
 elNodeEndpoint: 'http://host.docker.internal:$EL_PORT'
 redisCacheEndpoint: 'host.docker.internal:$REDIS_PORT'
-redisSessionStoreEndpoint: 'host.docker.internal:$REDIS_SESSIONS_PORT'
+redisSessionStoreEndpoint: 'host.docker.internal:$$REDIS_PORT'
 tieredCacheProvider: 'redis'
 frontend:
   siteDomain: "localhost:8080"

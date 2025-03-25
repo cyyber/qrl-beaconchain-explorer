@@ -500,22 +500,8 @@ func ReadConfig(cfg *types.Config, path string) error {
 		cfg.Chain.ClConfig = *chainConfig
 	}
 
-	if cfg.Chain.ElConfigPath == "" {
-		cfg.Chain.ElConfig = &params.ChainConfig{
-			ChainID: big.NewInt(int64(cfg.Chain.Id)),
-		}
-	} else {
-		f, err := os.Open(cfg.Chain.ElConfigPath)
-		if err != nil {
-			return fmt.Errorf("error opening EL Chain Config file %v: %w", cfg.Chain.ElConfigPath, err)
-		}
-		var chainConfig *params.ChainConfig
-		decoder := json.NewDecoder(f)
-		err = decoder.Decode(&chainConfig)
-		if err != nil {
-			return fmt.Errorf("error decoding EL Chain Config file %v: %v", cfg.Chain.ElConfigPath, err)
-		}
-		cfg.Chain.ElConfig = chainConfig
+	cfg.Chain.ElConfig = &params.ChainConfig{
+		ChainID: big.NewInt(int64(cfg.Chain.Id)),
 	}
 
 	cfg.Chain.Name = cfg.Chain.ClConfig.ConfigName

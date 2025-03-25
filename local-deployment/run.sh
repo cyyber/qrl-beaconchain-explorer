@@ -22,7 +22,6 @@ fn_main() {
             start) shift; fn_start "$@"; exit;;
             stop) shift; fn_stop "$@"; exit;;
             sql) shift; fn_sql "$@"; exit;;
-            redis) shift; fn_redis "$@"; exit;;
             misc) shift; fn_misc "$@"; exit;;
             *) echo "$var_help"
         esac
@@ -40,15 +39,6 @@ fn_sql() {
     else
         PGPASSWORD=pass psql -h localhost -p$POSTGRES_PORT -U postgres -d db -c "$@" --csv --pset=pager=off
     fi
-}
-
-fn_redis() {
-    if [ -z "${1}" ]; then
-        docker compose exec redis-sessions redis-cli
-    else
-        docker compose exec redis-sessions redis-cli "$@"
-    fi
-    #redis-cli -h localhost -p $REDIS_PORT
 }
 
 fn_start() {
