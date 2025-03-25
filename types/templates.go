@@ -1275,7 +1275,6 @@ type Eth1BlockPageData struct {
 	WithdrawalCount uint64
 	Hash            string
 	ParentHash      string
-	MinerAddress    string
 	MinerFormatted  template.HTML
 	Reward          *big.Int
 	TxFees          *big.Int

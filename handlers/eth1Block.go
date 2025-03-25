@@ -191,7 +191,6 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		TxCount:        uint64(len(block.Transactions)),
 		Hash:           fmt.Sprintf("%#x", block.Hash),
 		ParentHash:     fmt.Sprintf("%#x", block.ParentHash),
-		MinerAddress:   fmt.Sprintf("%#x", block.Coinbase),
 		MinerFormatted: utils.FormatAddressWithLimits(block.Coinbase, names[string(block.Coinbase)], false, "address", 42, 42, true),
 		Reward:         reward,
 		TxFees:         txFees,
