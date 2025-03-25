@@ -252,12 +252,7 @@ func slotVizUpdater(wg *sync.WaitGroup) {
 }
 
 func getIndexPageData() (*types.IndexPageData, error) {
-	// TODO(rgeraldes24)
-	// currency := utils.Config.Frontend.MainCurrency
-	currency := "ZND"
-
 	data := &types.IndexPageData{}
-	data.Mainnet = utils.Config.Chain.ClConfig.ConfigName == "mainnet"
 	data.NetworkName = utils.Config.Chain.ClConfig.ConfigName
 	data.DepositContract = utils.Config.Chain.ClConfig.DepositContractAddress
 
@@ -393,9 +388,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 	for _, epoch := range epochs {
 		epoch.Ts = utils.EpochToTime(epoch.Epoch)
 		epoch.FinalizedFormatted = utils.FormatYesNo(epoch.Finalized)
-		epoch.VotedZNDFormatted = utils.FormatBalance(epoch.VotedZND, currency)
-		epoch.EligibleZNDFormatted = utils.FormatEligibleBalance(epoch.EligibleZND, currency)
-		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZND, epoch.GlobalParticipationRate, currency)
+		epoch.VotedZNDFormatted = utils.FormatBalance(epoch.VotedZND, "ZND")
+		epoch.EligibleZNDFormatted = utils.FormatEligibleBalance(epoch.EligibleZND, "ZND")
+		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZND, epoch.GlobalParticipationRate, "ZND")
 		epochsMap[epoch.Epoch] = true
 	}
 
@@ -456,7 +451,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				Finalized:                        false,
 				FinalizedFormatted:               utils.FormatYesNo(false),
 				EligibleZND:                      0,
-				EligibleZNDFormatted:             utils.FormatEligibleBalance(0, currency),
+				EligibleZNDFormatted:             utils.FormatEligibleBalance(0, "ZND"),
 				GlobalParticipationRate:          0,
 				GlobalParticipationRateFormatted: utils.FormatGlobalParticipationRate(0, 1, ""),
 				VotedZND:                         0,
@@ -508,12 +503,12 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			if epochHistory[i].Finalized {
 				data.CurrentFinalizedEpoch = epochHistory[i].Epoch
 				data.FinalityDelay = FinalizationDelay()
-				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), currency))
+				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "ZND"))
 				break
 			}
 		}
 
-		data.StakedZND = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZND, currency))
+		data.StakedZND = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZND, "ZND"))
 		data.ActiveValidators = epochHistory[len(epochHistory)-1].ValidatorsCount
 	}
 

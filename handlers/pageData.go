@@ -24,7 +24,6 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 		fullTitle = fmt.Sprintf("%v - explorer.zond.theqrl.org - %v", utils.Config.Frontend.SiteName, time.Now().Year())
 	}
 
-	isMainnet := utils.Config.Chain.ClConfig.ConfigName == "mainnet"
 	data := &types.PageData{
 		Meta: &types.Meta{
 			Title:       fullTitle,
@@ -46,14 +45,13 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 		LatestFinalizedEpoch:  services.LatestFinalizedEpoch(),
 		CurrentSlot:           services.LatestSlot(),
 		FinalizationDelay:     services.FinalizationDelay(),
-		Mainnet:               utils.Config.Chain.ClConfig.ConfigName == "mainnet",
 		DepositContract:       utils.Config.Chain.ClConfig.DepositContractAddress,
 		ChainConfig:           utils.Config.Chain.ClConfig,
 		Debug:                 utils.Config.Frontend.Debug,
 		GasNow:                services.LatestGasNowData(),
 		ShowSyncingMessage:    services.IsSyncing(),
 		GlobalNotification:    services.GlobalNotificationMessage(),
-		MainMenuItems:         createMenuItems(active, isMainnet),
+		MainMenuItems:         createMenuItems(active),
 		TermsOfServiceUrl:     utils.Config.Frontend.Legal.TermsOfServiceUrl,
 		PrivacyPolicyUrl:      utils.Config.Frontend.Legal.PrivacyPolicyUrl,
 	}
@@ -69,7 +67,7 @@ func SetPageDataTitle(pageData *types.PageData, title string) {
 	}
 }
 
-func createMenuItems(active string, isMain bool) []types.MainMenuItem {
+func createMenuItems(active string) []types.MainMenuItem {
 	return []types.MainMenuItem{
 		{
 			Label:    "Blockchain",

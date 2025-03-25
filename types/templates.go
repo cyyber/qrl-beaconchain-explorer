@@ -35,7 +35,6 @@ type PageData struct {
 	LatestFinalizedEpoch  uint64
 	CurrentSlot           uint64
 	FinalizationDelay     uint64
-	Mainnet               bool
 	DepositContract       string
 	ChainConfig           ClChainConfig
 	Debug                 bool
@@ -140,7 +139,6 @@ type IndexPageData struct {
 	ActiveValidatorsChartData [][]float64            `json:"active_validators_chart_data"`
 	Title                     template.HTML          `json:"title"`
 	Subtitle                  template.HTML          `json:"subtitle"`
-	Mainnet                   bool                   `json:"mainnet"`
 	DepositChart              *ChartsPageDataChart
 	DepositDistribution       *ChartsPageDataChart
 	SlotVizData               *SlotVizPageData `json:"slotVizData"`
@@ -548,7 +546,6 @@ type BlockPageData struct {
 	SlashingsCount          uint64
 	VotesCount              uint64
 	VotingValidatorsCount   uint64
-	Mainnet                 bool
 
 	ExecParentHash        []byte        `db:"exec_parent_hash"`
 	ExecFeeRecipient      []byte        `db:"exec_fee_recipient"`

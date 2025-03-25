@@ -207,7 +207,6 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 	latestFinalizedEpoch := services.LatestFinalizedEpoch()
 	slotPageData := types.BlockPageData{}
-	slotPageData.Mainnet = utils.Config.Chain.ClConfig.ConfigName == "mainnet"
 	// for the first slot in an epoch the previous epoch defines the finalized state
 	err := db.ReaderDb.Get(&slotPageData, `
 		SELECT
