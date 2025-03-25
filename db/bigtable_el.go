@@ -2409,7 +2409,7 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 		itx := types.ITransaction{
 			From:      utils.FormatAddress(from, nil, fromName, false, from_contractInteraction != types.CONTRACT_NONE, true),
 			To:        utils.FormatAddress(to, nil, toName, false, to_contractInteraction != types.CONTRACT_NONE, true),
-			Amount:    utils.FormatElCurrency(value, currency, 8, true, false, false, true),
+			Amount:    utils.FormatElCurrency(value, 8, true, false, false, true),
 			TracePath: utils.FormatTracePath(tx_type, parityTrace[i].TraceAddress, parityTrace[i].Error == "", bigtable.GetMethodLabel(input, from_contractInteraction)),
 			Advanced:  tx_type == "delegatecall" || string(value) == "\x00",
 		}

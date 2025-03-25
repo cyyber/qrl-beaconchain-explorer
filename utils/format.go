@@ -140,26 +140,21 @@ func ClToCurrencyGplanck(valIf interface{}, currency string) decimal.Decimal {
 	return IfToDec(valIf)
 }
 
-func FormatElCurrency(value interface{}, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
-	return formatCurrency(ElToCurrency(value, MainCurrency), MainCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
+func FormatElCurrency(value interface{}, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
+	return formatCurrency(ElToCurrency(value, MainCurrency), digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
 }
 
-func FormatClCurrency(value interface{}, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
-	return formatCurrency(ClToCurrency(value, MainCurrency), MainCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
+func FormatClCurrency(value interface{}, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
+	return formatCurrency(ClToCurrency(value, MainCurrency), digitsAfterComma, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip)
 }
 
-// TODO(rgeraldes24)
-func formatCurrencyString(valIf interface{}, valueCurrency, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, truncateAndAddTooltip bool) string {
+func formatCurrencyString(valIf interface{}, digitsAfterComma int, showCurrencySymbol, showPlusSign, truncateAndAddTooltip bool) string {
 	val := IfToDec(valIf)
 
 	valPriced := val
-	// if valueCurrency != targetCurrency {
-	// 	valPriced = val.Mul(decimal.NewFromFloat(price.GetPrice(valueCurrency, targetCurrency)))
-	// }
 
 	currencyStr := ""
 	if showCurrencySymbol {
-		// currencyStr = " " + price.GetCurrencySymbol(targetCurrency)
 		currencyStr = " ZND"
 	}
 
@@ -199,8 +194,8 @@ func formatCurrencyString(valIf interface{}, valueCurrency, targetCurrency strin
 	return fmt.Sprintf(`%s%s%s%s%s`, tooltipStartStr, plusSignStr, amountStr, currencyStr, tooltipEndStr)
 }
 
-func formatCurrency(valIf interface{}, valueCurrency, targetCurrency string, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
-	result := formatCurrencyString(valIf, valueCurrency, targetCurrency, digitsAfterComma, showCurrencySymbol, showPlusSign, truncateAndAddTooltip)
+func formatCurrency(valIf interface{}, digitsAfterComma int, showCurrencySymbol, showPlusSign, colored, truncateAndAddTooltip bool) template.HTML {
+	result := formatCurrencyString(valIf, digitsAfterComma, showCurrencySymbol, showPlusSign, truncateAndAddTooltip)
 	classes := ""
 
 	if colored {
@@ -562,27 +557,6 @@ func FormatCount(count uint64, finalized bool, shortenCalcHint bool) template.HT
 	return template.HTML(CalculatingHint)
 }
 
-func FormatZNDValue(currency string, zndPrice decimal.Decimal, currentPrice template.HTML) template.HTML {
-	p := message.NewPrinter(language.English)
-	// currencySymbol := price.GetCurrencySymbol(currency)
-	currencySymbol := "ZND"
-	return template.HTML(p.Sprintf(`<span>%[1]s %[2]s</span> <span class="text-muted">@ %[1]s%[3]s/%[4]s</span>`, currencySymbol, zndPrice.StringFixed(2), currentPrice, MainCurrency))
-}
-
-func FormatPricedValue(val interface{}, valueCurrency, targetCurrency string) template.HTML {
-	p := message.NewPrinter(language.English)
-	// pp := IfToDec(price.GetPrice(valueCurrency, targetCurrency))
-	v := IfToDec(val)
-	// targetBalance := v.Mul(pp)
-	targetBalance := v
-	// valueSymbol := price.GetCurrencySymbol(valueCurrency)
-	// targetSymbol := price.GetCurrencySymbol(targetCurrency)
-	valueSymbol := "ZND"
-	targetSymbol := "ZND"
-	// TODO(rgeraldes24)
-	return template.HTML(p.Sprintf(`<span>%[1]s %[2]s</span> <span class="text-muted">@ %[3]s %[4]s/%[5]s`, targetSymbol, targetBalance.StringFixed(2), valueSymbol /*pp.StringFixed(2)*/, "  ", targetSymbol))
-}
-
 // FormatGraffiti will return the graffiti formated as html
 func FormatGraffiti(graffiti []byte) template.HTML {
 	s := strings.Map(fixUtf, string(bytes.Trim(graffiti, "\x00")))
@@ -798,11 +772,11 @@ func FormatIncomeClEl(income types.ClEl, currency string) template.HTML {
 			<b>%s</b>
 		</span>`,
 			className,
-			FormatElCurrency(income.Cl, currency, 5, true, true, false, false),
-			FormatElCurrency(income.El, currency, 5, true, true, false, false), // we use FormatElCurrency here because all values in income-struct are in el-currency
-			FormatElCurrency(income.Total, currency, 5, true, true, false, false)))
+			FormatElCurrency(income.Cl, 5, true, true, false, false),
+			FormatElCurrency(income.El, 5, true, true, false, false), // we use FormatElCurrency here because all values in income-struct are in el-currency
+			FormatElCurrency(income.Total, 5, true, true, false, false)))
 	} else {
-		return template.HTML(fmt.Sprintf(`<span><b>%s</b></span>`, FormatElCurrency(income.Total, currency, 5, true, true, false, false)))
+		return template.HTML(fmt.Sprintf(`<span><b>%s</b></span>`, FormatElCurrency(income.Total, 5, true, true, false, false)))
 	}
 }
 
@@ -1104,14 +1078,6 @@ func DerefString(str *string) string {
 		return *str
 	}
 	return ""
-}
-
-func KFormatterEthPrice(price uint64) template.HTML {
-	if price > 999 {
-		ethTruncPrice := fmt.Sprint(float64(int((float64(price)/float64(1000))*10))/float64(10)) + "k"
-		return template.HTML(ethTruncPrice)
-	}
-	return template.HTML(fmt.Sprint(price))
 }
 
 func FormatZND(num string) string {

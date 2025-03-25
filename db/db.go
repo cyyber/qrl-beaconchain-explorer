@@ -1925,7 +1925,7 @@ func GetEpochWithdrawalsTotal(epoch uint64) (total uint64, err error) {
 }
 
 // GetAddressWithdrawalTableData returns the withdrawal data for an address
-func GetAddressWithdrawalTableData(address []byte, pageToken string, currency string) (*types.DataTableResponse, error) {
+func GetAddressWithdrawalTableData(address []byte, pageToken string) (*types.DataTableResponse, error) {
 	const endOfWithdrawalsData = "End of withdrawals data"
 	const limit = DefaultInfScrollRows
 
@@ -1993,7 +1993,7 @@ func GetAddressWithdrawalTableData(address []byte, pageToken string, currency st
 			utils.FormatBlockSlot(w.Slot),
 			utils.FormatTimestamp(utils.SlotToTime(w.Slot).Unix()),
 			utils.FormatValidator(w.ValidatorIndex),
-			utils.FormatClCurrency(w.Amount, currency, 6, true, false, false, true),
+			utils.FormatClCurrency(w.Amount, 6, true, false, false, true),
 		}
 	}
 

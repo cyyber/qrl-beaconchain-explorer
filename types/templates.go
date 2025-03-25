@@ -1097,7 +1097,6 @@ type Eth1AddressPageData struct {
 	Zrc721Table        *DataTableResponse
 	Zrc1155Table       *DataTableResponse
 	WithdrawalsTable   *DataTableResponse
-	ZNDValue           template.HTML
 	Tabs               []Eth1AddressPageTabs
 }
 

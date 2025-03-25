@@ -734,10 +734,9 @@ func GlobalNotificationMessage() template.HTML {
 	return globalNotificationMessage
 }
 
-// TODO(rgeraldes24): (number of slots * time per slot / minute) + 2 slots
 // IsSyncing returns true if the chain is still syncing
 func IsSyncing() bool {
-	return time.Now().Add(time.Minute * -130).After(utils.EpochToTime(LatestEpoch()))
+	return time.Now().Add(time.Minute * -200).After(utils.EpochToTime(LatestEpoch()))
 }
 
 func gasNowUpdater(wg *sync.WaitGroup) {

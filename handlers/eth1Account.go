@@ -129,7 +129,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	})
 	g.Go(func() error {
 		var err error
-		withdrawals, err = db.GetAddressWithdrawalTableData(addressBytes, "", "ZND")
+		withdrawals, err = db.GetAddressWithdrawalTableData(addressBytes, "")
 		if err != nil {
 			return fmt.Errorf("GetAddressWithdrawalTableData: %w", err)
 		}
@@ -140,7 +140,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return fmt.Errorf("GetAddressWithdrawalsTotal: %w", err)
 		}
-		withdrawalSummary = utils.FormatClCurrency(sumWithdrawals, "ZND", 6, true, false, false, true)
+		withdrawalSummary = utils.FormatClCurrency(sumWithdrawals, 6, true, false, false, true)
 		return nil
 	})
 
@@ -223,7 +223,6 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		Zrc1155Table:       zrc1155,
 		WithdrawalsTable:   withdrawals,
 		BlocksMinedTable:   blocksMined,
-		ZNDValue:           utils.FormatPricedValue(utils.PlanckBytesToZND(metadata.EthBalance.Balance), utils.MainCurrency, "ZND"),
 		Tabs:               tabs,
 	}
 
@@ -304,7 +303,7 @@ func Eth1AddressWithdrawals(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	data, err := db.GetAddressWithdrawalTableData(addr.Bytes(), q.Get("pageToken"), "ZND")
+	data, err := db.GetAddressWithdrawalTableData(addr.Bytes(), q.Get("pageToken"))
 	if err != nil {
 		utils.LogError(err, "error getting address withdrawals data", 0, errFields)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

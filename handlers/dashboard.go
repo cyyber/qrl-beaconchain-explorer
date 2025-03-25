@@ -432,7 +432,7 @@ func getNextWithdrawalRow(queryValidators []uint64) ([][]interface{}, error) {
 		template.HTML(fmt.Sprintf(`<span class="text-muted">~ %s</span>`, utils.FormatBlockSlot(utils.TimeToSlot(uint64(timeToWithdrawal.Unix()))))),
 		template.HTML(fmt.Sprintf(`<span class="">~ %s</span>`, utils.FormatTimestamp(timeToWithdrawal.Unix()))),
 		withdrawalCredentialsTemplate,
-		template.HTML(fmt.Sprintf(`<span class="text-muted"><span data-toggle="tooltip" title="If the withdrawal were to be processed at this very moment, this amount would be withdrawn"><i class="far ml-1 fa-question-circle" style="margin-left: 0px !important;"></i></span> %s</span>`, utils.FormatClCurrency(withdrawalAmount, "ZND", 6, true, false, false, true))),
+		template.HTML(fmt.Sprintf(`<span class="text-muted"><span data-toggle="tooltip" title="If the withdrawal were to be processed at this very moment, this amount would be withdrawn"><i class="far ml-1 fa-question-circle" style="margin-left: 0px !important;"></i></span> %s</span>`, utils.FormatClCurrency(withdrawalAmount, 6, true, false, false, true))),
 	})
 
 	return nextData, nil
@@ -670,7 +670,7 @@ func DashboardDataWithdrawals(w http.ResponseWriter, r *http.Request) {
 			utils.FormatBlockSlot(w.Slot),
 			utils.FormatTimestamp(utils.SlotToTime(w.Slot).Unix()),
 			utils.FormatAddress(w.Address, nil, "", false, false, true),
-			utils.FormatClCurrency(w.Amount, "ZND", 6, true, false, false, true),
+			utils.FormatClCurrency(w.Amount, 6, true, false, false, true),
 		})
 	}
 
