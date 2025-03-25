@@ -15,38 +15,17 @@ import (
 )
 
 type rewardsResp struct {
-	Currencies       []string
-	CsrfField        template.HTML
-	MinDateTimestamp uint64
+	CsrfField template.HTML
 }
 
 func ValidatorRewards(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "validatorRewards.html")
 	var validatorRewardsServicesTemplate = templates.GetTemplate(templateFiles...)
 
-	// var err error
-
 	w.Header().Set("Content-Type", "text/html")
 
 	data := InitPageData(w, r, "services", "/rewards", "Zond Validator Rewards", templateFiles)
 
-	// var supportedCurrencies []string
-	// err = db.ReaderDb.Select(&supportedCurrencies,
-	// 	`select column_name
-	// 		from information_schema.columns
-	// 		where table_name = 'price'`)
-	// if err != nil {
-	// 	logger.Errorf("error getting eth1-deposits-distribution for stake pools: %v", err)
-	// }
-
-	// var minTime time.Time
-	// err = db.ReaderDb.Get(&minTime,
-	// 	`select ts from price order by ts asc limit 1`)
-	// if err != nil {
-	// 	logger.Errorf("error getting min ts: %v", err)
-	// }
-
-	// data.Data = rewardsResp{Currencies: supportedCurrencies, CsrfField: csrf.TemplateField(r), MinDateTimestamp: uint64(minTime.Unix())}
 	data.Data = rewardsResp{CsrfField: csrf.TemplateField(r)}
 
 	if handleTemplateError(w, r, "validatorRewards.go", "ValidatorRewards", "", validatorRewardsServicesTemplate.ExecuteTemplate(w, "layout", data)) != nil {
