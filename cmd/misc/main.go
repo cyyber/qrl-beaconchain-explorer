@@ -4,9 +4,8 @@ import (
 	"bytes"
 	"context"
 
-	"database/sql"
-	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"math"
 	"math/big"
@@ -16,28 +15,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/cmd/misc/commands"
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/exporter"
-	"github.com/gobitfly/eth2-beaconchain-explorer/rpc"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
-	"github.com/gobitfly/eth2-beaconchain-explorer/version"
+	"github.com/theQRL/zond-beaconchain-explorer/cmd/misc/commands"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/exporter"
+	"github.com/theQRL/zond-beaconchain-explorer/rpc"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/version"
 
 	"github.com/coocood/freecache"
-	"github.com/ethereum/go-ethereum/common"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
 	utilMath "github.com/protolambda/zrnt/eth2/util/math"
-	go_ens "github.com/wealdtech/go-ens/v3"
-	"golang.org/x/sync/errgroup"
-
-	"flag"
-
-	"github.com/Gurpartap/storekit-go"
-
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
 )
 
 var opts = struct {
@@ -60,22 +51,21 @@ var opts = struct {
 	Family              string
 	Key                 string
 	ValidatorNameRanges string
-	Email               string
 	Name                string
 	DryRun              bool
 	Yes                 bool
 }{}
 
 var bt *db.Bigtable
-var erigonClient *rpc.ErigonClient
-var lighthouseClient *rpc.LighthouseClient
-var rpcClient *rpc.LighthouseClient
+var gzondClient *rpc.GzondClient
+var qrysmClient *rpc.QrysmClient
+var rpcClient *rpc.QrysmClient
 
 func main() {
 	statsPartitionCommand := commands.StatsMigratorCommand{}
 
 	configPath := flag.String("config", "config/default.config.yml", "Path to the config file")
-	flag.StringVar(&opts.Command, "command", "", "command to run, available: updateAPIKey, applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, historic-prices-export, index-missing-blocks, export-epoch-missed-slots, migrate-last-attestation-slot-bigtable, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats, migrate-app-purchases, disable-user-per-email")
+	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, index-missing-blocks, export-epoch-missed-slots, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats")
 	flag.Uint64Var(&opts.StartEpoch, "start-epoch", 0, "start epoch")
 	flag.Uint64Var(&opts.EndEpoch, "end-epoch", 0, "end epoch")
 	flag.Uint64Var(&opts.User, "user", 0, "user id")
@@ -94,7 +84,6 @@ func main() {
 	flag.StringVar(&opts.ValidatorNameRanges, "validator-name-ranges", "https://config.dencun-devnet-8.ethpandaops.io/api/v1/nodes/validator-ranges", "url to or json of validator-ranges (format must be: {'ranges':{'X-Y':'name'}})")
 	flag.StringVar(&opts.Addresses, "addresses", "", "Comma separated list of addresses that should be processed by the command")
 	flag.StringVar(&opts.Columns, "columns", "", "Comma separated list of columns that should be affected by the command")
-	flag.StringVar(&opts.Email, "email", "", "Email of the user")
 	flag.StringVar(&opts.Name, "name", "", "Name")
 	flag.BoolVar(&opts.Yes, "yes", false, "Answer yes to all questions")
 	dryRun := flag.String("dry-run", "true", "if 'false' it deletes all rows starting with the key, per default it only logs the rows that would be deleted, but does not really delete them")
@@ -137,19 +126,19 @@ func main() {
 	go func() {
 		defer wg.Done()
 		var err error
-		rpcClient, err = rpc.NewLighthouseClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
+		rpcClient, err = rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
 		if err != nil {
-			utils.LogFatal(err, "lighthouse client error", 0)
+			utils.LogFatal(err, "qrysm client error", 0)
 		}
-		lighthouseClient = rpcClient
+		qrysmClient = rpcClient
 	}()
 
 	go func() {
 		defer wg.Done()
 		var err error
-		erigonClient, err = rpc.NewErigonClient(utils.Config.Eth1ErigonEndpoint)
+		gzondClient, err = rpc.NewGzondClient(utils.Config.ELNodeEndpoint)
 		if err != nil {
-			logrus.Fatalf("error initializing erigon client: %v", err)
+			logrus.Fatalf("error initializing gzond client: %v", err)
 		}
 	}()
 
@@ -212,11 +201,6 @@ func main() {
 		err := nameValidatorsByRanges(opts.ValidatorNameRanges)
 		if err != nil {
 			logrus.WithError(err).Fatal("error naming validators by ranges")
-		}
-	case "updateAPIKey":
-		err := updateAPIKey(opts.User)
-		if err != nil {
-			logrus.WithError(err).Fatal("error updating API key")
 		}
 	case "applyDbSchema":
 		logrus.Infof("applying db schema")
@@ -309,19 +293,13 @@ func main() {
 	case "clear-bigtable":
 		clearBigtable(opts.Table, opts.Family, opts.Columns, opts.Key, opts.DryRun, bt)
 	case "index-old-eth1-blocks":
-		indexOldEth1Blocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, erigonClient)
+		indexOldEth1Blocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, gzondClient)
 	case "update-aggregation-bits":
-		updateAggreationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
+		updateAggregationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
 	case "update-block-finalization-sequentially":
 		err = updateBlockFinalizationSequentially()
-	case "historic-prices-export":
-		exportHistoricPrices(opts.StartDay, opts.EndDay)
 	case "index-missing-blocks":
-		indexMissingBlocks(opts.StartBlock, opts.EndBlock, bt, erigonClient)
-	case "migrate-last-attestation-slot-bigtable":
-		migrateLastAttestationSlotToBigtable()
-	case "migrate-app-purchases":
-		err = migrateAppPurchases(opts.Key)
+		indexMissingBlocks(opts.StartBlock, opts.EndBlock, bt, gzondClient)
 	case "export-genesis-validators":
 		logrus.Infof("retrieving genesis validator state")
 		validators, err := rpcClient.GetValidatorState(0)
@@ -430,12 +408,11 @@ func main() {
 	case "partition-validator-stats":
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
-	case "fix-ens":
-		err = fixEns(erigonClient)
-	case "fix-ens-addresses":
-		err = fixEnsAddresses(erigonClient)
-	case "disable-user-per-email":
-		err = disableUserPerEmail()
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// case "fix-zns":
+	// 	err = fixZns(gzondClient)
+	// case "fix-zns-addresses":
+	// 	err = fixZnsAddresses(gzondClient)
 	case "fix-epochs":
 		err = fixEpochs()
 	default:
@@ -466,7 +443,7 @@ func fixEpoch(e uint64) error {
 		return fmt.Errorf("error starting tx: %w", err)
 	}
 	defer tx.Rollback()
-	s, err := lighthouseClient.GetValidatorParticipation(e)
+	s, err := qrysmClient.GetValidatorParticipation(e)
 	if err != nil {
 		return err
 	}
@@ -477,81 +454,20 @@ func fixEpoch(e uint64) error {
 	return tx.Commit()
 }
 
-func disableUserPerEmail() error {
-	if opts.Email == "" {
-		return errors.New("no email specified")
-	}
-
-	if utils.Config.Frontend.SessionSecret == "" {
-		return fmt.Errorf("session secret is empty, please provide a secure random string")
-	}
-
-	logrus.Infof("initializing session store: %v", utils.Config.RedisSessionStoreEndpoint)
-
-	utils.InitSessionStore(utils.Config.Frontend.SessionSecret)
-
-	user := struct {
-		ID    uint64 `db:"id"`
-		Email string `db:"email"`
-	}{}
-	err := db.FrontendWriterDB.Get(&user, `select id, email from users where email = $1`, opts.Email)
-	if err != nil {
-		return err
-	}
-
-	if !askForConfirmation(fmt.Sprintf(`Do you want to disable the user with email: %v (id: %v)?
-
-- the user will get logged out
-- the password will change
-- the apikey will change
-- password-reset will be disabled
-`, user.Email, user.ID)) {
-		logrus.Warnf("aborted")
-		return nil
-	}
-
-	_, err = db.FrontendWriterDB.Exec(`update users set password = $3, api_key = $4, password_reset_not_allowed = true where id = $1 and email = $2`, user.ID, user.Email, utils.RandomString(128), utils.RandomString(32))
-	if err != nil {
-		return err
-	}
-	logrus.Infof("changed password and apikey and disallowed password-reset for user %v", user.ID)
-
-	ctx := context.Background()
-
-	// invalidate all sessions for this user
-	err = utils.SessionStore.SCS.Iterate(ctx, func(ctx context.Context) error {
-		sessionUserID, ok := utils.SessionStore.SCS.Get(ctx, "user_id").(uint64)
-		if !ok {
-			return nil
-		}
-
-		if user.ID == sessionUserID {
-			logrus.Infof("destroying a session of user %v", user.ID)
-			return utils.SessionStore.SCS.Destroy(ctx)
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func fixEns(erigonClient *rpc.ErigonClient) error {
-	logrus.WithField("dry", opts.DryRun).Infof("command: fix-ens")
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
+func fixZns(gzondClient *rpc.GzondClient) error {
+	logrus.WithField("dry", opts.DryRun).Infof("command: fix-zns")
 	addrs := []struct {
 		Address []byte `db:"address"`
-		EnsName string `db:"ens_name"`
+		ZnsName string `db:"zns_name"`
 	}{}
-	err := db.WriterDb.Select(&addrs, `select address, ens_name from ens where is_primary_name = true`)
+	err := db.WriterDb.Select(&addrs, `select address, zns_name from zns where is_primary_name = true`)
 	if err != nil {
 		return err
 	}
 
-	logrus.Infof("found %v ens entries", len(addrs))
+	logrus.Infof("found %v zns entries", len(addrs))
 
 	g := new(errgroup.Group)
 	g.SetLimit(10) // limit load on the node
@@ -569,7 +485,7 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 		for _, addr := range batch {
 			addr := addr
 			g.Go(func() error {
-				ensAddr, err := go_ens.Resolve(erigonClient.GetNativeClient(), addr.EnsName)
+				znsAddr, err := go_zns.Resolve(gzondClient.GetNativeClient(), addr.ZnsName)
 				if err != nil {
 					if err.Error() == "unregistered name" ||
 						err.Error() == "no address" ||
@@ -577,9 +493,9 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 						err.Error() == "abi: attempting to unmarshall an empty string while arguments are expected" ||
 						strings.Contains(err.Error(), "execution reverted") ||
 						err.Error() == "invalid jump destination" {
-						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.EnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting ens entry")
+						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting zns entry")
 						if !opts.DryRun {
-							_, err = db.WriterDb.Exec(`delete from ens where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+							_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 							if err != nil {
 								return err
 							}
@@ -590,22 +506,22 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 				}
 
 				dbAddr := common.BytesToAddress(addr.Address)
-				if dbAddr.Cmp(ensAddr) != 0 {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.EnsName, "reason": fmt.Sprintf("dbAddr != resolved ensAddr: %#x != %#x", addr.Address, ensAddr.Bytes())}).Warnf("deleting ens entry")
+				if dbAddr.Cmp(znsAddr) != 0 {
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("dbAddr != resolved znsAddr: %#x != %#x", addr.Address, znsAddr.Bytes())}).Warnf("deleting zns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from ens where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+						_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 						if err != nil {
 							return err
 						}
 					}
 				}
 
-				reverseName, err := go_ens.ReverseResolve(erigonClient.GetNativeClient(), dbAddr)
+				reverseName, err := go_zns.ReverseResolve(gzondClient.GetNativeClient(), dbAddr)
 				if err != nil {
 					if err.Error() == "not a resolver" || err.Error() == "no resolution" {
-						logrus.WithFields(logrus.Fields{"addr": dbAddr, "name": addr.EnsName, "reason": fmt.Sprintf("failed reverse-resolve: %v", err.Error())}).Warnf("updating ens entry: is_primary_name = false")
+						logrus.WithFields(logrus.Fields{"addr": dbAddr, "name": addr.ZnsName, "reason": fmt.Sprintf("failed reverse-resolve: %v", err.Error())}).Warnf("updating zns entry: is_primary_name = false")
 						if !opts.DryRun {
-							_, err = db.WriterDb.Exec(`update ens set is_primary_name = false where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+							_, err = db.WriterDb.Exec(`update zns set is_primary_name = false where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 							if err != nil {
 								return err
 							}
@@ -615,10 +531,10 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 					return err
 				}
 
-				if reverseName != addr.EnsName {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.EnsName, "reason": fmt.Sprintf("resolved != reverseResolved: %v != %v", addr.EnsName, reverseName)}).Warnf("updating ens entry: is_primary_name = false")
+				if reverseName != addr.ZnsName {
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("resolved != reverseResolved: %v != %v", addr.ZnsName, reverseName)}).Warnf("updating zns entry: is_primary_name = false")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`update ens set is_primary_name = false where address = $1 and ens_name = $2`, addr.Address, addr.EnsName)
+						_, err = db.WriterDb.Exec(`update zns set is_primary_name = false where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
 						if err != nil {
 							return err
 						}
@@ -638,15 +554,15 @@ func fixEns(erigonClient *rpc.ErigonClient) error {
 	return nil
 }
 
-func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
-	logrus.WithFields(logrus.Fields{"dry": opts.DryRun}).Infof("command: fix-ens-addresses")
+func fixZnsAddresses(gzondClient *rpc.GzondClient) error {
+	logrus.WithFields(logrus.Fields{"dry": opts.DryRun}).Infof("command: fix-zns-addresses")
 	if opts.Addresses == "" {
 		return errors.New("no addresses specified")
 	}
 
 	type DbEntry struct {
 		NameHash      []byte    `db:"name_hash"`
-		EnsName       string    `db:"ens_name"`
+		ZnsName       string    `db:"zns_name"`
 		Address       []byte    `db:"address"`
 		IsPrimaryName bool      `db:"is_primary_name"`
 		ValidTo       time.Time `db:"valid_to"`
@@ -660,31 +576,31 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 		addr := common.HexToAddress(addrHex)
 
 		dbEntry := &DbEntry{}
-		err := db.WriterDb.Get(dbEntry, `select name_hash, ens_name, address, is_primary_name, valid_to from ens where address = $1`, addr.Bytes())
+		err := db.WriterDb.Get(dbEntry, `select name_hash, zns_name, address, is_primary_name, valid_to from zns where address = $1`, addr.Bytes())
 		if err != nil && err != sql.ErrNoRows {
-			return fmt.Errorf("error getting ens entry for addr [%v]: %w", addr.Hex(), err)
+			return fmt.Errorf("error getting zns entry for addr [%v]: %w", addr.Hex(), err)
 		}
 		if err == sql.ErrNoRows {
 			dbEntry = nil
 		}
 
-		name, err := go_ens.ReverseResolve(erigonClient.GetNativeClient(), addr)
+		name, err := go_zns.ReverseResolve(gzondClient.GetNativeClient(), addr)
 		if err != nil {
 			if err.Error() == "not a resolver" ||
 				err.Error() == "no resolution" {
 				logrus.WithFields(logrus.Fields{"addr": addr.Hex()}).Warnf("error reverse-resolving name: %v", err)
 				if dbEntry != nil {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error reverse-resolving name: %v", err)}).Warnf("deleting ens entry")
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error reverse-resolving name: %v", err)}).Warnf("deleting zns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from ens where address = $1`, addr.Bytes())
+						_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
 						if err != nil {
-							return fmt.Errorf("error deleting ens entry: %w", err)
+							return fmt.Errorf("error deleting zns entry: %w", err)
 						}
 					}
 				}
 				continue
 			} else {
-				return fmt.Errorf("error go_ens.ReverseResolve for addr %v: %w", addr.Hex(), err)
+				return fmt.Errorf("error go_zns.ReverseResolve for addr %v: %w", addr.Hex(), err)
 			}
 		}
 
@@ -693,7 +609,7 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 			name = name + ".eth"
 		}
 
-		resolvedAddr, err := go_ens.Resolve(erigonClient.GetNativeClient(), name)
+		resolvedAddr, err := go_zns.Resolve(gzondClient.GetNativeClient(), name)
 		if err != nil {
 			if err.Error() == "unregistered name" ||
 				err.Error() == "no address" ||
@@ -702,223 +618,83 @@ func fixEnsAddresses(erigonClient *rpc.ErigonClient) error {
 				strings.Contains(err.Error(), "execution reverted") ||
 				err.Error() == "invalid jump destination" {
 				if dbEntry != nil {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error resolving name: %v", err)}).Warnf("deleting ens entry")
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error resolving name: %v", err)}).Warnf("deleting zns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from ens where address = $1`, addr.Bytes())
+						_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
 						if err != nil {
-							return fmt.Errorf("error deleting ens entry: %w", err)
+							return fmt.Errorf("error deleting zns entry: %w", err)
 						}
 					}
 				}
 			} else {
-				return fmt.Errorf("error go_ens.Resolve(%v) for addr %v: %w", name, addr.Hex(), err)
+				return fmt.Errorf("error go_zns.Resolve(%v) for addr %v: %w", name, addr.Hex(), err)
 			}
 		}
 
 		if !bytes.Equal(resolvedAddr.Bytes(), addr.Bytes()) {
-			logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("addr != resolvedAddr: %v != %v", addr.Hex(), resolvedAddr.Hex())}).Warnf("deleting ens entry")
+			logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("addr != resolvedAddr: %v != %v", addr.Hex(), resolvedAddr.Hex())}).Warnf("deleting zns entry")
 			if !opts.DryRun {
-				_, err = db.WriterDb.Exec(`delete from ens where address = $1`, addr.Bytes())
+				_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
 				if err != nil {
-					return fmt.Errorf("error deleting ens entry: %w", err)
+					return fmt.Errorf("error deleting zns entry: %w", err)
 				}
 			}
 		}
 
-		nameHash, err := go_ens.NameHash(name)
+		nameHash, err := go_zns.NameHash(name)
 		if err != nil {
-			return fmt.Errorf("error go_ens.NameHash(%v) for addr %v: %w", name, addr.Hex(), err)
+			return fmt.Errorf("error go_zns.NameHash(%v) for addr %v: %w", name, addr.Hex(), err)
 		}
 		parts := strings.Split(name, ".")
 		mainName := strings.Join(parts[len(parts)-2:], ".")
-		ensName, err := go_ens.NewName(erigonClient.GetNativeClient(), mainName)
+		znsName, err := go_zns.NewName(gzondClient.GetNativeClient(), mainName)
 		if err != nil {
-			return fmt.Errorf("error could not create name via go_ens.NewName for [%v]: %w", name, err)
+			return fmt.Errorf("error could not create name via go_zns.NewName for [%v]: %w", name, err)
 		}
-		expires, err := ensName.Expires()
+		expires, err := znsName.Expires()
 		if err != nil {
-			return fmt.Errorf("error could not get ens expire date for [%v]: %w", name, err)
+			return fmt.Errorf("error could not get zns expire date for [%v]: %w", name, err)
 		}
 
-		if dbEntry == nil || dbEntry.EnsName != name || !bytes.Equal(dbEntry.NameHash, nameHash[:]) || !bytes.Equal(dbEntry.Address, resolvedAddr.Bytes()) || dbEntry.ValidTo != expires {
+		if dbEntry == nil || dbEntry.ZnsName != name || !bytes.Equal(dbEntry.NameHash, nameHash[:]) || !bytes.Equal(dbEntry.Address, resolvedAddr.Bytes()) || dbEntry.ValidTo != expires {
 			logFields := logrus.Fields{"resolvedAddr": resolvedAddr, "addr": addr.Hex(), "name": name, "nameHash": fmt.Sprintf("%#x", nameHash), "expires": expires}
 			if dbEntry == nil {
 				logFields["db"] = "nil"
-				logrus.WithFields(logFields).Warnf("adding ens entry")
+				logrus.WithFields(logFields).Warnf("adding zns entry")
 			} else {
-				logFields["db.name"] = dbEntry.EnsName
+				logFields["db.name"] = dbEntry.ZnsName
 				logFields["db.nameHash"] = fmt.Sprintf("%#x", dbEntry.NameHash)
 				logFields["db.addr"] = fmt.Sprintf("%#x", dbEntry.Address)
 				logFields["db.expire"] = dbEntry.ValidTo
-				logrus.WithFields(logFields).Warnf("updating ens entry")
+				logrus.WithFields(logFields).Warnf("updating zns entry")
 			}
 
 			if !opts.DryRun {
 				_, err = db.WriterDb.Exec(`
-					INSERT INTO ens (
-						name_hash, 
-						ens_name, 
+					INSERT INTO zns (
+						name_hash,
+						zns_name,
 						address,
-						is_primary_name, 
+						is_primary_name,
 						valid_to)
-					VALUES ($1, $2, $3, $4, $5) 
-					ON CONFLICT 
-						(name_hash) 
-					DO UPDATE SET 
-						ens_name = excluded.ens_name,
+					VALUES ($1, $2, $3, $4, $5)
+					ON CONFLICT
+						(name_hash)
+					DO UPDATE SET
+						zns_name = excluded.zns_name,
 						address = excluded.address,
 						is_primary_name = excluded.is_primary_name,
 						valid_to = excluded.valid_to`,
 					nameHash[:], name, addr.Bytes(), true, expires)
 				if err != nil {
-					return fmt.Errorf("error writing ens data for addr [%v]: %w", addr.Hex(), err)
+					return fmt.Errorf("error writing zns data for addr [%v]: %w", addr.Hex(), err)
 				}
 			}
 		}
 	}
 	return nil
 }
-
-func migrateAppPurchases(appStoreSecret string) error {
-	// This code runs once so please don't judge code style too harshly
-
-	if appStoreSecret == "" {
-		return fmt.Errorf("appStoreSecret is empty")
-	}
-
-	client := storekit.NewVerificationClient().OnProductionEnv()
-
-	tx, err := db.WriterDb.Beginx()
-	if err != nil {
-		return fmt.Errorf("error starting db transactions: %w", err)
-	}
-	defer tx.Rollback()
-
-	// Delete marked as duplicate, though the duplicate reject reason is not always set - mainly missing on historical data
-	_, err = tx.Exec("DELETE FROM users_app_subscriptions WHERE store = 'ios-appstore' AND reject_reason = 'duplicate';")
-	if err != nil {
-		return errors.Wrap(err, "error deleting duplicate receipt")
-	}
-
-	// Backup legacy receipts into custom column
-	_, err = tx.Exec("UPDATE users_app_subscriptions set legacy_receipt = receipt where legacy_receipt is null;")
-	if err != nil {
-		return errors.Wrap(err, "error backing up legacy receipts")
-	}
-
-	receipts := []*types.PremiumData{}
-	err = tx.Select(&receipts,
-		"SELECT id, receipt, store, active, validate_remotely, expires_at, product_id, user_id from users_app_subscriptions order by id desc",
-	)
-	if err != nil {
-		return errors.Wrap(err, "error getting app subscriptions")
-	}
-
-	for _, receipt := range receipts {
-		if receipt.Store != "ios-appstore" { // only interested in migrating iOS
-			continue
-		}
-		if len(receipt.Receipt) < 100 { // dont migrate data that has already been migrated (new receipt is a number of a hand full of digits while old one is insanely large)
-			continue
-		}
-
-		receiptData, err := base64.StdEncoding.DecodeString(receipt.Receipt)
-		if err != nil {
-			return errors.Wrap(err, "error decoding receipt")
-		}
-
-		// Call old deprecated endpoint to get the origin transaction id (new receipt info for new endpoints)
-		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-		defer cancel()
-		_, resp, err := client.Verify(ctx, &storekit.ReceiptRequest{
-			ReceiptData:            receiptData,
-			Password:               appStoreSecret,
-			ExcludeOldTransactions: true,
-		})
-
-		if err != nil {
-			return errors.Wrap(err, "error verifying receipt")
-		}
-
-		if resp.LatestReceiptInfo == nil || len(resp.LatestReceiptInfo) == 0 {
-			logrus.Infof("no receipt info for purchase id %v", receipt.ID)
-			if receipt.Active && receipt.ValidateRemotely { // sanity, if there is an active subscription without receipt info we cam't delete it.
-				return fmt.Errorf("no receipt info for active purchase id %v", receipt.ID)
-			}
-			// since it is not active any more and we don't get any new receipt info from apple, just drop the receipt info
-			// hash can stay the same since a collision is unlikely (new and old receipt info)
-			_, err = tx.Exec("UPDATE users_app_subscriptions SET receipt = '' WHERE id = $1", receipt.ID)
-			if err != nil {
-				return errors.Wrap(err, "error deleting duplicate receipt")
-			}
-			continue
-		}
-
-		latestReceiptInfo := resp.LatestReceiptInfo[0]
-		logrus.Infof("Update purchase id %v with new receipt %v", receipt.ID, latestReceiptInfo.OriginalTransactionId)
-
-		_, err = tx.Exec("UPDATE users_app_subscriptions SET receipt = $1, receipt_hash = $2 WHERE id = $3", latestReceiptInfo.OriginalTransactionId, utils.HashAndEncode(latestReceiptInfo.OriginalTransactionId), receipt.ID)
-		if err != nil {
-			if strings.Contains(err.Error(), "duplicate key") { // handle historic duplicates
-				// get the duplicate receipt
-				duplicateReceipt := types.PremiumData{}
-				err = tx.Get(&duplicateReceipt, "SELECT id, user_id, active FROM users_app_subscriptions WHERE receipt_hash = $1", utils.HashAndEncode(latestReceiptInfo.OriginalTransactionId))
-				if err != nil {
-					return errors.Wrap(err, "error getting duplicate receipt")
-				}
-
-				// Keep the active receipt and delete the other one. In case both are inactive keep the newest
-				var deleteReceiptID uint64
-				if !duplicateReceipt.Active && receipt.Active {
-					deleteReceiptID = duplicateReceipt.ID
-				} else if duplicateReceipt.Active && !receipt.Active {
-					deleteReceiptID = receipt.ID
-				} else if !duplicateReceipt.Active && !receipt.Active {
-					if duplicateReceipt.ID > receipt.ID { // keep the newer one
-						deleteReceiptID = duplicateReceipt.ID
-					} else {
-						deleteReceiptID = receipt.ID
-					}
-				} else {
-					return fmt.Errorf("duplicate receipt has same active status: %v != %v for id: %v != %v", duplicateReceipt.Active, receipt.Active, duplicateReceipt.ID, receipt.ID)
-				}
-
-				// new ios handler will automatically update the product id if the user switched the package, so we will just drop this receipt
-				_, err = tx.Exec("DELETE FROM users_app_subscriptions WHERE id = $1", deleteReceiptID)
-				if err != nil {
-					return errors.Wrap(err, "error deleting duplicate receipt")
-				}
-				logrus.Infof("deleted duplicate receipt id %v", receipt.ID)
-
-				// the one we keep and update is opposite of the one we deleted
-				var updateReceiptID uint64
-				if deleteReceiptID == duplicateReceipt.ID {
-					updateReceiptID = receipt.ID
-				} else {
-					updateReceiptID = duplicateReceipt.ID
-				}
-
-				_, err = tx.Exec("UPDATE users_app_subscriptions SET receipt = $1, receipt_hash = $2 WHERE id = $3", latestReceiptInfo.OriginalTransactionId, utils.HashAndEncode(latestReceiptInfo.OriginalTransactionId), updateReceiptID)
-				if err != nil {
-					return errors.Wrap(err, "error updating receipt")
-				}
-			} else {
-				return errors.Wrap(err, "error updating purchase id")
-			}
-		}
-
-		logrus.Infof("Migrated purchase id %v\n", receipt.ID)
-		time.Sleep(100 * time.Millisecond)
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return errors.Wrap(err, "error committing tx")
-	}
-
-	logrus.Infof("done migrating data")
-	return nil
-}
+*/
 
 func fixExecTransactionsCount() error {
 	startBlockNumber := uint64(opts.StartBlock)
@@ -1061,12 +837,12 @@ func updateBlockFinalizationSequentially() error {
 }
 
 func debugBlocks() error {
-	elClient, err := rpc.NewErigonClient(utils.Config.Eth1ErigonEndpoint)
+	elClient, err := rpc.NewGzondClient(utils.Config.ELNodeEndpoint)
 	if err != nil {
 		return err
 	}
 
-	clClient, err := rpc.NewLighthouseClient(fmt.Sprintf("http://%v:%v", utils.Config.Indexer.Node.Host, utils.Config.Indexer.Node.Port), new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID))
+	clClient, err := rpc.NewQrysmClient(fmt.Sprintf("http://%v:%v", utils.Config.Indexer.Node.Host, utils.Config.Indexer.Node.Port), new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID))
 	if err != nil {
 		return err
 	}
@@ -1077,8 +853,8 @@ func debugBlocks() error {
 			return err
 		}
 		// logrus.WithFields(logrus.Fields{"block": i, "data": fmt.Sprintf("%+v", b)}).Infof("block from bt")
-
-		elBlock, _, err := elClient.GetBlock(int64(i), "parity/geth")
+		// TODO(now.youtrack.cloud/issue/TZB-7)
+		elBlock, _, err := elClient.GetBlock(int64(i) /*"parity/gzond"*/)
 		if err != nil {
 			return err
 		}
@@ -1089,15 +865,11 @@ func debugBlocks() error {
 			return err
 		}
 		logFields := logrus.Fields{
-			"block":            i,
-			"bt.hash":          fmt.Sprintf("%#x", btBlock.Hash),
-			"bt.BlobGasUsed":   btBlock.BlobGasUsed,
-			"bt.ExcessBlobGas": btBlock.ExcessBlobGas,
-			"bt.txs":           len(btBlock.Transactions),
-			"el.BlobGasUsed":   elBlock.BlobGasUsed,
-			"el.hash":          fmt.Sprintf("%#x", elBlock.Hash),
-			"el.ExcessBlobGas": elBlock.ExcessBlobGas,
-			"el.txs":           len(elBlock.Transactions),
+			"block":   i,
+			"bt.hash": fmt.Sprintf("%#x", btBlock.Hash),
+			"bt.txs":  len(btBlock.Transactions),
+			"el.hash": fmt.Sprintf("%#x", elBlock.Hash),
+			"el.txs":  len(elBlock.Transactions),
 		}
 		if !bytes.Equal(clBlock.ExecutionPayload.BlockHash, elBlock.Hash) {
 			logrus.Warnf("clBlock.ExecutionPayload.BlockHash != i: %x != %x", clBlock.ExecutionPayload.BlockHash, elBlock.Hash)
@@ -1112,26 +884,10 @@ func debugBlocks() error {
 		for i := range elBlock.Transactions {
 			btx := elBlock.Transactions[i]
 			ctx := elBlock.Transactions[i]
-			btxH := []string{}
-			ctxH := []string{}
-			for _, h := range btx.BlobVersionedHashes {
-				btxH = append(btxH, fmt.Sprintf("%#x", h))
-			}
-			for _, h := range ctx.BlobVersionedHashes {
-				ctxH = append(ctxH, fmt.Sprintf("%#x", h))
-			}
 
 			logrus.WithFields(logrus.Fields{
-				"b.hash":                 fmt.Sprintf("%#x", btx.Hash),
-				"el.hash":                fmt.Sprintf("%#x", ctx.Hash),
-				"b.BlobVersionedHashes":  fmt.Sprintf("%+v", btxH),
-				"el.BlobVersionedHashes": fmt.Sprintf("%+v", ctxH),
-				"b.maxFeePerBlobGas":     btx.MaxFeePerBlobGas,
-				"el.maxFeePerBlobGas":    ctx.MaxFeePerBlobGas,
-				"b.BlobGasPrice":         btx.BlobGasPrice,
-				"el.BlobGasPrice":        ctx.BlobGasPrice,
-				"b.BlobGasUsed":          btx.BlobGasUsed,
-				"el.BlobGasUsed":         ctx.BlobGasUsed,
+				"b.hash":  fmt.Sprintf("%#x", btx.Hash),
+				"el.hash": fmt.Sprintf("%#x", ctx.Hash),
 			}).Infof("debug tx")
 		}
 	}
@@ -1184,30 +940,7 @@ func nameValidatorsByRanges(rangesUrl string) error {
 	return nil
 }
 
-// one time migration of the last attestation slot values from postgres to bigtable
-// will write the last attestation slot that is currently in postgres to bigtable
-// this can safely be done for active validators as bigtable will only keep the most recent
-// last attestation slot
-func migrateLastAttestationSlotToBigtable() {
-	validators := []types.Validator{}
-
-	err := db.WriterDb.Select(&validators, "SELECT validatorindex, lastattestationslot FROM validators WHERE lastattestationslot IS NOT NULL ORDER BY validatorindex")
-
-	if err != nil {
-		utils.LogFatal(err, "error retrieving last attestation slot", 0)
-	}
-
-	for _, validator := range validators {
-		logrus.Infof("setting last attestation slot %v for validator %v", validator.LastAttestationSlot, validator.Index)
-
-		err := db.BigtableClient.SetLastAttestationSlot(validator.Index, uint64(validator.LastAttestationSlot.Int64))
-		if err != nil {
-			utils.LogFatal(err, "error setting last attestation slot", 0)
-		}
-	}
-}
-
-func updateAggreationBits(rpcClient *rpc.LighthouseClient, startEpoch uint64, endEpoch uint64, concurency uint64) {
+func updateAggregationBits(rpcClient *rpc.QrysmClient, startEpoch uint64, endEpoch uint64, concurency uint64) {
 	logrus.Infof("update-aggregation-bits epochs %v - %v", startEpoch, endEpoch)
 	for epoch := startEpoch; epoch <= endEpoch; epoch++ {
 		logrus.Infof("Getting data from the node for epoch %v", epoch)
@@ -1328,7 +1061,7 @@ func updateAggreationBits(rpcClient *rpc.LighthouseClient, startEpoch uint64, en
 								block_index=$2
 						`, block.Slot, index)
 						if err != nil {
-							return fmt.Errorf("error getting aggregationbits on Slot [%v] Index [%v] with Sig [%v]: %v", block.Slot, index, att.Signature, err)
+							return fmt.Errorf("error getting aggregationbits on Slot [%v] Index [%v] with Signatures [%v]: %v", block.Slot, index, att.Signatures, err)
 						}
 
 						if !bytes.Equal(*aggregationbits, att.AggregationBits) {
@@ -1371,60 +1104,6 @@ func updateAggreationBits(rpcClient *rpc.LighthouseClient, startEpoch uint64, en
 	}
 }
 
-// Updates a users API key
-func updateAPIKey(user uint64) error {
-	type User struct {
-		PHash  string `db:"password"`
-		Email  string `db:"email"`
-		OldKey string `db:"api_key"`
-	}
-
-	var u User
-	err := db.FrontendWriterDB.Get(&u, `SELECT password, email, api_key from users where id = $1`, user)
-	if err != nil {
-		return fmt.Errorf("error getting current user, err: %w", err)
-	}
-
-	apiKey, err := utils.GenerateRandomAPIKey()
-	if err != nil {
-		return err
-	}
-
-	logrus.Infof("updating api key for user %v from old key: %v to new key: %v", user, u.OldKey, apiKey)
-
-	tx, err := db.FrontendWriterDB.Beginx()
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	_, err = tx.Exec(`UPDATE api_statistics set apikey = $1 where apikey = $2`, apiKey, u.OldKey)
-	if err != nil {
-		return err
-	}
-
-	rows, err := tx.Exec(`UPDATE users SET api_key = $1 WHERE id = $2`, apiKey, user)
-	if err != nil {
-		return err
-	}
-
-	amount, err := rows.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if amount > 1 {
-		return fmt.Errorf("error too many rows affected expected 1 but got: %v", amount)
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // Debugging function to compare Rewards from the Statistic Table with the onces from the Big Table
 func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Bigtable) {
 
@@ -1443,10 +1122,10 @@ func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Big
 		var dbRewards *int64
 		err = db.ReaderDb.Get(&dbRewards, `
 		SELECT 
-		COALESCE(cl_rewards_gwei, 0) AS cl_rewards_gwei
+		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck
 		FROM validator_stats WHERE validatorindex = $2 AND day = $1`, day, validator)
 		if err != nil {
-			logrus.Fatalf("error getting cl_rewards_gwei from db: %v", err)
+			logrus.Fatalf("error getting cl_rewards_gplanck from db: %v", err)
 			return
 		}
 		if tot != *dbRewards {
@@ -1457,7 +1136,6 @@ func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Big
 }
 
 func clearBigtable(table string, family string, columns string, key string, dryRun bool, bt *db.Bigtable) {
-
 	if !dryRun {
 		confirmation := utils.CmdPrompt(fmt.Sprintf("Are you sure you want to delete all big table entries starting with [%v] for family [%v] and columns [%v]?", key, family, columns))
 		if confirmation != "yes" {
@@ -1491,7 +1169,7 @@ func clearBigtable(table string, family string, columns string, key string, dryR
 //
 //	Both [start] and [end] are inclusive
 //	Pass math.MaxInt64 as [end] to export from [start] to the last block in the blocks table
-func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.ErigonClient) {
+func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.GzondClient) {
 	if end == math.MaxInt64 {
 		lastBlockFromBlocksTable, err := bt.GetLastBlockInBlocksTable()
 		if err != nil {
@@ -1545,8 +1223,8 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.E
 			logrus.Infof("block [%v] not found, will index it", block)
 			if _, err := db.BigtableClient.GetBlockFromBlocksTable(block); err != nil {
 				logrus.Infof("could not load [%v] from blocks table, will try to fetch it from the node and save it", block)
-
-				bc, _, err := client.GetBlock(int64(block), "parity/geth")
+				// TODO(now.youtrack.cloud/issue/TZB-7)
+				bc, _, err := client.GetBlock(int64(block) /*, "parity/gzond"*/)
 				if err != nil {
 					utils.LogError(err, fmt.Sprintf("error getting block %v from the node", block), 0)
 					return
@@ -1564,7 +1242,7 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.E
 	}
 }
 
-func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.ErigonClient) {
+func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.GzondClient) {
 	if endBlock > 0 && endBlock < startBlock {
 		utils.LogError(nil, fmt.Sprintf("endBlock [%v] < startBlock [%v]", endBlock, startBlock), 0)
 		return
@@ -1583,13 +1261,14 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 	logrus.Infof("transformerFlag: %v", transformerFlag)
 	transformerList := strings.Split(transformerFlag, ",")
 	if transformerFlag == "all" {
-		transformerList = []string{"TransformBlock", "TransformTx", "TransformBlobTx", "TransformItx", "TransformERC20", "TransformERC721", "TransformERC1155", "TransformWithdrawals", "TransformUncle", "TransformEnsNameRegistered", "TransformContract"}
+		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformZRC20", "TransformZRC721", "TransformZRC1155", "TransformWithdrawals", "TransformZnsNameRegistered", "TransformContract"}
 	} else if len(transformerList) == 0 {
 		utils.LogError(nil, "no transformer functions provided", 0)
 		return
 	}
 	logrus.Infof("transformers: %v", transformerList)
-	importENSChanges := false
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// importZNSChanges := false
 	/**
 	* Add additional transformers you want to sync to this switch case
 	**/
@@ -1599,23 +1278,20 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformBlock)
 		case "TransformTx":
 			transforms = append(transforms, bt.TransformTx)
-		case "TransformBlobTx":
-			transforms = append(transforms, bt.TransformBlobTx)
 		case "TransformItx":
 			transforms = append(transforms, bt.TransformItx)
-		case "TransformERC20":
-			transforms = append(transforms, bt.TransformERC20)
-		case "TransformERC721":
-			transforms = append(transforms, bt.TransformERC721)
-		case "TransformERC1155":
-			transforms = append(transforms, bt.TransformERC1155)
+		case "TransformZRC20":
+			transforms = append(transforms, bt.TransformZRC20)
+		case "TransformZRC721":
+			transforms = append(transforms, bt.TransformZRC721)
+		case "TransformZRC1155":
+			transforms = append(transforms, bt.TransformZRC1155)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
-		case "TransformUncle":
-			transforms = append(transforms, bt.TransformUncle)
-		case "TransformEnsNameRegistered":
-			transforms = append(transforms, bt.TransformEnsNameRegistered)
-			importENSChanges = true
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// case "TransformZnsNameRegistered":
+		// 	transforms = append(transforms, bt.TransformZnsNameRegistered)
+		// 	importZNSChanges = true
 		case "TransformContract":
 			transforms = append(transforms, bt.TransformContract)
 		default:
@@ -1651,36 +1327,15 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 
 	}
 
-	if importENSChanges {
-		if err := bt.ImportEnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
-			utils.LogError(err, "error importing ens from events", 0)
-			return
-		}
-	}
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// if importZNSChanges {
+	// 	if err := bt.ImportZnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
+	// 		utils.LogError(err, "error importing zns from events", 0)
+	// 		return
+	// 	}
+	// }
 
 	logrus.Infof("index run completed")
-}
-
-func exportHistoricPrices(dayStart uint64, dayEnd uint64) {
-	logrus.Infof("exporting historic prices for days %v - %v", dayStart, dayEnd)
-	for day := dayStart; day <= dayEnd; day++ {
-		timeStart := time.Now()
-		ts := utils.DayToTime(int64(day)).UTC().Truncate(utils.Day)
-		err := services.WriteHistoricPricesForDay(ts)
-		if err != nil {
-			errMsg := fmt.Sprintf("error exporting historic prices for day %v", day)
-			utils.LogError(err, errMsg, 0)
-			return
-		}
-		logrus.Printf("finished export for day %v, took %v", day, time.Since(timeStart))
-
-		if day < dayEnd {
-			// Wait to not overload the API
-			time.Sleep(5 * time.Second)
-		}
-	}
-
-	logrus.Info("historic price update run completed")
 }
 
 func exportStatsTotals(columns string, dayStart, dayEnd, concurrency uint64) {
@@ -1696,9 +1351,8 @@ func exportStatsTotals(columns string, dayStart, dayEnd, concurrency uint64) {
 	// validate columns input
 	columnsSlice := strings.Split(columns, ",")
 	validColumns := []string{
-		"cl_rewards_gwei_total",
-		"el_rewards_wei_total",
-		"mev_rewards_wei_total",
+		"cl_rewards_gplanck_total",
+		"el_rewards_planck_total",
 		"missed_attestations_total",
 		"participated_sync_total",
 		"missed_sync_total",
@@ -1819,9 +1473,11 @@ Instead of deleting entries from the sync_committee table in a prod environment 
 this method will replace each sync committee period one by one with the new one. Which is much nicer for a prod environment.
 */
 func exportSyncCommitteePeriods(rpcClient rpc.Client, startDay, endDay uint64, dryRun bool) {
-	var lastEpoch = uint64(0)
+	var (
+		lastEpoch   uint64 = 0
+		firstPeriod uint64 = 0
+	)
 
-	firstPeriod := utils.SyncPeriodOfEpoch(utils.Config.Chain.ClConfig.AltairForkEpoch)
 	if startDay > 0 {
 		firstEpoch, _ := utils.GetFirstAndLastEpochForDay(startDay)
 		firstPeriod = utils.SyncPeriodOfEpoch(firstEpoch)
@@ -2012,10 +1668,6 @@ func UpdateValidatorStatisticsSyncData(day uint64, client rpc.Client, dryRun boo
 		}
 	}
 
-	if err != nil {
-		return err
-	}
-
 	err = tx.Commit()
 	if err != nil {
 		return fmt.Errorf("error during statistics data insert: %w", err)
@@ -2070,28 +1722,4 @@ func reExportSyncCommittee(rpcClient rpc.Client, p uint64, dryRun bool) error {
 
 		return tx.Commit()
 	}
-}
-
-func askForConfirmation(q string) bool {
-	if opts.Yes {
-		return true
-	}
-	var s string
-
-	fmt.Printf("%s (y/N): ", q)
-	_, err := fmt.Scanln(&s)
-	if err != nil {
-		if err.Error() == "unexpected newline" {
-			return false
-		}
-		panic(err)
-	}
-
-	// s = strings.TrimSpace(s)
-	s = strings.ToLower(s)
-
-	if s == "y" || s == "yes" {
-		return true
-	}
-	return false
 }

@@ -1,16 +1,18 @@
 package handlers
 
+// TODO(now.youtrack.cloud/issue/TZB-2)
+/*
 import (
 	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -130,7 +132,7 @@ func BroadcastStatus(w http.ResponseWriter, r *http.Request) {
 func FormatNodeJobType(nodeJobType types.NodeJobType) string {
 	label := "Unknown"
 	switch nodeJobType {
-	case types.BLSToExecutionChangesNodeJobType:
+	case types.DilithiumToExecutionChangesNodeJobType:
 		label = "Set withdrawal address"
 	case types.VoluntaryExitsNodeJobType:
 		label = "Voluntary exit"
@@ -141,10 +143,11 @@ func FormatNodeJobType(nodeJobType types.NodeJobType) string {
 func FormatNodeJobTitle(nodeJobType types.NodeJobType) string {
 	label := "Transaction"
 	switch nodeJobType {
-	case types.BLSToExecutionChangesNodeJobType:
+	case types.DilithiumToExecutionChangesNodeJobType:
 		label = "Withdrawal Credentials Change Request Job"
 	case types.VoluntaryExitsNodeJobType:
 		label = "Voluntary Exit Request Job"
 	}
 	return label
 }
+*/

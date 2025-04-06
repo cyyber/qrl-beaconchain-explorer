@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/rpc"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/rpc"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
@@ -41,7 +41,7 @@ func exportSyncCommittees(rpcClient rpc.Client) error {
 		currEpoch = currEpoch - 1
 	}
 	lastPeriod := utils.SyncPeriodOfEpoch(uint64(currEpoch)) + 1 // we can look into the future
-	firstPeriod := utils.SyncPeriodOfEpoch(utils.Config.Chain.ClConfig.AltairForkEpoch)
+	var firstPeriod uint64 = 0
 	for p := firstPeriod; p <= lastPeriod; p++ {
 		_, exists := dbPeriodsMap[p]
 		if !exists {
@@ -61,7 +61,6 @@ func exportSyncCommittees(rpcClient rpc.Client) error {
 }
 
 func ExportSyncCommitteeAtPeriod(rpcClient rpc.Client, p uint64, providedTx *sqlx.Tx) error {
-
 	data, err := GetSyncCommitteAtPeriod(rpcClient, p)
 	if err != nil {
 		return err
@@ -102,16 +101,11 @@ func ExportSyncCommitteeAtPeriod(rpcClient rpc.Client, p uint64, providedTx *sql
 }
 
 func GetSyncCommitteAtPeriod(rpcClient rpc.Client, p uint64) ([]SyncCommittee, error) {
-
 	stateID := uint64(0)
 	if p > 0 {
 		stateID = utils.FirstEpochOfSyncPeriod(p-1) * utils.Config.Chain.ClConfig.SlotsPerEpoch
 	}
 	epoch := utils.FirstEpochOfSyncPeriod(p)
-	if stateID/utils.Config.Chain.ClConfig.SlotsPerEpoch <= utils.Config.Chain.ClConfig.AltairForkEpoch {
-		stateID = utils.Config.Chain.ClConfig.AltairForkEpoch * utils.Config.Chain.ClConfig.SlotsPerEpoch
-		epoch = utils.Config.Chain.ClConfig.AltairForkEpoch
-	}
 
 	firstEpoch := utils.FirstEpochOfSyncPeriod(p)
 	lastEpoch := firstEpoch + utils.Config.Chain.ClConfig.EpochsPerSyncCommitteePeriod - 1
@@ -131,11 +125,11 @@ func GetSyncCommitteAtPeriod(rpcClient rpc.Client, p uint64) ([]SyncCommittee, e
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, SyncCommittee{
+		result[i] = SyncCommittee{
 			Period:         p,
 			ValidatorIndex: idxU64,
 			CommitteeIndex: uint64(i),
-		})
+		}
 	}
 
 	return result, nil

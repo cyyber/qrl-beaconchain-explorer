@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 )
 
 func InitBigtableSchema() error {
-
 	tables := make(map[string]map[string]gcp_bigtable.GCPolicy)
 
 	tables["beaconchain_validators"] = map[string]gcp_bigtable.GCPolicy{
@@ -33,15 +32,12 @@ func InitBigtableSchema() error {
 		CONTRACT_METADATA_FAMILY: gcp_bigtable.MaxAgeGCPolicy(utils.Day),
 		DEFAULT_FAMILY:           nil,
 	}
-	tables["machine_metrics"] = map[string]gcp_bigtable.GCPolicy{
-		MACHINE_METRICS_COLUMN_FAMILY: gcp_bigtable.MaxAgeGCPolicy(utils.Day * 31),
-	}
 	tables["metadata"] = map[string]gcp_bigtable.GCPolicy{
 		ACCOUNT_METADATA_FAMILY:  nil,
 		CONTRACT_METADATA_FAMILY: nil,
-		ERC20_METADATA_FAMILY:    nil,
-		ERC721_METADATA_FAMILY:   nil,
-		ERC1155_METADATA_FAMILY:  nil,
+		ZRC20_METADATA_FAMILY:    nil,
+		ZRC721_METADATA_FAMILY:   nil,
+		ZRC1155_METADATA_FAMILY:  nil,
 		SERIES_FAMILY:            gcp_bigtable.MaxVersionsGCPolicy(1),
 	}
 	tables["metadata_updates"] = map[string]gcp_bigtable.GCPolicy{

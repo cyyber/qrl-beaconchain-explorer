@@ -13,22 +13,17 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/cache"
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	ethclients "github.com/gobitfly/eth2-beaconchain-explorer/ethClients"
-	"github.com/gobitfly/eth2-beaconchain-explorer/price"
-	"github.com/gobitfly/eth2-beaconchain-explorer/ratelimit"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/cache"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
 
-	itypes "github.com/gobitfly/eth-rewards/types"
 	"github.com/shopspring/decimal"
-
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/sirupsen/logrus"
-
-	geth_types "github.com/ethereum/go-ethereum/core/types"
-	geth_rpc "github.com/ethereum/go-ethereum/rpc"
+	"github.com/theQRL/go-zond/common"
+	gzond_types "github.com/theQRL/go-zond/core/types"
+	gzond_rpc "github.com/theQRL/go-zond/rpc"
 )
 
 var logger = logrus.New().WithField("module", "services")
@@ -58,12 +53,6 @@ func Init() {
 	go indexPageDataUpdater(ready)
 
 	ready.Add(1)
-	go poolsUpdater(ready)
-
-	ready.Add(1)
-	go relaysUpdater(ready)
-
-	ready.Add(1)
 	go chartsPageDataUpdater(ready)
 
 	ready.Add(1)
@@ -79,266 +68,12 @@ func Init() {
 	go gasNowUpdater(ready)
 
 	ready.Add(1)
-	go ethStoreStatisticsDataUpdater(ready)
-
-	ready.Add(1)
 	go startMonitoringService(ready)
 
 	ready.Add(1)
 	go latestExportedStatisticDayUpdater(ready)
 
-	if utils.Config.RatelimitUpdater.Enabled {
-		go ratelimit.DBUpdater()
-	}
-
 	ready.Wait()
-}
-
-func InitNotificationSender() {
-	logger.Infof("starting notifications-sender")
-	go notificationSender()
-}
-
-func InitNotificationCollector(pubkeyCachePath string) {
-	err := initPubkeyCache(pubkeyCachePath)
-	if err != nil {
-		logger.Fatalf("error initializing pubkey cache path for notifications: %v", err)
-	}
-
-	go ethclients.Init()
-
-	go notificationCollector()
-}
-
-func getRelaysPageData() (*types.RelaysResp, error) {
-	start := time.Now()
-	defer func() {
-		logger.WithFields(logrus.Fields{"duration": time.Since(start)}).Info("completed caching relays page data")
-	}()
-	var relaysData types.RelaysResp
-
-	relaysData.LastUpdated = start
-
-	networkParticipationQuery, err := db.ReaderDb.Preparex(`
-		SELECT 
-			(SELECT
-				COUNT(DISTINCT block_slot) AS block_count
-			FROM relays_blocks
-			WHERE 
-				block_slot > $1 AND 
-				block_root NOT IN (SELECT bt.blockroot FROM blocks_tags bt WHERE bt.tag_id='invalid-relay-reward') 
-			) / (MAX(blocks.slot) - $1)::float AS network_participation
-		FROM blocks`)
-	if err != nil {
-		logger.Errorf("failed to prepare networkParticipationQuery: %v", err)
-		return nil, err
-	}
-	defer networkParticipationQuery.Close()
-
-	overallStatsQuery, err := db.ReaderDb.Preparex(`
-		WITH stats AS (
-			SELECT 
-				tag_id AS relay_id,
-				COUNT(*) AS block_count,
-				SUM(value) AS total_value,
-				ROUND(avg(value)) AS avg_value,
-				COUNT(DISTINCT builder_pubkey) AS unique_builders,
-				MAX(value) AS max_value,
-				(SELECT rb2.block_slot FROM relays_blocks rb2 WHERE rb2.value = MAX(rb.value) AND rb2.tag_id = rb.tag_id LIMIT 1) AS max_value_slot
-			FROM relays_blocks rb
-			WHERE 
-				rb.block_slot > $1 AND 
-				rb.block_root NOT IN (SELECT bt.blockroot FROM blocks_tags bt WHERE bt.tag_id='invalid-relay-reward') 
-			GROUP BY tag_id 
-		)
-		SELECT 
-			tags.metadata ->> 'name' AS "name",
-			relays.public_link AS link,
-			relays.is_censoring AS censors,
-			relays.is_ethical AS ethical,
-			stats.block_count / (SELECT MAX(blocks.slot) - $1 FROM blocks)::float AS network_usage,
-			stats.relay_id,
-			stats.block_count,
-			stats.total_value,
-			stats.avg_value,
-			stats.unique_builders,
-			stats.max_value,
-			stats.max_value_slot
-		FROM relays
-		LEFT JOIN stats ON stats.relay_id = relays.tag_id
-		LEFT JOIN tags ON tags.id = relays.tag_id 
-		WHERE stats.relay_id = tag_id 
-		ORDER BY stats.block_count DESC`)
-	if err != nil {
-		logger.Errorf("failed to prepare overallStatsQuery: %v", err)
-		return nil, err
-	}
-	defer overallStatsQuery.Close()
-
-	dayInSlots := uint64(utils.Day/time.Second) / utils.Config.Chain.ClConfig.SecondsPerSlot
-
-	tmp := [3]types.RelayInfoContainer{{Days: 7}, {Days: 31}, {Days: 180}}
-	latest := LatestSlot()
-	for i := 0; i < len(tmp); i++ {
-		tmp[i].IsFirst = i == 0
-		var forSlot uint64 = 0
-		if latest > tmp[i].Days*dayInSlots {
-			forSlot = latest - (tmp[i].Days * dayInSlots)
-		}
-
-		// calculate total adoption
-		err = networkParticipationQuery.Get(&tmp[i].NetworkParticipation, forSlot)
-		if err != nil {
-			return nil, err
-		}
-		err = overallStatsQuery.Select(&tmp[i].RelaysInfo, forSlot)
-		if err != nil {
-			return nil, err
-		}
-
-	}
-	relaysData.RelaysInfoContainers = tmp
-
-	var forSlot uint64 = 0
-	if latest > (14 * dayInSlots) {
-		forSlot = latest - (14 * dayInSlots)
-	}
-	err = db.ReaderDb.Select(&relaysData.TopBuilders, `
-		select 
-			builder_pubkey,
-			SUM(c) as c,
-			jsonb_agg(tags.metadata) as tags,
-			max(latest_slot) as latest_slot
-		from (
-			select 
-				builder_pubkey,
-				count(*) as c,
-				tag_id,
-				(
-					select block_slot
-					from relays_blocks rb2
-					where
-						rb2.builder_pubkey = rb.builder_pubkey
-					order by block_slot desc
-					limit 1
-				) as latest_slot
-			from (
-				select builder_pubkey, tag_id
-				from relays_blocks
-				where block_slot > $1
-				order by block_slot desc) rb
-			group by builder_pubkey, tag_id 
-		) foo
-		left join tags on tags.id = foo.tag_id
-		group by builder_pubkey 
-		order by c desc`, forSlot)
-	if err != nil {
-		logger.Errorf("failed to get builder ranking %v", err)
-		return nil, err
-	}
-
-	err = db.ReaderDb.Select(&relaysData.RecentBlocks, `
-		select
-			jsonb_agg(tags.metadata order by id) as tags,
-			max(relays_blocks.value) as value,
-			relays_blocks.block_slot as slot,
-			relays_blocks.builder_pubkey as builder_pubkey,
-			relays_blocks.proposer_fee_recipient as proposer_fee_recipient,
-			validators.validatorindex as proposer,
-			encode(exec_extra_data, 'hex') as block_extra_data
-		from (
-			select blockroot, exec_extra_data
-			from blocks
-			where blockroot in (
-				select rb.block_root
-				from relays_blocks rb
-			) 
-			order by blocks.slot desc
-			limit 15
-		) as blocks
-		left join relays_blocks
-			on relays_blocks.block_root = blocks.blockroot
-		left join tags 
-			on tags.id = relays_blocks.tag_id 
-		left join validators
-			on validators.pubkey = relays_blocks.proposer_pubkey  
-		where validators.validatorindex is not null
-		group by 
-			blockroot, 
-			relays_blocks.block_slot,
-			relays_blocks.builder_pubkey,
-			relays_blocks.proposer_fee_recipient,
-			blocks.exec_extra_data,
-			validators.validatorindex 
-		order by relays_blocks.block_slot desc`)
-	if err != nil {
-		logger.Errorf("failed to get latest blocks for relays page %v", err)
-		return nil, err
-	}
-
-	err = db.ReaderDb.Select(&relaysData.TopBlocks, `
-		select
-			jsonb_agg(tags.metadata order by id) as tags,
-			max(relays_blocks.value) as value,
-			relays_blocks.block_slot as slot,
-			relays_blocks.builder_pubkey as builder_pubkey,
-			relays_blocks.proposer_fee_recipient as proposer_fee_recipient,
-			validators.validatorindex as proposer,
-			encode(exec_extra_data, 'hex') as block_extra_data
-		from (
-			select value, block_slot, builder_pubkey, proposer_fee_recipient, block_root, tag_id, proposer_pubkey
-			from relays_blocks
-			where relays_blocks.block_root not in (select bt.blockroot from blocks_tags bt where bt.tag_id='invalid-relay-reward') 
-			order by relays_blocks.value desc
-			limit 15
-		) as relays_blocks 
-		left join blocks
-			on relays_blocks.block_root = blocks.blockroot
-		left join tags 
-			on tags.id = relays_blocks.tag_id 
-		left join validators
-			on validators.pubkey = relays_blocks.proposer_pubkey  
-		group by 
-			blockroot, 
-			relays_blocks.block_slot,
-			relays_blocks.builder_pubkey,
-			relays_blocks.proposer_fee_recipient,
-			blocks.exec_fee_recipient,
-			blocks.exec_extra_data,
-			validators.validatorindex 
-		order by value desc`)
-	if err != nil {
-		logger.Errorf("failed to get top blocks for relays page %v", err)
-		return nil, err
-	}
-
-	return &relaysData, nil
-}
-
-func relaysUpdater(wg *sync.WaitGroup) {
-	firstRun := true
-
-	for {
-		data, err := getRelaysPageData()
-		if err != nil {
-			logger.Errorf("error retrieving relays page data: %v", err)
-			time.Sleep(time.Second * 10)
-			continue
-		}
-
-		cacheKey := fmt.Sprintf("%d:frontend:relaysData", utils.Config.Chain.ClConfig.DepositChainID)
-		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
-		if err != nil {
-			logger.Errorf("error caching relaysData: %v", err)
-		}
-		if firstRun {
-			logger.Info("initialized relays page updater")
-			wg.Done()
-			firstRun = false
-		}
-		ReportStatus("relaysUpdater", "Running", nil)
-		time.Sleep(time.Minute)
-	}
 }
 
 func epochUpdater(wg *sync.WaitGroup) {
@@ -435,59 +170,6 @@ func slotUpdater(wg *sync.WaitGroup) {
 	}
 }
 
-func poolsUpdater(wg *sync.WaitGroup) {
-	firstRun := true
-
-	for {
-		data, err := getPoolsPageData()
-		if err != nil {
-			logger.Errorf("error retrieving pools page data: %v", err)
-			time.Sleep(time.Second * 10)
-			continue
-		}
-
-		cacheKey := fmt.Sprintf("%d:frontend:poolsData", utils.Config.Chain.ClConfig.DepositChainID)
-		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
-		if err != nil {
-			logger.Errorf("error caching poolsData: %v", err)
-		}
-		if firstRun {
-			logger.Info("initialized pools page updater")
-			wg.Done()
-			firstRun = false
-		}
-		ReportStatus("poolsUpdater", "Running", nil)
-		time.Sleep(time.Minute * 10)
-	}
-}
-
-func getPoolsPageData() (*types.PoolsResp, error) {
-	var poolData types.PoolsResp
-	err := db.ReaderDb.Select(&poolData.PoolInfos, `
-	select pool as name, validators as count, apr * 100 as avg_performance_1d, (select avg(apr) from historical_pool_performance as hpp1 where hpp1.pool = hpp.pool AND hpp1.day > hpp.day - 7) * 100 as avg_performance_7d, (select avg(apr) from historical_pool_performance as hpp1 where hpp1.pool = hpp.pool AND hpp1.day > hpp.day - 31) * 100 as avg_performance_31d from historical_pool_performance hpp where day = (select max(day) from historical_pool_performance) order by validators desc;
-	`)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	ethstoreData := &types.PoolInfo{}
-	err = db.ReaderDb.Get(ethstoreData, `
-	select 'ETH.STORE' as name, -1 as count, apr * 100 as avg_performance_1d, (select avg(apr) from eth_store_stats as e1 where e1.validator = -1 AND e1.day > e.day - 7) * 100 as avg_performance_7d, (select avg(apr) from eth_store_stats as e1 where e1.validator = -1 AND e1.day > e.day - 31) * 100 as avg_performance_31d from eth_store_stats e where day = (select max(day) from eth_store_stats) LIMIT 1;
-	`)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	for _, pool := range poolData.PoolInfos {
-		pool.EthstoreComparison1d = pool.AvgPerformance1d*100/ethstoreData.AvgPerformance1d - 100
-		pool.EthstoreComparison7d = pool.AvgPerformance7d*100/ethstoreData.AvgPerformance7d - 100
-		pool.EthstoreComparison31d = pool.AvgPerformance31d*100/ethstoreData.AvgPerformance31d - 100
-	}
-	poolData.PoolInfos = append([]*types.PoolInfo{ethstoreData}, poolData.PoolInfos...)
-
-	return &poolData, nil
-}
-
 func latestProposedSlotUpdater(wg *sync.WaitGroup) {
 	firstRun := true
 
@@ -527,7 +209,7 @@ func indexPageDataUpdater(wg *sync.WaitGroup) {
 			time.Sleep(time.Second * 10)
 			continue
 		}
-		logger.WithFields(logrus.Fields{"genesis": data.Genesis, "currentEpoch": data.CurrentEpoch, "networkName": data.NetworkName, "networkStartTs": data.NetworkStartTs}).Infof("index page data update completed in %v", time.Since(start))
+		logger.WithFields(logrus.Fields{"currentEpoch": data.CurrentEpoch, "networkName": data.NetworkName, "networkStartTs": data.NetworkStartTs}).Infof("index page data update completed in %v", time.Since(start))
 
 		cacheKey := fmt.Sprintf("%d:frontend:indexPageData", utils.Config.Chain.ClConfig.DepositChainID)
 		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
@@ -541,31 +223,6 @@ func indexPageDataUpdater(wg *sync.WaitGroup) {
 		}
 		ReportStatus("indexPageDataUpdater", "Running", nil)
 		time.Sleep(time.Second * 10)
-	}
-}
-
-func ethStoreStatisticsDataUpdater(wg *sync.WaitGroup) {
-	firstRun := true
-	for {
-		data, err := getEthStoreStatisticsData()
-		if err != nil {
-			logger.Errorf("error retrieving ETH.STORE statistics data: %v", err)
-			time.Sleep(time.Second * 10)
-			continue
-		}
-
-		cacheKey := fmt.Sprintf("%d:frontend:ethStoreStatistics", utils.Config.Chain.ClConfig.DepositChainID)
-		err = cache.TieredCache.Set(cacheKey, data, utils.Day)
-		if err != nil {
-			logger.Errorf("error caching ETH.STORE statistics data: %v", err)
-		}
-		if firstRun {
-			firstRun = false
-			wg.Done()
-			logger.Info("initialized ETH.STORE statistics data updater")
-		}
-		ReportStatus("ethStoreStatistics", "Running", nil)
-		time.Sleep(time.Second * 90)
 	}
 }
 
@@ -594,67 +251,8 @@ func slotVizUpdater(wg *sync.WaitGroup) {
 	}
 }
 
-func getEthStoreStatisticsData() (*types.EthStoreStatistics, error) {
-	var ethStoreDays []types.EthStoreDay
-	err := db.ReaderDb.Select(&ethStoreDays, `
-		SELECT
-			day,
-			apr,
-			effective_balances_sum_wei,
-			total_rewards_wei
-		FROM eth_store_stats
-		WHERE validator = -1
-		ORDER BY DAY ASC`)
-	if err != nil {
-		return nil, fmt.Errorf("error getting eth store stats from db: %v", err)
-	}
-	daysLastIndex := len(ethStoreDays) - 1
-
-	if daysLastIndex < 0 {
-		return nil, fmt.Errorf("no eth store stats found in db")
-	}
-
-	effectiveBalances := [][]float64{}
-	totalRewards := [][]float64{}
-	aprs := [][]float64{}
-	for _, stat := range ethStoreDays {
-		ts := float64(utils.EpochToTime(stat.Day*utils.EpochsPerDay()).Unix()) * 1000
-
-		effectiveBalances = append(effectiveBalances, []float64{
-			ts,
-			stat.EffectiveBalancesSum.Div(decimal.NewFromInt(1e18)).Round(0).InexactFloat64(),
-		})
-
-		totalRewards = append(totalRewards, []float64{
-			ts,
-			stat.TotalRewardsWei.Div(decimal.NewFromInt(1e18)).Round(6).InexactFloat64(),
-		})
-
-		aprs = append(aprs, []float64{
-			ts,
-			stat.APR.Mul(decimal.NewFromInt(100)).Round(3).InexactFloat64(),
-		})
-	}
-
-	data := &types.EthStoreStatistics{
-		EffectiveBalances:         effectiveBalances,
-		TotalRewards:              totalRewards,
-		APRs:                      aprs,
-		ProjectedAPR:              ethStoreDays[daysLastIndex].APR.Mul(decimal.NewFromInt(100)).InexactFloat64(),
-		StartEpoch:                ethStoreDays[daysLastIndex].Day * utils.EpochsPerDay(),
-		YesterdayRewards:          ethStoreDays[daysLastIndex].TotalRewardsWei.Div(decimal.NewFromInt(1e18)).InexactFloat64(),
-		YesterdayEffectiveBalance: ethStoreDays[daysLastIndex].EffectiveBalancesSum.Div(decimal.NewFromInt(1e18)).InexactFloat64(),
-		YesterdayTs:               utils.EpochToTime(ethStoreDays[daysLastIndex].Day * utils.EpochsPerDay()).Unix(),
-	}
-
-	return data, nil
-}
-
 func getIndexPageData() (*types.IndexPageData, error) {
-	currency := utils.Config.Frontend.MainCurrency
-
 	data := &types.IndexPageData{}
-	data.Mainnet = utils.Config.Chain.ClConfig.ConfigName == "mainnet"
 	data.NetworkName = utils.Config.Chain.ClConfig.ConfigName
 	data.DepositContract = utils.Config.Chain.ClConfig.DepositContractAddress
 
@@ -690,7 +288,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				FROM eth1_deposits
 				WHERE valid_signature = true
 				GROUP BY publickey
-				HAVING SUM(amount) >= 32e9
+				HAVING SUM(amount) >= 40000e9
 			) a`)
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving eth1 deposits: %v", err)
@@ -771,23 +369,6 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		}
 	}
 
-	// has genesis occurred
-	if now.After(startSlotTime) {
-		data.Genesis = true
-	} else {
-		data.Genesis = false
-	}
-	// show the transition view one hour before the first slot and until epoch 30 is reached
-	if now.Add(utils.Day).After(startSlotTime) && now.Before(genesisTransition) {
-		data.GenesisPeriod = true
-	} else {
-		data.GenesisPeriod = false
-	}
-
-	if startSlotTime == time.Unix(0, 0) {
-		data.Genesis = false
-	}
-
 	var scheduledCount uint8
 	err = db.WriterDb.Get(&scheduledCount, `
 		select count(*) from blocks where status = '0' and epoch = $1;
@@ -799,7 +380,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 
 	latestFinalizedEpoch := LatestFinalizedEpoch()
 	var epochs []*types.IndexPageDataEpochs
-	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligibleether, globalparticipationrate, votedether FROM epochs ORDER BY epochs DESC LIMIT 15`)
+	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligibleznd, globalparticipationrate, votedznd FROM epochs ORDER BY epochs DESC LIMIT 15`)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving index epoch data: %v", err)
 	}
@@ -807,9 +388,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 	for _, epoch := range epochs {
 		epoch.Ts = utils.EpochToTime(epoch.Epoch)
 		epoch.FinalizedFormatted = utils.FormatYesNo(epoch.Finalized)
-		epoch.VotedEtherFormatted = utils.FormatBalance(epoch.VotedEther, currency)
-		epoch.EligibleEtherFormatted = utils.FormatEligibleBalance(epoch.EligibleEther, currency)
-		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedEther, epoch.GlobalParticipationRate, currency)
+		epoch.VotedZNDFormatted = utils.FormatBalance(epoch.VotedZND, "ZND")
+		epoch.EligibleZNDFormatted = utils.FormatEligibleBalance(epoch.EligibleZND, "ZND")
+		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZND, epoch.GlobalParticipationRate, "ZND")
 		epochsMap[epoch.Epoch] = true
 	}
 
@@ -869,12 +450,12 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				Ts:                               utils.EpochToTime(block.Epoch),
 				Finalized:                        false,
 				FinalizedFormatted:               utils.FormatYesNo(false),
-				EligibleEther:                    0,
-				EligibleEtherFormatted:           utils.FormatEligibleBalance(0, currency),
+				EligibleZND:                      0,
+				EligibleZNDFormatted:             utils.FormatEligibleBalance(0, "ZND"),
 				GlobalParticipationRate:          0,
 				GlobalParticipationRateFormatted: utils.FormatGlobalParticipationRate(0, 1, ""),
-				VotedEther:                       0,
-				VotedEtherFormatted:              "",
+				VotedZND:                         0,
+				VotedZNDFormatted:                "",
 			})
 			epochsMap[block.Epoch] = true
 		}
@@ -889,13 +470,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		data.Epochs = data.Epochs[:15]
 	}
 
-	if data.GenesisPeriod {
-		for _, blk := range blocks {
-			if blk.Status != 0 {
-				data.CurrentSlot = blk.Slot
-			}
-		}
-	} else if len(blocks) > 0 {
+	if len(blocks) > 0 {
 		data.CurrentSlot = blocks[0].Slot
 	}
 
@@ -918,9 +493,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		epochLowerBound = epoch - 1600
 	}
 	var epochHistory []*types.IndexPageEpochHistory
-	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligibleether, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
+	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligibleznd, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving staked ether history: %v", err)
+		return nil, fmt.Errorf("error retrieving staked ZND history: %v", err)
 	}
 
 	if len(epochHistory) > 0 {
@@ -928,19 +503,19 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			if epochHistory[i].Finalized {
 				data.CurrentFinalizedEpoch = epochHistory[i].Epoch
 				data.FinalityDelay = FinalizationDelay()
-				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), currency))
+				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "ZND"))
 				break
 			}
 		}
 
-		data.StakedEther = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleEther, currency))
+		data.StakedZND = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZND, "ZND"))
 		data.ActiveValidators = epochHistory[len(epochHistory)-1].ValidatorsCount
 	}
 
-	data.StakedEtherChartData = make([][]float64, len(epochHistory))
+	data.StakedZNDChartData = make([][]float64, len(epochHistory))
 	data.ActiveValidatorsChartData = make([][]float64, len(epochHistory))
 	for i, history := range epochHistory {
-		data.StakedEtherChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleEther).InexactFloat64()}
+		data.StakedZNDChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleZND).InexactFloat64()}
 		data.ActiveValidatorsChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), float64(history.ValidatorsCount)}
 	}
 
@@ -1050,21 +625,6 @@ func LatestBurnData() *types.BurnPageData {
 	return &types.BurnPageData{}
 }
 
-func LatestEthStoreStatistics() *types.EthStoreStatistics {
-	wanted := &types.EthStoreStatistics{}
-	cacheKey := fmt.Sprintf("%d:frontend:ethStoreStatistics", utils.Config.Chain.ClConfig.DepositChainID)
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Minute, wanted); err == nil {
-		return wanted.(*types.EthStoreStatistics)
-	} else {
-		logger.Errorf("error retrieving ETH.STORE statistics data from cache: %v", err)
-	}
-	return &types.EthStoreStatistics{}
-}
-
-func EthStoreDisclaimer() string {
-	return "ETH.STORE® is not made available for use as a benchmark, whether in relation to a financial instrument, financial contract or to measure the performance of an investment fund, or otherwise in a way that would require it to be administered by a benchmark administrator pursuant to the EU Benchmarks Regulation. Currently Bitfly does not grant any right to access or use ETH.STORE® for such purpose."
-}
-
 // LatestIndexPageData returns the latest index page data
 func LatestIndexPageData() *types.IndexPageData {
 	wanted := &types.IndexPageData{}
@@ -1079,25 +639,6 @@ func LatestIndexPageData() *types.IndexPageData {
 	return &types.IndexPageData{}
 }
 
-// LatestPoolsPageData returns the latest pools page data
-func LatestPoolsPageData() *types.PoolsResp {
-
-	wanted := &types.PoolsResp{}
-	cacheKey := fmt.Sprintf("%d:frontend:poolsData", utils.Config.Chain.ClConfig.DepositChainID)
-
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Second*5, wanted); err == nil {
-		return wanted.(*types.PoolsResp)
-	} else {
-		logger.Errorf("error retrieving poolsData from cache: %v", err)
-	}
-
-	return &types.PoolsResp{
-		PoolsDistribution:       types.ChartsPageDataChart{},
-		HistoricPoolPerformance: types.ChartsPageDataChart{},
-		PoolInfos:               []*types.PoolInfo{},
-	}
-}
-
 func LatestGasNowData() *types.GasNowPageData {
 	wanted := &types.GasNowPageData{}
 	cacheKey := fmt.Sprintf("%d:frontend:gasNow", utils.Config.Chain.ClConfig.DepositChainID)
@@ -1106,19 +647,6 @@ func LatestGasNowData() *types.GasNowPageData {
 		return wanted.(*types.GasNowPageData)
 	} else {
 		logger.Errorf("error retrieving gasNow from cache: %v", err)
-	}
-
-	return nil
-}
-
-func LatestRelaysPageData() *types.RelaysResp {
-	wanted := &types.RelaysResp{}
-	cacheKey := fmt.Sprintf("%d:frontend:relaysData", utils.Config.Chain.ClConfig.DepositChainID)
-
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Second*5, wanted); err == nil {
-		return wanted.(*types.RelaysResp)
-	} else {
-		logger.Errorf("error retrieving relaysData from cache: %v", err)
 	}
 
 	return nil
@@ -1147,64 +675,8 @@ func LatestState() *types.LatestState {
 	data.LastProposedSlot = LatestProposedSlot()
 	data.FinalityDelay = FinalizationDelay()
 	data.IsSyncing = IsSyncing()
-	data.Rates = GetRates(utils.Config.Frontend.MainCurrency)
 
 	return data
-}
-
-func GetRates(selectedCurrency string) *types.Rates {
-	r := types.Rates{}
-
-	if !price.IsAvailableCurrency(selectedCurrency) {
-		logrus.Warnf("setting selectedCurrency to mainCurrency since selected is not available: %v", selectedCurrency)
-		selectedCurrency = utils.Config.Frontend.MainCurrency
-	}
-
-	r.SelectedCurrency = selectedCurrency
-	r.SelectedCurrencySymbol = price.GetCurrencySymbol(r.SelectedCurrency)
-
-	r.MainCurrency = utils.Config.Frontend.MainCurrency
-	r.ClCurrency = utils.Config.Frontend.ClCurrency
-	r.ElCurrency = utils.Config.Frontend.ElCurrency
-	r.TickerCurrency = selectedCurrency
-	if r.TickerCurrency == utils.Config.Frontend.MainCurrency {
-		r.TickerCurrency = "USD"
-		if !price.IsAvailableCurrency(r.TickerCurrency) {
-			r.TickerCurrency = utils.Config.Frontend.MainCurrency
-		}
-	}
-
-	r.MainCurrencySymbol = price.GetCurrencySymbol(utils.Config.Frontend.MainCurrency)
-	r.ElCurrencySymbol = price.GetCurrencySymbol(utils.Config.Frontend.ElCurrency)
-	r.ClCurrencySymbol = price.GetCurrencySymbol(utils.Config.Frontend.ClCurrency)
-	r.TickerCurrencySymbol = price.GetCurrencySymbol(r.TickerCurrency)
-
-	r.MainCurrencyPrice = price.GetPrice(utils.Config.Frontend.MainCurrency, r.SelectedCurrency)
-	r.ClCurrencyPrice = price.GetPrice(utils.Config.Frontend.ClCurrency, r.SelectedCurrency)
-	r.ElCurrencyPrice = price.GetPrice(utils.Config.Frontend.ElCurrency, r.SelectedCurrency)
-	r.MainCurrencyTickerPrice = price.GetPrice(utils.Config.Frontend.MainCurrency, r.TickerCurrency)
-
-	r.MainCurrencyPriceFormatted = utils.FormatAddCommas(uint64(r.MainCurrencyPrice))
-	r.ClCurrencyPriceFormatted = utils.FormatAddCommas(uint64(r.ClCurrencyPrice))
-	r.ElCurrencyPriceFormatted = utils.FormatAddCommas(uint64(r.ElCurrencyPrice))
-	r.MainCurrencyTickerPriceFormatted = utils.FormatAddCommas(uint64(r.MainCurrencyTickerPrice))
-
-	r.MainCurrencyPriceKFormatted = utils.KFormatterEthPrice(uint64(r.MainCurrencyPrice))
-	r.ClCurrencyPriceKFormatted = utils.KFormatterEthPrice(uint64(r.ClCurrencyPrice))
-	r.ElCurrencyPriceKFormatted = utils.KFormatterEthPrice(uint64(r.ElCurrencyPrice))
-	r.MainCurrencyTickerPriceKFormatted = utils.FormatAddCommas(uint64(r.MainCurrencyTickerPrice))
-
-	r.MainCurrencyPrices = map[string]types.RatesPrice{}
-	for _, c := range price.GetAvailableCurrencies() {
-		p := types.RatesPrice{}
-		p.Symbol = price.GetCurrencySymbol(c)
-		cPrice := price.GetPrice(utils.Config.Frontend.MainCurrency, c)
-		p.RoundPrice = uint64(cPrice)
-		p.TruncPrice = utils.KFormatterEthPrice(uint64(cPrice))
-		r.MainCurrencyPrices[c] = p
-	}
-
-	return &r
 }
 
 func GetLatestStats() *types.Stats {
@@ -1264,7 +736,7 @@ func GlobalNotificationMessage() template.HTML {
 
 // IsSyncing returns true if the chain is still syncing
 func IsSyncing() bool {
-	return time.Now().Add(time.Minute * -10).After(utils.EpochToTime(LatestEpoch()))
+	return time.Now().Add(time.Minute * -200).After(utils.EpochToTime(LatestEpoch()))
 }
 
 func gasNowUpdater(wg *sync.WaitGroup) {
@@ -1296,12 +768,12 @@ func getGasNowData() (*types.GasNowPageData, error) {
 	gpoData.Code = 200
 	gpoData.Data.Timestamp = time.Now().UnixNano() / 1e6
 
-	client, err := geth_rpc.Dial(utils.Config.Eth1GethEndpoint)
+	client, err := gzond_rpc.Dial(utils.Config.ELNodeEndpoint)
 	if err != nil {
 		return nil, err
 	}
 	var raw json.RawMessage
-	err = client.Call(&raw, "eth_getBlockByNumber", "pending", true)
+	err = client.Call(&raw, "zond_getBlockByNumber", "pending", true)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving pending block data: %.1000s", err) // limit error message to 1000 characters
 	}
@@ -1312,7 +784,7 @@ func getGasNowData() (*types.GasNowPageData, error) {
 	// 	return nil, err
 	// }
 
-	var header *geth_types.Header
+	var header *gzond_types.Header
 	var body rpcBlock
 
 	err = json.Unmarshal(raw, &header)
@@ -1394,13 +866,6 @@ func getGasNowData() (*types.GasNowPageData, error) {
 		logrus.WithError(err).Error("error updating gas now history")
 	}
 
-	gpoData.Data.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, "USD")
-	gpoData.Data.Currency = "USD"
-
-	// gpoData.RapidUSD = gpoData.Rapid * 21000 * params.GWei / params.Ether * usd
-	// gpoData.FastUSD = gpoData.Fast * 21000 * params.GWei / params.Ether * usd
-	// gpoData.StandardUSD = gpoData.Standard * 21000 * params.GWei / params.Ether * usd
-	// gpoData.SlowUSD = gpoData.Slow * 21000 * params.GWei / params.Ether * usd
 	return gpoData, nil
 }
 
@@ -1439,7 +904,7 @@ func (tx *TxPoolContentTransaction) GetGasPrice() *big.Int {
 }
 
 type rpcTransaction struct {
-	tx *geth_types.Transaction
+	tx *gzond_types.Transaction
 	txExtraInfo
 }
 
@@ -1464,15 +929,15 @@ func mempoolUpdater(wg *sync.WaitGroup) {
 	firstRun := true
 	errorCount := 0
 
-	var client *geth_rpc.Client
+	var client *gzond_rpc.Client
 
 	for {
 		var err error
 
 		if client == nil {
-			client, err = geth_rpc.Dial(utils.Config.Eth1GethEndpoint)
+			client, err = gzond_rpc.Dial(utils.Config.ELNodeEndpoint)
 			if err != nil {
-				utils.LogError(err, "can't connect to geth node", 0)
+				utils.LogError(err, "can't connect to gzond node", 0)
 				time.Sleep(time.Second * 30)
 				continue
 			}
@@ -1516,16 +981,16 @@ func mempoolUpdater(wg *sync.WaitGroup) {
 				tx.Input = nil // nil inputs to save space
 			}
 		}
-		for _, txs := range mempoolTx.BaseFee {
-			for _, tx := range txs {
-				mempoolTx.TxsByHash[tx.Hash] = tx
+		// for _, txs := range mempoolTx.BaseFee {
+		// 	for _, tx := range txs {
+		// 		mempoolTx.TxsByHash[tx.Hash] = tx
 
-				if tx.GasPrice == nil {
-					tx.GasPrice = tx.GasFeeCap
-				}
-				tx.Input = nil // nil inputs to save space
-			}
-		}
+		// 		if tx.GasPrice == nil {
+		// 			tx.GasPrice = tx.GasFeeCap
+		// 		}
+		// 		tx.Input = nil // nil inputs to save space
+		// 	}
+		// }
 
 		cacheKey := fmt.Sprintf("%d:frontend:mempool", utils.Config.Chain.ClConfig.DepositChainID)
 		err = cache.TieredCache.Set(cacheKey, mempoolTx, utils.Day)
@@ -1636,10 +1101,10 @@ func getBurnPageData() (*types.BurnPageData, error) {
 		total.SyncCommitteePenalty += details.SyncCommitteePenalty
 		total.SlashingReward += details.SlashingReward
 		total.SlashingPenalty += details.SlashingPenalty
-		total.TxFeeRewardWei = utils.AddBigInts(total.TxFeeRewardWei, details.TxFeeRewardWei)
+		total.TxFeeRewardPlanck = utils.AddBigInts(total.TxFeeRewardPlanck, details.TxFeeRewardPlanck)
 	}
 
-	rewards := decimal.NewFromBigInt(new(big.Int).SetBytes(total.TxFeeRewardWei), 0)
+	rewards := decimal.NewFromBigInt(new(big.Int).SetBytes(total.TxFeeRewardPlanck), 0)
 
 	rewards = rewards.Add(decimal.NewFromBigInt(new(big.Int).SetUint64(total.AttestationHeadReward), 0))
 	rewards = rewards.Add(decimal.NewFromBigInt(new(big.Int).SetUint64(total.AttestationSourceReward), 0))
@@ -1691,8 +1156,6 @@ func getBurnPageData() (*types.BurnPageData, error) {
 
 		burned := new(big.Int).Mul(baseFee, big.NewInt(int64(blk.GetGasUsed())))
 
-		blockReward := new(big.Int).Add(utils.Eth1BlockReward(blockNumber, blk.GetDifficulty()), new(big.Int).Add(txReward, new(big.Int).SetBytes(blk.GetUncleReward())))
-
 		data.Blocks = append(data.Blocks, &types.BurnPageDataBlock{
 			Number:        int64(blockNumber),
 			Hash:          hex.EncodeToString(blk.Hash),
@@ -1702,7 +1165,7 @@ func getBurnPageData() (*types.BurnPageData, error) {
 			Age:           blk.Time.AsTime(),
 			BaseFeePerGas: float64(baseFee.Int64()),
 			BurnedFees:    float64(burned.Int64()),
-			Rewards:       float64(blockReward.Int64()),
+			Rewards:       float64(txReward.Int64()),
 		})
 	}
 

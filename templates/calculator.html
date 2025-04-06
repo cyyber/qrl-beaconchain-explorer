@@ -3,37 +3,6 @@
   <script src="/js/highcharts/annotations.min.js"></script>
   <script src="/js/highcharts/highcharts-global-options.js"></script>
   <script>
-    // share
-    var left = (screen.width - 570) / 2
-    var topScreen = (screen.height - 570) / 2
-    var windowParams = "menubar=no,toolbar=no,status=no,width=570,height=570,top=" + topScreen + ",left=" + left
-    document.addEventListener("DOMContentLoaded", function () {
-      document.getElementById("twitter-share").addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault()
-          window.open("https://twitter.com/share?url=" + encodeURIComponent(window.location.href) + "&text=Calculate your potential Ethereum earnings via the @etherchain_org beaconcha.in explorer!&hashtag=ethereum&related=@etherchain_org", "NewWindow", windowParams)
-        },
-        false
-      )
-      document.getElementById("facebook-share").addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault()
-          window.open("https://facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href) + "&t=Calculate your potential Ethereum earnings via the @etherchain_org beaconcha.in explorer!", "NewWindow", windowParams)
-        },
-        false
-      )
-      document.getElementById("linkedin-share").addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault()
-          window.open("https://linkedin.com/shareArticle?mini=true&url=" + encodeURIComponent(window.location.href) + "&title=" + encodeURIComponent("Beaconcha.in Staking Calculator") + "&summary=" + encodeURIComponent("Calculate your potential Ethereum earnings via the @etherchain_org beaconcha.in explorer!" + "&source=" + encodeURIComponent("https://beaconcha.in")), "NewWindow", windowParams)
-        },
-        false
-      )
-    })
-
     function formatNumberSpacing(str) {
       var result = ""
       var floor = ""
@@ -79,8 +48,8 @@
         this.config.slotsPerEpoch = 32
         this.config.secondsPerEpoch = this.config.secondsPerSlot * this.config.slotsPerEpoch
         this.config.epochsPerDay = (3600 * 24) / this.config.secondsPerEpoch
-        this.config.minNetworkStake = 32e9 * 16387
-        this.config.minValidatorStake = 32e9
+        this.config.minNetworkStake = 40000e9 * 2625
+        this.config.minValidatorStake = 40000e9
         this.config.symbols = {
           USD: "$",
           EUR: "€",
@@ -105,7 +74,7 @@
           RUB: 15277.44,
           USD: 208.96,
         }
-        this.config.totalEthSupply = 115113251499000000
+        this.config.totalZNDSupply = 105000000000000000
         this.config.showCosts = false
 
         // the param key, encoding function, decoding function, include in url params bool, update element function
@@ -272,7 +241,7 @@
         this.params.stakingFee = 0
         this.params.reinvest = false
         this.params.networkStake = 0
-        this.params.networkStakePercent = this.config.minNetworkStake / this.config.totalEthSupply
+        this.params.networkStakePercent = this.config.minNetworkStake / this.config.totalZNDSupply
         this.params.networkOnlineProbability = 0
         this.params.totalStakeMonthlyChange = 0
 
@@ -289,10 +258,13 @@
         this.result.start = null
         this.result.numberOfPossibleValidators = "0"
 
-        this.fetchStats().then(() => {
-          this.readUrlSearchParams()
-          this.run()
-        })
+        // TODO(now.youtrack.cloud/issue/TZB-5)
+        // this.fetchStats().then(() => {
+        //   this.readUrlSearchParams()
+        //   this.run()
+        // })
+        this.readUrlSearchParams()
+        this.run()
 
         $(".staking-variable").on("input", () => {
           self.run()
@@ -300,7 +272,7 @@
         })
 
         document.getElementById("staking-variable-totalStake-slider").oninput = function () {
-          document.getElementById("staking-variable-totalStake-percentage").innerText = `${(((this.value * 1e9) / self.config.totalEthSupply) * 100).toFixed(2)} %`
+          document.getElementById("staking-variable-totalStake-percentage").innerText = `${(((this.value * 1e9) / self.config.totalZNDSupply) * 100).toFixed(2)} %`
           document.getElementById("staking-variable-totalStake").value = this.value
         }
         document.getElementById("staking-variable-totalStake-slider").onchange = () => {
@@ -379,10 +351,12 @@
         this.setUrlParams()
       }
 
+      // TODO(now.youtrack.cloud/issue/TZB-5)
+      /*
       fetchStats() {
         return new Promise((resolve, reject) => {
           var count = 0
-          fetch("https://{{ .EtherscanApiBaseUrl }}/api?module=stats&action=ethsupply&apikey=")
+          fetch("https://etherscan.io/api?module=stats&action=ethsupply&apikey=")
             .then((res) => res.json())
             .then((data) => {
               console.log("success", data)
@@ -391,20 +365,20 @@
                   data.result = parseFloat(data.result)
                   console.log("parsed", data.result)
                 } catch (e) {
-                  console.err("could not pare eth supply", e)
+                  console.err("could not parse znd supply", e)
                 }
               }
-              if (data && data.result && data.result > this.config.totalEthSupply) {
-                console.log("updating totalsuplly")
-                this.config.totalEthSupply = data.result / 1e9
+              if (data && data.result && data.result > this.config.totalZNDSupply) {
+                console.log("updating totalsupply")
+                this.config.totalZNDSupply = data.result / 1e9
               }
-              var ethSupply = this.config.totalEthSupply / 1e9
-              document.getElementById("staking-variable-totalStake").setAttribute("max", ethSupply)
+              var zndSupply = this.config.totalZNDSupply / 1e9
+              document.getElementById("staking-variable-totalStake").setAttribute("max", zndSupply)
               if (document.getElementById("staking-variable-totalStake").getAttribute("value") === "0") {
-                document.getElementById("staking-variable-totalStake").setAttribute("value", ethSupply * 0.01)
+                document.getElementById("staking-variable-totalStake").setAttribute("value", zndSupply * 0.01)
               }
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", ethSupply)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", ethSupply * 0.0025)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", zndSupply)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", zndSupply * 0.0025)
               count += 1
               if (count == 2) {
                 resolve()
@@ -412,11 +386,11 @@
             })
             .catch((err) => {
               console.error(err)
-              var ethSupply = this.config.totalEthSupply / 1e9
-              document.getElementById("staking-variable-totalStake").setAttribute("max", ethSupply)
-              document.getElementById("staking-variable-totalStake").setAttribute("value", ethSupply * 0.01)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", ethSupply)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", ethSupply * 0.0025)
+              var zndSupply = this.config.totalZNDSupply / 1e9
+              document.getElementById("staking-variable-totalStake").setAttribute("max", zndSupply)
+              document.getElementById("staking-variable-totalStake").setAttribute("value", zndSupply * 0.01)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", zndSupply)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", zndSupply * 0.0025)
               count += 1
               if (count == 2) {
                 resolve()
@@ -439,6 +413,7 @@
             })
         })
       }
+      */
 
       run() {
         // var t0 = Date.now()
@@ -478,8 +453,8 @@
         } else {
           document.getElementById("staking-variable-yourStake-validation").style.display = "none"
         }
-        if (isNaN(p.networkStake) || p.networkStake < 32 * 16387 * 1e9) {
-          p.networkStake = 32 * 16387 * 1e9
+        if (isNaN(p.networkStake) || p.networkStake < 40000 * 2625 * 1e9) {
+          p.networkStake = 40000 * 2625 * 1e9
           document.getElementById("staking-variable-totalStake-validation").style.display = "initial"
         } else {
           document.getElementById("staking-variable-totalStake-validation").style.display = "none"
@@ -543,12 +518,12 @@
         if (p.stakingFee > 1) {
           p.stakingFee = 1
         }
-        p.networkStakePercent = p.networkStake / this.config.totalEthSupply
+        p.networkStakePercent = p.networkStake / this.config.totalZNDSupply
       }
 
       calculate() {
         // this calculation is only a rough estimation, it calculates the total
-        // network issuance based ond total staked ether and online-probability
+        // network issuance based ond total staked ZND and online-probability
         // of the network.
         this.result.priceChartData = []
         this.result.networkIssuanceChartData = []
@@ -560,7 +535,7 @@
         this.result.profitDollarChartData = []
         this.result.profitEthChartData = []
         this.result.breakEvenPoint = null
-        this.result.numberOfPossibleValidators = Math.floor(this.params.stake / (32 * 1e9)).toFixed(0) || "0"
+        this.result.numberOfPossibleValidators = Math.floor(this.params.stake / (40000 * 1e9)).toFixed(0) || "0"
 
         var price = this.params.price
         var costs = this.params.initialCosts //+ this.params.stake * price / 1e9
@@ -574,15 +549,15 @@
         var priceChangePerEpoch = this.params.priceChangePerMonth / epochsPerMonth
         var onlineProbability = this.params.networkOnlineProbability
         var totalStake = this.params.networkStake
-        var valStake = 32e9
+        var valStake = 40000e9
         var baseRewardFactor = 64
         var baseRewardsPerEpoch = 4
         var baseReward = (valStake * baseRewardFactor) / (baseRewardsPerEpoch * Math.sqrt(totalStake))
 
         var now = Date.now()
         var yourStake = this.params.stake
-        var incomeGwei = this.params.stake
-        var incomeDollar = (incomeGwei * price) / 1e9
+        var incomeGplanck = this.params.stake
+        var incomeDollar = (incomeGplanck * price) / 1e9
         var incomeAll = 0
 
         this.result.start = now
@@ -620,16 +595,16 @@
           price = price * (1 + priceChangePerEpoch)
           if (this.params.stakingFee > 0) {
             costs += (valRewards * (yourStake / valStake) * this.params.stakingFee * price) / 1e9
-            incomeGwei += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
+            incomeGplanck += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
             if (this.params.reinvest) yourStake += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
           } else {
-            incomeGwei += valRewards * (yourStake / valStake)
+            incomeGplanck += valRewards * (yourStake / valStake)
           }
           costs += costsPerEpoch
           var day = ((i + 1) / epochsPerDay) | 0
           if (day > this.result.incomeDollarChartData.length - 1) {
             var t = now + (i + 1) * 12 * 32 * 1000
-            this.fillChartData(t, (incomeGwei * price) / 1e9, costs, price)
+            this.fillChartData(t, (incomeGplanck * price) / 1e9, costs, price)
             this.result.networkIssuanceChartData.push([t, (100 * incomeAll) / totalStake])
           }
         }
@@ -673,15 +648,15 @@
 
         document.getElementById("staking-variable-totalStake-percentage").innerText = `${(this.params.networkStakePercent * 100).toFixed(2)} %`
 
-        document.getElementById("stake1d").innerHTML = `${this.result.incomeChartData[1].y.toFixed(4)} ETH (${symbol}${formatNumberSpacing(this.result.incomeChartData[1].income.toFixed(2))})`
-        document.getElementById("stake7d").innerHTML = `${this.result.incomeChartData[7].y.toFixed(4)} ETH (${symbol}${formatNumberSpacing(this.result.incomeChartData[7].income.toFixed(2))})`
-        document.getElementById("stake31d").innerHTML = `${this.result.incomeChartData[31].y.toFixed(4)} ETH (${symbol}${formatNumberSpacing(this.result.incomeChartData[31].income.toFixed(2))})`
-        document.getElementById("stake365d").innerHTML = `${this.result.incomeChartData[365].y.toFixed(4)} ETH (${symbol}${formatNumberSpacing(this.result.incomeChartData[365].income.toFixed(2))})`
+        document.getElementById("stake1d").innerHTML = `${this.result.incomeChartData[1].y.toFixed(4)} ZND (${symbol}${formatNumberSpacing(this.result.incomeChartData[1].income.toFixed(2))})`
+        document.getElementById("stake7d").innerHTML = `${this.result.incomeChartData[7].y.toFixed(4)} ZND (${symbol}${formatNumberSpacing(this.result.incomeChartData[7].income.toFixed(2))})`
+        document.getElementById("stake31d").innerHTML = `${this.result.incomeChartData[31].y.toFixed(4)} ZND (${symbol}${formatNumberSpacing(this.result.incomeChartData[31].income.toFixed(2))})`
+        document.getElementById("stake365d").innerHTML = `${this.result.incomeChartData[365].y.toFixed(4)} ZND (${symbol}${formatNumberSpacing(this.result.incomeChartData[365].income.toFixed(2))})`
 
-        document.getElementById("stakeChange1d").innerHTML = `${(this.result.incomeChartData[1].y - this.params.stake / 1e9).toFixed(4)} ETH (${symbol}${formatNumberSpacing((this.result.incomeChartData[1].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
-        document.getElementById("stakeChange7d").innerHTML = `${(this.result.incomeChartData[7].y - this.params.stake / 1e9).toFixed(4)} ETH (${symbol}${formatNumberSpacing((this.result.incomeChartData[7].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
-        document.getElementById("stakeChange31d").innerHTML = `${(this.result.incomeChartData[31].y - this.params.stake / 1e9).toFixed(4)} ETH (${symbol}${formatNumberSpacing((this.result.incomeChartData[31].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
-        document.getElementById("stakeChange365d").innerHTML = `${(this.result.incomeChartData[365].y - this.params.stake / 1e9).toFixed(4)} ETH (${symbol}${formatNumberSpacing((this.result.incomeChartData[365].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange1d").innerHTML = `${(this.result.incomeChartData[1].y - this.params.stake / 1e9).toFixed(4)} ZND (${symbol}${formatNumberSpacing((this.result.incomeChartData[1].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange7d").innerHTML = `${(this.result.incomeChartData[7].y - this.params.stake / 1e9).toFixed(4)} ZND (${symbol}${formatNumberSpacing((this.result.incomeChartData[7].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange31d").innerHTML = `${(this.result.incomeChartData[31].y - this.params.stake / 1e9).toFixed(4)} ZND (${symbol}${formatNumberSpacing((this.result.incomeChartData[31].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange365d").innerHTML = `${(this.result.incomeChartData[365].y - this.params.stake / 1e9).toFixed(4)} ZND (${symbol}${formatNumberSpacing((this.result.incomeChartData[365].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
 
         document.getElementById("return1d").innerHTML = `${symbol}${formatNumberSpacing(this.result.profitDollarChartData[1][1].toFixed(2))}`
         document.getElementById("return7d").innerHTML = `${symbol}${formatNumberSpacing(this.result.profitDollarChartData[7][1].toFixed(2))}`
@@ -711,7 +686,7 @@
           yAxis: [
             {
               title: {
-                text: "Stake in ETH",
+                text: "Stake in ZND",
               },
               offset: 30,
             },
@@ -727,7 +702,7 @@
           data: this.result.incomeChartData,
           tooltip: {
             pointFormatter: function () {
-              return `<span style="color:${this.color}">●</span> ${this.series.name} <b>${this.y.toFixed(3)} ETH </b>(${symbol}${formatNumberSpacing(this.options.income.toFixed(2))})<br>`
+              return `<span style="color:${this.color}">●</span> ${this.series.name} <b>${this.y.toFixed(3)} ZND </b>(${symbol}${formatNumberSpacing(this.options.income.toFixed(2))})<br>`
             },
           },
         })
@@ -883,13 +858,13 @@
       <div class="row my-3">
         <div class="col-xl-4 col-md-5 col-sm-12 py-3 variables">
           <div class="stake">
-            <h5 class="mb-0">Your Ethereum Stake <span id="yourStake-currency">ETH</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="This value represents the amount of ETH you want to use for stacking. If you are not staking on a pool it must be a multiple of 32, since validators can only join the network with a minimum of 32 ETH."></i></h5>
+            <h5 class="mb-0">Your Zond Stake <span id="yourStake-currency">ZND</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="This value represents the amount of ZND you want to use for staking. If you are not staking on a pool it must be a multiple of 40000, since validators can only join the network with a minimum of 40000 ZND."></i></h5>
             <div class="justify-content-between d-flex p-3 pb-0 align-content-center">
-              <input id="staking-variable-yourStake" class="staking-variable form-control col-6" type="text" value="32" />
-              <h5 class="mb-0 mt-1" id="validator-count col-6"><span id="validator-count">0</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="The total number of validators that can be added to the network with your stake. A minimum of 32 ethereum is needed for a validator to participate in the network. Ignore this value when you are staking over a pool."></i></h5>
+              <input id="staking-variable-yourStake" class="staking-variable form-control col-6" type="text" value="40000" />
+              <h5 class="mb-0 mt-1" id="validator-count col-6"><span id="validator-count">0</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="The total number of validators that can be added to the network with your stake. A minimum of 40000 ZND is needed for a validator to participate in the network. Ignore this value when you are staking over a pool."></i></h5>
             </div>
             <div class="p-3 pt-0">
-              <span id="staking-variable-yourStake-validation" class="input-validation">Your ethereum stake must be greater than 0</span>
+              <span id="staking-variable-yourStake-validation" class="input-validation">Your zond stake must be greater than 0</span>
             </div>
           </div>
           <div class="accordion" id="calculator-accordion">
@@ -921,14 +896,14 @@
                     </div>
                   </div>
                   <div class="setting">
-                    <h6>ETH price in <span class="currency-key">USD</span></h6>
-                    <input id="staking-variable-price" class="staking-variable form-control" type="text" value="209.46" />
-                    <span id="staking-variable-price-validation" class="input-validation">Ethereum price must be greater than 0</span>
+                    <h6>ZND price in <span class="currency-key">USD</span></h6>
+                    <input id="staking-variable-price" class="staking-variable form-control" type="text" value="1" />
+                    <span id="staking-variable-price-validation" class="input-validation">Zond price must be greater than 0</span>
                   </div>
                   <div class="setting">
                     <h6>Monthly price change in %</h6>
                     <input id="staking-variable-priceChangePerMonth" class="staking-variable form-control" type="text" value="0" />
-                    <span id="staking-variable-priceChangePerMonth-validation" class="input-validation">Ethereum price change must be a percentage greater or equal to 0</span>
+                    <span id="staking-variable-priceChangePerMonth-validation" class="input-validation">Zond price change must be a percentage greater or equal to 0</span>
                   </div>
                   <div class="setting">
                     <h6>Initial one-time-costs in <span class="currency-key">USD</span></h6>
@@ -969,14 +944,14 @@
                   <div class="setting">
                     <div class="d-flex justify-content-between">
                       <h6 width="50%">
-                        Total staked ether <span id="totalStake-currency">ETH</span>
-                        <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="Total staked ether is the sum of effective balances of all active validators attesting in the network."></i>
+                        Total staked <span id="totalStake-currency">ZND</span>
+                        <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="Total staked ZND is the sum of effective balances of all active validators attesting in the network."></i>
                       </h6>
                       <span id="staking-variable-totalStake-percentage"></span>
                     </div>
                     <input id="staking-variable-totalStake" class="staking-variable form-control" type="text" value="{{ .TotalStaked }}" />
                     <input id="staking-variable-totalStake-slider" class="form-control" type="range" value="1100000" min="0" max="100e6" />
-                    <span id="staking-variable-totalStake-validation" class="input-validation">Total stake must be greater or equal to 524384 (minimum stake required)</span>
+                    <span id="staking-variable-totalStake-validation" class="input-validation">Total stake must be greater or equal to 105000000 (minimum stake required)</span>
                   </div>
                   <div class="setting">
                     <h6>Churn rate % <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="The churn rate indicates how many validators join or leave the network. A positive value would indicate a net increase in the number of staking validators."></i></h6>
@@ -997,20 +972,6 @@
         </div>
         <div class="col-md-7 col-sm-12">
           <h5 class="my-3 px-0 col-10">Estimated Rewards</h5>
-          <div style="height: calc(54px - 1rem);" class="my-3 px-0 col-10 d-flex justif-content-center align-items-center">
-            <button style="width:38px; height:28px;" data-toggle="tooltip" data-original-title="Copy Link to Configuration" id="copy-button" data-clipboard-text="https://beaconcha.in/calculator" type="button" class="d-flex justify-content-center align-items-center btn btn-primary btn-sm m-1">
-              <i class="fa fa-copy"></i>
-            </button>
-            <button id="twitter-share" style="width:38px; height:28px;color:#fff;background-color:#1DA1F2" type="button" class="d-flex justify-content-center align-items-center btn btn-sm m-1">
-              <i class="fab fa-twitter"></i>
-            </button>
-            <button id="facebook-share" style="width:38px; height:28px;background-color:#4267B2;color:#fff" type="button" class="d-flex justify-content-center align-items-center btn btn-sm m-1">
-              <i class="fab fa-facebook-f"></i>
-            </button>
-            <button id="linkedin-share" style="width:38px; height:28px;background-color:#2867B2;color:#fff" type="button" class="d-flex justify-content-center align-items-center btn btn-sm m-1">
-              <i class="fab fa-linkedin-in"></i>
-            </button>
-          </div>
           <div id="stakeChart" class="card my-3"></div>
           <div id="breakEvenChart" class="card my-3"></div>
           <div class="card my-3 table-responsive">
@@ -1018,8 +979,8 @@
               <tbody>
                 <tr>
                   <th>Duration</th>
-                  <th>ETH Stake</th>
-                  <th>ETH Reward</th>
+                  <th>ZND Stake</th>
+                  <th>ZND Reward</th>
                   <th>Return</th>
                   <th>Return in %</th>
                 </tr>

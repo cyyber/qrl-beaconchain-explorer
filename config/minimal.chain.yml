@@ -6,19 +6,8 @@ PRESET_BASE: 'minimal'
 # Free-form short name of the network that this configuration applies to - known
 # canonical network names include:
 # * 'mainnet' - there can be only one
-# * 'prater' - testnet
 # Must match the regex: [a-z0-9\-]
 CONFIG_NAME: 'minimal'
-
-# Transition
-# ---------------------------------------------------------------
-# TBD, 2**256-2**10 is a placeholder
-TERMINAL_TOTAL_DIFFICULTY: 115792089237316195423570985008687907853269984665640564039457584007913129638912
-# By default, don't use these params
-TERMINAL_BLOCK_HASH: 0x0000000000000000000000000000000000000000000000000000000000000000
-TERMINAL_BLOCK_HASH_ACTIVATION_EPOCH: 18446744073709551615
-
-
 
 # Genesis
 # ---------------------------------------------------------------
@@ -30,26 +19,6 @@ MIN_GENESIS_TIME: 1578009600
 GENESIS_FORK_VERSION: 0x00000001
 # [customized] Faster to spin up testnets, but does not give validator reasonable warning time for genesis
 GENESIS_DELAY: 300
-
-
-# Forking
-# ---------------------------------------------------------------
-# Values provided for illustrative purposes.
-# Individual tests/testnets may set different values.
-
-# Altair
-ALTAIR_FORK_VERSION: 0x01000001
-ALTAIR_FORK_EPOCH: 18446744073709551615
-# Bellatrix
-BELLATRIX_FORK_VERSION: 0x02000001
-BELLATRIX_FORK_EPOCH: 18446744073709551615
-# Capella
-CAPELLA_FORK_VERSION: 0x03000001
-CAPELLA_FORK_EPOCH: 18446744073709551615
-# Sharding
-SHARDING_FORK_VERSION: 0x04000001
-SHARDING_FORK_EPOCH: 18446744073709551615
-
 
 # Time parameters
 # ---------------------------------------------------------------
@@ -71,7 +40,7 @@ ETH1_FOLLOW_DISTANCE: 16
 INACTIVITY_SCORE_BIAS: 4
 # 2**4 (= 16)
 INACTIVITY_SCORE_RECOVERY_RATE: 16
-# 2**4 * 10**9 (= 16,000,000,000) Gwei
+# 2**4 * 10**9 (= 16,000,000,000) Gplanck
 EJECTION_BALANCE: 16000000000
 # 2**2 (= 4)
 MIN_PER_EPOCH_CHURN_LIMIT: 4
@@ -87,23 +56,13 @@ PROPOSER_SCORE_BOOST: 40
 
 # Deposit contract
 # ---------------------------------------------------------------
-# Ethereum Goerli testnet
+# Zond testnet
 DEPOSIT_CHAIN_ID: 5
 DEPOSIT_NETWORK_ID: 5
 # Configured on a per testnet basis
-DEPOSIT_CONTRACT_ADDRESS: 0x1234567890123456789012345678901234567890
+DEPOSIT_CONTRACT_ADDRESS: Z1234567890123456789012345678901234567890
 
-# Minimal preset - Altair
-
-# Updated penalty values
-# ---------------------------------------------------------------
-# 3 * 2**24 (= 50,331,648)
-INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648
-# 2**6 (= 64)
-MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64
-# 2
-PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2
-
+# Minimal preset
 
 # Sync committee
 # ---------------------------------------------------------------
@@ -119,16 +78,6 @@ EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 8
 MIN_SYNC_COMMITTEE_PARTICIPANTS: 1
 # SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD (= 8 * 8)
 UPDATE_TIMEOUT: 64
-# Minimal preset - Bellatrix
-
-# Updated penalty values
-# ---------------------------------------------------------------
-# 2**24 (= 16,777,216)
-INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216
-# 2**5 (= 32)
-MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32
-# 3
-PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3
 
 # Execution
 # ---------------------------------------------------------------
@@ -140,8 +89,6 @@ MAX_TRANSACTIONS_PER_PAYLOAD: 1048576
 BYTES_PER_LOGS_BLOOM: 256
 # 2**5 (= 32)
 MAX_EXTRA_DATA_BYTES: 32
-# Minimal preset - Capella
-# Minimal preset - Custody Game
 
 # Time parameters
 # ---------------------------------------------------------------
@@ -202,13 +149,13 @@ HYSTERESIS_UPWARD_MULTIPLIER: 5
 SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 2
 
 
-# Gwei values
+# Gplanck values
 # ---------------------------------------------------------------
-# 2**0 * 10**9 (= 1,000,000,000) Gwei
+# 2**0 * 10**9 (= 1,000,000,000) Gplanck
 MIN_DEPOSIT_AMOUNT: 1000000000
-# 2**5 * 10**9 (= 32,000,000,000) Gwei
+# 2**5 * 10**9 (= 32,000,000,000) Gplanck
 MAX_EFFECTIVE_BALANCE: 32000000000
-# 2**0 * 10**9 (= 1,000,000,000) Gwei
+# 2**0 * 10**9 (= 1,000,000,000) Gplanck
 EFFECTIVE_BALANCE_INCREMENT: 1000000000
 
 
@@ -250,12 +197,12 @@ BASE_REWARD_FACTOR: 64
 WHISTLEBLOWER_REWARD_QUOTIENT: 512
 # 2**3 (= 8)
 PROPOSER_REWARD_QUOTIENT: 8
-# [customized] 2**25 (= 33,554,432)
-INACTIVITY_PENALTY_QUOTIENT: 33554432
-# [customized] 2**6 (= 64)
-MIN_SLASHING_PENALTY_QUOTIENT: 64
-# [customized] 2 (lower safety margin than Phase 0 genesis but different than mainnet config for testing)
-PROPORTIONAL_SLASHING_MULTIPLIER: 2
+# 2**24 (= 16,777,216)
+INACTIVITY_PENALTY_QUOTIENT: 16777216
+# 2**5 (= 32)
+MIN_SLASHING_PENALTY_QUOTIENT: 32
+# 3
+PROPORTIONAL_SLASHING_MULTIPLIER: 3
 
 
 # Max operations per block
@@ -287,19 +234,10 @@ MAX_SHARD_PROPOSER_SLASHINGS: 4
 MAX_SHARD_HEADERS_PER_SHARD: 4
 # 2**8 (= 256)
 SHARD_STATE_MEMORY_SLOTS: 256
-# 2**40 (= 1,099,511,627,776)
-BLOB_BUILDER_REGISTRY_LIMIT: 1099511627776
 
-# Shard blob samples
+# Gplanck values
 # ---------------------------------------------------------------
-# 2**11 (= 2,048)
-MAX_SAMPLES_PER_BLOCK: 2048
-# 2**10 (= 1,1024)
-TARGET_SAMPLES_PER_BLOCK: 1024
-
-# Gwei values
-# ---------------------------------------------------------------
-# 2**33 (= 8,589,934,592) Gwei
+# 2**33 (= 8,589,934,592) Gplanck
 MAX_SAMPLE_PRICE: 8589934592
-# 2**3 (= 8) Gwei
+# 2**3 (= 8) Gplanck
 MIN_SAMPLE_PRICE: 8

@@ -3,21 +3,6 @@
   <script type="text/javascript" src="/js/datatable_loader.js"></script>
 
   <script>
-    function togglePriceContent(currentPrice, historicPrice) {
-      var content = document.getElementById("valuePriceButton")
-
-      if (content.hasAttribute("historic-price")) {
-        content.setAttribute("data-original-title", "Current Value")
-        content.innerHTML = currentPrice
-      } else {
-        content.setAttribute("data-original-title", "Estimated Value on Day of Txn")
-        content.innerHTML = historicPrice
-      }
-
-      $(content).tooltip("show")
-      content.toggleAttribute("historic-price")
-    }
-
     activateTabbarSwitcher("eth1tx-tab-content", "eth1TxTabs", "overview")
 
     const handleTabChange = (url) => {
@@ -64,7 +49,7 @@
         .draw()
       } else {
         // all but exact match would be:
-        //regExSearch = '^(?!' + `0 ETH` + '$).*$'
+        //regExSearch = '^(?!' + `0 ZND` + '$).*$'
         noZeroValue = '^(?!' + '0 ' + ')'
         noDelegateCall = '^(?!' + 'delegatecall' + ')'
         $('#itransactions').DataTable()
@@ -301,7 +286,7 @@
                         <li class="mb-1">
                           <i class="fa-li fas fa-long-arrow-alt-right"></i>
                           <span>Deposit of</span>
-                          <span>{{ formatBytesAmount $deposit.Amount config.Frontend.ElCurrency 8 }}</span>
+                          <span>{{ formatBytesAmount $deposit.Amount "ZND" 8 }}</span>
                           <span>to Validator</span>
                           <span>{{ formatPublicKey $deposit.ValidatorPubkey }}</span>
                           <span>with withdrawal credentials</span>
@@ -315,39 +300,19 @@
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-3">Value:</div>
                 <div class="col-md-9">
-                  {{ formatBytesAmount .Value config.Frontend.ElCurrency 8 }}
-                  <span id="valuePriceButton" class="badge badge-pill align-middle bg-dark text-white" data-html="true" data-toggle="tooltip" data-placement="bottom" data-original-title="Current Value" {{ if .HistoricalEtherPrice }}onclick="togglePriceContent('{{ .CurrentEtherPrice }}','{{ .HistoricalEtherPrice }}')" style="cursor: pointer;"{{ end }}>
-                    {{ formatElCurrency .Value $.Rates.SelectedCurrency 2 true false false false }}
-                  </span>
+                  {{ formatBytesAmount .Value "ZND" 8 }}
                 </div>
               </div>
               <div class="row border-bottom p-3 mx-0" style="border-width:4px !important;">
                 <div class="col-md-3">Transaction Fee:</div>
                 <div class="col-md-9">
-                  {{ formatBytesAmount .Gas.TxFee config.Frontend.ElCurrency 8 }}
-                  <span id="valuePriceButton" class="badge badge-pill align-middle bg-dark text-white" data-html="true" data-toggle="tooltip" data-placement="bottom" data-original-title="Current Value">
-                    {{ formatElCurrency .Gas.TxFee $.Rates.SelectedCurrency 2 true false false false }}
-                  </span>
+                  {{ formatBytesAmount .Gas.TxFee "ZND" 8 }}
                 </div>
               </div>
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-3">Effective Gas Price:</div>
-                <div class="col-md-9">{{ formatBytesAmount .Gas.EffectiveFee "GWei" 8 }}</div>
+                <div class="col-md-9">{{ formatBytesAmount .Gas.EffectiveFee "GPlanck" 8 }}</div>
               </div>
-              {{ if eq .Type 3 }}
-                <div class="row border-bottom p-3 mx-0">
-                  <div class="col-md-3">Blob Tx Fees:</div>
-                  <div class="col-md-9">{{ formatBytesAmount .Gas.BlobTxFee config.Frontend.ElCurrency 8 }} <span class="text-secondary">(Used</span> <span class="text-black">{{ .Gas.BlobGasUsed }}</span> <span class="text-secondary">@</span> <span class="text-black">{{ formatBytesAmount .Gas.BlobGasPrice "GWei" 8 }}</span><span class="text-secondary">)</span></div>
-                </div>
-                <div class="row border-bottom p-3 mx-0">
-                  <div class="col-md-3">Blob Versioned Hashes:</div>
-                  <div class="col-md-9">
-                    <ul>
-                      {{ range $i, $h := .BlobHashes }}<li>{{ $i }}: {{ formatBlobVersionedHash $h }}</li>{{ end }}
-                    </ul>
-                  </div>
-                </div>
-              {{ end }}
               <div class="collapse" id="collapseExample">
                 <div class="row border-bottom p-3 mx-0">
                   <div class="col-md-3">Execution Stats:</div>
@@ -365,13 +330,13 @@
                     <div class="col-md-3">Gas Fees:</div>
                     <div class="col-md-9">
                       <span class="text-secondary">Base Block Fee:</span>
-                      <span class="text-black">{{ formatBytesAmount .Gas.BlockBaseFee "GWei" 8 }}</span>
+                      <span class="text-black">{{ formatBytesAmount .Gas.BlockBaseFee "GPlanck" 8 }}</span>
                       <span class="px-2">|</span>
                       <span class="text-secondary">Max Overall Fee:</span>
-                      <span class="text-black">{{ formatBytesAmount .Gas.MaxFee "GWei" 8 }}</span>
+                      <span class="text-black">{{ formatBytesAmount .Gas.MaxFee "GPlanck" 8 }}</span>
                       <span class="px-2">|</span>
                       <span class="text-secondary">Max Priority Fee:</span>
-                      <span class="text-black">{{ formatBytesAmount .Gas.MaxPriorityFee "GWei" 8 }}</span>
+                      <span class="text-black">{{ formatBytesAmount .Gas.MaxPriorityFee "GPlanck" 8 }}</span>
                     </div>
                   </div>
                 {{ end }}

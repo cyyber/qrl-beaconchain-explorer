@@ -402,56 +402,6 @@ $(document).ready(function () {
   $("#validators").on("page.dt", function () {
     showSelectedValidator()
   })
-  //bookmark button adds all validators in the dashboard to the watchlist
-  $("#bookmark-button").on("click", function (event) {
-    var tickIcon = $("<i class='fas fa-check' style='width:15px;'></i>")
-    var bookmarkIcon = $("<i class='far fa-bookmark' style='width:15px;'></i>")
-    var errorIcon = $("<i class='fas fa-exclamation' style='width:15px;'></i>")
-    var validatorIndices = state.validators.filter((v) => {
-      return !isValidatorPubkey(v)
-    })
-    fetch("/dashboard/save", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(validatorIndices),
-    })
-      .then(function (res) {
-        console.log("response", res)
-        if (res.status === 200 && !res.redirected) {
-          // success
-          console.log("success")
-          $("#bookmark-button").empty().append(tickIcon)
-          setTimeout(function () {
-            $("#bookmark-button").empty().append(bookmarkIcon)
-          }, 1000)
-        } else if (res.redirected) {
-          console.log("redirected!")
-          $("#bookmark-button").attr("data-original-title", "Please login or sign up first.")
-          $("#bookmark-button").tooltip("show")
-          $("#bookmark-button").empty().append(errorIcon)
-          setTimeout(function () {
-            $("#bookmark-button").empty().append(bookmarkIcon)
-            $("#bookmark-button").tooltip("hide")
-            $("#bookmark-button").attr("data-original-title", "Save all to Watchlist")
-          }, 2000)
-        } else {
-          // could not bookmark validators
-          $("#bookmark-button").empty().append(errorIcon)
-          setTimeout(function () {
-            $("#bookmark-button").empty().append(bookmarkIcon)
-          }, 2000)
-        }
-      })
-      .catch(function (err) {
-        $("#bookmark-button").empty().append(errorIcon)
-        setTimeout(function () {
-          $("#bookmark-button").empty().append(bookmarkIcon)
-        }, 2000)
-        console.log(err)
-      })
-  })
 
   $(document).on("mouseenter", ".hoverCheck[data-track=hover]", function () {
     $(this).data("hover", true)
@@ -670,7 +620,7 @@ $(document).ready(function () {
           return data?.eth1_address || ""
         },
         templates: {
-          header: '<h5 class="font-weight-bold ml-3">ETH Address</h5>',
+          header: '<h5 class="font-weight-bold ml-3">Zond Address</h5>',
           suggestion: function (data) {
             var len = data.validator_indices.length > 10 ? 10 + "+" : data.validator_indices.length
             return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">0x${data.eth1_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
@@ -820,7 +770,7 @@ $(document).ready(function () {
       source: bhEth1Addresses,
       display: "address",
       templates: {
-        header: "<h3>Validators by ETH Addresses</h3>",
+        header: "<h3>Validators by Zond Addresses</h3>",
         suggestion: function (data) {
           var len = data.validator_indices.length > VALLIMIT ? VALLIMIT + "+" : data.validator_indices.length
           return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">${data.eth1_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
@@ -1236,7 +1186,6 @@ $(document).ready(function () {
 
       if (firstValidatorWithIndex() !== undefined) {
         document.querySelector("#rewards-button").style.visibility = "visible"
-        document.querySelector("#bookmark-button").style.visibility = "visible"
 
         $.ajax({
           url: "/dashboard/data/earnings" + qryStr,
@@ -1257,7 +1206,6 @@ $(document).ready(function () {
         })
       } else {
         document.querySelector("#rewards-button").style.visibility = "hidden"
-        document.querySelector("#bookmark-button").style.visibility = "hidden"
 
         document.querySelector("#earnings-day").innerHTML = summaryDefaultValue
         document.querySelector("#earnings-week").innerHTML = summaryDefaultValue
@@ -1268,7 +1216,6 @@ $(document).ready(function () {
     } else {
       document.querySelector("#copy-button").style.visibility = "hidden"
       document.querySelector("#rewards-button").style.visibility = "hidden"
-      document.querySelector("#bookmark-button").style.visibility = "hidden"
       document.querySelector("#clear-search").style.visibility = "hidden"
     }
 

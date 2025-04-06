@@ -3,10 +3,9 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
 )
 
 // StakingCalculator renders stakingCalculatorTemplate
@@ -16,15 +15,16 @@ func StakingCalculator(w http.ResponseWriter, r *http.Request) {
 
 	calculatorPageData := types.StakingCalculatorPageData{}
 
-	total, err := db.GetTotalEligibleEther()
+	total, err := db.GetTotalEligibleZND()
 	if err != nil {
-		logger.WithError(err).Error("error getting total staked ether")
+		logger.WithError(err).Error("error getting total staked ZND")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	calculatorPageData.TotalStaked = total
-	calculatorPageData.EtherscanApiBaseUrl = utils.GetEtherscanAPIBaseUrl(true)
+	// TODO(now.youtrack.cloud/issue/TZB-5)
+	// calculatorPageData.EtherscanApiBaseUrl = utils.GetEtherscanAPIBaseUrl(true)
 
 	w.Header().Set("Content-Type", "text/html")
 

@@ -1,13 +1,13 @@
 version: '3'
 x-service: &default-service
-  image: golang:1.20
+  image: golang:1.24
   working_dir: /app
-  network_mode: "host"
   volumes:
     - ../.:/app
     - /tmp/go-cache:/go
     - /tmp/go-build-cache:/root/.cache/go-build
 services:
+  # TODO(now.youtrack.cloud/issue/TZB-2)
   build-once:
     <<: *default-service
     profiles:
@@ -18,9 +18,12 @@ services:
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
     environment:
       - INDEXER_ENABLED=true
-  eth1indexer:
+  el-indexer:
     <<: *default-service
-    command: go run ./cmd/eth1indexer -config /app/local-deployment/config.yml -blocks.concurrency 1 -blocks.tracemode 'geth' -data.concurrency 1 --balances.enabled
+    command: go run ./cmd/el-indexer -config /app/local-deployment/config.yml -blocks.concurrency 1 -data.concurrency 1 --balances.enabled
+    # TODO(now.youtrack.cloud/issue/TZB-7)
+    # command: go run ./cmd/el-indexer -config /app/local-deployment/config.yml -blocks.concurrency 1 -blocks.tracemode 'gzond' -data.concurrency 1 --balances.enabled
+  
   rewards-exporter:
     <<: *default-service
     command: go run ./cmd/rewards-exporter -config /app/local-deployment/config.yml
@@ -33,20 +36,9 @@ services:
   frontend:
     <<: *default-service
     command: go run ./cmd/explorer -config /app/local-deployment/config.yml
-    environment:
-      - FRONTEND_ENABLED=true
-  ratelimits-updater:
-    <<: *default-service
-    command: go run ./cmd/misc -config /app/local-deployment/config.yml -command=update-ratelimits
+    ports:
+      - "8080:8080"
+  
   misc:
     <<: *default-service
     command: /bin/bash -c "trap stopit SIGINT; stopit() { echo 'trapped SIGINT'; exit; }; while true; do date; sleep 1; done"
-  redis-sessions:
-    image: redis:7
-    volumes:
-      - redis-sessions:/data
-    ports:
-      - "$REDIS_SESSIONS_PORT:6379"
-
-volumes:
-  redis-sessions:

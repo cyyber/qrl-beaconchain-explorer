@@ -6,16 +6,16 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/cache"
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/metrics"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
-	"github.com/gobitfly/eth2-beaconchain-explorer/version"
+	"github.com/theQRL/zond-beaconchain-explorer/cache"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/metrics"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/version"
+	zond_rewards "github.com/theQRL/zond-beaconchain-explorer/zond-rewards"
+	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/beacon"
 
-	eth_rewards "github.com/gobitfly/eth-rewards"
-	"github.com/gobitfly/eth-rewards/beacon"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
@@ -90,11 +90,11 @@ func main() {
 	}
 
 	if enAddress == nil || *enAddress == "" {
-		if utils.Config.Eth1ErigonEndpoint == "" {
+		if utils.Config.ELNodeEndpoint == "" {
 			utils.LogFatal(nil, "no execution node url provided", 0)
 		} else {
 			logrus.Info("applying execution node endpoint from config")
-			*enAddress = utils.Config.Eth1ErigonEndpoint
+			*enAddress = utils.Config.ELNodeEndpoint
 		}
 	}
 
@@ -187,7 +187,7 @@ func main() {
 			notExportedEpochs := []uint64{}
 			err = db.WriterDb.Select(&notExportedEpochs, "SELECT epoch FROM epochs WHERE NOT rewards_exported AND epoch > $1 AND epoch <= $2 ORDER BY epoch desc LIMIT 10", lastExportedEpoch, latestFinalizedEpoch)
 			if err != nil {
-				utils.LogFatal(err, "getting chain head from lighthouse error", 0)
+				utils.LogFatal(err, "getting chain head from qrysm error", 0)
 			}
 			for _, e := range notExportedEpochs {
 				err := export(e, bt, client, enAddress)
@@ -230,7 +230,7 @@ func export(epoch uint64, bt *db.Bigtable, client *beacon.Client, elClient *stri
 	start := time.Now()
 	logrus.Infof("retrieving rewards details for epoch %v", epoch)
 
-	rewards, err := eth_rewards.GetRewardsForEpoch(epoch, client, *elClient)
+	rewards, err := zond_rewards.GetRewardsForEpoch(epoch, client, *elClient)
 
 	if err != nil {
 		return fmt.Errorf("error retrieving reward details for epoch %v: %v", epoch, err)

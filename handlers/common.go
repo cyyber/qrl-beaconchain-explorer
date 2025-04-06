@@ -1,28 +1,22 @@
 package handlers
 
 import (
-	"database/sql"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"math"
 	"math/big"
 	"net/http"
 	"sort"
-	"strconv"
-	"strings"
 	"syscall"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/price"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/lib/pq"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
 	utilMath "github.com/protolambda/zrnt/eth2/util/math"
 	"github.com/shopspring/decimal"
@@ -45,7 +39,7 @@ func GetValidatorOnlineThresholdSlot() uint64 {
 }
 
 // GetValidatorEarnings will return the earnings (last day, week, month and total) of selected validators, including proposal and statisic information - infused with data from the current day. all values are
-func GetValidatorEarnings(validators []uint64, currency string) (*types.ValidatorEarnings, map[uint64]*types.Validator, error) {
+func GetValidatorEarnings(validators []uint64) (*types.ValidatorEarnings, map[uint64]*types.Validator, error) {
 	if len(validators) == 0 {
 		return nil, nil, errors.New("no validators provided")
 	}
@@ -133,13 +127,11 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		return nil, nil, err
 	}
 
-	clElPrice := price.GetPrice(utils.Config.Frontend.ClCurrency, utils.Config.Frontend.ElCurrency)
-
 	if totalDeposits == 0 {
 		totalDeposits = utils.Config.Chain.ClConfig.MaxEffectiveBalance * uint64(len(validators))
 	}
 
-	clApr7d := income.ClIncomeWei7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
+	clApr7d := income.ClIncomePlanck7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
 	if clApr7d < float64(-1) {
 		clApr7d = float64(-1)
 	}
@@ -147,7 +139,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		clApr7d = float64(0)
 	}
 
-	elApr7d := income.ElIncomeWei7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
+	elApr7d := income.ElIncomePlanck7d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(7)).InexactFloat64()
 	if elApr7d < float64(-1) {
 		elApr7d = float64(-1)
 	}
@@ -155,7 +147,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		elApr7d = float64(0)
 	}
 
-	clApr31d := income.ClIncomeWei31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
+	clApr31d := income.ClIncomePlanck31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
 	if clApr31d < float64(-1) {
 		clApr31d = float64(-1)
 	}
@@ -163,7 +155,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		clApr31d = float64(0)
 	}
 
-	elApr31d := income.ElIncomeWei31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
+	elApr31d := income.ElIncomePlanck31d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).Mul(decimal.NewFromInt(365)).Div(decimal.NewFromInt(31)).InexactFloat64()
 	if elApr31d < float64(-1) {
 		elApr31d = float64(-1)
 	}
@@ -171,7 +163,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		elApr31d = float64(0)
 	}
 
-	clApr365d := income.ClIncomeWei365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
+	clApr365d := income.ClIncomePlanck365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
 	if clApr365d < float64(-1) {
 		clApr365d = float64(-1)
 	}
@@ -179,7 +171,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		clApr365d = float64(0)
 	}
 
-	elApr365d := income.ElIncomeWei365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
+	elApr365d := income.ElIncomePlanck365d.DivRound(decimal.NewFromInt(1e9), 18).DivRound(decimal.NewFromInt(int64(totalDeposits)), 18).InexactFloat64()
 	if elApr365d < float64(-1) {
 		elApr365d = float64(-1)
 	}
@@ -241,20 +233,14 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 	currentDayClIncome := decimal.NewFromInt(int64(totalBalance - lastBalance - lastDeposits + lastWithdrawals)).Mul(decimal.NewFromInt(1e9))
 	incomeToday := types.ClEl{
 		El:    decimal.NewFromInt(0),
-		Cl:    currentDayClIncome.Mul(decimal.NewFromFloat(clElPrice)),
-		Total: currentDayClIncome.Mul(decimal.NewFromFloat(clElPrice)),
+		Cl:    currentDayClIncome,
+		Total: currentDayClIncome,
 	}
 	if len(proposedToday) > 0 {
 		// get el data
 		execBlocks, err := db.BigtableClient.GetBlocksIndexedMultiple(proposedToday, 10000)
 		if err != nil {
 			return nil, nil, fmt.Errorf("error retrieving execution blocks data from bigtable: %v", err)
-		}
-
-		// get mev data
-		relaysData, err := db.GetRelayDataForIndexedBlocks(execBlocks)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error retrieving mev bribe data: %v", err)
 		}
 
 		incomeTodayEl := new(big.Int)
@@ -264,12 +250,7 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 			if blockEpoch > int64(latestFinalizedEpoch) {
 				continue
 			}
-			// add mev bribe if present
-			if relaysDatum, hasMevBribes := relaysData[common.BytesToHash(execBlock.Hash)]; hasMevBribes {
-				incomeTodayEl = new(big.Int).Add(incomeTodayEl, relaysDatum.MevBribe.Int)
-			} else {
-				incomeTodayEl = new(big.Int).Add(incomeTodayEl, new(big.Int).SetBytes(execBlock.GetTxReward()))
-			}
+			incomeTodayEl = new(big.Int).Add(incomeTodayEl, new(big.Int).SetBytes(execBlock.GetTxReward()))
 		}
 		incomeToday.El = decimal.NewFromBigInt(incomeTodayEl, 0)
 		incomeToday.Total = incomeToday.Total.Add(incomeToday.El)
@@ -278,24 +259,24 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 	earnings := &types.ValidatorEarnings{
 		IncomeToday: incomeToday,
 		Income1d: types.ClEl{
-			El:    income.ElIncomeWei1d,
-			Cl:    income.ClIncomeWei1d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWei1d.Add(income.ClIncomeWei1d.Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanck1d,
+			Cl:    income.ClIncomePlanck1d,
+			Total: income.ElIncomePlanck1d.Add(income.ClIncomePlanck1d),
 		},
 		Income7d: types.ClEl{
-			El:    income.ElIncomeWei7d,
-			Cl:    income.ClIncomeWei7d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWei7d.Add(income.ClIncomeWei7d.Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanck7d,
+			Cl:    income.ClIncomePlanck7d,
+			Total: income.ElIncomePlanck7d.Add(income.ClIncomePlanck7d),
 		},
 		Income31d: types.ClEl{
-			El:    income.ElIncomeWei31d,
-			Cl:    income.ClIncomeWei31d.Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWei31d.Add(income.ClIncomeWei31d.Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanck31d,
+			Cl:    income.ClIncomePlanck31d,
+			Total: income.ElIncomePlanck31d.Add(income.ClIncomePlanck31d),
 		},
 		IncomeTotal: types.ClEl{
-			El:    income.ElIncomeWeiTotal.Add(incomeToday.El),
-			Cl:    income.ClIncomeWeiTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice)),
-			Total: income.ElIncomeWeiTotal.Add(incomeToday.El).Add(income.ClIncomeWeiTotal.Add(incomeToday.Cl).Mul(decimal.NewFromFloat(clElPrice))),
+			El:    income.ElIncomePlanckTotal.Add(incomeToday.El),
+			Cl:    income.ClIncomePlanckTotal.Add(incomeToday.Cl),
+			Total: income.ElIncomePlanckTotal.Add(incomeToday.El).Add(income.ClIncomePlanckTotal.Add(incomeToday.Cl)),
 		},
 		Apr7d: types.ClElFloat64{
 			El:    elApr7d,
@@ -315,11 +296,11 @@ func GetValidatorEarnings(validators []uint64, currency string) (*types.Validato
 		TotalDeposits: int64(totalDeposits),
 		ProposalData:  validatorProposalData,
 	}
-	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, currency)
-	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, currency)
-	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, currency)
-	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, currency)
-	earnings.TotalBalance = "<b>" + utils.FormatClCurrency(totalBalance, currency, 5, true, false, false, false) + "</b>"
+	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, "ZND")
+	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, "ZND")
+	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, "ZND")
+	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, "ZND")
+	earnings.TotalBalance = "<b>" + utils.FormatClCurrency(totalBalance, 5, true, false, false, false) + "</b>"
 	return earnings, balancesMap, nil
 }
 
@@ -401,33 +382,6 @@ func getProposalLuck(slots []uint64, validatorsCount int, fromEpoch uint64) (flo
 	return float64(qualifiedProposalCount) / expectedSlotProposals, proposalTimeFrame
 }
 
-func getProposalTimeframeName(proposalTimeframe time.Duration) string {
-	switch {
-	case proposalTimeframe == fiveDays:
-		return "5 days"
-	case proposalTimeframe == oneWeek:
-		return "week"
-	case proposalTimeframe == oneMonth:
-		return "month"
-	case proposalTimeframe == sixWeeks:
-		return "6 weeks"
-	case proposalTimeframe == twoMonths:
-		return "2 months"
-	case proposalTimeframe == threeMonths:
-		return "3 months"
-	case proposalTimeframe == fourMonths:
-		return "4 months"
-	case proposalTimeframe == fiveMonths:
-		return "5 months"
-	case proposalTimeframe == sixMonths:
-		return "6 months"
-	case proposalTimeframe == year:
-		return "year"
-	default:
-		return "month"
-	}
-}
-
 // calcExpectedSlotProposals calculates the expected number of slot proposals for a certain time frame and validator count
 func calcExpectedSlotProposals(timeframe time.Duration, validatorCount int, activeValidatorsCount uint64) float64 {
 	if validatorCount == 0 || activeValidatorsCount == 0 {
@@ -474,13 +428,6 @@ func LatestState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", utils.Config.Chain.ClConfig.SecondsPerSlot)) // set local cache to the seconds per slot interval
 
 	data := services.LatestState()
-	data.Rates = services.GetRates(GetCurrency(r))
-	userAgent := r.Header.Get("User-Agent")
-	userAgent = strings.ToLower(userAgent)
-	if strings.Contains(userAgent, "android") || strings.Contains(userAgent, "iphone") || strings.Contains(userAgent, "windows phone") {
-		data.Rates.MainCurrencyPriceFormatted = utils.KFormatterEthPrice(uint64(data.Rates.MainCurrencyPrice))
-	}
-
 	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
 		logger.Errorf("error sending latest index page data: %v", err)
@@ -489,145 +436,16 @@ func LatestState(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetCurrency(r *http.Request) string {
-	if cookie, err := r.Cookie("currency"); err == nil {
-		if price.IsAvailableCurrency(cookie.Value) {
-			return cookie.Value
-		}
-	}
-	return utils.Config.Frontend.MainCurrency
-}
-
-func GetCurrencySymbol(r *http.Request) string {
-	cookie, err := r.Cookie("currency")
-	if err != nil {
-		logger.WithError(err).Tracef("error in handlers.GetCurrencySymbol")
-		return "$"
-	}
-	if cookie.Value == utils.Config.Frontend.MainCurrency {
-		return "USD"
-	}
-	return price.GetCurrencySymbol(cookie.Value)
-}
-
-func GetCurrentPrice(r *http.Request) uint64 {
-	cookie, err := r.Cookie("currency")
-	if err != nil {
-		return uint64(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))
-	}
-	if cookie.Value == utils.Config.Frontend.MainCurrency {
-		return uint64(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))
-	}
-	return uint64(price.GetPrice(utils.Config.Frontend.MainCurrency, cookie.Value))
-}
-
-func GetCurrentElPrice(r *http.Request) uint64 {
-	cookie, err := r.Cookie("currency")
-	if err != nil {
-		return uint64(price.GetPrice(utils.Config.Frontend.ElCurrency, "USD"))
-	}
-	if cookie.Value == utils.Config.Frontend.ElCurrency {
-		return uint64(price.GetPrice(utils.Config.Frontend.ElCurrency, "USD"))
-	}
-	return uint64(price.GetPrice(utils.Config.Frontend.ElCurrency, cookie.Value))
-}
-
-func GetCurrentPriceFormatted(r *http.Request) template.HTML {
-	userAgent := r.Header.Get("User-Agent")
-	userAgent = strings.ToLower(userAgent)
-	price := GetCurrentPrice(r)
-	if strings.Contains(userAgent, "android") || strings.Contains(userAgent, "iphone") || strings.Contains(userAgent, "windows phone") {
-		return utils.KFormatterEthPrice(price)
-	}
-	return utils.FormatAddCommas(uint64(price))
-}
-
-func GetCurrentElPriceFormatted(r *http.Request) template.HTML {
-	userAgent := r.Header.Get("User-Agent")
-	userAgent = strings.ToLower(userAgent)
-	price := GetCurrentElPrice(r)
-	if strings.Contains(userAgent, "android") || strings.Contains(userAgent, "iphone") || strings.Contains(userAgent, "windows phone") {
-		return utils.KFormatterEthPrice(price)
-	}
-	return utils.FormatAddCommas(uint64(price))
-}
-
-func GetCurrentPriceKFormatted(r *http.Request) template.HTML {
-	return utils.KFormatterEthPrice(GetCurrentPrice(r))
-}
-
-func GetCurrentElPriceKFormatted(r *http.Request) template.HTML {
-	return utils.KFormatterEthPrice(GetCurrentElPrice(r))
-}
-
-func GetTruncCurrentPriceFormatted(r *http.Request) string {
-	price := GetCurrentPrice(r)
-	symbol := GetCurrencySymbol(r)
-	return fmt.Sprintf("%s %s", symbol, utils.KFormatterEthPrice(price))
-}
-
-// GetValidatorKeysFrom gets the validator keys from users input
-func GetValidatorKeysFrom(userInput []string) (pubKeys [][]byte, err error) {
-	indexList := []uint64{}
-	keyList := [][]byte{}
-	for _, input := range userInput {
-
-		validatorIndex, err := strconv.ParseUint(input, 10, 32)
-		if err == nil {
-			indexList = append(indexList, validatorIndex)
-		}
-
-		pubKey, err := hex.DecodeString(strings.Replace(input, "0x", "", -1))
-		if err == nil {
-			keyList = append(keyList, pubKey)
-		}
-	}
-
-	pubKeys, err = db.GetValidatorPublicKeys(indexList, keyList)
-	if len(pubKeys) != len(userInput) {
-		err = fmt.Errorf("not all validators found in db")
-	}
-	return
-}
-
 func GetDataTableStateChanges(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	vars := mux.Vars(r)
-	tableKey := vars["tableId"]
-
 	errMsgPrefix := "error loading data table state"
-	errFields := map[string]interface{}{
-		"tableKey": tableKey}
 
 	response := &types.ApiResponse{}
 	response.Status = errMsgPrefix
 	response.Data = ""
 
 	defer json.NewEncoder(w).Encode(response)
-
-	user, _, err := getUserSession(r)
-	if err != nil {
-		utils.LogError(err, errMsgPrefix+", could not retrieve user session", 0, errFields)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	if user.Authenticated {
-		state, err := db.GetDataTablesState(user.UserID, tableKey)
-		if err != nil {
-			if !errors.Is(err, sql.ErrNoRows) {
-				utils.LogError(err, errMsgPrefix+", could not load values from db", 0, errFields)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-		} else {
-			// the time for the state load of a data table must not be older than 2 hours so set it to the current time
-			state.Time = uint64(time.Now().Unix() * 1000)
-
-			response.Data = state
-		}
-	}
 
 	response.Status = "OK"
 }
@@ -639,8 +457,6 @@ func SetDataTableStateChanges(w http.ResponseWriter, r *http.Request) {
 	tableKey := vars["tableId"]
 
 	errMsgPrefix := "error saving data table state"
-	errFields := map[string]interface{}{
-		"tableKey": tableKey}
 
 	response := &types.ApiResponse{}
 	response.Status = errMsgPrefix
@@ -648,15 +464,8 @@ func SetDataTableStateChanges(w http.ResponseWriter, r *http.Request) {
 
 	defer json.NewEncoder(w).Encode(response)
 
-	user, _, err := getUserSession(r)
-	if err != nil {
-		utils.LogError(err, errMsgPrefix+", could not retrieve user session", 0, errFields)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
 	settings := types.DataTableSaveState{}
-	err = json.NewDecoder(r.Body).Decode(&settings)
+	err := json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
 		logger.Warnf(errMsgPrefix+", could not parse body for tableKey %v: %v", tableKey, err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -668,16 +477,7 @@ func SetDataTableStateChanges(w http.ResponseWriter, r *http.Request) {
 	// never store the page number
 	settings.Start = 0
 
-	if user.Authenticated {
-		err = db.SaveDataTableState(user.UserID, settings.Key, settings)
-		if err != nil {
-			utils.LogError(err, errMsgPrefix+", could no save values to db", 0, errFields)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-	} else {
-		response.Data = settings
-	}
+	response.Data = settings
 
 	response.Status = "OK"
 }
@@ -730,7 +530,7 @@ func GetWithdrawableCountFromCursor(epoch uint64, validatorindex uint64, cursor 
 	}
 }
 
-func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint64) ([]*types.ChartDataPoint, error) {
+func getExecutionChartData(indices []uint64, lowerBoundDay uint64) ([]*types.ChartDataPoint, error) {
 	var limit uint64 = 300
 	blockList, consMap, err := findExecBlockNumbersByProposerIndex(indices, 0, limit, false, true, lowerBoundDay)
 	if err != nil {
@@ -738,10 +538,6 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 	}
 
 	blocks, err := db.BigtableClient.GetBlocksIndexedMultiple(blockList, limit)
-	if err != nil {
-		return nil, err
-	}
-	relaysData, err := db.GetRelayDataForIndexedBlocks(blocks)
 	if err != nil {
 		return nil, err
 	}
@@ -757,24 +553,18 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 		consData := consMap[block.Number]
 		day := int64(consData.Epoch / epochsPerDay)
 
-		var totalReward float64
-		if relayData, ok := relaysData[common.BytesToHash(block.Hash)]; ok {
-			totalReward = utils.WeiToEther(relayData.MevBribe.BigInt()).InexactFloat64()
-		} else {
-			totalReward = utils.WeiToEther(utils.Eth1TotalReward(block)).InexactFloat64()
-		}
+		totalReward := utils.PlanckToZND(utils.Eth1TotalReward(block)).InexactFloat64()
 
 		// Add the reward to the existing reward for the day or set it if not previously set
 		dayRewardMap[day] += totalReward
 	}
 
 	// Now populate the chartData array using the dayRewardMap
-	exchangeRate := price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
 	for day, reward := range dayRewardMap {
 		ts := float64(utils.DayToTime(day).Unix() * 1000)
 		chartData = append(chartData, &types.ChartDataPoint{
 			X:     ts,
-			Y:     exchangeRate * reward,
+			Y:     reward,
 			Color: color,
 		})
 	}
@@ -785,4 +575,57 @@ func getExecutionChartData(indices []uint64, currency string, lowerBoundDay uint
 	})
 
 	return chartData, nil
+}
+
+func findExecBlockNumbersByProposerIndex(indices []uint64, offset, limit uint64, isSortAsc bool, onlyFinalized bool, lowerBoundDay uint64) ([]uint64, map[uint64]types.ExecBlockProposer, error) {
+	var blockListSub []types.ExecBlockProposer
+
+	lowerBoundEpoch := lowerBoundDay * utils.EpochsPerDay()
+
+	order := "DESC"
+	if isSortAsc {
+		order = "ASC"
+	}
+
+	status := "status != '3'"
+	if onlyFinalized {
+		status = `status = '1'`
+	}
+
+	query := fmt.Sprintf(`
+		SELECT 
+			exec_block_number,
+			proposer,
+			slot,
+			epoch  
+		FROM blocks 
+		WHERE proposer = ANY($1)
+			AND exec_block_number IS NOT NULL AND exec_block_number > 0
+			AND epoch >= $4
+			AND %s
+		ORDER BY exec_block_number %s
+		OFFSET $2 LIMIT $3`, status, order)
+
+	err := db.ReaderDb.Select(&blockListSub,
+		query,
+		pq.Array(indices),
+		offset,
+		limit,
+		lowerBoundEpoch,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+	blockList, blockProposerMap := getBlockNumbersAndMapProposer(blockListSub)
+	return blockList, blockProposerMap, nil
+}
+
+func getBlockNumbersAndMapProposer(data []types.ExecBlockProposer) ([]uint64, map[uint64]types.ExecBlockProposer) {
+	blockList := []uint64{}
+	blockToProposerMap := make(map[uint64]types.ExecBlockProposer)
+	for _, execBlock := range data {
+		blockList = append(blockList, execBlock.ExecBlock)
+		blockToProposerMap[execBlock.ExecBlock] = execBlock
+	}
+	return blockList, blockToProposerMap
 }

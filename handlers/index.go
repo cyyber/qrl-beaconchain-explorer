@@ -6,28 +6,22 @@ import (
 	"math"
 	"net/http"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 // Index will return the main "index" page using a go template
 func Index(w http.ResponseWriter, r *http.Request) {
 	var indexTemplateFiles = append(layoutTemplateFiles,
 		"index/index.html",
-		"index/depositProgress.html",
 		"index/depositChart.html",
-		"index/genesis.html",
-		"index/hero.html",
 		"index/networkStats.html",
 		"index/postGenesis.html",
-		"index/preGenesis.html",
 		"index/recentBlocks.html",
 		"index/recentEpochs.html",
-		"index/genesisCountdown.html",
 		"index/depositDistribution.html",
-		"svg/bricks.html",
 		"svg/professor.html",
 		"svg/timeline.html",
 		"components/rocket.html",
@@ -41,9 +35,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	pageData := services.LatestIndexPageData()
 
 	// data.Data.(*types.IndexPageData).ShowSyncingMessage = data.ShowSyncingMessage
-	pageData.Countdown = utils.Config.Frontend.Countdown
 
-	pageData.SlotVizData = getSlotVizData(data.CurrentEpoch)
+	pageData.SlotVizData = getSlotVizData()
 
 	calculateChurn(pageData)
 
@@ -68,32 +61,16 @@ func IndexPageData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getSlotVizData(currentEpoch uint64) *types.SlotVizPageData {
-	var visiblFrom uint64
-	var visibleTo uint64
+func getSlotVizData() *types.SlotVizPageData {
 	configuration, err := services.GetExplorerConfigurationsWithDefaults()
 	if err != nil {
 		utils.LogError(err, "Could not load SlotViz configuration for index page", 0)
 		return nil
 	}
-	visiblFrom, err = configuration.GetUInt64Value(services.ConfigurationCategorySlotViz, services.ConfigurationKeyVisibleFromEpoch)
-	if err != nil {
-		utils.LogError(err, "Could not get visbleFrom for SlotViz on index page", 0)
-		return nil
-	}
-	visibleTo, err = configuration.GetUInt64Value(services.ConfigurationCategorySlotViz, services.ConfigurationKeyVisibleToEpoch)
-	if err != nil {
-		utils.LogError(err, "Could not get visibleTo for SlotViz on index page", 0)
-		return nil
-	}
-	if visiblFrom <= currentEpoch && visibleTo >= currentEpoch {
-		return &types.SlotVizPageData{
-			Epochs:   services.LatestSlotVizMetrics(),
-			Selector: "slotsViz",
-			Config:   configuration[services.ConfigurationCategorySlotViz]}
-
-	}
-	return nil
+	return &types.SlotVizPageData{
+		Epochs:   services.LatestSlotVizMetrics(),
+		Selector: "slotsViz",
+		Config:   configuration[services.ConfigurationCategorySlotViz]}
 }
 
 func calculateChurn(page *types.IndexPageData) {

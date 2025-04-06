@@ -1,16 +1,6 @@
 # content of this file is concated files of # content of this file is concated files of https://github.com/ethereum/consensus-specs/tree/ef434e8/presets/minimal
 
-# Minimal preset - Altair
-
-# Updated penalty values
-# ---------------------------------------------------------------
-# 3 * 2**24 (= 50,331,648)
-INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648
-# 2**6 (= 64)
-MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64
-# 2
-PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2
-
+# Minimal preset
 
 # Sync committee
 # ---------------------------------------------------------------
@@ -26,16 +16,7 @@ EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 8
 MIN_SYNC_COMMITTEE_PARTICIPANTS: 1
 # SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD (= 8 * 8)
 UPDATE_TIMEOUT: 64
-# Minimal preset - Bellatrix
 
-# Updated penalty values
-# ---------------------------------------------------------------
-# 2**24 (= 16,777,216)
-INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216
-# 2**5 (= 32)
-MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32
-# 3
-PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3
 
 # Execution
 # ---------------------------------------------------------------
@@ -47,12 +28,11 @@ MAX_TRANSACTIONS_PER_PAYLOAD: 1048576
 BYTES_PER_LOGS_BLOOM: 256
 # 2**5 (= 32)
 MAX_EXTRA_DATA_BYTES: 32
-# Minimal preset - Capella
 
 # Max operations per block
 # ---------------------------------------------------------------
 # 2**4 (= 16)
-MAX_BLS_TO_EXECUTION_CHANGES: 16
+MAX_DILITHIUM_TO_EXECUTION_CHANGES: 16
 
 
 # Execution
@@ -101,16 +81,6 @@ EARLY_DERIVED_SECRET_REVEAL_SLOT_REWARD_MULTIPLE: 2
 MINOR_REWARD_QUOTIENT: 256
 # Minimal preset - Deneb
 
-# Misc
-# ---------------------------------------------------------------
-# [customized]
-FIELD_ELEMENTS_PER_BLOB: 4
-# [customized]
-MAX_BLOB_COMMITMENTS_PER_BLOCK: 16
-# `uint64(6)`
-MAX_BLOBS_PER_BLOCK: 6
-# Minimal preset - EIP6110
-
 # Execution
 # ---------------------------------------------------------------
 # [customized]
@@ -135,13 +105,13 @@ HYSTERESIS_DOWNWARD_MULTIPLIER: 1
 HYSTERESIS_UPWARD_MULTIPLIER: 5
 
 
-# Gwei values
+# Gplanck values
 # ---------------------------------------------------------------
-# 2**0 * 10**9 (= 1,000,000,000) Gwei
+# 2**0 * 10**9 (= 1,000,000,000) Gplanck
 MIN_DEPOSIT_AMOUNT: 1000000000
-# 2**5 * 10**9 (= 32,000,000,000) Gwei
+# 2**5 * 10**9 (= 32,000,000,000) Gplanck
 MAX_EFFECTIVE_BALANCE: 32000000000
-# 2**0 * 10**9 (= 1,000,000,000) Gwei
+# 2**0 * 10**9 (= 1,000,000,000) Gplanck
 EFFECTIVE_BALANCE_INCREMENT: 1000000000
 
 
@@ -183,12 +153,12 @@ BASE_REWARD_FACTOR: 64
 WHISTLEBLOWER_REWARD_QUOTIENT: 512
 # 2**3 (= 8)
 PROPOSER_REWARD_QUOTIENT: 8
-# [customized] 2**25 (= 33,554,432)
-INACTIVITY_PENALTY_QUOTIENT: 33554432
-# [customized] 2**6 (= 64)
-MIN_SLASHING_PENALTY_QUOTIENT: 64
-# [customized] 2 (lower safety margin than Phase 0 genesis but different than mainnet config for testing)
-PROPORTIONAL_SLASHING_MULTIPLIER: 2
+# 2**24 (= 16,777,216)
+INACTIVITY_PENALTY_QUOTIENT: 16777216
+# 2**5 (= 32)
+MIN_SLASHING_PENALTY_QUOTIENT: 32
+# 3
+PROPORTIONAL_SLASHING_MULTIPLIER: 3
 
 
 # Max operations per block
@@ -220,21 +190,12 @@ MAX_SHARD_PROPOSER_SLASHINGS: 4
 MAX_SHARD_HEADERS_PER_SHARD: 4
 # 2**8 (= 256)
 SHARD_STATE_MEMORY_SLOTS: 256
-# 2**40 (= 1,099,511,627,776)
-BLOB_BUILDER_REGISTRY_LIMIT: 1099511627776
 
-# Shard blob samples
+# Gplanck values
 # ---------------------------------------------------------------
-# 2**11 (= 2,048)
-MAX_SAMPLES_PER_BLOCK: 2048
-# 2**10 (= 1,1024)
-TARGET_SAMPLES_PER_BLOCK: 1024
-
-# Gwei values
-# ---------------------------------------------------------------
-# 2**33 (= 8,589,934,592) Gwei
+# 2**33 (= 8,589,934,592) Gplanck
 MAX_SAMPLE_PRICE: 8589934592
-# 2**3 (= 8) Gwei
+# 2**3 (= 8) Gplanck
 MIN_SAMPLE_PRICE: 8
 # Minimal preset - Whisk
 

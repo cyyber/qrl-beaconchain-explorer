@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/cache"
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/cache"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 const latestBlockNumberCacheKey = "latestEth1BlockNumber"
@@ -80,16 +80,4 @@ func headBlockRootHashUpdater(wg *sync.WaitGroup) {
 		ReportStatus("headBlockRootHashUpdater", "Running", nil)
 		time.Sleep(time.Second * 10)
 	}
-}
-
-// Eth1HeadBlockRootHash will return the hash of the current chain head block
-func Eth1HeadBlockRootHash() []byte {
-	cacheKey := fmt.Sprintf("%d:frontend:%s", utils.Config.Chain.ClConfig.DepositChainID, latestBlockHashRootCacheKey)
-
-	if wanted, err := cache.TieredCache.GetStringWithLocalTimeout(cacheKey, time.Second*5); err == nil {
-		return []byte(wanted)
-	} else {
-		utils.LogError(err, fmt.Sprintf("error retrieving latest blockroot hash from cache with key %s", latestBlockHashRootCacheKey), 0)
-	}
-	return []byte{}
 }

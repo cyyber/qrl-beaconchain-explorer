@@ -9,9 +9,6 @@
   <!-- <script type="text/javascript" src="js/slick.min.js"></script> -->
   <!-- <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script> -->
 
-  {{ if .GenesisPeriod }}
-    <script src="/js/d3.min.js"></script>
-  {{ end }}
     <script>
         var creditsEnabled = {{ if  .SlotVizData }} false {{ else }} true {{ end }}
         var app = new Vue({
@@ -50,7 +47,7 @@
                             }
                         },
                         yAxis: [{
-                            title: {text: 'Balance [{{config.Frontend.MainCurrency}}]'},
+                            title: {text: 'Balance [ZND]'},
                             labels: {
                                 formatter: function () {
                                     return this.value.toFixed(0);
@@ -68,9 +65,9 @@
                         }],
                         series: [
                             {
-                                name: "Staked {{config.Frontend.MainCurrency}}",
+                                name: "Staked ZND",
                                 yAxis: 0,
-                                data: {{.StakedEtherChartData}}
+                                data: {{.StakedZNDChartData}}
                             },
                             {
                                 name: "Active Validators",
@@ -129,7 +126,7 @@
                     return this.page.scheduled_count
                 },
                 epochCompletePercent: function () {
-                    return ((32 - this.page.scheduled_count) / 32) * 100
+                    return ((128 - this.page.scheduled_count) / 128) * 100
                 }
             },
             filters: {
@@ -173,12 +170,6 @@
 
   <!-- <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/> -->
-
-  {{ if .GenesisPeriod }}
-    <link rel="stylesheet" href="/css/checklist.css" />
-    <link rel="stylesheet" href="/css/rocket.css" />
-  {{ end }}
-
 
   <style>
     #slotsViz > svg {
@@ -351,17 +342,8 @@
 {{ define "content" }}
   <div class="container mt-2">
     <div id="app" v-cloak>
-      {{ with .Data }}
-        {{ template "hero" . }}
-      {{ end }}
       <div id="r-banner" info="{{ .Meta.Templates }}"></div>
-      {{ if and (not .Data.Genesis) (not .Data.GenesisPeriod) }}
-        {{ template "preGenesis" $ }}
-      {{ else if .Data.GenesisPeriod }}
-        {{ template "genesis" . }}
-      {{ else }}
-        {{ template "postGenesis" .Data }}
-      {{ end }}
+      {{ template "postGenesis" .Data }}
     </div>
   </div>
   {{ if .Data.SlotVizData }}{{ template "SlotViz" . }}{{ end }}

@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -46,11 +45,6 @@ func Charts(w http.ResponseWriter, r *http.Request) {
 	disclaimer := ""
 	for _, chart := range cpd {
 		chart.Data.Series = nil
-
-		// If at least one chart shows info about ETH.STORE, then show the disclaimer
-		if disclaimer == "" && strings.Contains(chart.Data.Subtitle, "ETH.STORE®") {
-			disclaimer = services.EthStoreDisclaimer()
-		}
 	}
 
 	data.Data = &types.ChartsPageData{ChartsPageDataCharts: cpd, Disclaimer: disclaimer}

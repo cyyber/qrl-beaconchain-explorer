@@ -9,14 +9,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/cache"
-	"github.com/gobitfly/eth2-beaconchain-explorer/metrics"
-	"github.com/gobitfly/eth2-beaconchain-explorer/price"
-	"github.com/gobitfly/eth2-beaconchain-explorer/rpc"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/cache"
+	"github.com/theQRL/zond-beaconchain-explorer/metrics"
+	"github.com/theQRL/zond-beaconchain-explorer/rpc"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/lib/pq"
@@ -204,14 +202,11 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		data.OrphanedSyncTotal = previousDayData.OrphanedSyncTotal + data.OrphanedSync
 
 		// calculate cl reward & update totals
-		data.ClRewardsGWei = data.EndBalance - previousDayData.EndBalance + data.WithdrawalsAmount - data.DepositsAmount
-		data.ClRewardsGWeiTotal = previousDayData.ClRewardsGWeiTotal + data.ClRewardsGWei
+		data.ClRewardsGPlanck = data.EndBalance - previousDayData.EndBalance + data.WithdrawalsAmount - data.DepositsAmount
+		data.ClRewardsGPlanckTotal = previousDayData.ClRewardsGPlanckTotal + data.ClRewardsGPlanck
 
 		// update el reward total
-		data.ElRewardsWeiTotal = previousDayData.ElRewardsWeiTotal.Add(data.ElRewardsWei)
-
-		// update mev reward total
-		data.MEVRewardsWeiTotal = previousDayData.MEVRewardsWeiTotal.Add(data.MEVRewardsWei)
+		data.ElRewardsPlanckTotal = previousDayData.ElRewardsPlanckTotal.Add(data.ElRewardsPlanck)
 
 		// update withdrawal total
 		data.WithdrawalsTotal = previousDayData.WithdrawalsTotal + data.Withdrawals
@@ -222,40 +217,32 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		data.DepositsAmountTotal = previousDayData.DepositsAmountTotal + data.DepositsAmount
 
 		if statisticsData1d != nil && len(statisticsData1d) > index {
-			data.ClPerformance1d = data.ClRewardsGWeiTotal - statisticsData1d[index].ClRewardsGWeiTotal
-			data.ElPerformance1d = data.ElRewardsWeiTotal.Sub(statisticsData1d[index].ElRewardsWeiTotal)
-			data.MEVPerformance1d = data.MEVRewardsWeiTotal.Sub(statisticsData1d[index].MEVRewardsWeiTotal)
+			data.ClPerformance1d = data.ClRewardsGPlanckTotal - statisticsData1d[index].ClRewardsGPlanckTotal
+			data.ElPerformance1d = data.ElRewardsPlanckTotal.Sub(statisticsData1d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance1d = data.ClRewardsGWeiTotal
-			data.ElPerformance1d = data.ElRewardsWeiTotal
-			data.MEVPerformance1d = data.MEVRewardsWeiTotal
+			data.ClPerformance1d = data.ClRewardsGPlanckTotal
+			data.ElPerformance1d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData7d != nil && len(statisticsData7d) > index {
-			data.ClPerformance7d = data.ClRewardsGWeiTotal - statisticsData7d[index].ClRewardsGWeiTotal
-			data.ElPerformance7d = data.ElRewardsWeiTotal.Sub(statisticsData7d[index].ElRewardsWeiTotal)
-			data.MEVPerformance7d = data.MEVRewardsWeiTotal.Sub(statisticsData7d[index].MEVRewardsWeiTotal)
+			data.ClPerformance7d = data.ClRewardsGPlanckTotal - statisticsData7d[index].ClRewardsGPlanckTotal
+			data.ElPerformance7d = data.ElRewardsPlanckTotal.Sub(statisticsData7d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance7d = data.ClRewardsGWeiTotal
-			data.ElPerformance7d = data.ElRewardsWeiTotal
-			data.MEVPerformance7d = data.MEVRewardsWeiTotal
+			data.ClPerformance7d = data.ClRewardsGPlanckTotal
+			data.ElPerformance7d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData31d != nil && len(statisticsData31d) > index {
-			data.ClPerformance31d = data.ClRewardsGWeiTotal - statisticsData31d[index].ClRewardsGWeiTotal
-			data.ElPerformance31d = data.ElRewardsWeiTotal.Sub(statisticsData31d[index].ElRewardsWeiTotal)
-			data.MEVPerformance31d = data.MEVRewardsWeiTotal.Sub(statisticsData31d[index].MEVRewardsWeiTotal)
+			data.ClPerformance31d = data.ClRewardsGPlanckTotal - statisticsData31d[index].ClRewardsGPlanckTotal
+			data.ElPerformance31d = data.ElRewardsPlanckTotal.Sub(statisticsData31d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance31d = data.ClRewardsGWeiTotal
-			data.ElPerformance31d = data.ElRewardsWeiTotal
-			data.MEVPerformance31d = data.MEVRewardsWeiTotal
+			data.ClPerformance31d = data.ClRewardsGPlanckTotal
+			data.ElPerformance31d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData365d != nil && len(statisticsData365d) > index {
-			data.ClPerformance365d = data.ClRewardsGWeiTotal - statisticsData365d[index].ClRewardsGWeiTotal
-			data.ElPerformance365d = data.ElRewardsWeiTotal.Sub(statisticsData365d[index].ElRewardsWeiTotal)
-			data.MEVPerformance365d = data.MEVRewardsWeiTotal.Sub(statisticsData365d[index].MEVRewardsWeiTotal)
+			data.ClPerformance365d = data.ClRewardsGPlanckTotal - statisticsData365d[index].ClRewardsGPlanckTotal
+			data.ElPerformance365d = data.ElRewardsPlanckTotal.Sub(statisticsData365d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance365d = data.ClRewardsGWeiTotal
-			data.ElPerformance365d = data.ElRewardsWeiTotal
-			data.MEVPerformance365d = data.MEVRewardsWeiTotal
+			data.ClPerformance365d = data.ClRewardsGPlanckTotal
+			data.ElPerformance365d = data.ElRewardsPlanckTotal
 		}
 	}
 
@@ -316,12 +303,10 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 			"withdrawals_total",
 			"withdrawals_amount",
 			"withdrawals_amount_total",
-			"cl_rewards_gwei",
-			"cl_rewards_gwei_total",
-			"el_rewards_wei",
-			"el_rewards_wei_total",
-			"mev_rewards_wei",
-			"mev_rewards_wei_total",
+			"cl_rewards_gplanck",
+			"cl_rewards_gplanck_total",
+			"el_rewards_planck",
+			"el_rewards_planck_total",
 		}, pgx.CopyFromSlice(len(validatorData), func(i int) ([]interface{}, error) {
 			return []interface{}{
 				validatorData[i].ValidatorIndex,
@@ -356,12 +341,10 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 				validatorData[i].WithdrawalsTotal,
 				validatorData[i].WithdrawalsAmount,
 				validatorData[i].WithdrawalsAmountTotal,
-				validatorData[i].ClRewardsGWei,
-				validatorData[i].ClRewardsGWeiTotal,
-				validatorData[i].ElRewardsWei,
-				validatorData[i].ElRewardsWeiTotal,
-				validatorData[i].MEVRewardsWei,
-				validatorData[i].MEVRewardsWeiTotal,
+				validatorData[i].ClRewardsGPlanck,
+				validatorData[i].ClRewardsGPlanckTotal,
+				validatorData[i].ElRewardsPlanck,
+				validatorData[i].ElRewardsPlanckTotal,
 			}, nil
 		}))
 
@@ -401,12 +384,6 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 				"el_performance_31d",
 				"el_performance_365d",
 				"el_performance_total",
-
-				"mev_performance_1d",
-				"mev_performance_7d",
-				"mev_performance_31d",
-				"mev_performance_365d",
-				"mev_performance_total",
 			}, pgx.CopyFromSlice(len(validatorData), func(i int) ([]interface{}, error) {
 				return []interface{}{
 					validatorData[i].ValidatorIndex,
@@ -417,19 +394,13 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 					validatorData[i].ClPerformance7d,
 					validatorData[i].ClPerformance31d,
 					validatorData[i].ClPerformance365d,
-					validatorData[i].ClRewardsGWeiTotal,
+					validatorData[i].ClRewardsGPlanckTotal,
 
 					validatorData[i].ElPerformance1d,
 					validatorData[i].ElPerformance7d,
 					validatorData[i].ElPerformance31d,
 					validatorData[i].ElPerformance365d,
-					validatorData[i].ElRewardsWeiTotal,
-
-					validatorData[i].MEVPerformance1d,
-					validatorData[i].MEVPerformance7d,
-					validatorData[i].MEVPerformance31d,
-					validatorData[i].MEVPerformance365d,
-					validatorData[i].MEVRewardsWeiTotal,
+					validatorData[i].ElRewardsPlanckTotal,
 				}, nil
 			}))
 
@@ -504,122 +475,6 @@ func WriteValidatorStatsExported(day uint64, tx pgx.Tx) error {
 	}
 	logger.Infof("marking completed, took %v", time.Since(start))
 
-	return nil
-}
-
-func WriteValidatorTotalPerformance(day uint64, tx pgx.Tx) error {
-	exportStart := time.Now()
-	defer func() {
-		metrics.TaskDuration.WithLabelValues("db_update_validator_total_performance_stats").Observe(time.Since(exportStart).Seconds())
-	}()
-
-	start := time.Now()
-
-	logger.Infof("exporting total performance stats")
-
-	_, err := tx.Exec(context.Background(), `insert into validator_performance (
-				validatorindex,
-				balance,
-				rank7d,
-
-				cl_performance_1d,
-				cl_performance_7d,
-				cl_performance_31d,
-				cl_performance_365d,
-				cl_performance_total,
-
-				el_performance_1d,
-				el_performance_7d,
-				el_performance_31d,
-				el_performance_365d,
-				el_performance_total,
-
-				mev_performance_1d,
-				mev_performance_7d,
-				mev_performance_31d,
-				mev_performance_365d,
-				mev_performance_total
-				) (
-					select 
-					vs_now.validatorindex, 
-						COALESCE(vs_now.end_balance, 0) as balance,
-						0 as rank7d,
-
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_1d.cl_rewards_gwei_total, 0) as cl_performance_1d, 
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_7d.cl_rewards_gwei_total, 0) as cl_performance_7d, 
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_31d.cl_rewards_gwei_total, 0) as cl_performance_31d, 
-						coalesce(vs_now.cl_rewards_gwei_total, 0) - coalesce(vs_365d.cl_rewards_gwei_total, 0) as cl_performance_365d,
-						coalesce(vs_now.cl_rewards_gwei_total, 0) as cl_performance_total, 
-						
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_1d.el_rewards_wei_total, 0) as el_performance_1d, 
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_7d.el_rewards_wei_total, 0) as el_performance_7d, 
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_31d.el_rewards_wei_total, 0) as el_performance_31d, 
-						coalesce(vs_now.el_rewards_wei_total, 0) - coalesce(vs_365d.el_rewards_wei_total, 0) as el_performance_365d,
-						coalesce(vs_now.el_rewards_wei_total, 0) as el_performance_total, 
-						
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_1d.mev_rewards_wei_total, 0) as mev_performance_1d, 
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_7d.mev_rewards_wei_total, 0) as mev_performance_7d, 
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_31d.mev_rewards_wei_total, 0) as mev_performance_31d, 
-						coalesce(vs_now.mev_rewards_wei_total, 0) - coalesce(vs_365d.mev_rewards_wei_total, 0) as mev_performance_365d,
-						coalesce(vs_now.mev_rewards_wei_total, 0) as mev_performance_total
-					from validator_stats vs_now
-					left join validator_stats vs_1d on vs_1d.validatorindex = vs_now.validatorindex and vs_1d.day = $2
-					left join validator_stats vs_7d on vs_7d.validatorindex = vs_now.validatorindex and vs_7d.day = $3
-					left join validator_stats vs_31d on vs_31d.validatorindex = vs_now.validatorindex and vs_31d.day = $4
-					left join validator_stats vs_365d on vs_365d.validatorindex = vs_now.validatorindex and vs_365d.day = $5
-					where vs_now.day = $1
-				) 
-				on conflict (validatorindex) do update set 
-					balance = excluded.balance,
-					rank7d=excluded.rank7d,
-
-					cl_performance_1d=excluded.cl_performance_1d,
-					cl_performance_7d=excluded.cl_performance_7d,
-					cl_performance_31d=excluded.cl_performance_31d,
-					cl_performance_365d=excluded.cl_performance_365d,
-					cl_performance_total=excluded.cl_performance_total,
-
-					el_performance_1d=excluded.el_performance_1d,
-					el_performance_7d=excluded.el_performance_7d,
-					el_performance_31d=excluded.el_performance_31d,
-					el_performance_365d=excluded.el_performance_365d,
-					el_performance_total=excluded.el_performance_total,
-
-					mev_performance_1d=excluded.mev_performance_1d,
-					mev_performance_7d=excluded.mev_performance_7d,
-					mev_performance_31d=excluded.mev_performance_31d,
-					mev_performance_365d=excluded.mev_performance_365d,
-					mev_performance_total=excluded.mev_performance_total
-			;`, day, int64(day)-1, int64(day)-7, int64(day)-31, int64(day)-365)
-
-	if err != nil {
-		return fmt.Errorf("error inserting performance into validator_performance for day [%v]: %w", day, err)
-	}
-
-	logger.Infof("export completed, took %v", time.Since(start))
-
-	start = time.Now()
-	logger.Infof("populate validator_performance rank7d")
-
-	_, err = tx.Exec(context.Background(), `
-		WITH ranked_performance AS (
-			SELECT
-				validatorindex, 
-				row_number() OVER (ORDER BY cl_performance_7d DESC) AS rank7d
-			FROM validator_performance
-		)
-		UPDATE validator_performance vp
-		SET rank7d = rp.rank7d
-		FROM ranked_performance rp
-		WHERE vp.validatorindex = rp.validatorindex
-		`)
-	if err != nil {
-		return fmt.Errorf("error updating rank7d while exporting day [%v]: %w", day, err)
-	}
-
-	logger.Infof("export completed, took %v", time.Since(start))
-
-	logger.Infof("total performance statistics export of day %v completed, took %v", day, time.Since(exportStart))
 	return nil
 }
 
@@ -706,14 +561,13 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 		"lastEpoch":  lastEpoch,
 	})
 
-	logger.Infof("gathering mev & el rewards")
+	logger.Infof("gathering el rewards")
 
 	type Container struct {
 		Slot            uint64 `db:"slot"`
 		ExecBlockNumber uint64 `db:"exec_block_number"`
 		Proposer        uint64 `db:"proposer"`
 		TxFeeReward     *big.Int
-		MevReward       *big.Int
 	}
 
 	blocks := make([]*Container, 0)
@@ -736,11 +590,6 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 		return fmt.Errorf("error in GetBlocksIndexedMultiple: %w", err)
 	}
 
-	relaysData, err := GetRelayDataForIndexedBlocks(blocksData)
-	if err != nil {
-		return fmt.Errorf("error in GetRelayDataForIndexedBlocks: %w", err)
-	}
-
 	proposerRewards := make(map[uint64]*Container)
 
 	for _, b := range blocksData {
@@ -748,31 +597,21 @@ func gatherValidatorElIcome(day uint64, data []*types.ValidatorStatsTableDbRow, 
 
 		if proposerRewards[proposer] == nil {
 			proposerRewards[proposer] = &Container{
-				MevReward:   big.NewInt(0),
 				TxFeeReward: big.NewInt(0),
 			}
 		}
 
 		txFeeReward := new(big.Int).SetBytes(b.TxReward)
 		proposerRewards[proposer].TxFeeReward = new(big.Int).Add(txFeeReward, proposerRewards[proposer].TxFeeReward)
-
-		mevReward, ok := relaysData[common.BytesToHash(b.Hash)]
-
-		if ok {
-			proposerRewards[proposer].MevReward = new(big.Int).Add(mevReward.MevBribe.BigInt(), proposerRewards[proposer].MevReward)
-		} else {
-			proposerRewards[proposer].MevReward = new(big.Int).Add(txFeeReward, proposerRewards[proposer].MevReward)
-		}
 	}
 
 	mux.Lock()
 	for proposer, r := range proposerRewards {
-		data[proposer].ElRewardsWei = decimal.NewFromBigInt(r.TxFeeReward, 0)
-		data[proposer].MEVRewardsWei = decimal.NewFromBigInt(r.MevReward, 0)
+		data[proposer].ElRewardsPlanck = decimal.NewFromBigInt(r.TxFeeReward, 0)
 	}
 	mux.Unlock()
 
-	logger.Infof("gathering mev & el rewards statistics completed, took %v", time.Since(exportStart))
+	logger.Infof("gathering el rewards statistics completed, took %v", time.Since(exportStart))
 	return nil
 }
 
@@ -900,12 +739,6 @@ func GatherValidatorSyncDutiesForDay(validators []uint64, day uint64, data []*ty
 	}()
 
 	firstEpoch, lastEpoch := utils.GetFirstAndLastEpochForDay(day)
-	if firstEpoch < utils.Config.Chain.ClConfig.AltairForkEpoch && lastEpoch > utils.Config.Chain.ClConfig.AltairForkEpoch {
-		firstEpoch = utils.Config.Chain.ClConfig.AltairForkEpoch
-	} else if lastEpoch < utils.Config.Chain.ClConfig.AltairForkEpoch {
-		logger.Infof("day %v is pre-altair, skipping sync committee export", day)
-		return nil
-	}
 	logger := logger.WithFields(logrus.Fields{
 		"day":         day,
 		"firstEpoch":  firstEpoch,
@@ -1165,12 +998,10 @@ func GatherStatisticsForDay(day int64) ([]*types.ValidatorStatsTableDbRow, error
 		COALESCE(withdrawals_total, 0) AS withdrawals_total,
 		COALESCE(withdrawals_amount, 0) AS withdrawals_amount,
 		COALESCE(withdrawals_amount_total, 0) AS withdrawals_amount_total,
-		COALESCE(cl_rewards_gwei, 0) AS cl_rewards_gwei,
-		COALESCE(cl_rewards_gwei_total, 0) AS cl_rewards_gwei_total,
-		COALESCE(el_rewards_wei, 0) AS el_rewards_wei,
-		COALESCE(el_rewards_wei_total, 0) AS el_rewards_wei_total,
-		COALESCE(mev_rewards_wei, 0) AS mev_rewards_wei,
-		COALESCE(mev_rewards_wei_total, 0) AS mev_rewards_wei_total
+		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck,
+		COALESCE(cl_rewards_gplanck_total, 0) AS cl_rewards_gplanck_total,
+		COALESCE(el_rewards_planck, 0) AS el_rewards_planck,
+		COALESCE(el_rewards_planck_total, 0) AS el_rewards_planck_total
 	 from validator_stats WHERE day = $1 ORDER BY validatorindex
 	`, day)
 
@@ -1182,14 +1013,12 @@ func GatherStatisticsForDay(day int64) ([]*types.ValidatorStatsTableDbRow, error
 	return ret, nil
 }
 
-func GetValidatorIncomeHistoryChart(validatorIndices []uint64, currency string, lastFinalizedEpoch uint64, lowerBoundDay uint64) ([]*types.ChartDataPoint, error) {
+func GetValidatorIncomeHistoryChart(validatorIndices []uint64, lastFinalizedEpoch uint64, lowerBoundDay uint64) ([]*types.ChartDataPoint, error) {
 	incomeHistory, err := GetValidatorIncomeHistory(validatorIndices, lowerBoundDay, 0, lastFinalizedEpoch)
 	if err != nil {
 		return nil, err
 	}
 	var clRewardsSeries = make([]*types.ChartDataPoint, len(incomeHistory))
-
-	p := price.GetPrice(utils.Config.Frontend.ClCurrency, currency)
 
 	for i := 0; i < len(incomeHistory); i++ {
 		color := "#7cb5ec"
@@ -1197,7 +1026,7 @@ func GetValidatorIncomeHistoryChart(validatorIndices []uint64, currency string, 
 			color = "#f7a35c"
 		}
 		balanceTs := utils.DayToTime(incomeHistory[i].Day)
-		clRewardsSeries[i] = &types.ChartDataPoint{X: float64(balanceTs.Unix() * 1000), Y: p * (float64(incomeHistory[i].ClRewards)) / float64(utils.Config.Frontend.ClCurrencyDivisor), Color: color}
+		clRewardsSeries[i] = &types.ChartDataPoint{X: float64(balanceTs.Unix() * 1000), Y: (float64(incomeHistory[i].ClRewards)) / float64(1e9), Color: color}
 	}
 	return clRewardsSeries, err
 }
@@ -1230,7 +1059,7 @@ func GetValidatorIncomeHistory(validatorIndices []uint64, lowerBoundDay uint64, 
 	err := ReaderDb.Select(&result, `
 		SELECT 
 			day, 
-			SUM(COALESCE(cl_rewards_gwei, 0)) AS cl_rewards_gwei,
+			SUM(COALESCE(cl_rewards_gplanck, 0)) AS cl_rewards_gplanck,
 			SUM(COALESCE(end_balance, 0)) AS end_balance
 		FROM validator_stats 
 		WHERE validatorindex = ANY($1) AND day BETWEEN $2 AND $3 
@@ -1405,14 +1234,14 @@ func WriteConsensusChartSeriesForDay(day int64) error {
 
 	var err error
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'STAKED_ETH' as indicator, eligibleether/1e9 as value from epochs where epoch = $2 limit 1 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, lastEpoch-1)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'STAKED_ZND' as indicator, eligibleznd/1e9 as value from epochs where epoch = $2 limit 1 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, lastEpoch-1)
 	if err != nil {
-		return fmt.Errorf("error inserting STAKED_ETH into chart_series: %w", err)
+		return fmt.Errorf("error inserting STAKED_ZND into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_VALIDATOR_BALANCE_ETH' as indicator, avg(averagevalidatorbalance)/1e9 as value from epochs where epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_VALIDATOR_BALANCE_ZND' as indicator, avg(averagevalidatorbalance)/1e9 as value from epochs where epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
 	if err != nil {
-		return fmt.Errorf("error inserting AVG_VALIDATOR_BALANCE_ETH into chart_series: %w", err)
+		return fmt.Errorf("error inserting AVG_VALIDATOR_BALANCE_ZND into chart_series: %w", err)
 	}
 
 	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_PARTICIPATION_RATE' as indicator, avg(globalparticipationrate) as value from epochs where epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
@@ -1420,29 +1249,29 @@ func WriteConsensusChartSeriesForDay(day int64) error {
 		return fmt.Errorf("error inserting AVG_PARTICIPATION_RATE into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_STAKE_EFFECTIVENESS' as indicator, coalesce(avg(eligibleether) / avg(totalvalidatorbalance), 0) as value from epochs where totalvalidatorbalance != 0 AND eligibleether != 0 and epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_STAKE_EFFECTIVENESS' as indicator, coalesce(avg(eligibleznd) / avg(totalvalidatorbalance), 0) as value from epochs where totalvalidatorbalance != 0 AND eligibleznd != 0 and epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
 	if err != nil {
 		return fmt.Errorf("error inserting AVG_STAKE_EFFECTIVENESS into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_VALID_DEPOSITS_ETH' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = true and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_VALID_DEPOSITS_ZND' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = true and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
 	if err != nil {
-		return fmt.Errorf("error inserting EL_VALID_DEPOSITS_ETH into chart_series: %w", err)
+		return fmt.Errorf("error inserting EL_VALID_DEPOSITS_ZND into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_INVALID_DEPOSITS_ETH' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = false and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_INVALID_DEPOSITS_ZND' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = false and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
 	if err != nil {
-		return fmt.Errorf("error inserting EL_INVALID_DEPOSITS_ETH into chart_series: %w", err)
+		return fmt.Errorf("error inserting EL_INVALID_DEPOSITS_ZND into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'CL_DEPOSITS_ETH' as indicator, coalesce(sum(amount)/1e9,0) as value from blocks_deposits where block_slot >= $2 and block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'CL_DEPOSITS_ZND' as indicator, coalesce(sum(amount)/1e9,0) as value from blocks_deposits where block_slot >= $2 and block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
 	if err != nil {
-		return fmt.Errorf("error inserting CL_DEPOSITS_ETH into chart_series: %w", err)
+		return fmt.Errorf("error inserting CL_DEPOSITS_ZND into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'WITHDRAWALS_ETH' as indicator, coalesce(sum(w.amount)/1e9,0) as value from blocks_withdrawals w inner join blocks b ON w.block_root = b.blockroot AND b.status = '1' where w.block_slot >= $2 and w.block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'WITHDRAWALS_ZND' as indicator, coalesce(sum(w.amount)/1e9,0) as value from blocks_withdrawals w inner join blocks b ON w.block_root = b.blockroot AND b.status = '1' where w.block_slot >= $2 and w.block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
 	if err != nil {
-		return fmt.Errorf("error inserting WITHDRAWALS_ETH into chart_series: %w", err)
+		return fmt.Errorf("error inserting WITHDRAWALS_ZND into chart_series: %w", err)
 	}
 
 	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'PROPOSED_BLOCKS' as indicator, count(*) as value from blocks where status = '1' and slot >= $2 and slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
@@ -1543,19 +1372,12 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	txCount := int64(0)
 
 	totalBaseFee := decimal.NewFromInt(0)
-	totalGasPrice := decimal.NewFromInt(0)
 	totalTxSavings := decimal.NewFromInt(0)
 	totalTxFees := decimal.NewFromInt(0)
 	totalBurned := decimal.NewFromInt(0)
-	totalBurnedBlob := decimal.NewFromInt(0)
 	totalGasUsed := decimal.NewFromInt(0)
-	totalBlobGasUsed := decimal.NewFromInt(0)
-	totalBlobCount := decimal.NewFromInt(0)
 
-	legacyTxCount := int64(0)
-	accessListTxCount := int64(0)
 	eip1559TxCount := int64(0)
-	blobTxCount := int64(0)
 	failedTxCount := int64(0)
 	successTxCount := int64(0)
 
@@ -1588,8 +1410,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 			accumulatedBlockTime = accumulatedBlockTime.Add(decimal.NewFromInt(prevBlock.Time.AsTime().UnixMicro() - blk.Time.AsTime().UnixMicro()))
 		}
 
-		totalBaseBlockReward = totalBaseBlockReward.Add(decimal.NewFromBigInt(utils.Eth1BlockReward(blk.Number, blk.Difficulty), 0))
-
 		for _, tx := range blk.Transactions {
 			// for _, itx := range tx.Itx {
 			// }
@@ -1598,23 +1418,10 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 			maxFee := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.MaxFeePerGas), 0)
 			prioFee := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.MaxPriorityFeePerGas), 0)
 			gasUsed := decimal.NewFromBigInt(new(big.Int).SetUint64(tx.GasUsed), 0)
-			gasPrice := decimal.NewFromBigInt(new(big.Int).SetBytes(tx.GasPrice), 0)
 
 			var tipFee decimal.Decimal
 			var txFees decimal.Decimal
 			switch tx.Type {
-			case 0:
-				legacyTxCount += 1
-				totalGasPrice = totalGasPrice.Add(gasPrice)
-				txFees = gasUsed.Mul(gasPrice)
-				tipFee = gasPrice.Sub(baseFee)
-
-			case 1:
-				accessListTxCount += 1
-				totalGasPrice = totalGasPrice.Add(gasPrice)
-				txFees = gasUsed.Mul(gasPrice)
-				tipFee = gasPrice.Sub(baseFee)
-
 			case 2:
 				// priority fee is capped because the base fee is filled first
 				tipFee = decimal.Min(prioFee, maxFee.Sub(baseFee))
@@ -1622,20 +1429,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 				// totalMinerTips = totalMinerTips.Add(tipFee.Mul(gasUsed))
 				txFees = baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))
 				totalTxSavings = totalTxSavings.Add(maxFee.Mul(gasUsed).Sub(baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))))
-
-			case 3:
-				// priority fee is capped because the base fee is filled first
-				tipFee = decimal.Min(prioFee, maxFee.Sub(baseFee))
-				blobTxCount += 1
-				// totalMinerTips = totalMinerTips.Add(tipFee.Mul(gasUsed))
-				txFees = baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))
-				totalTxSavings = totalTxSavings.Add(maxFee.Mul(gasUsed).Sub(baseFee.Mul(gasUsed).Add(tipFee.Mul(gasUsed))))
-
-				blobGasUsed := decimal.NewFromBigInt(new(big.Int).SetUint64(tx.BlobGasUsed), 0)
-				totalBlobGasUsed = totalBlobGasUsed.Add(blobGasUsed)
-				totalBurnedBlob = blobGasUsed.Mul(decimal.NewFromBigInt(new(big.Int).SetBytes(tx.BlobGasPrice), 0))
-				totalBlobCount = totalBlobCount.Add(decimal.NewFromInt(int64(len(tx.BlobVersionedHashes))))
-
 			default:
 				logger.Fatalf("error unknown tx type %v hash: %x", tx.Status, tx.Hash)
 			}
@@ -1652,12 +1445,8 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 				logger.Fatalf("error unknown status code %v hash: %x", tx.Status, tx.Hash)
 			}
 			totalGasUsed = totalGasUsed.Add(gasUsed)
-			totalBurned = totalBurned.Add(baseFee.Mul(gasUsed)).Add(totalBurnedBlob)
-			if blk.Number < 12244000 {
-				totalTips = totalTips.Add(gasUsed.Mul(gasPrice))
-			} else {
-				totalTips = totalTips.Add(gasUsed.Mul(tipFee))
-			}
+			totalBurned = totalBurned.Add(baseFee.Mul(gasUsed))
+			totalTips = totalTips.Add(gasUsed.Mul(tipFee))
 		}
 		prevBlock = blk
 	}
@@ -1666,10 +1455,10 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 
 	logger.Infof("exporting consensus rewards from %v to %v", firstEpoch, lastEpoch)
 
-	// consensus rewards are in Gwei
+	// consensus rewards are in Gplanck
 	totalConsensusRewards := int64(0)
 
-	err = WriterDb.Get(&totalConsensusRewards, "SELECT SUM(COALESCE(cl_rewards_gwei, 0)) FROM validator_stats WHERE day = $1", day)
+	err = WriterDb.Get(&totalConsensusRewards, "SELECT SUM(COALESCE(cl_rewards_gplanck, 0)) FROM validator_stats WHERE day = $1", day)
 	if err != nil {
 		return fmt.Errorf("error calculating totalConsensusRewards: %w", err)
 	}
@@ -1679,12 +1468,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	err = SaveChartSeriesPoint(dateTrunc, "BURNED_FEES", totalBurned.String())
 	if err != nil {
 		return fmt.Errorf("error calculating BURNED_FEES chart_series: %w", err)
-	}
-
-	logger.Infof("Exporting BURNED_BLOB_FEES %v", totalBurnedBlob.String())
-	err = SaveChartSeriesPoint(dateTrunc, "BURNED_BLOB_FEES", totalBurnedBlob.String())
-	if err != nil {
-		return fmt.Errorf("error calculating BURNED_BLOB_FEES chart_series: %w", err)
 	}
 
 	logger.Infof("Exporting NON_FAILED_TX_GAS_USAGE %v", totalGasUsed.Sub(totalFailedGasUsed).String())
@@ -1699,19 +1482,13 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 		return fmt.Errorf("error calculating BLOCK_COUNT chart_series: %w", err)
 	}
 
-	logger.Infof("Exporting BLOB_COUNT %v", blockCount)
-	err = SaveChartSeriesPoint(dateTrunc, "BLOB_COUNT", totalBlobCount)
-	if err != nil {
-		return fmt.Errorf("error calculating BLOB_COUNT chart_series: %w", err)
-	}
-
 	// convert microseconds to seconds
 	logger.Infof("Exporting BLOCK_TIME_AVG %v", avgBlockTime.Div(decimal.NewFromInt(1e6)).Abs().String())
 	err = SaveChartSeriesPoint(dateTrunc, "BLOCK_TIME_AVG", avgBlockTime.Div(decimal.NewFromInt(1e6)).String())
 	if err != nil {
 		return fmt.Errorf("error calculating BLOCK_TIME_AVG chart_series: %w", err)
 	}
-	// convert consensus rewards to gwei
+	// convert consensus rewards to gplanck
 	emission := (totalBaseBlockReward.Add(decimal.NewFromInt(totalConsensusRewards).Mul(decimal.NewFromInt(1000000000))).Add(totalTips)).Sub(totalBurned)
 	logger.Infof("Exporting TOTAL_EMISSION %v day emission", emission)
 
@@ -1727,14 +1504,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 		return fmt.Errorf("error calculating TOTAL_EMISSION chart_series: %w", err)
 	}
 
-	if totalGasPrice.GreaterThan(decimal.NewFromInt(0)) && decimal.NewFromInt(legacyTxCount).Add(decimal.NewFromInt(accessListTxCount)).GreaterThan(decimal.NewFromInt(0)) {
-		logger.Infof("Exporting AVG_GASPRICE")
-		err = SaveChartSeriesPoint(dateTrunc, "AVG_GASPRICE", totalGasPrice.Div((decimal.NewFromInt(legacyTxCount).Add(decimal.NewFromInt(accessListTxCount)))).String())
-		if err != nil {
-			return fmt.Errorf("error calculating AVG_GASPRICE chart_series err: %w", err)
-		}
-	}
-
 	if txCount > 0 {
 		logger.Infof("Exporting AVG_GASUSED %v", totalGasUsed.Div(decimal.NewFromInt(blockCount)).String())
 		err = SaveChartSeriesPoint(dateTrunc, "AVG_GASUSED", totalGasUsed.Div(decimal.NewFromInt(blockCount)).String())
@@ -1747,12 +1516,6 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	err = SaveChartSeriesPoint(dateTrunc, "TOTAL_GASUSED", totalGasUsed.String())
 	if err != nil {
 		return fmt.Errorf("error calculating TOTAL_GASUSED chart_series: %w", err)
-	}
-
-	logger.Infof("Exporting TOTAL_BLOB_GASUSED %v", totalBlobGasUsed.String())
-	err = SaveChartSeriesPoint(dateTrunc, "TOTAL_BLOB_GASUSED", totalBlobGasUsed.String())
-	if err != nil {
-		return fmt.Errorf("error calculating TOTAL_BLOB_GASUSED chart_series: %w", err)
 	}
 
 	if blockCount > 0 {
@@ -1774,8 +1537,9 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	switch utils.Config.Chain.ClConfig.DepositChainID {
 	case 1:
 		crowdSale := 72009990.50
-		logger.Infof("Exporting MARKET_CAP: %v", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
-		err = SaveChartSeriesPoint(dateTrunc, "MARKET_CAP", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(price.GetPrice(utils.Config.Frontend.MainCurrency, "USD"))).String())
+		p := 1.0
+		logger.Infof("Exporting MARKET_CAP: %v", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(p)).String())
+		err = SaveChartSeriesPoint(dateTrunc, "MARKET_CAP", newEmission.Div(decimal.NewFromInt(1e18)).Add(decimal.NewFromFloat(crowdSale)).Mul(decimal.NewFromFloat(p)).String())
 		if err != nil {
 			return fmt.Errorf("error calculating MARKET_CAP chart_series: %w", err)
 		}

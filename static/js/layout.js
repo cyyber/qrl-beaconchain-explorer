@@ -38,12 +38,6 @@ function switchTheme(e) {
 }
 $("#toggleSwitch").on("change", switchTheme)
 
-function hideInfoBanner(msg) {
-  localStorage.setItem("infoBannerStatus", msg)
-  $("#infoBanner").attr("class", "d-none")
-}
-// $("#infoBannerDissBtn").on('click', hideInfoBanner)
-
 function setValidatorEffectiveness(elem, eff) {
   if (elem === undefined) return
   eff = parseInt(eff)
@@ -271,14 +265,14 @@ $(document).ready(function () {
   })
   bhValidators.remote.transport._get = debounce(bhValidators.remote.transport, bhValidators.remote.transport._get)
 
-  var bhEns = new Bloodhound({
+  var bhZns = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     identify: function (obj) {
       return obj?.domain
     },
     remote: {
-      url: "/search/ens/%QUERY",
+      url: "/search/zns/%QUERY",
       wildcard: "%QUERY",
       maxPendingRequests: requestNum,
       transform: function (data) {
@@ -286,7 +280,7 @@ $(document).ready(function () {
       },
     },
   })
-  bhEns.remote.transport._get = debounce(bhEns.remote.transport, bhEns.remote.transport._get)
+  bhZns.remote.transport._get = debounce(bhZns.remote.transport, bhZns.remote.transport._get)
 
   var bhSlots = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -448,15 +442,15 @@ $(document).ready(function () {
     },
     {
       limit: 5,
-      name: "ens",
-      source: bhEns,
+      name: "zns",
+      source: bhZns,
       display: function (data) {
         return data?.address && data?.domain ? data.domain : null
       },
       templates: {
-        header: '<h3 class="h5">Ens</h3>',
+        header: '<h3 class="h5">Zns</h3>',
         suggestion: function (data) {
-          return `<div class="text-monospace text-truncate"><a href="/ens/${data.domain}">${data.domain} Registration Overview</a></div>`
+          return `<div class="text-monospace text-truncate"><a href="/zns/${data.domain}">${data.domain} Registration Overview</a></div>`
         },
       },
     },
@@ -848,7 +842,7 @@ function trimCurrency(value) {
 }
 
 function getIncomeChartValueString(value, currency, priceCurrency, price) {
-  if (currency == priceCurrency || (currency == "xDAI" && priceCurrency == "DAI")) {
+  if (currency == priceCurrency) {
     return `${trimToken(value)} ${currency}`
   }
 

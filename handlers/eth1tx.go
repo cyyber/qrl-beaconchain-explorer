@@ -5,23 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strings"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/eth1data"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/eth1data"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
-	"github.com/shopspring/decimal"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
+	"github.com/theQRL/go-zond"
+	"github.com/theQRL/go-zond/common"
 )
 
 // Tx will show the tx using a go template
@@ -51,7 +46,7 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 		data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)
 		txTemplate = txNotFoundTemplate
 	} else {
-		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "ETH")
+		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "ZND")
 		if err != nil {
 			mempool := services.LatestMempoolTransactions()
 			mempoolTx := mempool.FindTxByHash(txHashString)
@@ -68,47 +63,13 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 
 				data.Data = mempoolPageData
 			} else {
-				if !errors.Is(err, ethereum.NotFound) && !errors.Is(err, eth1data.ErrTxIsPending) {
+				if !errors.Is(err, zond.NotFound) && !errors.Is(err, eth1data.ErrTxIsPending) {
 					utils.LogError(err, "error getting eth1 transaction data", 0, errFields)
 				}
 				data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)
 				txTemplate = txNotFoundTemplate
 			}
 		} else {
-			p := message.NewPrinter(language.English)
-
-			symbol := GetCurrencySymbol(r)
-			etherValue := utils.WeiBytesToEther(txData.Value)
-
-			currentPrice := GetCurrentPrice(r)
-			currentEthPrice := etherValue.Mul(decimal.NewFromInt(int64(currentPrice)))
-			txData.CurrentEtherPrice = template.HTML(p.Sprintf(`<span>%s%.2f</span>`, symbol, currentEthPrice.InexactFloat64()))
-
-			txData.HistoricalEtherPrice = ""
-			if txData.Timestamp.Unix() >= int64(utils.Config.Chain.GenesisTimestamp) {
-				txDay := utils.TimeToDay(uint64(txData.Timestamp.Unix()))
-				errFields["txDay"] = txDay
-				latestEpoch, err := db.GetLatestEpoch()
-				if err != nil {
-					utils.LogError(err, "error retrieving latest epoch from db", 0, errFields)
-				}
-
-				currentDay := latestEpoch / utils.EpochsPerDay()
-
-				if txDay < currentDay {
-					// Do not show the historical price if it is the current day
-					currency := GetCurrency(r)
-					price, err := db.GetHistoricalPrice(utils.Config.Chain.ClConfig.DepositChainID, currency, txDay)
-					if err != nil {
-						errFields["currency"] = currency
-						utils.LogError(err, "error retrieving historical prices", 0, errFields)
-					} else {
-						historicalEthPrice := etherValue.Mul(decimal.NewFromFloat(price))
-						txData.HistoricalEtherPrice = template.HTML(p.Sprintf(`<span>%s%.2f <i class="far fa-clock"></i></span>`, symbol, historicalEthPrice.InexactFloat64()))
-					}
-				}
-			}
-
 			data = InitPageData(w, r, "blockchain", path, title, txTemplateFiles)
 			data.Data = txData
 		}
@@ -131,8 +92,8 @@ func Eth1TransactionTxData(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	txHashString := vars["hash"]
-	currency := GetCurrency(r)
-	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, currency))
+
+	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, "ZND"))
 	if err != nil {
 		logger.Errorf("error enconding json response for %v route: %v", r.URL.String(), err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

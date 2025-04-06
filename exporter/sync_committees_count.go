@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
 )
@@ -33,7 +33,7 @@ func exportSyncCommitteesCount() error {
 	}
 
 	currentPeriod := utils.SyncPeriodOfEpoch(latestFinalizedEpoch)
-	firstPeriod := utils.SyncPeriodOfEpoch(utils.Config.Chain.ClConfig.AltairForkEpoch)
+	var firstPeriod uint64 = 0
 
 	dbPeriod := uint64(0)
 	countSoFar := float64(0)

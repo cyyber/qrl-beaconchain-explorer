@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -65,9 +65,9 @@ func Epoch(w http.ResponseWriter, r *http.Request) {
 			validatorscount, 
 			averagevalidatorbalance, 
 			(epoch <= $2) AS finalized,
-			eligibleether,
+			eligibleznd,
 			globalparticipationrate,
-			votedether
+			votedznd
 		FROM epochs 
 		WHERE epoch = $1`, epoch, latestFinalizedEpoch)
 	if err != nil {
@@ -165,7 +165,7 @@ func Epoch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	epochPageData.WithdrawalTotal = utils.FormatCurrentBalance(withdrawalTotal, GetCurrency(r))
+	epochPageData.WithdrawalTotal = utils.FormatCurrentBalance(withdrawalTotal, "ZND")
 
 	epochPageData.SyncParticipationRate /= float64(epochPageData.ProposedCount)
 

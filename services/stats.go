@@ -5,10 +5,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/cache"
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/cache"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 func statsUpdater(wg *sync.WaitGroup) {
@@ -111,12 +111,12 @@ func calculateStats() (*types.Stats, error) {
 
 	stats.WithdrawableValidatorCount = &WithdrawableValidatorCount
 
-	PendingBLSChangeValidatorCount, err := db.GetPendingBLSChangeValidatorCount()
+	PendingDilithiumChangeValidatorCount, err := db.GetPendingDilithiumChangeValidatorCount()
 	if err != nil {
 		logger.WithError(err).Error("error getting withdrawable validator count")
 	}
 
-	stats.PendingBLSChangeValidatorCount = &PendingBLSChangeValidatorCount
+	stats.PendingDilithiumChangeValidatorCount = &PendingDilithiumChangeValidatorCount
 
 	TotalAmountWithdrawn, WithdrawalCount, err := db.GetTotalAmountWithdrawn()
 	if err != nil {
@@ -132,12 +132,12 @@ func calculateStats() (*types.Stats, error) {
 
 	stats.TotalAmountDeposited = &TotalAmountDeposited
 
-	BLSChangeCount, err := db.GetBLSChangeCount()
+	DilithiumChangeCount, err := db.GetDilithiumChangeCount()
 	if err != nil {
-		logger.WithError(err).Error("error getting bls change count")
+		logger.WithError(err).Error("error getting dilithium change count")
 	}
 
-	stats.BLSChangeCount = &BLSChangeCount
+	stats.DilithiumChangeCount = &DilithiumChangeCount
 
 	return &stats, nil
 }
@@ -196,7 +196,7 @@ func eth1UniqueValidatorsCount() (*uint64, error) {
 			valid_signature = true 
 		GROUP BY 
 			publickey 
-		HAVING sum(amount) >= 32e9
+		HAVING sum(amount) >= 40000e9
 	) as q;
 	`)
 	if err != nil {
@@ -211,9 +211,6 @@ func getValidatorActivationChurnLimit(validatorCount, epoch uint64) (uint64, err
 	vcl, err := getValidatorChurnLimit(validatorCount)
 	if err != nil {
 		return 0, err
-	}
-	if utils.Config.Chain.ClConfig.DenebForkEpoch > epoch {
-		return vcl, nil
 	}
 	if vcl > utils.Config.Chain.ClConfig.MaxPerEpochActivationChurnLimit {
 		return utils.Config.Chain.ClConfig.MaxPerEpochActivationChurnLimit, nil

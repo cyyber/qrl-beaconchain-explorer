@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
-
-// var currentEpoch uint64
-// var currentSlot uint64
 
 // SlotVizMetrics returns the metrics for the earliest epochs
 func SlotVizMetrics(w http.ResponseWriter, r *http.Request) {

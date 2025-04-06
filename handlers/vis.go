@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 // Vis returns the visualizations using a go template
@@ -71,7 +71,6 @@ func VisBlocks(w http.ResponseWriter, r *http.Request) {
 			d.Parents = []string{lastMissedHash}
 			lastMissedHash = d.Hash
 		}
-		d.Difficulty = d.Slot
 	}
 
 	logger.Printf("returning %v blocks since %v", len(chartData), sinceSlot)
@@ -81,58 +80,5 @@ func VisBlocks(w http.ResponseWriter, r *http.Request) {
 		logger.Errorf("error enconding json response for %v route: %v", r.URL.String(), err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
-	}
-}
-
-// VisVotes shows the votes visualizations using a go template
-func VisVotes(w http.ResponseWriter, r *http.Request) {
-	templateFiles := append(layoutTemplateFiles, "vis_votes.html")
-	var visVotesTemplate = templates.GetTemplate(templateFiles...)
-
-	var err error
-
-	w.Header().Set("Content-Type", "text/html")
-
-	since := time.Now().Add(time.Minute * -20).Unix()
-	sinceSlot := utils.TimeToSlot(uint64(since - 120))
-
-	var chartData []*types.VotesVisChartData
-
-	rows, err := db.ReaderDb.Query(`select blocks.slot, 
-       											ENCODE(blocks.blockroot::bytea, 'hex') AS blockroot, 
-       											ENCODE(blocks.parentroot::bytea, 'hex') AS parentroot,
-												blocks_attestations.validators 
-												from blocks 
-													left join blocks_attestations on 
-														blocks_attestations.beaconblockroot = blocks.blockroot 
-												where blocks.slot >= $1 and blocks.status in ('1', '3') 
-												order by blocks.slot desc LIMIT 10;`, sinceSlot)
-
-	if err != nil {
-		logger.Errorf("error retrieving votes tree data: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		data := &types.VotesVisChartData{}
-		err := rows.Scan(&data.Slot, &data.BlockRoot, &data.ParentRoot, &data.Validators)
-		if err != nil {
-			logger.Errorf("error scanning votes tree data: %v", err)
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-		chartData = append(chartData, data)
-	}
-
-	logger.Printf("returning %v entries since %v", len(chartData), sinceSlot)
-
-	data := InitPageData(w, r, "vis", "/vis", "Votes", templateFiles)
-	data.Data = &types.VisVotesPageData{ChartData: chartData}
-
-	if handleTemplateError(w, r, "vis.go", "VisVotes", "", visVotesTemplate.ExecuteTemplate(w, "layout", data)) != nil {
-		return // an error has occurred and was processed
 	}
 }

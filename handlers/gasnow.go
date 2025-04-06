@@ -7,11 +7,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/price"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 // Will return the gas now page
@@ -21,7 +20,7 @@ func GasNow(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	data := InitPageData(w, r, "gasnow", "/gasnow", fmt.Sprintf("%v Gwei", 34), templateFiles)
+	data := InitPageData(w, r, "gasnow", "/gasnow", fmt.Sprintf("%v Gplanck", 34), templateFiles)
 
 	now := time.Now().Truncate(time.Minute)
 	lastWeek := time.Now().Truncate(time.Minute).Add(-utils.Week)
@@ -77,13 +76,6 @@ func GasNowData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-
-	currency := GetCurrency(r)
-	if currency == utils.Config.Frontend.ElCurrency {
-		currency = "USD"
-	}
-	gasnowData.Data.Price = price.GetPrice(utils.Config.Frontend.ElCurrency, currency)
-	gasnowData.Data.Currency = currency
 
 	err := json.NewEncoder(w).Encode(gasnowData)
 	if err != nil {

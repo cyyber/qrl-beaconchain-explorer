@@ -9,12 +9,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/price"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 type states struct {
@@ -66,14 +65,11 @@ func Validators(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	epoch := services.LatestEpoch()
-
 	validatorsPageData.ActiveCount = validatorsPageData.ActiveOnlineCount + validatorsPageData.ActiveOfflineCount
 	validatorsPageData.SlashingCount = validatorsPageData.SlashingOnlineCount + validatorsPageData.SlashingOfflineCount
 	validatorsPageData.ExitingCount = validatorsPageData.ExitingOnlineCount + validatorsPageData.ExitingOfflineCount
 	validatorsPageData.ExitedCount = validatorsPageData.VoluntaryExitsCount + validatorsPageData.Slashed
 	validatorsPageData.TotalCount = validatorsPageData.ActiveCount + validatorsPageData.ExitingCount + validatorsPageData.ExitedCount + validatorsPageData.PendingCount + validatorsPageData.DepositedCount
-	validatorsPageData.CappellaHasHappened = epoch >= (utils.Config.Chain.ClConfig.CappellaForkEpoch)
 
 	data := InitPageData(w, r, "validators", "/validators", "Validators", templateFiles)
 	data.Data = validatorsPageData
@@ -96,6 +92,7 @@ type ValidatorsDataQueryParams struct {
 	StateFilter       string
 }
 
+// TODO(now.youtrack.cloud/issue/TZB-9)
 var searchPubkeyExactRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{96}`) // only search for pubkeys if string consists of 96 hex-chars
 var searchPubkeyLikeRE = regexp.MustCompile(`^(0x)?[0-9a-fA-F]{2,96}`)
 
@@ -232,8 +229,6 @@ func parseValidatorsDataQueryParams(r *http.Request) (*ValidatorsDataQueryParams
 
 // ValidatorsData returns all validators and basic information about them based on a StateFilter
 func ValidatorsData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
-
 	w.Header().Set("Content-Type", "application/json")
 
 	dataQuery, err := parseValidatorsDataQueryParams(r)
@@ -312,8 +307,8 @@ func ValidatorsData(w http.ResponseWriter, r *http.Request) {
 				fmt.Sprintf("%x", v.PublicKey),
 				fmt.Sprintf("%v", v.ValidatorIndex),
 				[]interface{}{
-					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.Config.Frontend.ClCurrencyDivisor)*price.GetPrice(utils.Config.Frontend.ClCurrency, currency), currency),
-					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.Config.Frontend.ClCurrencyDivisor)*price.GetPrice(utils.Config.Frontend.ClCurrency, currency), currency),
+					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), "ZND"),
+					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), "ZND"),
 				},
 				v.State,
 				[]interface{}{

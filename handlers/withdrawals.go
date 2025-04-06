@@ -11,11 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -53,10 +53,11 @@ func Withdrawals(w http.ResponseWriter, r *http.Request) {
 // WithdrawalsData will return eth1-deposits as json
 func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	currency := GetCurrency(r)
 	q := r.URL.Query()
 
-	search := ReplaceEnsNameWithAddress(q.Get("search[value]"))
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
+	search := q.Get("search[value]")
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)
 	if err != nil {
@@ -87,7 +88,7 @@ func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	orderBy := q.Get("order[0][column]")
 	orderDir := q.Get("order[0][dir]")
 
-	data, err := WithdrawalsTableData(draw, search, length, start, orderBy, orderDir, currency)
+	data, err := WithdrawalsTableData(draw, search, length, start, orderBy, orderDir)
 	if err != nil {
 		logger.Errorf("error getting withdrawal table data: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -102,7 +103,7 @@ func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func WithdrawalsTableData(draw uint64, search string, length, start uint64, orderBy, orderDir string, currency string) (*types.DataTableResponse, error) {
+func WithdrawalsTableData(draw uint64, search string, length, start uint64, orderBy, orderDir string) (*types.DataTableResponse, error) {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Minute*10))
 	defer cancel()
 
@@ -180,11 +181,6 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 		filteredCount = withdrawalCount
 	}
 
-	formatCurrency := currency
-	if currency == "ETH" {
-		formatCurrency = "Ether"
-	}
-
 	var err error
 	names := make(map[string]string)
 	for _, v := range withdrawals {
@@ -204,7 +200,7 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 			utils.FormatValidator(w.ValidatorIndex),
 			utils.FormatTimestamp(utils.SlotToTime(w.Slot).Unix()),
 			utils.FormatAddressWithLimits(w.Address, names[string(w.Address)], false, "address", visibleDigitsForHash+5, 18, true),
-			utils.FormatAmount(new(big.Int).Mul(new(big.Int).SetUint64(w.Amount), big.NewInt(1e9)), formatCurrency, 6),
+			utils.FormatAmount(new(big.Int).Mul(new(big.Int).SetUint64(w.Amount), big.NewInt(1e9)), "Znd", 6),
 		}
 	}
 
@@ -227,11 +223,13 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 }
 
 // Eth1DepositsData will return eth1-deposits as json
-func BLSChangeData(w http.ResponseWriter, r *http.Request) {
+func DilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 
-	search := ReplaceEnsNameWithAddress(q.Get("search[value]"))
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
+	search := q.Get("search[value]")
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)
 	if err != nil {
@@ -245,9 +243,9 @@ func BLSChangeData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error: Missing or invalid parameter start", http.StatusBadRequest)
 		return
 	}
-	if start > db.BlsChangeQueryLimit {
+	if start > db.DilithiumChangeQueryLimit {
 		// limit offset to 10000, otherwise the query will be too slow
-		start = db.BlsChangeQueryLimit
+		start = db.DilithiumChangeQueryLimit
 	}
 	length, err := strconv.ParseUint(q.Get("length"), 10, 64)
 	if err != nil {
@@ -262,9 +260,9 @@ func BLSChangeData(w http.ResponseWriter, r *http.Request) {
 	orderBy := q.Get("order[0][column]")
 	orderDir := q.Get("order[0][dir]")
 
-	data, err := BLSTableData(draw, search, length, start, orderBy, orderDir)
+	data, err := DilithiumTableData(draw, search, length, start, orderBy, orderDir)
 	if err != nil {
-		logger.Errorf("Error getting bls changes: %v", err)
+		logger.Errorf("Error getting dilithium changes: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -277,7 +275,7 @@ func BLSChangeData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func BLSTableData(draw uint64, search string, length, start uint64, orderBy, orderDir string) (*types.DataTableResponse, error) {
+func DilithiumTableData(draw uint64, search string, length, start uint64, orderBy, orderDir string) (*types.DataTableResponse, error) {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Minute*10))
 	defer cancel()
 	orderByMap := map[string]string{
@@ -303,9 +301,9 @@ func BLSTableData(draw uint64, search string, length, start uint64, orderBy, ord
 		default:
 		}
 		var err error
-		totalCount, err = db.GetTotalBLSChanges()
+		totalCount, err = db.GetTotalDilithiumChanges()
 		if err != nil {
-			return fmt.Errorf("error getting total bls changes: %w", err)
+			return fmt.Errorf("error getting total dilithium changes: %w", err)
 		}
 		return nil
 	})
@@ -320,15 +318,15 @@ func BLSTableData(draw uint64, search string, length, start uint64, orderBy, ord
 			default:
 			}
 			var err error
-			filteredCount, err = db.GetBLSChangesCountForQuery(search)
+			filteredCount, err = db.GetDilithiumChangesCountForQuery(search)
 			if err != nil {
-				return fmt.Errorf("error getting bls changes count for filter [%v]: %w", search, err)
+				return fmt.Errorf("error getting dilithium changes count for filter [%v]: %w", search, err)
 			}
 			return nil
 		})
 	}
 
-	blsChange := []*types.BLSChange{}
+	dilithiumChange := []*types.DilithiumChange{}
 	g.Go(func() error {
 		select {
 		case <-gCtx.Done():
@@ -336,9 +334,9 @@ func BLSTableData(draw uint64, search string, length, start uint64, orderBy, ord
 		default:
 		}
 		var err error
-		blsChange, err = db.GetBLSChanges(search, length, start, orderVar, orderDir)
+		dilithiumChange, err = db.GetDilithiumChanges(search, length, start, orderVar, orderDir)
 		if err != nil {
-			return fmt.Errorf("error getting bls changes: %w", err)
+			return fmt.Errorf("error getting dilithium changes: %w", err)
 		}
 		return nil
 	})
@@ -353,7 +351,7 @@ func BLSTableData(draw uint64, search string, length, start uint64, orderBy, ord
 
 	var err error
 	names := make(map[string]string)
-	for _, v := range blsChange {
+	for _, v := range dilithiumChange {
 		names[string(v.Address)] = ""
 	}
 	names, _, err = db.BigtableClient.GetAddressesNamesArMetadata(&names, nil)
@@ -361,23 +359,23 @@ func BLSTableData(draw uint64, search string, length, start uint64, orderBy, ord
 		return nil, err
 	}
 
-	tableData := make([][]interface{}, len(blsChange))
-	for i, bls := range blsChange {
+	tableData := make([][]interface{}, len(dilithiumChange))
+	for i, dilithium := range dilithiumChange {
 		tableData[i] = []interface{}{
-			utils.FormatEpoch(utils.EpochOfSlot(bls.Slot)),
-			utils.FormatBlockSlot(bls.Slot),
-			utils.FormatValidator(bls.Validatorindex),
-			utils.FormatHashWithCopy(bls.Signature),
-			utils.FormatHashWithCopy(bls.BlsPubkey),
-			utils.FormatAddressWithLimits(bls.Address, names[string(bls.Address)], false, "address", visibleDigitsForHash+5, 18, true),
+			utils.FormatEpoch(utils.EpochOfSlot(dilithium.Slot)),
+			utils.FormatBlockSlot(dilithium.Slot),
+			utils.FormatValidator(dilithium.Validatorindex),
+			utils.FormatHashWithCopy(dilithium.Signature),
+			utils.FormatHashWithCopy(dilithium.DilithiumPubkey),
+			utils.FormatAddressWithLimits(dilithium.Address, names[string(dilithium.Address)], false, "address", visibleDigitsForHash+5, 18, true),
 		}
 	}
 
-	if totalCount > db.BlsChangeQueryLimit {
-		totalCount = db.BlsChangeQueryLimit
+	if totalCount > db.DilithiumChangeQueryLimit {
+		totalCount = db.DilithiumChangeQueryLimit
 	}
-	if filteredCount > db.BlsChangeQueryLimit {
-		filteredCount = db.BlsChangeQueryLimit
+	if filteredCount > db.DilithiumChangeQueryLimit {
+		filteredCount = db.DilithiumChangeQueryLimit
 	}
 
 	data := &types.DataTableResponse{

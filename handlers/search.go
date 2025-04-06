@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -10,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
@@ -22,35 +21,39 @@ import (
 const searchValidatorsResultLimit = 300
 
 var transactionLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{64}$`)
+
 var searchLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{0,96}$`)
+
+// TODO(now.youtrack.cloud/issue/TZB-9)
+// var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,5184}$`)
 var thresholdHexLikeRE = regexp.MustCompile(`^[0-9a-fA-F]{5,96}$`)
 
 // Search handles search requests
 func Search(w http.ResponseWriter, r *http.Request) {
-
 	search := r.FormValue("search")
 
 	_, err := strconv.Atoi(search)
-
 	if err == nil {
 		http.Redirect(w, r, "/block/"+search, http.StatusMovedPermanently)
 		return
 	}
 
-	var ensData *types.EnsDomainResponse
-	if utils.IsValidEnsDomain(search) {
-		ensData, _ = GetEnsDomain(search)
-	}
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// var znsData *types.ZnsDomainResponse
+	// if utils.IsValidZnsDomain(search) {
+	// 	znsData, _ = GetZnsDomain(search)
+	// }
 	search = strings.Replace(search, "0x", "", -1)
-	if ensData != nil && len(ensData.Address) > 0 {
-		http.Redirect(w, r, "/address/"+ensData.Domain, http.StatusMovedPermanently)
-	} else if utils.IsValidWithdrawalCredentials(search) {
+	// if znsData != nil && len(znsData.Address) > 0 {
+	// 	http.Redirect(w, r, "/address/"+znsData.Domain, http.StatusMovedPermanently)
+	// } else if utils.IsValidWithdrawalCredentials(search) {
+	if utils.IsValidWithdrawalCredentials(search) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
-	} else if utils.IsValidEth1Tx(search) {
+	} else if utils.IsValidTxHash(search) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)
-	} else if len(search) == 96 {
+	} else if len(search) == 5184 {
 		http.Redirect(w, r, "/validator/"+search, http.StatusMovedPermanently)
-	} else if utils.IsValidEth1Address(search) {
+	} else if utils.IsAddress(search) {
 		http.Redirect(w, r, "/address/"+search, http.StatusMovedPermanently)
 	} else {
 		w.Header().Set("Content-Type", "text/html")
@@ -182,17 +185,18 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			ORDER BY index LIMIT 10`, search+"%")
 		}
 	case "eth1_addresses":
-		if utils.IsValidEnsDomain(search) {
-			ensData, _ := GetEnsDomain(search)
-			if len(ensData.Address) > 0 {
-				result = []*types.Eth1AddressSearchItem{{
-					Address: ensData.Address,
-					Name:    ensData.Domain,
-					Token:   "",
-				}}
-				break
-			}
-		}
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// if utils.IsValidZnsDomain(search) {
+		// 	znsData, _ := GetZnsDomain(search)
+		// 	if len(znsData.Address) > 0 {
+		// 		result = []*types.Eth1AddressSearchItem{{
+		// 			Address: znsData.Address,
+		// 			Name:    znsData.Domain,
+		// 			Token:   "",
+		// 		}}
+		// 		break
+		// 	}
+		// }
 		if !searchLikeRE.MatchString(strippedSearch) {
 			break
 		}
@@ -236,19 +240,21 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			LEFT JOIN validators ON validators.pubkey = eth1_deposits.publickey
 			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_eth1_addresses":
-		search = ReplaceEnsNameWithAddress(search)
-		if !utils.IsEth1Address(search) {
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// search = ReplaceZnsNameWithAddress(search)
+		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
 	case "count_indexed_validators_by_eth1_address":
-		var ensData *types.EnsDomainResponse
-		if utils.IsValidEnsDomain(search) {
-			ensData, _ = GetEnsDomain(search)
-			if len(ensData.Address) > 0 {
-				lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
-			}
-		}
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// var znsData *types.ZnsDomainResponse
+		// if utils.IsValidZnsDomain(search) {
+		// 	znsData, _ = GetZnsDomain(search)
+		// 	if len(znsData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(znsData.Address, "Z", "", -1))
+		// 	}
+		// }
 		if !searchLikeRE.MatchString(lowerStrippedSearch) {
 			break
 		}
@@ -269,13 +275,14 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
-		var ensData *types.EnsDomainResponse
-		if utils.IsValidEnsDomain(search) {
-			ensData, _ = GetEnsDomain(search)
-			if len(ensData.Address) > 0 {
-				lowerStrippedSearch = strings.ToLower(strings.Replace(ensData.Address, "0x", "", -1))
-			}
-		}
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// var znsData *types.ZnsDomainResponse
+		// if utils.IsValidZnsDomain(search) {
+		// 	znsData, _ = GetZnsDomain(search)
+		// 	if len(znsData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(znsData.Address, "0x", "", -1))
+		// 	}
+		// }
 		if len(lowerStrippedSearch) == 40 {
 			// when the user gives an address (that validators might withdraw to) we transform the address into credentials
 			lowerStrippedSearch = utils.BeginningOfSetWithdrawalCredentials + lowerStrippedSearch
@@ -366,18 +373,18 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			res[i].Name = string(utils.FormatValidatorName(res[i].Name))
 		}
 		result = &res
-	case "ens":
-		if !utils.IsValidEnsDomain(search) {
-			break
-		}
-		data, ensErr := GetEnsDomain(search)
-		if ensErr != nil {
-			if ensErr != sql.ErrNoRows {
-				err = ensErr
-			}
-			break
-		}
-		result = &data
+	// case "ens":
+	// 	if !utils.IsValidZnsDomain(search) {
+	// 		break
+	// 	}
+	// 	data, ensErr := GetZnsDomain(search)
+	// 	if ensErr != nil {
+	// 		if ensErr != sql.ErrNoRows {
+	// 			err = ensErr
+	// 		}
+	// 		break
+	// 	}
+	// 	result = &data
 	default:
 		http.Error(w, "Not found", 404)
 		return
@@ -395,16 +402,17 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// search can either be a valid ETH address or an ENS name mapping to one
+// search can either be a valid Zond address or an ZNS name mapping to one
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
-	search = strings.ToLower(strings.Replace(ReplaceEnsNameWithAddress(search), "0x", "", -1))
-	if !utils.IsValidEth1Address(search) {
-		return nil, fmt.Errorf("not a valid Eth1 address: %v", search)
+	// search = strings.ToLower(strings.Replace(ReplaceZnsNameWithAddress(search), "0x", "", -1))
+	search = strings.ToLower(search)
+	if !utils.IsAddress(search) {
+		return nil, fmt.Errorf("not a valid Zond address: %v", search)
 	}
 	// find validators per eth1-address (limit result by N addresses and M validators per address)
 
 	result := &[]struct {
-		Eth1Address      string        `db:"from_address_text" json:"eth1_address"`
+		ZondAddress      string        `db:"from_address_text" json:"zond_address"`
 		ValidatorIndices pq.Int64Array `db:"validatorindices" json:"validator_indices"`
 		Count            uint64        `db:"count" json:"-"`
 	}{}

@@ -85,7 +85,6 @@ var SessionStore *CustomSessionStore
 
 // InitSessionStore initializes SessionStore with the given secret.
 func InitSessionStore(secret string) {
-
 	pool := &redis.Pool{
 		MaxIdle: 10,
 		Dial: func() (redis.Conn, error) {
@@ -144,35 +143,4 @@ func GetFlash(w http.ResponseWriter, r *http.Request, name string) (string, erro
 		return fmt.Sprintf("%v", fm[0]), nil
 	}
 	return "", nil
-}
-
-func GetFlashes(w http.ResponseWriter, r *http.Request, name string) []interface{} {
-	session, err := SessionStore.Get(r, name)
-	if err != nil {
-		return []interface{}{}
-	}
-	flashes := session.Flashes()
-	session.Save(r, w)
-	return flashes
-}
-
-func HandleRecaptcha(w http.ResponseWriter, r *http.Request, errorRoute string) error {
-	if len(Config.Frontend.RecaptchaSecretKey) > 0 && len(Config.Frontend.RecaptchaSiteKey) > 0 {
-		recaptchaResponse := r.FormValue("g-recaptcha-response")
-		if len(recaptchaResponse) == 0 {
-			SetFlash(w, r, "pricing_flash", "Error: Failed to create request")
-			logger.Warnf("error no recaptcha response present for route: %v", r.URL.String())
-			http.Redirect(w, r, errorRoute, http.StatusSeeOther)
-			return fmt.Errorf("no recaptcha")
-		}
-
-		valid, err := ValidateReCAPTCHA(recaptchaResponse)
-		if err != nil || !valid {
-			SetFlash(w, r, "pricing_flash", "Error: Failed to create request")
-			logger.Warnf("error validating recaptcha %v route: %v -> %v", recaptchaResponse, r.URL.String(), err)
-			http.Redirect(w, r, errorRoute, http.StatusSeeOther)
-			return fmt.Errorf("invalid recaptcha")
-		}
-	}
-	return nil
 }

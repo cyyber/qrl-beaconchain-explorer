@@ -4,12 +4,12 @@ import (
 	"math/big"
 	"net/http"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/theQRL/go-zond/common"
 )
 
 func MempoolView(w http.ResponseWriter, r *http.Request) {
@@ -47,11 +47,6 @@ func formatToTable(content *types.RawMempoolResponse) *types.DataTableResponse {
 			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
 		}
 	}
-	for _, txs := range content.BaseFee {
-		for _, tx := range txs {
-			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
-		}
-	}
 	for _, txs := range content.Queued {
 		for _, tx := range txs {
 			dataTable.Data = append(dataTable.Data, toTableDataRow(tx))
@@ -62,23 +57,12 @@ func formatToTable(content *types.RawMempoolResponse) *types.DataTableResponse {
 
 func toTableDataRow(tx *types.RawMempoolTransaction) []interface{} {
 	return []any{
-		utils.FormatAddressWithLimits(tx.Hash.Bytes(), "", false, "tx", 15, 18, true),
+		utils.FormatTxHashWithLimits(tx.Hash.Bytes(), "", false, "tx", 15, 18, true),
 		utils.FormatAddressAll(tx.From.Bytes(), "", false, "address", int(12), int(12), true),
 		_isContractCreation(tx.To),
-		utils.FormatAmount((*big.Int)(tx.Value), utils.Config.Frontend.ElCurrency, 5),
+		utils.FormatAmount((*big.Int)(tx.Value), "ZND", 8),
 		utils.FormatAddCommasFormatted(float64(tx.Gas.ToInt().Int64()), 0),
-		utils.FormatAmountFormatted(tx.GasPrice.ToInt(), "GWei", 5, 0, true, true, false),
+		utils.FormatAmountFormatted(tx.GasPrice.ToInt(), "GPlanck", 5, 0, true, true, false),
 		tx.Nonce.ToInt(),
 	}
 }
-
-// type formatedTx struct {
-// 	Hash      template.HTML `json:"hash"`
-// 	From      template.HTML `json:"from"`
-// 	To        template.HTML `default:"Empty address"`
-// 	Value     template.HTML `json:"value"`
-// 	Gas       template.HTML `json:"gas"`
-// 	GasFeeCap template.HTML `json:"maxFeePerGas,omitempty"`
-// 	GasPrice  template.HTML `json:"gasPrice"`
-// 	Nonce     template.HTML `json:"nonce"`
-// }

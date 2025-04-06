@@ -37,7 +37,9 @@
                   formatTimestamps('#initiated-deposits')
               },
               language: {
-                  searchPlaceholder: 'Address | Val. Key | Withd. Cred. | Tx Hash | ENS address',
+                  // TODO(https://now.youtrack.cloud/issue/TZB-1)
+                  // searchPlaceholder: 'Address | Val. Key | Withd. Cred. | Tx Hash | ZNS address',
+                  searchPlaceholder: 'Address | Val. Key | Withd. Cred. | Tx Hash',
                   search: '',
                   paginate: {
                       previous: '<i class="fas fa-chevron-left"></i>',
@@ -64,7 +66,9 @@
             ajax: dataTableLoader("/validators/included-deposits/data"),
             pagingType: "input",
             language: {
-              searchPlaceholder: "Slot | Validator Key | Withdrawal Credentials | ENS address",
+              // TODO(https://now.youtrack.cloud/issue/TZB-1)
+              // searchPlaceholder: "Slot | Validator Key | Withdrawal Credentials | ZNS address",
+              searchPlaceholder: "Slot | Validator Key | Withdrawal Credentials",
               search: "",
               paginate: {
                 previous: '<i class="fas fa-chevron-left"></i>',
@@ -151,52 +155,12 @@
           <ol class="breadcrumb font-size-1 mb-0" style="padding:0; background-color:transparent;">
             <li class="breadcrumb-item"><a href="/" title="Home">Home</a></li>
             <li class="breadcrumb-item"><a href="/validators" title="Validators">Validators</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Eth Deposits</li>
+            <li class="breadcrumb-item active" aria-current="page">Zond Deposits</li>
           </ol>
         </nav>
       </div>
       <div id="r-banner" info="{{ $.Meta.Templates }}"></div>
       <div class="row mb-1">
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-item-center">
-                <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Top Depositor</h2>
-                <span class="h6" title="Number of deposits made">{{ if len .Stats.TopDepositors }}{{ (index .Stats.TopDepositors 0).DepositCount }}{{ else }}0{{ end }} Deposits</span>
-              </div>
-              <div class="d-flex align-items-center">
-                <span style="max-width: 150px;" class="h6 font-weight-normal mb-0 text-truncate">
-                  <a href="/validators/deposit-leaderboard" class="text-primary text-truncate">
-                    <i class="fas fa-medal"></i>
-                    {{ if len .Stats.TopDepositors }}0x{{ (index .Stats.TopDepositors 0).Address }}{{ end }}
-                  </a>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-item-center">
-                <h2 class="small text-uppercase font-weight-medium text-secondary mr-1">Runner Up</h2>
-                <span class="h6" title="Number of deposits made">{{ if gt (len .Stats.TopDepositors) 1 }}{{ (index .Stats.TopDepositors 1).DepositCount }}{{ else }}0{{ end }} Deposits</span>
-              </div>
-              <div class="d-flex align-items-center">
-                <span style="max-width: 150px;" class="h6 font-weight-normal mb-0 text-truncate">
-                  <a href="/validators/deposit-leaderboard" class="text-primary text-truncate">
-                    <i class="fas fa-medal"></i>
-                    {{ if gt (len .Stats.TopDepositors) 1 }}
-                      0x{{ (index .Stats.TopDepositors 1).Address }}
-                    {{ else }}
-                      N/A
-                    {{ end }}
-                  </a>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <div class="card-body">

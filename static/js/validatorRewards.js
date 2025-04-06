@@ -1,5 +1,5 @@
 const VALLIMIT = 200
-const DECIMAL_POINTS_ETH = 6
+const DECIMAL_POINTS_ZND = 6
 const DECIMAL_POINTS_CURRENCY = 3
 var csrfToken = ""
 var currency = ""
@@ -109,7 +109,7 @@ function create_typeahead(input_container) {
       source: bhEth1Addresses,
       display: "address",
       templates: {
-        header: "<h3>Validators by ETH Addresses</h3>",
+        header: "<h3>Validators by Zond Addresses</h3>",
         suggestion: function (data) {
           var len = data.validator_indices.length > VALLIMIT ? VALLIMIT + "+" : data.validator_indices.length
           return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">${data.eth1_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
@@ -178,13 +178,6 @@ function create_typeahead(input_container) {
   })
 }
 
-function updateCurrencies(currencies, container) {
-  for (item of currencies) {
-    if (item === "ts") continue
-    $("#" + container).append(`<option value="${item}">${item.toUpperCase()}</option>`)
-  }
-}
-
 function getValidatorQueryString() {
   return window.location.href.slice(window.location.href.indexOf("?"), window.location.href.length)
 }
@@ -216,8 +209,7 @@ function showTable(data) {
       $("#form-div").removeClass("d-flex").addClass("d-none")
       $("#table-div").removeClass("d-none")
       $("#subscriptions-div").addClass("d-none")
-      $("#total-income-eth-span").html("ETH " + data.total_eth)
-      $("#total-income-currency-span").html(data.total_currency)
+      $("#total-income-znd-span").html("ZND " + data.total_znd)
       $("#totals-div").removeClass("d-none")
       $(".dt-button").addClass("ml-2 ")
       hideSpinner()
@@ -241,7 +233,7 @@ function showTable(data) {
         data: "1",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ETH))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZND))
           return data
         },
       },
@@ -250,55 +242,37 @@ function showTable(data) {
         data: "2",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ETH))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZND))
           return data
         },
       },
-      {
-        targets: 3,
-        data: "3",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          // return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
-          return data
-        },
-      },
-      {
-        targets: 4,
-        data: "4",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          //    return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
-          return data
-        },
-        // }, {
-        //     targets: 5,
-        //     data: '5',
-        //     "orderable": false,
-        //     visible: false,
-        //     render: function (data, type, row, meta) {
-        //         return data.toUpperCase()
-        //     }
-      },
+      // {
+      //   targets: 3,
+      //   data: "3",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     // return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
+      //     return data
+      //   },
+      // },
+      // {
+      //   targets: 4,
+      //   data: "4",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     //    return `${currency} ${addCommas(parseFloat(data).toFixed(DECIMAL_POINTS_CURRENCY))}`
+      //     return data
+      //   },
+      //   // }, {
+      //   //     targets: 5,
+      //   //     data: '5',
+      //   //     "orderable": false,
+      //   //     visible: false,
+      //   //     render: function (data, type, row, meta) {
+      //   //         return data.toUpperCase()
+      //   //     }
+      // },
     ],
-  })
-}
-
-function unSubUser(filter) {
-  // console.log(filter)
-  showSpinner()
-  fetch(`/user/rewards/unsubscribe?${filter}`, {
-    method: "POST",
-    headers: { "X-CSRF-Token": csrfToken },
-    credentials: "include",
-    body: "",
-  }).then((res) => {
-    if (res.status == 200) {
-      res.json().then((data) => {
-        console.log(data.msg)
-        fetchSubscriptions()
-      })
-    }
   })
 }
 
@@ -380,49 +354,26 @@ function updateSubscriptionTable(data, container) {
           return data
         },
       },
-      {
-        targets: 3,
-        data: "3",
-        orderable: false,
-        render: function (data, type, row, meta) {
-          downloadQueryUrl = `${window.location.origin}/rewards/hist/download?validators=${row[2]}&currency=${row[1]}&days=${moment().subtract(1, "month").startOf("month").unix()}-${moment().subtract(1, "month").endOf("month").unix()}`
-          return `
-                        <div class="d-flex justify-content-between align-item-center">
-                            <i class="far fa-clone mr-2" style="cursor: pointer;" onClick='loadValInForm("${row[2]}")' data-toggle="tooltip" data-placement="top" title="Load validators in the form"></i>
-                            <a href="${downloadQueryUrl}" download><i class="fas fa-file-download mr-2" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Download the last month report"></i></a>
-                            <i class="fas fa-times text-danger mr-2" onClick='unSubUser("${data}")' style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Unsubscribe"></i>
-                        </div>
-                        `
-        },
-      },
+      // {
+      //   targets: 3,
+      //   data: "3",
+      //   orderable: false,
+      //   render: function (data, type, row, meta) {
+      //     downloadQueryUrl = `${window.location.origin}/rewards/hist/download?validators=${row[2]}&currency=${row[1]}&days=${moment().subtract(1, "month").startOf("month").unix()}-${moment().subtract(1, "month").endOf("month").unix()}`
+      //     return `
+      //                   <div class="d-flex justify-content-between align-item-center">
+      //                       <i class="far fa-clone mr-2" style="cursor: pointer;" onClick='loadValInForm("${row[2]}")' data-toggle="tooltip" data-placement="top" title="Load validators in the form"></i>
+      //                       <a href="${downloadQueryUrl}" download><i class="fas fa-file-download mr-2" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Download the last month report"></i></a>
+      //                   </div>
+      //                   `
+      //   },
+      // },
     ],
   })
 }
 
 function loadValInForm(val) {
   $("#validator-index-view").val(val.replace(/([a-zA-Z ])/g, ""))
-}
-
-function fetchSubscriptions() {
-  fetch(`/user/rewards/subscriptions/data`, {
-    method: "POST",
-    headers: { "X-CSRF-Token": csrfToken },
-    credentials: "include",
-    body: "",
-  })
-    .then((res) => {
-      if (res.status == 200) {
-        res.json().then((data) => {
-          // console.log(data.msg)
-          updateSubscriptionTable(data, "subscriptions-table")
-        })
-      } else {
-        console.error("error getting subscriptions", res)
-      }
-    })
-    .catch((err) => {
-      console.error("error getting subscriptions", err)
-    })
 }
 
 $(document).ready(function () {
@@ -480,41 +431,6 @@ $(document).ready(function () {
   create_typeahead(".typeahead-validators")
   let qry = getValidatorQueryString()
   // console.log(qry, qry.length)
-
-  $("#report-sub-btn").on("click", function () {
-    var form = document.getElementById("hits-form")
-    if (!form.reportValidity()) {
-      return
-    }
-    let btn_content = $(this).html()
-    $(this).html(`<div class="spinner-border text-dark spinner-border-sm" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>`)
-
-    fetch(`/user/rewards/subscribe?validators=${$("#validator-index-view").val()}&currency=${$("#currency").val()}`, {
-      method: "POST",
-      headers: { "X-CSRF-Token": csrfToken },
-      credentials: "include",
-      body: "",
-    })
-      .then((res) => {
-        if (res.status == 200) {
-          res.json().then((data) => {
-            // console.log(data.msg)
-            fetchSubscriptions()
-            $(this).html(btn_content)
-          })
-        } else {
-          console.error("error subscribing", res)
-          alert("Subscription limit is reached")
-          $(this).html(btn_content)
-        }
-      })
-      .catch((err) => {
-        console.error("error subscribing", err)
-        $(this).html(btn_content)
-      })
-  })
 
   if (qry.length > 1) {
     fetch(`/rewards/hist${qry}`, {

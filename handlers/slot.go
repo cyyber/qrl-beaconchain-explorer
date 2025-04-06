@@ -7,17 +7,16 @@ import (
 	"fmt"
 	"html/template"
 	"math"
-	"math/big"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/juliangruber/go-intersect"
 	"github.com/lib/pq"
@@ -34,7 +33,6 @@ const MaxSlotValue = 137438953503 // we only render a page for blocks up to this
 func Slot(w http.ResponseWriter, r *http.Request) {
 	slotTemplateFiles := append(layoutTemplateFiles,
 		"slot/slot.html",
-		"slot/transactions.html",
 		"slot/withdrawals.html",
 		"slot/attestations.html",
 		"slot/deposits.html",
@@ -42,7 +40,6 @@ func Slot(w http.ResponseWriter, r *http.Request) {
 		"slot/attesterSlashing.html",
 		"slot/proposerSlashing.html",
 		"slot/exits.html",
-		"slot/blobs.html",
 		"components/timestamp.html",
 		"slot/overview.html",
 		"slot/execTransactions.html")
@@ -129,16 +126,12 @@ func Slot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if the network started with PoS, slot 0 will contain block 0; checking for blockPageData.ExecBlockNumber.Int64 > 0 does not work in this case
-	isMergedSlot0 := slotPageData.Slot == 0 && slotPageData.Epoch >= utils.Config.Chain.ClConfig.BellatrixForkEpoch
-
-	if slotPageData.Status == 1 && (slotPageData.ExecBlockNumber.Int64 > 0 || isMergedSlot0) {
+	if slotPageData.Status == 1 && (slotPageData.ExecBlockNumber.Int64 > 0 || slotPageData.Slot == 0) {
 		// slot has corresponding execution block, fetch execution data
 		eth1BlockPageData, err := GetExecutionBlockPageData(uint64(slotPageData.ExecBlockNumber.Int64), 10)
 		// if err != nil, simply show slot view without block
 		if err == nil {
 			slotPageData.ExecutionData = eth1BlockPageData
-			slotPageData.ExecutionData.IsValidMev = slotPageData.IsValidMev
 		}
 	}
 	data := InitPageData(w, r, "blockchain", fmt.Sprintf("/slot/%v", slotPageData.Slot), fmt.Sprintf("Slot %v", slotOrHash), slotTemplateFiles)
@@ -170,7 +163,7 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 			block_index,
 			aggregationbits,
 			validators,
-			signature,
+			signatures,
 			slot,
 			committeeindex,
 			beaconblockroot,
@@ -195,7 +188,7 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 			&attestation.BlockIndex,
 			&attestation.AggregationBits,
 			&attestation.Validators,
-			&attestation.Signature,
+			&attestation.Signatures,
 			&attestation.Slot,
 			&attestation.CommitteeIndex,
 			&attestation.BeaconBlockRoot,
@@ -214,7 +207,6 @@ func getAttestationsData(slot uint64, onlyFirst bool) ([]*types.BlockPageAttesta
 func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 	latestFinalizedEpoch := services.LatestFinalizedEpoch()
 	slotPageData := types.BlockPageData{}
-	slotPageData.Mainnet = utils.Config.Chain.ClConfig.ConfigName == "mainnet"
 	// for the first slot in an epoch the previous epoch defines the finalized state
 	err := db.ReaderDb.Get(&slotPageData, `
 		SELECT
@@ -233,7 +225,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			blocks.eth1data_depositcount,
 			blocks.eth1data_blockhash,
 			blocks.syncaggregate_bits,
-			blocks.syncaggregate_signature,
+			blocks.syncaggregate_signatures,
 			blocks.syncaggregate_participation,
 			blocks.proposerslashingscount,
 			blocks.attesterslashingscount,
@@ -245,9 +237,8 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			blocks.status,
 			exec_block_number,
 			jsonb_agg(tags.metadata) as tags,
-			COALESCE(not 'invalid-relay-reward'=ANY(array_agg(tags.id)), true) as is_valid_mev,
 			COALESCE(validator_names.name, '') AS name,
-			(SELECT count(*) from blocks_bls_change where block_slot = $1) as bls_change_count
+			(SELECT count(*) from blocks_dilithium_change where block_slot = $1) as dilithium_change_count
 		FROM blocks 
 		LEFT JOIN validators ON blocks.proposer = validators.validatorindex
 		LEFT JOIN validator_names ON validators.pubkey = validator_names.publickey
@@ -325,7 +316,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			block_slot,
 			block_index,
 			attestation1_indices,
-			attestation1_signature,
+			attestation1_signatures,
 			attestation1_slot,
 			attestation1_index,
 			attestation1_beaconblockroot,
@@ -334,7 +325,7 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			attestation1_target_epoch,
 			attestation1_target_root,
 			attestation2_indices,
-			attestation2_signature,
+			attestation2_signatures,
 			attestation2_slot,
 			attestation2_index,
 			attestation2_beaconblockroot,
@@ -357,11 +348,6 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 		}
 	}
 
-	err = db.ReaderDb.Select(&slotPageData.BlobSidecars, `SELECT block_slot, block_root, index, kzg_commitment, kzg_proof, blob_versioned_hash FROM blocks_blob_sidecars WHERE block_root = $1`, slotPageData.BlockRoot)
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving block blob sidecars (slot: %d, blockroot: %#x): %w", slotPageData.Slot, slotPageData.BlockRoot, err)
-	}
-
 	err = db.ReaderDb.Select(&slotPageData.ProposerSlashings, "SELECT block_slot, block_index, block_root, proposerindex, header1_slot, header1_parentroot, header1_stateroot, header1_bodyroot, header1_signature, header2_slot, header2_parentroot, header2_stateroot, header2_bodyroot, header2_signature FROM blocks_proposerslashings WHERE block_slot = $1", slotPageData.Slot)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving block proposer slashings data: %v", err)
@@ -377,7 +363,6 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 
 // SlotDepositData returns the deposits for a specific slot
 func SlotDepositData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
@@ -475,7 +460,7 @@ func SlotDepositData(w http.ResponseWriter, r *http.Request) {
 		tableData = append(tableData, []interface{}{
 			i + 1 + int(start),
 			utils.FormatPublicKey(deposit.PublicKey),
-			utils.FormatBalance(deposit.Amount, currency),
+			utils.FormatBalance(deposit.Amount, "ZND"),
 			utils.FormatWithdawalCredentials(deposit.WithdrawalCredentials, true),
 			fmt.Sprintf("0x%v", hex.EncodeToString(deposit.Signature)),
 			utils.FormatHash(deposit.Signature, true),
@@ -689,9 +674,9 @@ func BlockTransactionsData(w http.ResponseWriter, r *http.Request) {
 			Method:        methodFormatted,
 			FromFormatted: v.FromFormatted,
 			ToFormatted:   v.ToFormatted,
-			Value:         utils.FormatAmountFormatted(v.Value, utils.Config.Frontend.ElCurrency, 5, 0, true, true, false),
-			Fee:           utils.FormatAmountFormatted(v.Fee, utils.Config.Frontend.ElCurrency, 5, 0, true, true, false),
-			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GWei", 5, 0, true, true, false),
+			Value:         utils.FormatAmountFormatted(v.Value, "ZND", 5, 0, true, true, false),
+			Fee:           utils.FormatAmountFormatted(v.Fee, "ZND", 5, 0, true, true, false),
+			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GPlanck", 5, 0, true, true, false),
 		}
 	}
 
@@ -714,7 +699,7 @@ type attestationsData struct {
 	SourceRoot      string        `json:"SourceRoot"`
 	TargetEpoch     uint64        `json:"TargetEpoch"`
 	TargetRoot      string        `json:"TargetRoot"`
-	Signature       string        `json:"Signature"`
+	Signatures      []string      `json:"Signatures"`
 }
 
 // SlotAttestationsData returns the attestations for a specific slot
@@ -753,7 +738,10 @@ func SlotAttestationsData(w http.ResponseWriter, r *http.Request) {
 			SourceRoot:      fmt.Sprintf("%x", v.SourceRoot),
 			TargetEpoch:     v.TargetEpoch,
 			TargetRoot:      fmt.Sprintf("%x", v.TargetRoot),
-			Signature:       fmt.Sprintf("%x", v.Signature),
+			Signatures:      make([]string, len(v.Signatures)),
+		}
+		for j, sig := range v.Signatures {
+			data[i].Signatures[j] = fmt.Sprintf("%x", sig)
 		}
 	}
 
@@ -768,7 +756,6 @@ func SlotAttestationsData(w http.ResponseWriter, r *http.Request) {
 func SlotWithdrawalData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	currency := GetCurrency(r)
 	slot, err := strconv.ParseUint(vars["slot"], 10, 64)
 	if err != nil || slot > math.MaxInt32 {
 		logger.Warnf("error parsing slot url parameter %v: %v", vars["slot"], err)
@@ -786,7 +773,7 @@ func SlotWithdrawalData(w http.ResponseWriter, r *http.Request) {
 			template.HTML(fmt.Sprintf("%v", w.Index)),
 			utils.FormatValidator(w.ValidatorIndex),
 			utils.FormatAddress(w.Address, nil, "", false, false, true),
-			utils.FormatClCurrency(w.Amount, currency, 6, true, false, false, true),
+			utils.FormatClCurrency(w.Amount, 6, true, false, false, true),
 		})
 	}
 
@@ -804,7 +791,7 @@ func SlotWithdrawalData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SlotBlsChangeData(w http.ResponseWriter, r *http.Request) {
+func SlotDilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 
@@ -814,24 +801,24 @@ func SlotBlsChangeData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error: Invalid parameter slot.", http.StatusBadRequest)
 		return
 	}
-	blsChange, err := db.GetSlotBLSChange(slot)
+	dilithiumChange, err := db.GetSlotDilithiumChange(slot)
 	if err != nil {
-		logger.Errorf("error retrieving blsChange data for slot %v, err: %v", slot, err)
+		logger.Errorf("error retrieving dilithiumChange data for slot %v, err: %v", slot, err)
 	}
 
-	tableData := make([][]interface{}, 0, len(blsChange))
-	for _, c := range blsChange {
+	tableData := make([][]interface{}, 0, len(dilithiumChange))
+	for _, c := range dilithiumChange {
 		tableData = append(tableData, []interface{}{
 			utils.FormatValidator(c.Validatorindex),
 			utils.FormatHashWithCopy(c.Signature),
-			utils.FormatHashWithCopy(c.BlsPubkey),
+			utils.FormatHashWithCopy(c.DilithiumPubkey),
 			utils.FormatAddress(c.Address, nil, "", false, false, true),
 		})
 	}
 
 	data := &types.DataTableResponse{
 		Draw:         1,
-		RecordsTotal: uint64(len(blsChange)),
+		RecordsTotal: uint64(len(dilithiumChange)),
 		// RecordsFiltered: uint64(len(withdrawals)),
 		Data: tableData,
 	}
@@ -842,24 +829,4 @@ func SlotBlsChangeData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-}
-
-// ToWei converts the big.Int wei to its gwei string representation.
-func ToWei(wei *big.Int) string {
-	return wei.String()
-}
-
-// ToGWei converts the big.Int wei to its gwei string representation.
-func ToGWei(wei *big.Int) string {
-	return ToEth(new(big.Int).Mul(wei, big.NewInt(1e9)))
-}
-
-// ToEth converts the big.Int wei to its ether string representation.
-func ToEth(wei *big.Int) string {
-	z, m := new(big.Int).DivMod(wei, big.NewInt(1e18), new(big.Int))
-	if m.Cmp(new(big.Int)) == 0 {
-		return z.String()
-	}
-	s := strings.TrimRight(fmt.Sprintf("%018s", m.String()), "0")
-	return z.String() + "." + s
 }

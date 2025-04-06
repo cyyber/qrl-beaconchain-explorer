@@ -26,8 +26,12 @@
           <div class="col-md-10">0x{{ printf "%x" $attestationSlashing.Attestation1BeaconBlockRoot }}</div>
         </div>
         <div class="row border-bottom p-1 mx-0">
-          <div class="col-md-2">Signature:</div>
-          <div class="col-md-10">0x{{ printf "%x" $attestationSlashing.Attestation1Signature }}</div>
+          <div class="col-md-2">Signatures:</div>
+          <div class="col-md-10">
+            {{ range $sig := $attestationSlashing.Attestation1Signatures }}
+              0x{{ printf "%x" $sig }}
+            {{ end }}
+          </div>
         </div>
         <div class="row border-bottom p-1 mx-0">
           <div class="col-md-2">Source Epoch:</div>
@@ -61,8 +65,12 @@
           <div class="col-md-10">0x{{ printf "%x" $attestationSlashing.Attestation2BeaconBlockRoot }}</div>
         </div>
         <div class="row border-bottom p-1 mx-0">
-          <div class="col-md-2">Signature:</div>
-          <div class="col-md-10">0x{{ printf "%x" $attestationSlashing.Attestation2Signature }}</div>
+          <div class="col-md-2">Signatures:</div>
+          <div class="col-md-10">
+            {{ range $sig := $attestationSlashing.Attestation2Signatures }}
+              0x{{ printf "%x" $sig }}
+            {{ end }}
+          </div>
         </div>
         <div class="row border-bottom p-1 mx-0">
           <div class="col-md-2">Source Epoch:</div>

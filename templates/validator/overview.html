@@ -85,14 +85,13 @@
           <div class="px-2 mx-auto" style="max-width: 50rem;">
             <span>
               {{ if eq .InclusionDelay 0 }}
-                A deposit has been made, and your validator will be voted into the activation queue once the deposited amount sums up to {{ formatClCurrency config.Chain.ClConfig.MaxEffectiveBalance $.Rates.ClCurrency 0 true false false false }}.
+                A deposit has been made, and your validator will be voted into the activation queue once the deposited amount sums up to {{ formatClCurrency config.Chain.ClConfig.MaxEffectiveBalance 0 true false false false }}.
               {{ else }}
-                The last deposit to the Deposit contract was made {{ if gt .Deposits.LastEth1DepositTs 0 }}<span aria-ethereum-date-format="FROMNOW" aria-ethereum-date="{{ .Deposits.LastEth1DepositTs }}"></span>{{ end }}, it will take <a href="https://kb.beaconcha.in/ethereum-2.0-and-depositing-process">around 16-24 hours</a> until your deposit is processed by the beacon chain. This validator will be eligible for activation once the deposited amount sums up to {{ formatClCurrency config.Chain.ClConfig.MaxEffectiveBalance $.Rates.ClCurrency 0 true false false false }}.
+                The last deposit to the Deposit contract was made {{ if gt .Deposits.LastEth1DepositTs 0 }}<span aria-ethereum-date-format="FROMNOW" aria-ethereum-date="{{ .Deposits.LastEth1DepositTs }}"></span>{{ end }}, it will take <a href="https://kb.beaconcha.in/ethereum-2.0-and-depositing-process">around 16-24 hours</a> until your deposit is processed by the beacon chain. This validator will be eligible for activation once the deposited amount sums up to {{ formatClCurrency config.Chain.ClConfig.MaxEffectiveBalance 0 true false false false }}.
               {{ end }}
               <br />
               <br /><br />
-              Join our <a href="https://dsc.gg/beaconchain">Discord server</a> for support, questions and suggestions. <br /><br />
-              Download the <a href="https://beaconcha.in/mobile">mobile app</a> to monitor your validator.
+              Join our <a href="https://www.theqrl.org/discord">Discord server</a> for support, questions and suggestions. <br /><br />
             </span>
           </div>
         </div>
@@ -143,10 +142,8 @@
     <div class="overview-container d-flex flex-wrap justify-content-center">
       <div class="m-3 position-relative" style="flex-basis: 4rem; white-space: nowrap;">
         <span style="top:-1.2rem; white-space: nowrap;" class="text-muted font-weight-lighter position-absolute"><small>{{ if gtf .RankPercentage 0.0 }}{{ if gtf .RankPercentage 0.001 }}Rank {{ formatPercentageWithGPrecision .RankPercentage 3 }} %{{ else }}Top 0.1%{{ end }}{{ else }}Rank{{ end }}</small></span>
-        <a class="no-highlight" href="/validators/leaderboard">
-          <i style="font-size: 16px;" class="fas fa-medal"></i>
-          <span id="validatorRank" style="font-weight: bold; font-size:16px;">{{ if gt .Rank7d 0 }}{{ .Rank7d }}{{ else }}N/A{{ end }}</span>
-        </a>
+        <i style="font-size: 16px;" class="fas fa-medal"></i>
+        <span id="validatorRank" style="font-weight: bold; font-size:16px;">{{ if gt .Rank7d 0 }}{{ .Rank7d }}{{ else }}N/A{{ end }}</span>
       </div>
       <div class="m-3 position-relative" style="flex-basis: 4rem; white-space: nowrap;">
         <span style="top:-1.2rem; white-space: nowrap;" class="text-muted font-weight-lighter position-absolute"><small>Status</small></span>
@@ -155,7 +152,7 @@
       <div class="m-3 position-relative" style="flex-basis: 4rem; white-space: nowrap;">
         <span style="top:-1.2rem; white-space: nowrap;" class="text-muted font-weight-lighter position-absolute"><small>Balance</small></span>
         <div class="d-flex flex-column">
-          <span style="font-weight: bold; font-size:18px;">{{ formatClCurrency .CurrentBalance $.Rates.SelectedCurrency 5 true false false false }}</span>
+          <span style="font-weight: bold; font-size:18px;">{{ formatClCurrency .CurrentBalance 5 true false false false }}</span>
           <span style="font-size: 0.8rem; color: gray"
             >{{ formatEffectiveBalance .EffectiveBalance config.Frontend.MainCurrency }}
             <span data-toggle="tooltip" title="The effective balance is used to calculate the base rewards of a validator"
@@ -185,7 +182,7 @@
       <div class="m-3 position-relative">
         <span style="top:-1.2rem;" class="text-muted font-weight-lighter position-absolute"><small>Balance</small></span>
         <div style="width: 8.32rem" class="d-flex flex-column">
-          <span style="font-weight: bold; font-size:18px;">{{ formatClCurrency .CurrentBalance $.Rates.SelectedCurrency 5 true false false false }}</span>
+          <span style="font-weight: bold; font-size:18px;">{{ formatClCurrency .CurrentBalance 5 true false false false }}</span>
           <span
             >{{ formatEffectiveBalance .EffectiveBalance config.Frontend.MainCurrency }}
             <span style="font-size:0.8rem; color:gray" data-toggle="tooltip" title="The effective balance is used to calculate the base rewards of a validator"
@@ -215,15 +212,8 @@
             {{ else }}
               This validator has exited the system during epoch <a href="/epoch/{{ .ExitEpoch }}">{{ .ExitEpoch }}</a> and is no longer validating. There is no need to keep the validator running anymore.
             {{ end }}
-
-            {{ if .CappellaHasHappened }}
-              Funds will be withdrawable after epoch <span><a href="/epoch/{{ .WithdrawableEpoch }}">{{ .WithdrawableEpoch }}</a></span
-              >.
-            {{ else }}
-              <span data-toggle="tooltip" title="Please note that the withdraw functionality has not been implemented by ACD yet.">
-                Funds will be withdrawable after epoch <span><a href="/epoch/{{ .WithdrawableEpoch }}">{{ .WithdrawableEpoch }}</a></span></span
-              >.
-            {{ end }}
+            Funds will be withdrawable after epoch <span><a href="/epoch/{{ .WithdrawableEpoch }}">{{ .WithdrawableEpoch }}</a></span
+            >.
           </div>
           {{ if .Slashed }}<div class="p-2">Slashed by {{ .SlashedBy | formatValidator }} at Slot {{ .SlashedAt | formatBlockSlot }}, Reason: {{ .SlashedFor }}</div>{{ end }}
         </div>
@@ -264,33 +254,20 @@
       <span id="depositCount" style="cursor: pointer;" data-toggle="tooltip" title="Deposits made to the deposit contract"><i class="fas fa-wallet"></i> {{ .DepositsCount }}</span>
     </div>
 
-    {{ if .CappellaHasHappened }}
-      <div class="mx-3">
-        <span id="withdrawalCount" style="cursor: pointer;" data-toggle="tooltip" {{ if .IsWithdrawableAddress }}title="Withdrawals processed for this validator"{{ else }}title="To receive withdrawals, 0x01 withdrawal credentials are required. Click here for more information."{{ end }}>
-          {{ if .IsWithdrawableAddress }}
-            <i class="fas fa-money-bill"></i>
-            {{ .WithdrawalCount }}
-          {{ else }}
-            <a href="{{ if eq config.Chain.Id 100 }}https://docs.gnosischain.com/node/management/withdrawals/#how-to-change-the-withdrawal-credential{{ else }}https://launchpad.ethereum.org/en/withdrawals{{ end }}">
-              <i class="fas fa-money-bill" style="color:var(--body-color)"></i>
-              <i class="text-warning fas fa-exclamation-triangle"></i>
-              <i class="fas fa-external-link-alt"></i>
-            </a>
-          {{ end }}
-        </span>
-      </div>
-    {{ end }}
-
-
-    <!--
     <div class="mx-3">
-        {{ if ne .CurrentAttestationStreak .LongestAttestationStreak }}
-      <span id="attestationStreak" style="cursor: default;" data-toggle="tooltip" title="Attestation Streaks (Current / Longest)"><i class="fas fa-fire"></i> {{ .CurrentAttestationStreak }} / {{ .LongestAttestationStreak }}</span>
-    {{ else }}
-      <span id="attestationStreak" style="cursor: default;" data-toggle="tooltip" title="Attestation Streak"><i class="fas fa-fire"></i> {{ .LongestAttestationStreak }}</span>
-    {{ end }}
+      <span id="withdrawalCount" style="cursor: pointer;" data-toggle="tooltip" {{ if .IsWithdrawableAddress }}title="Withdrawals processed for this validator"{{ else }}title="To receive withdrawals, 0x01 withdrawal credentials are required. Click here for more information."{{ end }}>
+        {{ if .IsWithdrawableAddress }}
+          <i class="fas fa-money-bill"></i>
+          {{ .WithdrawalCount }}
+        {{ else }}
+          <a href="{{ if eq config.Chain.Id 100 }}https://docs.gnosischain.com/node/management/withdrawals/#how-to-change-the-withdrawal-credential{{ else }}https://launchpad.ethereum.org/en/withdrawals{{ end }}">
+            <i class="fas fa-money-bill" style="color:var(--body-color)"></i>
+            <i class="text-warning fas fa-exclamation-triangle"></i>
+            <i class="fas fa-external-link-alt"></i>
+          </a>
+        {{ end }}
+      </span>
     </div>
-    -->
   </div>
 
   <script>

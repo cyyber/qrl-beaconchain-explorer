@@ -5,12 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -28,7 +27,6 @@ func startMonitoringService(wg *sync.WaitGroup) {
 
 // The cl data monitoring service will check that the data in the validators, blocks & epochs tables is up to date
 func startClDataMonitoringService() {
-
 	name := "monitoring_cl_data"
 	firstRun := true
 	for {
@@ -93,7 +91,6 @@ func startClDataMonitoringService() {
 }
 
 func startElDataMonitoringService() {
-
 	name := "monitoring_el_data"
 	firstRun := true
 	for {
@@ -139,7 +136,6 @@ func startElDataMonitoringService() {
 }
 
 func startRedisMonitoringService() {
-
 	name := "monitoring_redis"
 	firstRun := true
 	for {
@@ -166,7 +162,6 @@ func startRedisMonitoringService() {
 }
 
 func startApiMonitoringService() {
-
 	name := "monitoring_api"
 	firstRun := true
 
@@ -174,11 +169,9 @@ func startApiMonitoringService() {
 		Timeout: time.Second * 10,
 	}
 
-	url := "https://" + utils.Config.Frontend.SiteDomain + "/api/v1/epoch/latest"
-	// add apikey (if any) to url but don't log the api key when errors occur
+	url := "https://" + utils.Config.Frontend.SiteDomain + "/api/healthz"
 	errFields := map[string]interface{}{
 		"url": url}
-	url += "?apikey=" + utils.Config.Monitoring.ApiKey
 
 	for {
 		if !firstRun {
@@ -189,12 +182,12 @@ func startApiMonitoringService() {
 		resp, err := client.Get(url)
 		if err != nil {
 			utils.LogError(err, "getting client error", 0, errFields)
-			ReportStatus(name, strings.ReplaceAll(err.Error(), utils.Config.Monitoring.ApiKey, ""), nil)
+			ReportStatus(name, err.Error(), nil)
 			continue
 		}
 
 		if resp.StatusCode != 200 {
-			errorMsg := fmt.Errorf("error: api epoch / latest endpoint returned a non 200 status: %v", resp.StatusCode)
+			errorMsg := fmt.Errorf("error: api healthz endpoint returned a non 200 status: %v", resp.StatusCode)
 			utils.LogError(nil, errorMsg, 0, errFields)
 			ReportStatus(name, errorMsg.Error(), nil)
 			continue
@@ -205,7 +198,6 @@ func startApiMonitoringService() {
 }
 
 func startAppMonitoringService() {
-
 	name := "monitoring_app"
 	firstRun := true
 
@@ -213,11 +205,9 @@ func startAppMonitoringService() {
 		Timeout: time.Second * 10,
 	}
 
-	url := "https://" + utils.Config.Frontend.SiteDomain + "/api/v1/app/dashboard"
-	// add apikey (if any) to url but don't log the api key when errors occur
+	url := "https://" + utils.Config.Frontend.SiteDomain
 	errFields := map[string]interface{}{
 		"url": url}
-	url += "?apikey=" + utils.Config.Monitoring.ApiKey
 
 	for {
 		if !firstRun {
@@ -225,10 +215,10 @@ func startAppMonitoringService() {
 		}
 		firstRun = false
 
-		resp, err := client.Post(url, "application/json", strings.NewReader(`{"indicesOrPubkey": "1,2"}`))
+		resp, err := client.Get(url)
 		if err != nil {
-			utils.LogError(err, "POST to dashboard URL error", 0, errFields)
-			ReportStatus(name, strings.ReplaceAll(err.Error(), utils.Config.Monitoring.ApiKey, ""), nil)
+			utils.LogError(err, "getting client error", 0, errFields)
+			ReportStatus(name, err.Error(), nil)
 			continue
 		}
 
@@ -249,7 +239,7 @@ func startServicesMonitoringService() {
 	firstRun := true
 
 	servicesToCheck := map[string]time.Duration{
-		"eth1indexer":               time.Minute * 15,
+		"elIndexer":                 time.Minute * 15,
 		"slotVizUpdater":            time.Minute * 15,
 		"slotUpdater":               time.Minute * 15,
 		"latestProposedSlotUpdater": time.Minute * 15,
@@ -259,16 +249,10 @@ func startServicesMonitoringService() {
 		"indexPageDataUpdater":      time.Minute * 15,
 		"latestBlockUpdater":        time.Minute * 15,
 		"headBlockRootHashUpdater":  time.Minute * 15,
-		"notification-collector":    time.Minute * 15,
-		"relaysUpdater":             time.Minute * 15,
-		"ethstoreExporter":          time.Minute * 60,
 		"statsUpdater":              time.Minute * 30,
-		"poolsUpdater":              time.Minute * 30,
 		"slotExporter":              time.Minute * 15,
 		"statistics":                time.Minute * 90,
-		"ethStoreStatistics":        time.Minute * 15,
 		"lastExportedStatisticDay":  time.Minute * 15,
-		//"notification-sender", //exclude for now as the sender is only running on mainnet
 	}
 
 	if utils.Config.Monitoring.ServiceMonitoringConfigurations != nil {

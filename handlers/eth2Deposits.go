@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 )
 
 // Eth2Deposits will return information about deposits using a go template
@@ -18,12 +18,13 @@ func Eth2Deposits(w http.ResponseWriter, r *http.Request) {
 
 // Eth2DepositsData will return information eth1-deposits in json
 func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
-	currency := GetCurrency(r)
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
 
-	search := ReplaceEnsNameWithAddress(q.Get("search[value]"))
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
+	search := q.Get("search[value]")
 	search = strings.Replace(search, "0x", "", -1)
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)
@@ -76,7 +77,7 @@ func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
 		tableData[i] = []interface{}{
 			utils.FormatBlockSlot(d.BlockSlot),
 			utils.FormatPublicKey(d.Publickey),
-			utils.FormatDepositAmount(d.Amount, currency),
+			utils.FormatDepositAmount(d.Amount, "ZND"),
 			utils.FormatWithdawalCredentials(d.Withdrawalcredentials, false),
 			utils.FormatHash(d.Signature),
 			utils.FormatHash(d.Withdrawalcredentials, false),

@@ -1,4 +1,5 @@
 #! /bin/bash
+# TODO(now.youtrack.cloud/issue/TZB-6)
 set -e
 
 clean_up () {

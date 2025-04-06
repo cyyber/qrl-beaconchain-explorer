@@ -1,7 +1,3 @@
 config.yml
-config-staging.yml
-config-pyrmont.yml
-cmd/test
-cmd/playground
 bin
 _gitignore

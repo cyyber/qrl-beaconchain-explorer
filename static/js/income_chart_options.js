@@ -52,12 +52,12 @@ function getIncomeChartOptions(clIncomeHistory, elIncomeHistory, title, height) 
     yAxis: [
       {
         title: {
-          text: `Income [${selectedCurrency}]`,
+          text: `Income ZND`,
         },
         opposite: false,
         labels: {
           formatter: function () {
-            return selectedCurrency === "ETH" ? trimToken(this.value) : trimCurrency(this.value)
+            return trimToken(this.value)
           },
         },
       },

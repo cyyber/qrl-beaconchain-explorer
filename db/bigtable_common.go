@@ -7,15 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 	"github.com/sirupsen/logrus"
 )
 
 func (bigtable *Bigtable) WriteBulk(mutations *types.BulkMutations, table *gcp_bigtable.Table, batchSize int) error {
-
 	callingFunctionName := utils.GetParentFuncName()
 
 	ctx, done := context.WithTimeout(context.Background(), time.Minute*5)
@@ -96,8 +95,6 @@ func (bigtable *Bigtable) ClearByPrefix(table string, family, columns, prefix st
 		btTable = bigtable.tableMetadata
 	case "beaconchain":
 		btTable = bigtable.tableBeaconchain
-	case "machine_metrics":
-		btTable = bigtable.tableMachineMetrics
 	case "beaconchain_validators":
 		btTable = bigtable.tableValidators
 	case "beaconchain_validators_history":

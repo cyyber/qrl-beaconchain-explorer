@@ -42,8 +42,13 @@
           </div>
         </div>
         <div class="row p-1 mx-0">
-          <div class="col-md-2">Signature:</div>
-          <div class="col-md-10 text-monospace text-break">0x{{ printf "%x" $attestation.Signature }}</div>
+          <div class="col-md-2">Signatures:</div>
+          <div class="col-md-10 text-monospace text-break">
+            {{ range $sig := $attestation.Signatures }}
+              {{ formatHash $sig }}
+              <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" $sig }}"></i>
+            {{ end }}
+          </div>
         </div>
       </div>
     </div>

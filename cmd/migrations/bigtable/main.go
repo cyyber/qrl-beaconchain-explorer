@@ -6,19 +6,18 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/exporter"
-	"github.com/gobitfly/eth2-beaconchain-explorer/rpc"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
-	"github.com/gobitfly/eth2-beaconchain-explorer/version"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/exporter"
+	"github.com/theQRL/zond-beaconchain-explorer/rpc"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/version"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
 
 func main() {
-
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
 	start := flag.Uint64("start", 1, "Start epoch")
@@ -95,9 +94,9 @@ func main() {
 
 	chainIDBig := new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID)
 
-	rpcClient, err := rpc.NewLighthouseClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
+	rpcClient, err := rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
 	if err != nil {
-		utils.LogFatal(err, "new bigtable lighthouse client error", 0)
+		utils.LogFatal(err, "new bigtable qrysm client error", 0)
 	}
 
 	gOuter := errgroup.Group{}
@@ -164,14 +163,6 @@ func main() {
 				}
 				return nil
 			})
-			g.Go(func() error {
-				err := db.BigtableClient.MigrateIncomeDataV1V2Schema(epoch)
-				if err != nil {
-					return fmt.Errorf("error migrating income data to v2 schema for epoch %v: %w", epoch, err)
-				}
-				return nil
-			})
-
 			err = g.Wait()
 			if err != nil {
 				return fmt.Errorf("error during bigtable export for epoch %v: %w", epoch, err)
@@ -205,16 +196,16 @@ func monitor(configPath string) {
 	chainIDBig := new(big.Int).SetUint64(utils.Config.Chain.ClConfig.DepositChainID)
 
 	var rpcClient rpc.Client
-	rpcClient, err = rpc.NewLighthouseClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
+	rpcClient, err = rpc.NewQrysmClient("http://"+cfg.Indexer.Node.Host+":"+cfg.Indexer.Node.Port, chainIDBig)
 	if err != nil {
-		utils.LogFatal(err, "new bigtable lighthouse client in monitor error", 0)
+		utils.LogFatal(err, "new bigtable qrysm client in monitor error", 0)
 	}
 	current := uint64(0)
 
 	for ; ; time.Sleep(time.Second * 12) {
 		head, err := rpcClient.GetChainHead()
 		if err != nil {
-			utils.LogFatal(err, "getting chain head from lighthouse in monitor error", 0)
+			utils.LogFatal(err, "getting chain head from qrysm in monitor error", 0)
 		}
 
 		logrus.Infof("current is %v, head is %v, finalized is %v", current, head.HeadEpoch, head.FinalizedEpoch)

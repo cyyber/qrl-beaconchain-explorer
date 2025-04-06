@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/templates"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/lib/pq"
 )
@@ -139,7 +139,7 @@ func GetSlotsTableData(draw, start, length uint64, search string, searchForEmpty
 		// - block-slot (exact when number)
 		// - block-graffiti (infix)
 		// - proposer-index (exact when number)
-		// - proposer-publickey (prefix when hex, exact when hex and 96 chars)
+		// - proposer-publickey (prefix when hex, exact when hex and 5184 chars)
 		// - proposer-name (infix)
 		//
 		// the resulting query will look like this:

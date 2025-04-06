@@ -1,9 +1,8 @@
 # The dockerfile is currently still WIP and might be broken
-FROM golang:1.21.12 AS build-env
+FROM golang:1.24 AS build-env
 COPY go.mod go.sum /src/
 WORKDIR /src
 RUN go mod download
-RUN go install github.com/swaggo/swag/cmd/swag@v1.8.3
 ADD . /src
 ARG target=all
 RUN make -B $target

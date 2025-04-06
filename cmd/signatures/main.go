@@ -6,19 +6,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	_ "net/http/pprof"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/metrics"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/types"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
-	"github.com/gobitfly/eth2-beaconchain-explorer/version"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/metrics"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/version"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
-
-	_ "net/http/pprof"
 )
 
 /**
@@ -203,7 +202,6 @@ func ImportSignatures(bt *db.Bigtable, st types.SignatureType) {
 }
 
 func GetNextSignatures(bt *db.Bigtable, page string, status types.SignatureImportStatus) (*string, []types.Signature, error) {
-
 	httpClient := &http.Client{Timeout: time.Second * 10}
 
 	resp, err := httpClient.Get(page)

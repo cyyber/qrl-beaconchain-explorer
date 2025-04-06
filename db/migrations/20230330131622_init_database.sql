@@ -30,9 +30,10 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE INDEX IF NOT EXISTS idx_validators_pubkey ON validators (pubkey);
 
-CREATE INDEX IF NOT EXISTS idx_validators_pubkeyhex ON validators (pubkeyhex);
+-- TODO(now.youtrack.cloud/issue/TZB-9)
+-- CREATE INDEX IF NOT EXISTS idx_validators_pubkeyhex ON validators (pubkeyhex);
+-- CREATE INDEX IF NOT EXISTS idx_validators_pubkeyhex_pattern_pos ON validators (pubkeyhex varchar_pattern_ops);
 
-CREATE INDEX IF NOT EXISTS idx_validators_pubkeyhex_pattern_pos ON validators (pubkeyhex varchar_pattern_ops);
 
 CREATE INDEX IF NOT EXISTS idx_validators_status ON validators (status);
 
@@ -90,11 +91,6 @@ CREATE TABLE IF NOT EXISTS
         el_performance_31d BIGINT NOT NULL,
         el_performance_365d BIGINT NOT NULL,
         el_performance_total BIGINT NOT NULL,
-        mev_performance_1d BIGINT NOT NULL,
-        mev_performance_7d BIGINT NOT NULL,
-        mev_performance_31d BIGINT NOT NULL,
-        mev_performance_365d BIGINT NOT NULL,
-        mev_performance_total BIGINT NOT NULL,
         rank7d INT NOT NULL,
         PRIMARY KEY (validatorindex)
     );
@@ -170,12 +166,10 @@ CREATE TABLE IF NOT EXISTS
         deposits_amount BIGINT,
         withdrawals INT,
         withdrawals_amount BIGINT,
-        cl_rewards_gwei BIGINT,
-        cl_rewards_gwei_total BIGINT,
-        el_rewards_wei DECIMAL,
-        el_rewards_wei_total DECIMAL,
-        mev_rewards_wei DECIMAL,
-        mev_rewards_wei_total DECIMAL,
+        cl_rewards_gplanck BIGINT,
+        cl_rewards_gplanck_total BIGINT,
+        el_rewards_planck DECIMAL,
+        el_rewards_planck_total DECIMAL,
         PRIMARY KEY (validatorindex, DAY)
     );
 
@@ -188,25 +182,6 @@ CREATE TABLE IF NOT EXISTS
         income_exported BOOLEAN NOT NULL DEFAULT FALSE,
         PRIMARY KEY (DAY)
     );
-
-CREATE TABLE IF NOT EXISTS
-    validator_attestation_streaks (
-        validatorindex INT NOT NULL,
-        status INT NOT NULL,
-        START INT NOT NULL,
-        LENGTH INT NOT NULL,
-        longest BOOLEAN NOT NULL,
-        CURRENT BOOLEAN NOT NULL,
-        PRIMARY KEY (validatorindex, status, START)
-    );
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_validatorindex ON validator_attestation_streaks (validatorindex);
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_status ON validator_attestation_streaks (status);
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_length ON validator_attestation_streaks (LENGTH);
-
-CREATE INDEX IF NOT EXISTS idx_validator_attestation_streaks_start ON validator_attestation_streaks (START);
 
 CREATE TABLE IF NOT EXISTS
     queue (
@@ -250,9 +225,9 @@ CREATE TABLE IF NOT EXISTS
         averagevalidatorbalance BIGINT NOT NULL,
         totalvalidatorbalance BIGINT NOT NULL,
         finalized bool,
-        eligibleether BIGINT,
+        eligibleznd BIGINT,
         globalparticipationrate FLOAT,
-        votedether BIGINT,
+        votedznd BIGINT,
         rewards_exported bool NOT NULL DEFAULT FALSE,
         PRIMARY KEY (epoch)
     );
@@ -272,7 +247,7 @@ CREATE TABLE IF NOT EXISTS
         eth1data_depositcount INT NOT NULL,
         eth1data_blockhash bytea,
         syncaggregate_bits bytea,
-        syncaggregate_signature bytea,
+        syncaggregate_signatures bytea[],
         syncaggregate_participation FLOAT NOT NULL DEFAULT 0,
         proposerslashingscount INT NOT NULL,
         attesterslashingscount INT NOT NULL,
@@ -320,7 +295,7 @@ CREATE TABLE IF NOT EXISTS
         validatorindex INT NOT NULL,
         address bytea NOT NULL,
         amount BIGINT NOT NULL,
-        -- in GWei
+        -- in GPlanck
         PRIMARY KEY (block_slot, block_root, withdrawalindex)
     );
 
@@ -329,7 +304,7 @@ CREATE INDEX IF NOT EXISTS idx_blocks_withdrawals_recipient ON blocks_withdrawal
 CREATE INDEX IF NOT EXISTS idx_blocks_withdrawals_validatorindex ON blocks_withdrawals (validatorindex);
 
 CREATE TABLE IF NOT EXISTS
-    blocks_bls_change (
+    blocks_dilithium_change (
         block_slot INT NOT NULL,
         block_root bytea NOT NULL,
         validatorindex INT NOT NULL,
@@ -339,9 +314,9 @@ CREATE TABLE IF NOT EXISTS
         PRIMARY KEY (block_slot, block_root, validatorindex)
     );
 
-CREATE INDEX IF NOT EXISTS idx_blocks_bls_change_pubkey ON blocks_bls_change (pubkey);
+CREATE INDEX IF NOT EXISTS idx_blocks_dilithium_change_pubkey ON blocks_dilithium_change (pubkey);
 
-CREATE INDEX IF NOT EXISTS idx_blocks_bls_change_address ON blocks_bls_change (address);
+CREATE INDEX IF NOT EXISTS idx_blocks_dilithium_change_address ON blocks_dilithium_change (address);
 
 CREATE TABLE IF NOT EXISTS
     blocks_transactions (
@@ -387,7 +362,7 @@ CREATE TABLE IF NOT EXISTS
         block_index INT NOT NULL,
         block_root bytea NOT NULL DEFAULT '',
         attestation1_indices INTEGER[] NOT NULL,
-        attestation1_signature bytea NOT NULL,
+        attestation1_signatures bytea[] NOT NULL,
         attestation1_slot BIGINT NOT NULL,
         attestation1_index INT NOT NULL,
         attestation1_beaconblockroot bytea NOT NULL,
@@ -396,7 +371,7 @@ CREATE TABLE IF NOT EXISTS
         attestation1_target_epoch INT NOT NULL,
         attestation1_target_root bytea NOT NULL,
         attestation2_indices INTEGER[] NOT NULL,
-        attestation2_signature bytea NOT NULL,
+        attestation2_signatures bytea[] NOT NULL,
         attestation2_slot BIGINT NOT NULL,
         attestation2_index INT NOT NULL,
         attestation2_beaconblockroot bytea NOT NULL,
@@ -414,7 +389,7 @@ CREATE TABLE IF NOT EXISTS
         block_root bytea NOT NULL DEFAULT '',
         aggregationbits bytea NOT NULL,
         validators INT[] NOT NULL,
-        signature bytea NOT NULL,
+        signatures bytea[] NOT NULL,
         slot INT NOT NULL,
         committeeindex INT NOT NULL,
         beaconblockroot bytea NOT NULL,
@@ -467,17 +442,7 @@ CREATE TABLE IF NOT EXISTS
         previousjustifiedepoch INT NOT NULL,
         PRIMARY KEY (ts)
     );
-
-CREATE TABLE IF NOT EXISTS
-    graffitiwall (
-        x INT NOT NULL,
-        y INT NOT NULL,
-        color TEXT NOT NULL,
-        slot INT NOT NULL,
-        VALIDATOR INT NOT NULL,
-        PRIMARY KEY (x, y)
-    );
-
+    
 CREATE TABLE IF NOT EXISTS
     eth1_deposits (
         tx_hash bytea NOT NULL,
@@ -515,165 +480,6 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    users (
-        id serial NOT NULL UNIQUE,
-        PASSWORD CHARACTER VARYING(256) NOT NULL,
-        email CHARACTER VARYING(100) NOT NULL UNIQUE,
-        email_confirmed bool NOT NULL DEFAULT 'f',
-        email_confirmation_hash CHARACTER VARYING(40) UNIQUE,
-        email_confirmation_ts TIMESTAMP WITHOUT TIME ZONE,
-        email_change_to_value CHARACTER VARYING(100),
-        password_reset_hash CHARACTER VARYING(40),
-        password_reset_ts TIMESTAMP WITHOUT TIME ZONE,
-        register_ts TIMESTAMP WITHOUT TIME ZONE,
-        api_key CHARACTER VARYING(256) UNIQUE,
-        stripe_customer_id CHARACTER VARYING(256) UNIQUE,
-        user_group VARCHAR(10),
-        PRIMARY KEY (id, email)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_datatable (
-        user_id INT NOT NULL,
-        KEY CHARACTER VARYING(256) NOT NULL,
-        state jsonb NOT NULL,
-        updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT 'now()',
-        PRIMARY KEY (user_id, KEY)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_stripe_subscriptions (
-        subscription_id CHARACTER VARYING(256) UNIQUE NOT NULL,
-        customer_id CHARACTER VARYING(256) NOT NULL,
-        price_id CHARACTER VARYING(256) NOT NULL,
-        active bool NOT NULL DEFAULT 'f',
-        payload json NOT NULL,
-        purchase_group CHARACTER VARYING(30) NOT NULL DEFAULT 'api',
-        PRIMARY KEY (customer_id, subscription_id, price_id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_app_subscriptions (
-        id serial NOT NULL,
-        user_id INT NOT NULL,
-        product_id CHARACTER VARYING(256) NOT NULL,
-        price_micros BIGINT NOT NULL,
-        currency CHARACTER VARYING(10) NOT NULL,
-        created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        validate_remotely BOOLEAN NOT NULL DEFAULT 't',
-        active bool NOT NULL DEFAULT 'f',
-        store CHARACTER VARYING(50) NOT NULL,
-        expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        reject_reason CHARACTER VARYING(50),
-        receipt CHARACTER VARYING(99999) NOT NULL,
-        receipt_hash CHARACTER VARYING(1024) NOT NULL UNIQUE,
-        subscription_id CHARACTER VARYING(256) DEFAULT ''
-    );
-
-CREATE INDEX IF NOT EXISTS idx_user_app_subscriptions ON users_app_subscriptions (user_id);
-
-CREATE TABLE IF NOT EXISTS
-    oauth_apps (
-        id serial NOT NULL,
-        owner_id INT NOT NULL,
-        redirect_uri CHARACTER VARYING(100) NOT NULL UNIQUE,
-        app_name CHARACTER VARYING(35) NOT NULL,
-        active bool NOT NULL DEFAULT 't',
-        created_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        PRIMARY KEY (id, redirect_uri)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    oauth_codes (
-        id serial NOT NULL,
-        user_id INT NOT NULL,
-        code CHARACTER VARYING(64) NOT NULL,
-        client_id CHARACTER VARYING(128) NOT NULL,
-        consumed bool NOT NULL DEFAULT 'f',
-        app_id INT NOT NULL,
-        created_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        PRIMARY KEY (user_id, app_id, client_id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_devices (
-        id serial NOT NULL,
-        user_id INT NOT NULL,
-        refresh_token CHARACTER VARYING(64) NOT NULL,
-        device_name CHARACTER VARYING(20) NOT NULL,
-        notification_token CHARACTER VARYING(500),
-        notify_enabled bool NOT NULL DEFAULT 't',
-        active bool NOT NULL DEFAULT 't',
-        app_id INT NOT NULL,
-        created_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        PRIMARY KEY (user_id, refresh_token)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_clients (
-        id serial NOT NULL,
-        user_id INT NOT NULL,
-        client CHARACTER VARYING(12) NOT NULL,
-        client_version INT NOT NULL,
-        notify_enabled bool NOT NULL DEFAULT 't',
-        created_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        PRIMARY KEY (user_id, client)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_subscriptions (
-        id serial NOT NULL,
-        user_id INT NOT NULL,
-        event_name CHARACTER VARYING(100) NOT NULL,
-        event_filter TEXT NOT NULL DEFAULT '',
-        event_threshold REAL DEFAULT 0,
-        last_sent_ts TIMESTAMP WITHOUT TIME ZONE,
-        last_sent_epoch INT,
-        created_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        created_epoch INT NOT NULL,
-        unsubscribe_hash bytea,
-        internal_state VARCHAR,
-        PRIMARY KEY (user_id, event_name, event_filter)
-    );
-
-CREATE INDEX IF NOT EXISTS idx_users_subscriptions_unsubscribe_hash ON users_subscriptions (unsubscribe_hash);
-
-DO $$
-BEGIN
-IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notification_channels') THEN
-        CREATE TYPE notification_channels AS ENUM('webhook_discord', 'webhook', 'email', 'push');
-END IF;
-END$$;
-
-CREATE TABLE IF NOT EXISTS
-    users_notification_channels (
-        user_id INT NOT NULL,
-        channel notification_channels NOT NULL,
-        active BOOLEAN DEFAULT 't' NOT NULL,
-        PRIMARY KEY (user_id, channel)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    notification_queue (
-        id serial NOT NULL,
-        created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        sent TIMESTAMP WITHOUT TIME ZONE,
-        -- record when the transaction was dispatched
-        -- delivered           timestamp without time zone,  --record when the transaction arrived
-        channel notification_channels NOT NULL,
-        CONTENT jsonb NOT NULL
-    );
-
-CREATE TABLE IF NOT EXISTS
-    users_validators_tags (
-        user_id INT NOT NULL,
-        validator_publickey bytea NOT NULL,
-        tag CHARACTER VARYING(100) NOT NULL,
-        PRIMARY KEY (user_id, validator_publickey, tag)
-    );
-
-CREATE TABLE IF NOT EXISTS
     validator_tags (
         publickey bytea NOT NULL,
         tag CHARACTER VARYING(100) NOT NULL,
@@ -681,80 +487,9 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    users_webhooks (
-        id serial NOT NULL,
-        user_id INT NOT NULL,
-        -- label             varchar(200)            not null,
-        url CHARACTER VARYING(1024) NOT NULL,
-        retries INT NOT NULL DEFAULT 0,
-        -- a backoff parameter that indicates if the requests was successful and when to retry it again
-        request jsonb,
-        response jsonb,
-        last_sent TIMESTAMP WITHOUT TIME ZONE,
-        event_names TEXT[] NOT NULL,
-        destination CHARACTER VARYING(200),
-        -- discord for example could be a destination and the request would be adapted
-        PRIMARY KEY (user_id, id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    mails_sent (
-        email CHARACTER VARYING(100) NOT NULL,
-        ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        cnt INT NOT NULL,
-        PRIMARY KEY (email, ts)
-    );
-
-CREATE TABLE IF NOT EXISTS
     chart_images (
         NAME VARCHAR(100) NOT NULL PRIMARY KEY,
         image bytea NOT NULL
-    );
-
-CREATE TABLE IF NOT EXISTS
-    api_statistics (
-        ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        apikey VARCHAR(64) NOT NULL,
-        CALL VARCHAR(64) NOT NULL,
-        COUNT INT NOT NULL DEFAULT 0,
-        PRIMARY KEY (
-            ts,
-            apikey,
-            CALL
-        )
-    );
-
-CREATE TABLE IF NOT EXISTS
-    stake_pools_stats (
-        id serial NOT NULL,
-        address TEXT NOT NULL,
-        deposit INT,
-        NAME TEXT NOT NULL,
-        category TEXT,
-        PRIMARY KEY (id, address, deposit, NAME)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    price (
-        ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        eur NUMERIC(20, 10) NOT NULL,
-        usd NUMERIC(20, 10) NOT NULL,
-        rub NUMERIC(20, 10) NOT NULL,
-        cny NUMERIC(20, 10) NOT NULL,
-        cad NUMERIC(20, 10) NOT NULL,
-        jpy NUMERIC(20, 10) NOT NULL,
-        gbp NUMERIC(20, 10) NOT NULL,
-        aud NUMERIC(20, 10) NOT NULL,
-        PRIMARY KEY (ts)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    stats_sharing (
-        id bigserial PRIMARY KEY,
-        ts TIMESTAMP NOT NULL,
-        SHARE bool NOT NULL,
-        user_id BIGINT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users (id)
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -771,154 +506,17 @@ CREATE TABLE IF NOT EXISTS
     );
 
 CREATE TABLE IF NOT EXISTS
-    rocketpool_export_status (
-        rocketpool_storage_address bytea NOT NULL,
-        eth1_block INT NOT NULL,
-        PRIMARY KEY (rocketpool_storage_address)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    rocketpool_minipools (
-        rocketpool_storage_address bytea NOT NULL,
-        address bytea NOT NULL,
-        pubkey bytea NOT NULL,
-        node_address bytea NOT NULL,
-        node_fee FLOAT NOT NULL,
-        deposit_type VARCHAR(20) NOT NULL,
-        -- none (invalid), full, half, empty .. see: https://github.com/rocket-pool/rocketpool/blob/683addf4ac/contracts/types/MinipoolDeposit.sol
-        status TEXT NOT NULL,
-        -- Initialized, Prelaunch, Staking, Withdrawable, Dissolved .. see: https://github.com/rocket-pool/rocketpool/blob/683addf4ac/contracts/types/MinipoolStatus.sol
-        status_time TIMESTAMP WITHOUT TIME ZONE,
-        penalty_count NUMERIC NOT NULL DEFAULT 0,
-        node_deposit_balance NUMERIC,
-        node_refund_balance NUMERIC,
-        user_deposit_balance NUMERIC,
-        is_vacant BOOLEAN DEFAULT FALSE,
-        VERSION INT DEFAULT 0,
-        PRIMARY KEY (rocketpool_storage_address, address)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    rocketpool_nodes (
-        rocketpool_storage_address bytea NOT NULL,
-        address bytea NOT NULL,
-        timezone_location VARCHAR(200) NOT NULL,
-        rpl_stake NUMERIC NOT NULL,
-        min_rpl_stake NUMERIC NOT NULL,
-        max_rpl_stake NUMERIC NOT NULL,
-        rpl_cumulative_rewards NUMERIC NOT NULL DEFAULT 0,
-        smoothing_pool_opted_in BOOLEAN NOT NULL DEFAULT FALSE,
-        claimed_smoothing_pool NUMERIC NOT NULL,
-        unclaimed_smoothing_pool NUMERIC NOT NULL,
-        unclaimed_rpl_rewards NUMERIC NOT NULL,
-        effective_rpl_stake NUMERIC NOT NULL,
-        deposit_credit NUMERIC,
-        PRIMARY KEY (rocketpool_storage_address, address)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    rocketpool_dao_proposals (
-        rocketpool_storage_address bytea NOT NULL,
-        id INT NOT NULL,
-        dao TEXT NOT NULL,
-        proposer_address bytea NOT NULL,
-        message TEXT NOT NULL,
-        created_time TIMESTAMP WITHOUT TIME ZONE,
-        start_time TIMESTAMP WITHOUT TIME ZONE,
-        end_time TIMESTAMP WITHOUT TIME ZONE,
-        expiry_time TIMESTAMP WITHOUT TIME ZONE,
-        votes_required FLOAT NOT NULL,
-        votes_for FLOAT NOT NULL,
-        votes_against FLOAT NOT NULL,
-        member_voted BOOLEAN NOT NULL,
-        member_supported BOOLEAN NOT NULL,
-        is_cancelled BOOLEAN NOT NULL,
-        is_executed BOOLEAN NOT NULL,
-        payload bytea NOT NULL,
-        state TEXT NOT NULL,
-        PRIMARY KEY (rocketpool_storage_address, id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    rocketpool_dao_proposals_member_votes (
-        rocketpool_storage_address bytea NOT NULL,
-        id INT NOT NULL,
-        member_address bytea NOT NULL,
-        voted BOOLEAN NOT NULL,
-        supported BOOLEAN NOT NULL,
-        PRIMARY KEY (rocketpool_storage_address, id, member_address)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    rocketpool_dao_members (
-        rocketpool_storage_address bytea NOT NULL,
-        address bytea NOT NULL,
-        id VARCHAR(200) NOT NULL,
-        url VARCHAR(200) NOT NULL,
-        joined_time TIMESTAMP WITHOUT TIME ZONE,
-        last_proposal_time TIMESTAMP WITHOUT TIME ZONE,
-        rpl_bond_amount NUMERIC NOT NULL,
-        unbonded_validator_count INT NOT NULL,
-        PRIMARY KEY (rocketpool_storage_address, address)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    rocketpool_network_stats (
-        id bigserial,
-        ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        rpl_price NUMERIC NOT NULL,
-        claim_interval_time INTERVAL NOT NULL,
-        claim_interval_time_start TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-        current_node_fee FLOAT NOT NULL,
-        current_node_demand NUMERIC NOT NULL,
-        reth_supply NUMERIC NOT NULL,
-        effective_rpl_staked NUMERIC NOT NULL,
-        node_operator_rewards NUMERIC NOT NULL,
-        reth_exchange_rate FLOAT NOT NULL,
-        node_count NUMERIC NOT NULL,
-        minipool_count NUMERIC NOT NULL,
-        odao_member_count NUMERIC NOT NULL,
-        total_eth_staking NUMERIC NOT NULL,
-        total_eth_balance NUMERIC NOT NULL,
-        PRIMARY KEY (id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    rocketpool_reward_tree (
-        id bigserial,
-        DATA jsonb NOT NULL,
-        PRIMARY KEY (id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    eth_store_stats (
-        DAY INT NOT NULL,
-        VALIDATOR INT NOT NULL,
-        effective_balances_sum_wei NUMERIC NOT NULL,
-        start_balances_sum_wei NUMERIC NOT NULL,
-        end_balances_sum_wei NUMERIC NOT NULL,
-        deposits_sum_wei NUMERIC NOT NULL,
-        tx_fees_sum_wei NUMERIC NOT NULL,
-        consensus_rewards_sum_wei NUMERIC NOT NULL,
-        total_rewards_wei NUMERIC NOT NULL,
-        apr FLOAT NOT NULL,
-        PRIMARY KEY (DAY, VALIDATOR)
-    );
-
-CREATE INDEX IF NOT EXISTS idx_eth_store_validator ON eth_store_stats (VALIDATOR, DAY DESC);
-
-CREATE TABLE IF NOT EXISTS
     historical_pool_performance (
         DAY INT NOT NULL,
         pool VARCHAR(40) NOT NULL,
         validators INT NOT NULL,
-        effective_balances_sum_wei NUMERIC NOT NULL,
-        start_balances_sum_wei NUMERIC NOT NULL,
-        end_balances_sum_wei NUMERIC NOT NULL,
-        deposits_sum_wei NUMERIC NOT NULL,
-        tx_fees_sum_wei NUMERIC NOT NULL,
-        consensus_rewards_sum_wei NUMERIC NOT NULL,
-        total_rewards_wei NUMERIC NOT NULL,
+        effective_balances_sum_planck NUMERIC NOT NULL,
+        start_balances_sum_planck NUMERIC NOT NULL,
+        end_balances_sum_planck NUMERIC NOT NULL,
+        deposits_sum_planck NUMERIC NOT NULL,
+        tx_fees_sum_planck NUMERIC NOT NULL,
+        consensus_rewards_sum_planck NUMERIC NOT NULL,
+        total_rewards_planck NUMERIC NOT NULL,
         apr FLOAT NOT NULL,
         PRIMARY KEY (DAY, pool)
     );
@@ -945,41 +543,6 @@ CREATE TABLE IF NOT EXISTS
 CREATE INDEX IF NOT EXISTS idx_blocks_tags_slot ON blocks_tags (slot);
 
 CREATE INDEX IF NOT EXISTS idx_blocks_tags_tag_id ON blocks_tags (tag_id);
-
-CREATE TABLE IF NOT EXISTS
-    relays (
-        tag_id VARCHAR NOT NULL,
-        endpoint VARCHAR NOT NULL,
-        public_link VARCHAR NULL,
-        is_censoring bool NULL,
-        is_ethical bool NULL,
-        export_failure_count INT NOT NULL DEFAULT 0,
-        last_export_try_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-        last_export_success_ts TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-        PRIMARY KEY (tag_id, endpoint),
-        FOREIGN KEY (tag_id) REFERENCES tags (id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    relays_blocks (
-        tag_id VARCHAR NOT NULL,
-        block_slot int4 NOT NULL,
-        block_root bytea NOT NULL,
-        exec_block_hash bytea NOT NULL,
-        builder_pubkey bytea NOT NULL,
-        proposer_pubkey bytea NOT NULL,
-        proposer_fee_recipient bytea NOT NULL,
-        VALUE NUMERIC NOT NULL,
-        PRIMARY KEY (block_slot, block_root, tag_id)
-    );
-
-CREATE INDEX IF NOT EXISTS relays_blocks_block_root_idx ON public.relays_blocks (block_root);
-
-CREATE INDEX IF NOT EXISTS relays_blocks_builder_pubkey_idx ON public.relays_blocks (builder_pubkey);
-
-CREATE INDEX IF NOT EXISTS relays_blocks_exec_block_hash_idx ON public.relays_blocks (exec_block_hash);
-
-CREATE INDEX IF NOT EXISTS relays_blocks_value_idx ON public.relays_blocks (VALUE);
 
 CREATE TABLE IF NOT EXISTS
     validator_queue_deposits (
@@ -1028,43 +591,20 @@ CREATE TABLE IF NOT EXISTS
         enabled bool NOT NULL
     );
 
-CREATE TABLE IF NOT EXISTS
-    node_jobs (
-        id VARCHAR(40),
-        TYPE VARCHAR(40) NOT NULL,
-        -- can be one of: BLS_TO_EXECUTION_CHANGES, VOLUNTARY_EXITS
-        status VARCHAR(40) NOT NULL,
-        -- can be one of: PENDING, SUBMITTED_TO_NODE, COMPLETED
-        created_time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-        submitted_to_node_time TIMESTAMP WITHOUT TIME ZONE,
-        completed_time TIMESTAMP WITHOUT TIME ZONE,
-        DATA jsonb NOT NULL,
-        PRIMARY KEY (id)
-    );
-
-CREATE TABLE IF NOT EXISTS
-    ad_configurations (
-        id VARCHAR(40),
-        --uuid
-        template_id VARCHAR(100) NOT NULL,
-        --relative path to the main html file of the page
-        jquery_selector VARCHAR(40) NOT NULL,
-        --selector with the html
-        insert_mode VARCHAR(10) NOT NULL,
-        -- can be before, after, replace or insert
-        refresh_interval INT NOT NULL,
-        -- defines how often the ad is refreshed in seconds, 0 = don't refresh
-        enabled bool NOT NULL,
-        -- defines if the ad is active
-        for_all_users bool NOT NULL,
-        -- if set the ad will be shown to all users even if they have NoAds
-        banner_id INT,
-        -- an ad must either have a banner_id OR an html_content
-        html_content TEXT,
-        PRIMARY KEY (id)
-    );
-
-CREATE INDEX IF NOT EXISTS idx_ad_configuration_for_template ON ad_configurations (template_id, enabled);
+-- TODO(now.youtrack.cloud/issue/TZB-2)
+-- CREATE TABLE IF NOT EXISTS
+--     node_jobs (
+--         id VARCHAR(40),
+--         TYPE VARCHAR(40) NOT NULL,
+--         -- can be one of: DILITHIUM_TO_EXECUTION_CHANGES, VOLUNTARY_EXITS
+--         status VARCHAR(40) NOT NULL,
+--         -- can be one of: PENDING, SUBMITTED_TO_NODE, COMPLETED
+--         created_time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+--         submitted_to_node_time TIMESTAMP WITHOUT TIME ZONE,
+--         completed_time TIMESTAMP WITHOUT TIME ZONE,
+--         DATA jsonb NOT NULL,
+--         PRIMARY KEY (id)
+--     );
 
 CREATE TABLE IF NOT EXISTS
     explorer_configurations (

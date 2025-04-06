@@ -208,18 +208,7 @@
                   <button data-toggle="tooltip" title="Open in reward history" style="visibility:hidden;" id="rewards-button" class="btn btn-primary btn-sm m-1">
                     <i class="far fa-money-bill-alt text-white" style="width:18px;"></i>
                   </button>
-                  {{ if $.User.Authenticated }}
-                    <button data-toggle="tooltip" title="Save all to Watchlist" style="visibility:hidden;" id="bookmark-button" type="button" class="btn btn-primary btn-sm m-1">
-                      <i class="far fa-bookmark text-white" style="width:18px;"></i>
-                    </button>
-                  {{ else }}
-                    <span class="" data-toggle="tooltip" title="You need to login to follow a validator">
-                      <button style="visibility:hidden;" id="bookmark-button" disabled type="button" class="btn btn-primary btn-sm m-1 disabled">
-                        <i class="far fa-bookmark text-white" style="width:18px;"></i>
-                      </button>
-                    </span>
-                  {{ end }}
-                  <button data-toggle="tooltip" data-original-title="Copy Link to Dashboard" style="visibility:hidden;" id="copy-button" data-clipboard-text="https://beaconcha.in/dashboard" type="button" class="btn btn-primary btn-sm m-1">
+                  <button data-toggle="tooltip" data-original-title="Copy Link to Dashboard" style="visibility:hidden;" id="copy-button" data-clipboard-text="https://explorer.zond.theqrl.org/dashboard" type="button" class="btn btn-primary btn-sm m-1">
                     <i class="fa fa-copy text-white" style="width:18px;"></i>
                   </button>
                   <button data-toggle="tooltip" title="Clear Dashboard" style="visibility:hidden;" id="clear-search" type="button" class="btn btn-primary btn-sm m-1">
@@ -228,7 +217,11 @@
                 </span>
                 <span class="multiselect-border" style="margin:1rem 0;">
                   <ul id="selected-validators-input" class="multiselect">
-                    <li class="input"><input class="typeahead-dashboard" type="text" placeholder="Add a validator via their index, public key, name, graffiti, ENS name or address" aria-label="Search" style="font-size:.9rem;" /></li>
+                    <!--
+                    // TODO(now.youtrack.cloud/issue/TZB-1)
+                    <li class="input"><input class="typeahead-dashboard" type="text" placeholder="Add a validator via their index, public key, name, graffiti, ZNS name or address" aria-label="Search" style="font-size:.9rem;" /></li>
+                    -->
+                    <li class="input"><input class="typeahead-dashboard" type="text" placeholder="Add a validator via their index, public key, name, graffiti or address" aria-label="Search" style="font-size:.9rem;" /></li>
                   </ul>
                   <div id="selected-validators-overview" class="d-none dropdown-selected-validators" style="position:absolute;overflow-y:auto;left:.5rem;right:calc(92px + .5rem);top:100%;margin-top:.3rem;max-height:280px;min-width:240px;border-radius:5px;box-shadow:0 .5rem 1rem rgba(0,0,0,.175);">
                     <!-- class="dropdown-selected-validators" -->
@@ -325,14 +318,12 @@
                     <span class="tab-text dashboard-table-nav-text"> Proposals</span>
                   </a>
                 </li>
-                {{ if .CappellaHasHappened }}
-                  <li class="nav-item dashboard-table-nav" style="flex:1;">
-                    <a class="nav-link" id="withdrawal-tab" data-toggle="tab" href="#withdrawals" role="tab" aria-controls="withdrawals" aria-selected="false" style="text-align:center;white-space:nowrap;">
-                      <i class="tab-icon mr-md-1 fas fa-money-bill"></i>
-                      <span class="tab-text">Withdrawals</span>
-                    </a>
-                  </li>
-                {{ end }}
+                <li class="nav-item dashboard-table-nav" style="flex:1;">
+                  <a class="nav-link" id="withdrawal-tab" data-toggle="tab" href="#withdrawals" role="tab" aria-controls="withdrawals" aria-selected="false" style="text-align:center;white-space:nowrap;">
+                    <i class="tab-icon mr-md-1 fas fa-money-bill"></i>
+                    <span class="tab-text">Withdrawals</span>
+                  </a>
+                </li>
               </ul>
               <div class="tab-content h-100" id="dashTabContent">
                 <div id="validators-tableTabPanel" class="tab-pane fade h-100" role="tabpanel" aria-labelledby="validators-tab">
@@ -621,11 +612,9 @@
                     </div>
                   </div>
                 </div>
-                {{ if .CappellaHasHappened }}
-                  <div class="tab-pane fade h-100" id="withdrawalsTabPanel" role="tabpanel" aria-labelledby="withdrawal-tab" aria-controls="withdrawals">
-                    {{ template "dashboardWithdrawalTable" . }}
-                  </div>
-                {{ end }}
+                <div class="tab-pane fade h-100" id="withdrawalsTabPanel" role="tabpanel" aria-labelledby="withdrawal-tab" aria-controls="withdrawals">
+                  {{ template "dashboardWithdrawalTable" . }}
+                </div>
               </div>
             </div>
           </div>

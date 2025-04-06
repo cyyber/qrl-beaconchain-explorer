@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"

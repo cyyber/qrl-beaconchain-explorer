@@ -3,10 +3,10 @@ package exporter
 import (
 	"time"
 
-	"github.com/gobitfly/eth2-beaconchain-explorer/db"
-	"github.com/gobitfly/eth2-beaconchain-explorer/rpc"
-	"github.com/gobitfly/eth2-beaconchain-explorer/services"
-	"github.com/gobitfly/eth2-beaconchain-explorer/utils"
+	"github.com/theQRL/zond-beaconchain-explorer/db"
+	"github.com/theQRL/zond-beaconchain-explorer/rpc"
+	"github.com/theQRL/zond-beaconchain-explorer/services"
+	"github.com/theQRL/zond-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
 )
@@ -20,23 +20,9 @@ func Start(client rpc.Client) {
 	go networkLivenessUpdater(client)
 	go eth1DepositsExporter()
 	go genesisDepositsExporter(client)
-	go checkSubscriptions()
 	go syncCommitteesExporter(client)
 	go syncCommitteesCountExporter()
-	if utils.Config.SSVExporter.Enabled {
-		go ssvExporter()
-	}
-	if utils.Config.RocketpoolExporter.Enabled {
-		go rocketpoolExporter()
-	}
 
-	if utils.Config.Indexer.PubKeyTagsExporter.Enabled {
-		go UpdatePubkeyTag()
-	}
-
-	if utils.Config.MevBoostRelayExporter.Enabled {
-		go mevBoostRelaysExporter()
-	}
 	// wait until the beacon-node is available
 	for {
 		head, err := client.GetChainHead()
