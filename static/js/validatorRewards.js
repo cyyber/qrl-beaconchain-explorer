@@ -1,5 +1,5 @@
 const VALLIMIT = 200
-const DECIMAL_POINTS_ZND = 6
+const DECIMAL_POINTS_ZOND = 6
 const DECIMAL_POINTS_CURRENCY = 3
 var csrfToken = ""
 var currency = ""
@@ -209,7 +209,7 @@ function showTable(data) {
       $("#form-div").removeClass("d-flex").addClass("d-none")
       $("#table-div").removeClass("d-none")
       $("#subscriptions-div").addClass("d-none")
-      $("#total-income-znd-span").html("ZND " + data.total_znd)
+      $("#total-income-zond-span").html("Zond " + data.total_zond)
       $("#totals-div").removeClass("d-none")
       $(".dt-button").addClass("ml-2 ")
       hideSpinner()
@@ -233,7 +233,7 @@ function showTable(data) {
         data: "1",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZND))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZOND))
           return data
         },
       },
@@ -242,7 +242,7 @@ function showTable(data) {
         data: "2",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZND))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZOND))
           return data
         },
       },

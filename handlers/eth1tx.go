@@ -46,7 +46,7 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 		data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)
 		txTemplate = txNotFoundTemplate
 	} else {
-		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "ZND")
+		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "Zond")
 		if err != nil {
 			mempool := services.LatestMempoolTransactions()
 			mempoolTx := mempool.FindTxByHash(txHashString)
@@ -93,7 +93,7 @@ func Eth1TransactionTxData(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	txHashString := vars["hash"]
 
-	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, "ZND"))
+	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, "Zond"))
 	if err != nil {
 		logger.Errorf("error enconding json response for %v route: %v", r.URL.String(), err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

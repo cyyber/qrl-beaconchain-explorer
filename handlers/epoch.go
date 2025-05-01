@@ -65,9 +65,9 @@ func Epoch(w http.ResponseWriter, r *http.Request) {
 			validatorscount, 
 			averagevalidatorbalance, 
 			(epoch <= $2) AS finalized,
-			eligibleznd,
+			eligiblezond,
 			globalparticipationrate,
-			votedznd
+			votedzond
 		FROM epochs 
 		WHERE epoch = $1`, epoch, latestFinalizedEpoch)
 	if err != nil {
@@ -165,7 +165,7 @@ func Epoch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	epochPageData.WithdrawalTotal = utils.FormatCurrentBalance(withdrawalTotal, "ZND")
+	epochPageData.WithdrawalTotal = utils.FormatCurrentBalance(withdrawalTotal, "Zond")
 
 	epochPageData.SyncParticipationRate /= float64(epochPageData.ProposedCount)
 

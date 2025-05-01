@@ -307,8 +307,8 @@ func ValidatorsData(w http.ResponseWriter, r *http.Request) {
 				fmt.Sprintf("%x", v.PublicKey),
 				fmt.Sprintf("%v", v.ValidatorIndex),
 				[]interface{}{
-					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), "ZND"),
-					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), "ZND"),
+					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), "Zond"),
+					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), "Zond"),
 				},
 				v.State,
 				[]interface{}{

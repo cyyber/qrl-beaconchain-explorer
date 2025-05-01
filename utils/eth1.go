@@ -299,7 +299,7 @@ func formatAmount(amount *big.Int, unit string, digits int, maxPreCommaDigitsBef
 	// define display unit & digits used per unit max
 	displayUnit := " " + unit
 	var unitDigits int
-	if unit == "ZND" {
+	if unit == "Zond" {
 		unitDigits = 18
 	} else if unit == "GPlanck" {
 		unitDigits = 9

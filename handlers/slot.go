@@ -460,7 +460,7 @@ func SlotDepositData(w http.ResponseWriter, r *http.Request) {
 		tableData = append(tableData, []interface{}{
 			i + 1 + int(start),
 			utils.FormatPublicKey(deposit.PublicKey),
-			utils.FormatBalance(deposit.Amount, "ZND"),
+			utils.FormatBalance(deposit.Amount, "Zond"),
 			utils.FormatWithdawalCredentials(deposit.WithdrawalCredentials, true),
 			fmt.Sprintf("0x%v", hex.EncodeToString(deposit.Signature)),
 			utils.FormatHash(deposit.Signature, true),
@@ -674,8 +674,8 @@ func BlockTransactionsData(w http.ResponseWriter, r *http.Request) {
 			Method:        methodFormatted,
 			FromFormatted: v.FromFormatted,
 			ToFormatted:   v.ToFormatted,
-			Value:         utils.FormatAmountFormatted(v.Value, "ZND", 5, 0, true, true, false),
-			Fee:           utils.FormatAmountFormatted(v.Fee, "ZND", 5, 0, true, true, false),
+			Value:         utils.FormatAmountFormatted(v.Value, "Zond", 5, 0, true, true, false),
+			Fee:           utils.FormatAmountFormatted(v.Fee, "Zond", 5, 0, true, true, false),
 			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GPlanck", 5, 0, true, true, false),
 		}
 	}

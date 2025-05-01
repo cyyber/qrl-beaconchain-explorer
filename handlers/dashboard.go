@@ -849,8 +849,8 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 			fmt.Sprintf("%x", v.PublicKey),
 			indexInfo,
 			[]interface{}{
-				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9), "ZND"),
-				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9), "ZND"),
+				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9), "Zond"),
+				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9), "Zond"),
 			},
 			[]interface{}{
 				v.ValidatorIndex,
@@ -901,7 +901,7 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 			v.MissedProposals,
 		})
 
-		tableData[i] = append(tableData[i], utils.FormatIncome(v.Performance7d, "ZND", true))
+		tableData[i] = append(tableData[i], utils.FormatIncome(v.Performance7d, "Zond", true))
 
 		validatorDeposits := validatorsDepositsMap[hex.EncodeToString(v.PublicKey)]
 		if validatorDeposits != nil {

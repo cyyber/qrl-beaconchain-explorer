@@ -640,9 +640,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount, 
 			averagevalidatorbalance, 
 			totalvalidatorbalance,
-			eligibleznd, 
+			eligiblezond, 
 			globalparticipationrate, 
-			votedznd,
+			votedzond,
 			finalized
 		)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
@@ -657,9 +657,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount         = excluded.validatorscount,
 			averagevalidatorbalance = excluded.averagevalidatorbalance,
 			totalvalidatorbalance   = excluded.totalvalidatorbalance,
-			eligibleznd             = excluded.eligibleznd,
+			eligiblezond             = excluded.eligiblezond,
 			globalparticipationrate = excluded.globalparticipationrate,
-			votedznd                = excluded.votedznd,
+			votedzond                = excluded.votedzond,
 			finalized               = excluded.finalized`,
 		epoch,
 		0,
@@ -1345,9 +1345,9 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 
 	_, err := tx.Exec(`
 		UPDATE epochs SET
-			eligibleznd = $1,
+			eligiblezond = $1,
 			globalparticipationrate = $2,
-			votedznd = $3,
+			votedzond = $3,
 			finalized = $4,
 			blockscount = (SELECT COUNT(*) FROM blocks WHERE epoch = $5 AND status = '1'),
 			proposerslashingscount = (SELECT COALESCE(SUM(proposerslashingscount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
@@ -1357,7 +1357,7 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 			withdrawalcount = (SELECT COALESCE(SUM(withdrawalcount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
 			voluntaryexitscount = (SELECT COALESCE(SUM(voluntaryexitscount),0) FROM blocks WHERE epoch = $5 AND status = '1')
 		WHERE epoch = $5`,
-		stats.EligibleZND, stats.GlobalParticipationRate, stats.VotedZND, stats.Finalized, stats.Epoch)
+		stats.EligibleZond, stats.GlobalParticipationRate, stats.VotedZond, stats.Finalized, stats.Epoch)
 
 	return err
 }
@@ -1420,7 +1420,7 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 		return err
 	}
 
-	// efficiently collect the tnx that pushed each validator over 40000 ZND.
+	// efficiently collect the tnx that pushed each validator over 40000 Zond.
 	_, err = tx.Exec(`
 		UPDATE validator_queue_deposits 
 		SET 
@@ -1447,7 +1447,7 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 			FROM CumSum
 			/* join so we can retrieve the validator index again */
 			left join validators on validators.pubkey = CumSum.publickey
-			/* we want the deposit that pushed the cum sum over 40000 ZND */
+			/* we want the deposit that pushed the cum sum over 40000 Zond */
 			WHERE cumTotal>=40000000000000
 			ORDER BY publickey, cumTotal asc 
 		) AS data
@@ -1537,11 +1537,11 @@ func GetPendingValidatorCount() (uint64, error) {
 	return count, nil
 }
 
-func GetTotalEligibleZND() (uint64, error) {
+func GetTotalEligibleZond() (uint64, error) {
 	var total uint64
 
 	err := ReaderDb.Get(&total, `
-		SELECT eligibleznd FROM epochs ORDER BY epoch DESC LIMIT 1
+		SELECT eligiblezond FROM epochs ORDER BY epoch DESC LIMIT 1
 	`)
 	if err == sql.ErrNoRows {
 		return 0, nil

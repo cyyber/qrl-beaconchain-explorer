@@ -49,7 +49,7 @@
         .draw()
       } else {
         // all but exact match would be:
-        //regExSearch = '^(?!' + `0 ZND` + '$).*$'
+        //regExSearch = '^(?!' + `0 Zond` + '$).*$'
         noZeroValue = '^(?!' + '0 ' + ')'
         noDelegateCall = '^(?!' + 'delegatecall' + ')'
         $('#itransactions').DataTable()
@@ -286,7 +286,7 @@
                         <li class="mb-1">
                           <i class="fa-li fas fa-long-arrow-alt-right"></i>
                           <span>Deposit of</span>
-                          <span>{{ formatBytesAmount $deposit.Amount "ZND" 8 }}</span>
+                          <span>{{ formatBytesAmount $deposit.Amount "Zond" 8 }}</span>
                           <span>to Validator</span>
                           <span>{{ formatPublicKey $deposit.ValidatorPubkey }}</span>
                           <span>with withdrawal credentials</span>
@@ -300,13 +300,13 @@
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-3">Value:</div>
                 <div class="col-md-9">
-                  {{ formatBytesAmount .Value "ZND" 8 }}
+                  {{ formatBytesAmount .Value "Zond" 8 }}
                 </div>
               </div>
               <div class="row border-bottom p-3 mx-0" style="border-width:4px !important;">
                 <div class="col-md-3">Transaction Fee:</div>
                 <div class="col-md-9">
-                  {{ formatBytesAmount .Gas.TxFee "ZND" 8 }}
+                  {{ formatBytesAmount .Gas.TxFee "Zond" 8 }}
                 </div>
               </div>
               <div class="row border-bottom p-3 mx-0">

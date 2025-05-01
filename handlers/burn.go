@@ -11,7 +11,7 @@ import (
 func Burn(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	templateFiles := append(layoutTemplateFiles, "burn.html")
-	data := InitPageData(w, r, "burn", "/burn", "ZND Burned", templateFiles)
+	data := InitPageData(w, r, "burn", "/burn", "Zond Burned", templateFiles)
 
 	var burnTemplate = templates.GetTemplate(templateFiles...)
 
