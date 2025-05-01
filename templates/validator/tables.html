@@ -428,7 +428,7 @@
                   {{ end }}
                   {{ formatWithdawalCredentials $deposit.WithdrawalCredentials true }}
                 </td>
-                <td>{{ formatDepositAmount $deposit.Amount "ZND" }}</td>
+                <td>{{ formatDepositAmount $deposit.Amount "Zond" }}</td>
                 <td>
                   {{ if $deposit.ValidSignature }}
                     <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">{{ $deposit.ValidSignature }}</span>
@@ -588,7 +588,7 @@
                     {{ end }}
                     {{ formatWithdawalCredentials $deposit.Withdrawalcredentials true }}
                   </td>
-                  <td>{{ formatDepositAmount $deposit.Amount "ZND" }}</td>
+                  <td>{{ formatDepositAmount $deposit.Amount "Zond" }}</td>
                   <!-- <td>{{ formatHash $deposit.Proof }}</td> -->
                   <td>
                     {{ formatHash $deposit.Signature }}
@@ -846,8 +846,8 @@
         <td><span data-toggle="tooltip" data-placement="top" title="Entering">{{ .NetworkStats.EnteringValidators }}</span>/<span data-toggle="tooltip" data-placement="top" title="Exiting">{{ .NetworkStats.ExitingValidators }}</span></td>
       </tr>
       <tr>
-        <th scope="row">Staked ZND</th>
-        <td>{{ .NetworkStats.StakedZND }}</td>
+        <th scope="row">Staked Zond</th>
+        <td>{{ .NetworkStats.StakedZond }}</td>
       </tr>
       <tr>
         <th scope="row">Average Balance</th>

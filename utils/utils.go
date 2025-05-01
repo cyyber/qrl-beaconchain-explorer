@@ -107,7 +107,7 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatAttestationInclusionEffectiveness": FormatAttestationInclusionEffectiveness,
 		"formatValidatorTags":                     FormatValidatorTags,
 		"formatValidatorTag":                      FormatValidatorTag,
-		"formatZND":                               FormatZND,
+		"formatZond":                              FormatZond,
 		"formatFloat":                             FormatFloat,
 		"formatAmount":                            FormatAmount,
 		"formatBigAmount":                         FormatBigAmount,
@@ -310,13 +310,12 @@ func TimeToEpoch(ts time.Time) int64 {
 	return (ts.Unix() - int64(Config.Chain.GenesisTimestamp)) / int64(Config.Chain.ClConfig.SecondsPerSlot) / int64(Config.Chain.ClConfig.SlotsPerEpoch)
 }
 
-// TODO(now.youtrack.cloud/issue/TZB-4)
-func PlanckToZND(planck *big.Int) decimal.Decimal {
-	return decimal.NewFromBigInt(planck, 0).DivRound(decimal.NewFromInt(params.Ether), 18)
+func PlanckToZond(planck *big.Int) decimal.Decimal {
+	return decimal.NewFromBigInt(planck, 0).DivRound(decimal.NewFromInt(params.Zond), 18)
 }
 
-func PlanckBytesToZND(planck []byte) decimal.Decimal {
-	return PlanckToZND(new(big.Int).SetBytes(planck))
+func PlanckBytesToZond(planck []byte) decimal.Decimal {
+	return PlanckToZond(new(big.Int).SetBytes(planck))
 }
 
 // WaitForCtrlC will block/wait until a control-c is pressed
@@ -792,7 +791,7 @@ func isMaliciousToken(symbol string) bool {
 	containsUrls := len(xurls.Relaxed.FindAllString(symbol, -1)) > 0
 	isConfusable := len(confusables.IsConfusable(symbol, false, []string{"LATIN", "COMMON"})) > 0
 	isMixedScript := confusables.IsMixedScript(symbol, nil)
-	return containsUrls || isConfusable || isMixedScript || strings.ToUpper(symbol) == "ZND"
+	return containsUrls || isConfusable || isMixedScript || strings.ToUpper(symbol) == "Zond"
 }
 
 func ReverseSlice[S ~[]E, E any](s S) {

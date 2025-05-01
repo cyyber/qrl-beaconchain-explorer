@@ -119,7 +119,7 @@ func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
 			utils.FormatEth1Address(d.FromAddress),
 			utils.FormatPublicKey(d.PublicKey),
 			utils.FormatWithdawalCredentials(d.WithdrawalCredentials, true),
-			utils.FormatDepositAmount(d.Amount, "ZND"),
+			utils.FormatDepositAmount(d.Amount, "Zond"),
 			utils.FormatEth1TxHash(d.TxHash),
 			utils.FormatTimestamp(d.BlockTs.Unix()),
 			utils.FormatEth1Block(d.BlockNumber),

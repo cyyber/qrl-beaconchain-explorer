@@ -15,9 +15,9 @@ func StakingCalculator(w http.ResponseWriter, r *http.Request) {
 
 	calculatorPageData := types.StakingCalculatorPageData{}
 
-	total, err := db.GetTotalEligibleZND()
+	total, err := db.GetTotalEligibleZond()
 	if err != nil {
-		logger.WithError(err).Error("error getting total staked ZND")
+		logger.WithError(err).Error("error getting total staked Zond")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}

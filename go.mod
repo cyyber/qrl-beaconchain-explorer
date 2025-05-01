@@ -157,4 +157,4 @@ replace github.com/wealdtech/go-merkletree v1.0.1-0.20190605192610-2bb163c2ea2a 
 
 replace github.com/theQRL/qrysm => github.com/cyyber/qrysm v0.2.0
 
-replace github.com/theQRL/go-zond => github.com/cyyber/go-zond v0.2.0
+replace github.com/theQRL/go-zond => github.com/cyyber/go-zond v0.2.1-0.20250430092150-d9b1e2ea3867

@@ -296,10 +296,10 @@ func GetValidatorEarnings(validators []uint64) (*types.ValidatorEarnings, map[ui
 		TotalDeposits: int64(totalDeposits),
 		ProposalData:  validatorProposalData,
 	}
-	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, "ZND")
-	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, "ZND")
-	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, "ZND")
-	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, "ZND")
+	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, "Zond")
+	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, "Zond")
+	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, "Zond")
+	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, "Zond")
 	earnings.TotalBalance = "<b>" + utils.FormatClCurrency(totalBalance, 5, true, false, false, false) + "</b>"
 	return earnings, balancesMap, nil
 }
@@ -553,7 +553,7 @@ func getExecutionChartData(indices []uint64, lowerBoundDay uint64) ([]*types.Cha
 		consData := consMap[block.Number]
 		day := int64(consData.Epoch / epochsPerDay)
 
-		totalReward := utils.PlanckToZND(utils.Eth1TotalReward(block)).InexactFloat64()
+		totalReward := utils.PlanckToZond(utils.Eth1TotalReward(block)).InexactFloat64()
 
 		// Add the reward to the existing reward for the day or set it if not previously set
 		dayRewardMap[day] += totalReward

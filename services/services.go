@@ -380,7 +380,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 
 	latestFinalizedEpoch := LatestFinalizedEpoch()
 	var epochs []*types.IndexPageDataEpochs
-	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligibleznd, globalparticipationrate, votedznd FROM epochs ORDER BY epochs DESC LIMIT 15`)
+	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligiblezond, globalparticipationrate, votedzond FROM epochs ORDER BY epochs DESC LIMIT 15`)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving index epoch data: %v", err)
 	}
@@ -388,9 +388,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 	for _, epoch := range epochs {
 		epoch.Ts = utils.EpochToTime(epoch.Epoch)
 		epoch.FinalizedFormatted = utils.FormatYesNo(epoch.Finalized)
-		epoch.VotedZNDFormatted = utils.FormatBalance(epoch.VotedZND, "ZND")
-		epoch.EligibleZNDFormatted = utils.FormatEligibleBalance(epoch.EligibleZND, "ZND")
-		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZND, epoch.GlobalParticipationRate, "ZND")
+		epoch.VotedZondFormatted = utils.FormatBalance(epoch.VotedZond, "Zond")
+		epoch.EligibleZondFormatted = utils.FormatEligibleBalance(epoch.EligibleZond, "Zond")
+		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZond, epoch.GlobalParticipationRate, "Zond")
 		epochsMap[epoch.Epoch] = true
 	}
 
@@ -450,12 +450,12 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				Ts:                               utils.EpochToTime(block.Epoch),
 				Finalized:                        false,
 				FinalizedFormatted:               utils.FormatYesNo(false),
-				EligibleZND:                      0,
-				EligibleZNDFormatted:             utils.FormatEligibleBalance(0, "ZND"),
+				EligibleZond:                     0,
+				EligibleZondFormatted:            utils.FormatEligibleBalance(0, "Zond"),
 				GlobalParticipationRate:          0,
 				GlobalParticipationRateFormatted: utils.FormatGlobalParticipationRate(0, 1, ""),
-				VotedZND:                         0,
-				VotedZNDFormatted:                "",
+				VotedZond:                        0,
+				VotedZondFormatted:               "",
 			})
 			epochsMap[block.Epoch] = true
 		}
@@ -493,9 +493,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		epochLowerBound = epoch - 1600
 	}
 	var epochHistory []*types.IndexPageEpochHistory
-	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligibleznd, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
+	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligiblezond, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving staked ZND history: %v", err)
+		return nil, fmt.Errorf("error retrieving staked Zond history: %v", err)
 	}
 
 	if len(epochHistory) > 0 {
@@ -503,19 +503,19 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			if epochHistory[i].Finalized {
 				data.CurrentFinalizedEpoch = epochHistory[i].Epoch
 				data.FinalityDelay = FinalizationDelay()
-				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "ZND"))
+				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "Zond"))
 				break
 			}
 		}
 
-		data.StakedZND = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZND, "ZND"))
+		data.StakedZond = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZond, "Zond"))
 		data.ActiveValidators = epochHistory[len(epochHistory)-1].ValidatorsCount
 	}
 
-	data.StakedZNDChartData = make([][]float64, len(epochHistory))
+	data.StakedZondChartData = make([][]float64, len(epochHistory))
 	data.ActiveValidatorsChartData = make([][]float64, len(epochHistory))
 	for i, history := range epochHistory {
-		data.StakedZNDChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleZND).InexactFloat64()}
+		data.StakedZondChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleZond).InexactFloat64()}
 		data.ActiveValidatorsChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), float64(history.ValidatorsCount)}
 	}
 

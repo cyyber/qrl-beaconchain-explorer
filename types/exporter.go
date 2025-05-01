@@ -62,8 +62,8 @@ type EpochData struct {
 type ValidatorParticipation struct {
 	Epoch                   uint64
 	GlobalParticipationRate float32
-	VotedZND                uint64
-	EligibleZND             uint64
+	VotedZond               uint64
+	EligibleZond            uint64
 	Finalized               bool
 }
 

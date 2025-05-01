@@ -376,8 +376,8 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 				data.EpochParticipationStats = &types.ValidatorParticipation{
 					Epoch:                   epoch,
 					GlobalParticipationRate: 0.0,
-					VotedZND:                0,
-					EligibleZND:             0,
+					VotedZond:               0,
+					EligibleZond:            0,
 				}
 			}
 			return nil
@@ -386,8 +386,8 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 		data.EpochParticipationStats = &types.ValidatorParticipation{
 			Epoch:                   epoch,
 			GlobalParticipationRate: 0.0,
-			VotedZND:                0,
-			EligibleZND:             0,
+			VotedZond:               0,
+			EligibleZond:            0,
 		}
 	}
 
@@ -1152,16 +1152,16 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
 			GlobalParticipationRate: float32(parsedResponse.Data.PreviousEpochTargetAttestingGplanck) / float32(prevEpochActiveGplanck),
-			VotedZND:                uint64(parsedResponse.Data.PreviousEpochTargetAttestingGplanck),
-			EligibleZND:             uint64(prevEpochActiveGplanck),
+			VotedZond:               uint64(parsedResponse.Data.PreviousEpochTargetAttestingGplanck),
+			EligibleZond:            uint64(prevEpochActiveGplanck),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	} else {
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
 			GlobalParticipationRate: float32(parsedResponse.Data.CurrentEpochTargetAttestingGplanck) / float32(parsedResponse.Data.CurrentEpochActiveGplanck),
-			VotedZND:                uint64(parsedResponse.Data.CurrentEpochTargetAttestingGplanck),
-			EligibleZND:             uint64(parsedResponse.Data.CurrentEpochActiveGplanck),
+			VotedZond:               uint64(parsedResponse.Data.CurrentEpochTargetAttestingGplanck),
+			EligibleZond:            uint64(parsedResponse.Data.CurrentEpochActiveGplanck),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	}

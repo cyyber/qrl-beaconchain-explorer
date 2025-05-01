@@ -2091,7 +2091,7 @@ func (bigtable *Bigtable) GetAddressTransactionsTableData(address []byte, pageTo
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.From, fromName, false, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
 			utils.FormatInOutSelf(address, t.From, t.To),
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.To, BigtableClient.GetAddressLabel(names[string(t.To)], contractInteraction), contractInteraction != types.CONTRACT_NONE, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
-			utils.FormatAmount(new(big.Int).SetBytes(t.Value), "ZND", 8),
+			utils.FormatAmount(new(big.Int).SetBytes(t.Value), "Zond", 8),
 		}
 	}
 
@@ -2195,7 +2195,7 @@ func (bigtable *Bigtable) GetAddressBlocksMinedTableData(address string, pageTok
 			utils.FormatBlockNumber(b.Number),
 			utils.FormatTimestamp(b.Time.AsTime().Unix()),
 			utils.FormatBlockUsage(b.GasUsed, b.GasLimit),
-			utils.FormatAmount(reward, "ZND", 6),
+			utils.FormatAmount(reward, "Zond", 6),
 		}
 	}
 
@@ -2348,7 +2348,7 @@ func (bigtable *Bigtable) GetAddressInternalTableData(address []byte, pageToken 
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.From, BigtableClient.GetAddressLabel(fromName, from_contractInteraction), from_contractInteraction != types.CONTRACT_NONE, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
 			utils.FormatInOutSelf(address, t.From, t.To),
 			utils.FormatAddressWithLimitsInAddressPageTable(address, t.To, BigtableClient.GetAddressLabel(toName, to_contractInteraction), to_contractInteraction != types.CONTRACT_NONE, digitLimitInAddressPagesTable, nameLimitInAddressPagesTable, true),
-			utils.FormatAmount(new(big.Int).SetBytes(t.Value), "ZND", 6),
+			utils.FormatAmount(new(big.Int).SetBytes(t.Value), "Zond", 6),
 			t.Type,
 		}
 	}
@@ -3038,9 +3038,9 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 
 				token := common.FromHex(strings.TrimPrefix(column.Column, "a:B:"))
 
-				isNativeZnd := bytes.Equal([]byte{0x00}, token)
-				if !isNativeZnd {
-					// token is not ZND, check if token limit is reached
+				isNativeZond := bytes.Equal([]byte{0x00}, token)
+				if !isNativeZond {
+					// token is not Zond, check if token limit is reached
 					if tokenCount >= limit {
 						ret.ZRC20TokenLimitExceeded = true
 						continue
@@ -3075,7 +3075,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 					balance.Metadata = metadata
 
 					mux.Lock()
-					if isNativeZnd {
+					if isNativeZond {
 						ret.EthBalance = balance
 					} else {
 						ret.Balances = append(ret.Balances, balance)
@@ -3161,7 +3161,7 @@ func (bigtable *Bigtable) GetZRC20MetadataForAddress(address []byte) (*types.ZRC
 	if len(address) == 1 {
 		return &types.ZRC20Metadata{
 			Decimals:    big.NewInt(18).Bytes(),
-			Symbol:      "ZND",
+			Symbol:      "Zond",
 			TotalSupply: []byte{},
 		}, nil
 	}

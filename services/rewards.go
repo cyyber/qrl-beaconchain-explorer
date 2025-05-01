@@ -19,7 +19,7 @@ import (
 
 type rewardHistory struct {
 	History    [][]string `json:"history"`
-	TotalZND   string     `json:"total_znd"`
+	TotalZond  string     `json:"total_zond"`
 	Validators []uint64   `json:"validators"`
 }
 
@@ -45,23 +45,23 @@ func GetValidatorHist(validatorArr []uint64, start uint64, end uint64) rewardHis
 	}
 
 	data := make([][]string, len(income))
-	tZND := 0.0
+	tZond := 0.0
 
 	for i, item := range income {
 		key := fmt.Sprintf("%v", utils.DayToTime(item.Day))
 		key = strings.Split(key, " ")[0]
-		iZND := float64(item.ClRewards) / 1e9
-		tZND += iZND
+		iZond := float64(item.ClRewards) / 1e9
+		tZond += iZond
 		data[i] = []string{
 			key,
 			addCommas(float64(item.EndBalance.Int64)/1e9, "%.5f"), // end of day balance
-			addCommas(iZND, "%.5f"),                               // income of day ZND
+			addCommas(iZond, "%.5f"),                              // income of day Zond
 		}
 	}
 
 	return rewardHistory{
 		History:    data,
-		TotalZND:   addCommas(tZND, "%.5f"),
+		TotalZond:  addCommas(tZond, "%.5f"),
 		Validators: validatorArr,
 	}
 }
@@ -130,7 +130,7 @@ func GeneratePdfReport(hist rewardHistory) []byte {
 	pdf.SetTextColor(24, 24, 24)
 	pdf.SetFillColor(255, 255, 255)
 	// pdf.Ln(-1)
-	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalZND), "", 0, "CM", true, 0, "")
+	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalZond), "", 0, "CM", true, 0, "")
 
 	header := [colCount]string{"Date", "Balance", "Income"}
 

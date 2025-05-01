@@ -1435,7 +1435,7 @@ func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 			} else if len(tableData) >= pageLength {
 				continue
 			}
-			tableData = append(tableData, incomeToTableData(i, incomeDetails[index][i], withdrawalMap[i], "ZND"))
+			tableData = append(tableData, incomeToTableData(i, incomeDetails[index][i], withdrawalMap[i], "Zond"))
 		}
 	}
 
@@ -1476,7 +1476,7 @@ func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 				}
 				continue
 			}
-			tableData = append(tableData, incomeToTableData(epoch, incomeDetails[index][epoch], withdrawalMap[epoch], "ZND"))
+			tableData = append(tableData, incomeToTableData(epoch, incomeDetails[index][epoch], withdrawalMap[epoch], "Zond"))
 
 		}
 	}

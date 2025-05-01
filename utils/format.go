@@ -155,7 +155,7 @@ func formatCurrencyString(valIf interface{}, digitsAfterComma int, showCurrencyS
 
 	currencyStr := ""
 	if showCurrencySymbol {
-		currencyStr = " ZND"
+		currencyStr = " Zond"
 	}
 
 	amountStr := ""
@@ -1080,7 +1080,7 @@ func DerefString(str *string) string {
 	return ""
 }
 
-func FormatZND(num string) string {
+func FormatZond(num string) string {
 	floatNum, _ := strconv.ParseFloat(num, 64)
 	return fmt.Sprintf("%.4f", floatNum/math.Pow10(18)) + " " + MainCurrency
 }
@@ -1136,13 +1136,13 @@ func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
 	e := new(big.Int).SetBytes(balance.Metadata.Decimals)
 	d := new(big.Int).Exp(big.NewInt(10), e, nil)
 	balPlanck := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0)
-	balZND := balPlanck.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
+	balZond := balPlanck.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
 
 	p := message.NewPrinter(language.English)
 	return template.HTML(p.Sprintf(`
 		<div class="d-flex align-items-center">
-			<span class="token-holdings">%v ZND</span>
-		</div>`, balZND))
+			<span class="token-holdings">%v Zond</span>
+		</div>`, balZond))
 }
 
 func FormatTokenValue(balance *types.Eth1AddressBalance, fullAmountTooltip bool) template.HTML {

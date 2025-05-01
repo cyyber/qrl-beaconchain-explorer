@@ -32,19 +32,19 @@
         case "pplanck":
           planck = value.mul(10e14)
           break
-        case "znd":
+        case "zond":
           planck = value.mul(10e17)
           break
-        case "kznd":
+        case "kzond":
           planck = value.mul(10e20)
           break
-        case "mznd":
+        case "mzond":
           planck = value.mul(10e23)
           break
-        case "gznd":
+        case "gzond":
           planck = value.mul(10e26)
           break
-        case "tznd":
+        case "tzond":
           planck = value.mul(10e29)
           break
       }
@@ -55,11 +55,11 @@
       $("#gplanck").val(planck.div(10e8).toFixed())
       $("#tplanck").val(planck.div(10e11).toFixed())
       $("#pplanck").val(planck.div(10e14).toFixed())
-      $("#znd").val(planck.div(10e17).toFixed())
-      $("#kznd").val(planck.div(10e20).toFixed())
-      $("#mznd").val(planck.div(10e23).toFixed())
-      $("#gznd").val(planck.div(10e26).toFixed())
-      $("#tznd").val(planck.div(10e29).toFixed())
+      $("#zond").val(planck.div(10e17).toFixed())
+      $("#kzond").val(planck.div(10e20).toFixed())
+      $("#mzond").val(planck.div(10e23).toFixed())
+      $("#gzond").val(planck.div(10e26).toFixed())
+      $("#tzond").val(planck.div(10e29).toFixed())
     })
   </script>
 {{ end }}
@@ -81,7 +81,7 @@
     </div>
     <div class="row mt-4">
       <div class="col-md-12">
-        <p><span class="fas fa-lightbulb mr-1"></span> INFO: Zond uses a lot of different units like Planck, GPlanck and ZND. You can use this tool to convert between them.</p>
+        <p><span class="fas fa-lightbulb mr-1"></span> INFO: Zond uses a lot of different units like Planck, GPlanck and Zond. You can use this tool to convert between them.</p>
       </div>
     </div>
     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
@@ -121,33 +121,33 @@
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="znd" type="text" value="1" />
+      <input class="form-control" id="zond" type="text" value="1" />
       <div class="input-group-append">
-        <div class="input-group-text bg-primary text-white" style="width: 150px;">ZND</div>
+        <div class="input-group-text bg-primary text-white" style="width: 150px;">Zond</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="kznd" type="text" value="0.001" />
+      <input class="form-control" id="kzond" type="text" value="0.001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">KZND</div>
+        <div class="input-group-text" style="width: 150px;">KZond</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="mznd" type="text" value="0.000001" />
+      <input class="form-control" id="mzond" type="text" value="0.000001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">MZND</div>
+        <div class="input-group-text" style="width: 150px;">MZond</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="gznd" type="text" value="0.000000001" />
+      <input class="form-control" id="gzond" type="text" value="0.000000001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">GZND</div>
+        <div class="input-group-text" style="width: 150px;">GZond</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="tznd" type="text" value="0.000000000001" />
+      <input class="form-control" id="tzond" type="text" value="0.000000000001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">TZND</div>
+        <div class="input-group-text" style="width: 150px;">TZond</div>
       </div>
     </div>
   </div>

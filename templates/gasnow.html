@@ -97,7 +97,7 @@
 			progress: 0,
 			gasUsed: [
 				{
-					"title": "ZND",
+					"title": "Zond",
 					// "icon": "/img/defi/ethereum.png",
 					"tag": [
 						"Native"
@@ -124,7 +124,7 @@
 			toPercentage(number, digits) {
 				return (number * 100).toFixed(digits)
 			},
-			formatZND(number, digits) {
+			formatZond(number, digits) {
 				return (number / 1e18).toFixed(digits)
 			},
 			formatGasUsed(number) {
@@ -151,7 +151,7 @@
 						// console.log('gasnow data', response)
 						this.page = response;
 
-						document.title = (response.data.rapid / 1e9).toFixed(0) + "-" + (response.data.fast / 1e9).toFixed(0) + " GPlanck | Zond (ZND) - GasNow - " + new Date().getFullYear();
+						document.title = (response.data.rapid / 1e9).toFixed(0) + "-" + (response.data.fast / 1e9).toFixed(0) + " GPlanck | Zond (Zond) - GasNow - " + new Date().getFullYear();
 					}.bind(this));
 					this.updateIn = 5;
 					this.progress = 0;
