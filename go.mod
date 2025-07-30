@@ -1,4 +1,4 @@
-module github.com/theQRL/zond-beaconchain-explorer
+module github.com/theQRL/qrl-beaconchain-explorer
 
 go 1.24
 
