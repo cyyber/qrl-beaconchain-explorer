@@ -1082,7 +1082,7 @@ type DataTableSaveStateColumns struct {
 
 type Eth1AddressPageData struct {
 	Address            string `json:"address"`
-	ZnsName            string `json:"znsName"`
+	QrnsName           string `json:"znsName"`
 	IsContract         bool
 	QRCode             string `json:"qr_code_base64"`
 	QRCodeInverse      string
@@ -1120,7 +1120,7 @@ type Eth1AddressMetadata struct {
 	ZRC20                   *ZRC20Metadata
 	Name                    string
 	Tags                    []template.HTML
-	EthBalance              *Eth1AddressBalance
+	QuantaBalance           *Eth1AddressBalance
 }
 
 type Eth1AddressBalance struct {

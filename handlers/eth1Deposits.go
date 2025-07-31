@@ -53,9 +53,7 @@ func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
-	search := q.Get("search[value]")
+	search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
 	search = strings.Replace(search, "0x", "", -1)
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)

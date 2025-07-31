@@ -27,15 +27,14 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
 	address := template.HTMLEscapeString(vars["address"])
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// znsData, err := GetZnsDomain(address)
-	// if err != nil && utils.IsValidZnsDomain(address) {
-	// 	handleNotFoundHtml(w, r)
-	// 	return
-	// }
-	// if len(znsData.Address) > 0 {
-	// 	address = znsData.Address
-	// }
+	qrnsData, err := GetQrnsDomain(address)
+	if err != nil && utils.IsValidQrnsDomain(address) {
+		handleNotFoundHtml(w, r)
+		return
+	}
+	if len(qrnsData.Address) > 0 {
+		address = qrnsData.Address
+	}
 
 	isValid := utils.IsAddress(address)
 	if !isValid {
@@ -208,9 +207,8 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.Data = types.Eth1AddressPageData{
-		Address: address,
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// ZnsName:            znsData.Domain,
+		Address:            address,
+		ZnsName:            znsData.Domain,
 		IsContract:         isContract,
 		QRCode:             pngStr,
 		QRCodeInverse:      pngStrInverse,
@@ -426,30 +424,27 @@ func Eth1AddressZrc1155Transactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// takes the "address" parameter from the request and transforms it to lower case. The ZNS name can be used instead of the address
+// takes the "address" parameter from the request and transforms it to lower case. The QRNS name can be used instead of the address
 func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, error) {
 	vars := mux.Vars(r)
 	address := vars["address"]
-	// if utils.IsValidZnsDomain(address) {
-	// 	znsData, err := GetZnsDomain(address)
-	// 	if err != nil {
-	// 		handleNotFoundJson(address, w, r, err)
-	// 		return "", err
-	// 	}
-	// 	if len(znsData.Address) > 0 {
-	// 		address = znsData.Address
-	// 	}
-	// }
+	if utils.IsValidQrnsDomain(address) {
+		znsData, err := GetQrnsDomain(address)
+		if err != nil {
+			handleNotFoundJson(address, w, r, err)
+			return "", err
+		}
+		if len(znsData.Address) > 0 {
+			address = znsData.Address
+		}
+	}
 	return strings.ToLower(strings.Replace(address, "Z", "", -1)), nil
 }
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
 func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {
-	logger.Errorf("error getting address for ZNS name [%v] not found for %v route: %v", address, r.URL.String(), err)
-	http.Error(w, "Invalid ZNS name", http.StatusInternalServerError)
+	logger.Errorf("error getting address for QRNS name [%v] not found for %v route: %v", address, r.URL.String(), err)
+	http.Error(w, "Invalid QRNS name", http.StatusInternalServerError)
 }
-*/
 
 func handleNotFoundHtml(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/addressNotFound.html")

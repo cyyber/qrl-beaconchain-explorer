@@ -1,7 +1,5 @@
 package db
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
 import (
 	"bytes"
 	"context"
@@ -15,7 +13,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/sirupsen/logrus"
-	znsContracts "github.com/theQRL/zond-beaconchain-explorer/contracts/zns"
 	"github.com/theQRL/zond-beaconchain-explorer/metrics"
 	"github.com/theQRL/zond-beaconchain-explorer/types"
 	"github.com/theQRL/zond-beaconchain-explorer/utils"
@@ -31,50 +28,50 @@ import (
 	go_zns "github.com/wealdtech/go-zns/v3"
 )
 
-// TransformZnsNameRegistered accepts an eth1 block and creates bigtable mutations for ZNS Name events.
+// TransformZnsNameRegistered accepts an eth1 block and creates bigtable mutations for QRNS Name events.
 // It transforms the logs contained within a block and indexes zns relevant transactions and tags changes (to be verified from the node in a separate process)
 // ==================================================
 //
 // It indexes transactions
 //
 // - by hashed zns name
-// Row:    <chainID>:ZNS:I:H:<nameHash>:<txHash>
+// Row:    <chainID>:QRNS:I:H:<nameHash>:<txHash>
 // Family: f
 // Column: nil
 // Cell:   nil
-// Example scan: "5:ZNS:I:H:4ae569dd0aa2f6e9207e41423c956d0d27cbc376a499ee8d90fe1d84489ae9d1:e627ae94bd16eb1ed8774cd4003fc25625159f13f8a2612cc1c7f8d2ab11b1d7"
+// Example scan: "5:QRNS:I:H:4ae569dd0aa2f6e9207e41423c956d0d27cbc376a499ee8d90fe1d84489ae9d1:e627ae94bd16eb1ed8774cd4003fc25625159f13f8a2612cc1c7f8d2ab11b1d7"
 //
 // - by address
-// Row:    <chainID>:ZNS:I:A:<address>:<txHash>
+// Row:    <chainID>:QRNS:I:A:<address>:<txHash>
 // Family: f
 // Column: nil
 // Cell:   nil
-// Example scan: "5:ZNS:I:A:05579fadcf7cc6544f7aa018a2726c85251600c5:e627ae94bd16eb1ed8774cd4003fc25625159f13f8a2612cc1c7f8d2ab11b1d7"
+// Example scan: "5:QRNS:I:A:05579fadcf7cc6544f7aa018a2726c85251600c5:e627ae94bd16eb1ed8774cd4003fc25625159f13f8a2612cc1c7f8d2ab11b1d7"
 //
 // ==================================================
 //
 // Track for later verification via the node ("set dirty")
 //
 // - by name
-// Row:    <chainID>:ZNS:V:N:<name>
+// Row:    <chainID>:QRNS:V:N:<name>
 // Family: f
 // Column: nil
 // Cell:   nil
-// Example scan: "5:ZNS:V:N:somename"
+// Example scan: "5:QRNS:V:N:somename"
 //
 // - by name hash
-// Row:    <chainID>:ZNS:V:H:<nameHash>
+// Row:    <chainID>:QRNS:V:H:<nameHash>
 // Family: f
 // Column: nil
 // Cell:   nil
-// Example scan: "5:ZNS:V:H:6f5d9cc23e60abe836401b4fd386ec9280a1f671d47d9bf3ec75dab76380d845"
+// Example scan: "5:QRNS:V:H:6f5d9cc23e60abe836401b4fd386ec9280a1f671d47d9bf3ec75dab76380d845"
 //
 // - by address
-// Row:    <chainID>:ZNS:V:A:<address>
+// Row:    <chainID>:QRNS:V:A:<address>
 // Family: f
 // Column: nil
 // Cell:   nil
-// Example scan: "5:ZNS:V:A:27234cb8734d5b1fac0521c6f5dc5aebc6e839b6"
+// Example scan: "5:QRNS:V:A:27234cb8734d5b1fac0521c6f5dc5aebc6e839b6"
 //
 // ==================================================
 
@@ -87,7 +84,7 @@ func (bigtable *Bigtable) TransformZnsNameRegistered(blk *types.Eth1Block, cache
 	var znsCrontractAddresses map[string]string
 	switch bigtable.chainId {
 	case "1":
-		znsCrontractAddresses = znsContracts.ZNSCrontractAddressesEthereum
+		znsCrontractAddresses = znsContracts.QRNSCrontractAddressesEthereum
 	default:
 		return nil, nil, nil
 	}
@@ -132,60 +129,60 @@ func (bigtable *Bigtable) TransformZnsNameRegistered(blk *types.Eth1Block, cache
 				}
 
 				if znsContract == "Registry" {
-					if bytes.Equal(lTopic, znsContracts.ZNSRegistryParsedABI.Events["NewResolver"].ID.Bytes()) {
+					if bytes.Equal(lTopic, znsContracts.QRNSRegistryParsedABI.Events["NewResolver"].ID.Bytes()) {
 						logFields["event"] = "NewResolver"
-						r := &znsContracts.ZNSRegistryNewResolver{}
-						err = znsContracts.ZNSRegistryContract.UnpackLog(r, "NewResolver", ethLog)
+						r := &znsContracts.QRNSRegistryNewResolver{}
+						err = znsContracts.QRNSRegistryContract.UnpackLog(r, "NewResolver", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:H:%x", bigtable.chainId, r.Node)] = true
-					} else if bytes.Equal(lTopic, znsContracts.ZNSRegistryParsedABI.Events["NewOwner"].ID.Bytes()) {
+						keys[fmt.Sprintf("%s:QRNS:V:H:%x", bigtable.chainId, r.Node)] = true
+					} else if bytes.Equal(lTopic, znsContracts.QRNSRegistryParsedABI.Events["NewOwner"].ID.Bytes()) {
 						logFields["event"] = "NewOwner"
-						r := &znsContracts.ZNSRegistryNewOwner{}
-						err = znsContracts.ZNSRegistryContract.UnpackLog(r, "NewOwner", ethLog)
+						r := &znsContracts.QRNSRegistryNewOwner{}
+						err = znsContracts.QRNSRegistryContract.UnpackLog(r, "NewOwner", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:A:%x", bigtable.chainId, r.Owner)] = true
-					} else if bytes.Equal(lTopic, znsContracts.ZNSRegistryParsedABI.Events["NewTTL"].ID.Bytes()) {
+						keys[fmt.Sprintf("%s:QRNS:V:A:%x", bigtable.chainId, r.Owner)] = true
+					} else if bytes.Equal(lTopic, znsContracts.QRNSRegistryParsedABI.Events["NewTTL"].ID.Bytes()) {
 						logFields["event"] = "NewTTL"
-						r := &znsContracts.ZNSRegistryNewTTL{}
-						err = znsContracts.ZNSRegistryContract.UnpackLog(r, "NewTTL", ethLog)
+						r := &znsContracts.QRNSRegistryNewTTL{}
+						err = znsContracts.QRNSRegistryContract.UnpackLog(r, "NewTTL", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:H:%x", bigtable.chainId, r.Node)] = true
+						keys[fmt.Sprintf("%s:QRNS:V:H:%x", bigtable.chainId, r.Node)] = true
 					}
 				} else if znsContract == "ZONDRegistrarController" {
-					if bytes.Equal(lTopic, znsContracts.ZNSZONDRegistrarControllerParsedABI.Events["NameRegistered"].ID.Bytes()) {
+					if bytes.Equal(lTopic, znsContracts.QRNSZONDRegistrarControllerParsedABI.Events["NameRegistered"].ID.Bytes()) {
 						logFields["event"] = "NameRegistered"
-						r := &znsContracts.ZNSZONDRegistrarControllerNameRegistered{}
-						err = znsContracts.ZNSZONDRegistrarControllerContract.UnpackLog(r, "NameRegistered", ethLog)
+						r := &znsContracts.QRNSZONDRegistrarControllerNameRegistered{}
+						err = znsContracts.QRNSZONDRegistrarControllerContract.UnpackLog(r, "NameRegistered", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:N:%s", bigtable.chainId, r.Name)] = true
-						keys[fmt.Sprintf("%s:ZNS:V:A:%x", bigtable.chainId, r.Owner)] = true
-					} else if bytes.Equal(lTopic, znsContracts.ZNSZONDRegistrarControllerParsedABI.Events["NameRenewed"].ID.Bytes()) {
+						keys[fmt.Sprintf("%s:QRNS:V:N:%s", bigtable.chainId, r.Name)] = true
+						keys[fmt.Sprintf("%s:QRNS:V:A:%x", bigtable.chainId, r.Owner)] = true
+					} else if bytes.Equal(lTopic, znsContracts.QRNSZONDRegistrarControllerParsedABI.Events["NameRenewed"].ID.Bytes()) {
 						logFields["event"] = "NameRenewed"
-						r := &znsContracts.ZNSZONDRegistrarControllerNameRenewed{}
-						err = znsContracts.ZNSZONDRegistrarControllerContract.UnpackLog(r, "NameRenewed", ethLog)
+						r := &znsContracts.QRNSZONDRegistrarControllerNameRenewed{}
+						err = znsContracts.QRNSZONDRegistrarControllerContract.UnpackLog(r, "NameRenewed", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:N:%s", bigtable.chainId, r.Name)] = true
+						keys[fmt.Sprintf("%s:QRNS:V:N:%s", bigtable.chainId, r.Name)] = true
 					}
 				} else if znsContract == "OldZnsRegistrarController" {
-					if bytes.Equal(lTopic, znsContracts.ZNSOldRegistrarControllerParsedABI.Events["NameRegistered"].ID.Bytes()) {
+					if bytes.Equal(lTopic, znsContracts.QRNSOldRegistrarControllerParsedABI.Events["NameRegistered"].ID.Bytes()) {
 						logFields["event"] = "NameRegistered"
-						r := &znsContracts.ZNSOldRegistrarControllerNameRegistered{}
-						err = znsContracts.ZNSOldRegistrarControllerContract.UnpackLog(r, "NameRegistered", ethLog)
+						r := &znsContracts.QRNSOldRegistrarControllerNameRegistered{}
+						err = znsContracts.QRNSOldRegistrarControllerContract.UnpackLog(r, "NameRegistered", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
@@ -194,12 +191,12 @@ func (bigtable *Bigtable) TransformZnsNameRegistered(blk *types.Eth1Block, cache
 							utils.LogWarn(err, "error verifying zns-name", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:N:%s", bigtable.chainId, r.Name)] = true
-						keys[fmt.Sprintf("%s:ZNS:V:A:%x", bigtable.chainId, r.Owner)] = true
-					} else if bytes.Equal(lTopic, znsContracts.ZNSOldRegistrarControllerParsedABI.Events["NameRenewed"].ID.Bytes()) {
+						keys[fmt.Sprintf("%s:QRNS:V:N:%s", bigtable.chainId, r.Name)] = true
+						keys[fmt.Sprintf("%s:QRNS:V:A:%x", bigtable.chainId, r.Owner)] = true
+					} else if bytes.Equal(lTopic, znsContracts.QRNSOldRegistrarControllerParsedABI.Events["NameRenewed"].ID.Bytes()) {
 						logFields["event"] = "NameRenewed"
-						r := &znsContracts.ZNSOldRegistrarControllerNameRenewed{}
-						err = znsContracts.ZNSOldRegistrarControllerContract.UnpackLog(r, "NameRenewed", ethLog)
+						r := &znsContracts.QRNSOldRegistrarControllerNameRenewed{}
+						err = znsContracts.QRNSOldRegistrarControllerContract.UnpackLog(r, "NameRenewed", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
@@ -208,13 +205,13 @@ func (bigtable *Bigtable) TransformZnsNameRegistered(blk *types.Eth1Block, cache
 							utils.LogWarn(err, "error verifying zns-name", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:N:%s", bigtable.chainId, r.Name)] = true
+						keys[fmt.Sprintf("%s:QRNS:V:N:%s", bigtable.chainId, r.Name)] = true
 					}
 				} else {
-					if bytes.Equal(lTopic, znsContracts.ZNSPublicResolverParsedABI.Events["NameChanged"].ID.Bytes()) {
+					if bytes.Equal(lTopic, znsContracts.QRNSPublicResolverParsedABI.Events["NameChanged"].ID.Bytes()) {
 						logFields["event"] = "NameChanged"
-						r := &znsContracts.ZNSPublicResolverNameChanged{}
-						err = znsContracts.ZNSPublicResolverContract.UnpackLog(r, "NameChanged", ethLog)
+						r := &znsContracts.QRNSPublicResolverNameChanged{}
+						err = znsContracts.QRNSPublicResolverContract.UnpackLog(r, "NameChanged", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
@@ -223,16 +220,16 @@ func (bigtable *Bigtable) TransformZnsNameRegistered(blk *types.Eth1Block, cache
 							utils.LogWarn(err, "error verifying zns-name", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:N:%s", bigtable.chainId, r.Name)] = true
-					} else if bytes.Equal(lTopic, znsContracts.ZNSPublicResolverParsedABI.Events["AddressChanged"].ID.Bytes()) {
+						keys[fmt.Sprintf("%s:QRNS:V:N:%s", bigtable.chainId, r.Name)] = true
+					} else if bytes.Equal(lTopic, znsContracts.QRNSPublicResolverParsedABI.Events["AddressChanged"].ID.Bytes()) {
 						logFields["event"] = "AddressChanged"
-						r := &znsContracts.ZNSPublicResolverAddressChanged{}
-						err = znsContracts.ZNSPublicResolverContract.UnpackLog(r, "AddressChanged", ethLog)
+						r := &znsContracts.QRNSPublicResolverAddressChanged{}
+						err = znsContracts.QRNSPublicResolverContract.UnpackLog(r, "AddressChanged", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking zns-log", 0, logFields)
 							continue
 						}
-						keys[fmt.Sprintf("%s:ZNS:V:H:%x", bigtable.chainId, r.Node)] = true
+						keys[fmt.Sprintf("%s:QRNS:V:H:%x", bigtable.chainId, r.Node)] = true
 					}
 				}
 			}
@@ -288,7 +285,7 @@ func (bigtable *Bigtable) ImportZnsUpdates(client *ethclient.Client, readBatchSi
 		metrics.TaskDuration.WithLabelValues("bt_import_zns_updates").Observe(time.Since(startTime).Seconds())
 	}()
 
-	key := fmt.Sprintf("%s:ZNS:V", bigtable.chainId)
+	key := fmt.Sprintf("%s:QRNS:V", bigtable.chainId)
 
 	ctx, done := context.WithTimeout(context.Background(), time.Second*30)
 	defer done()
@@ -306,11 +303,11 @@ func (bigtable *Bigtable) ImportZnsUpdates(client *ethclient.Client, readBatchSi
 	}
 
 	if len(keys) == 0 {
-		logger.Info("No ZNS entries to validate")
+		logger.Info("No QRNS entries to validate")
 		return nil
 	}
 
-	logger.Infof("Validating %v ZNS entries", len(keys))
+	logger.Infof("Validating %v QRNS entries", len(keys))
 	alreadyChecked := ZnsCheckedDictionary{
 		address: make(map[common.Address]bool),
 		name:    make(map[string]bool),
@@ -327,7 +324,7 @@ func (bigtable *Bigtable) ImportZnsUpdates(client *ethclient.Client, readBatchSi
 			to = total
 		}
 		batch := keys[i:to]
-		logger.Infof("Batching ZNS entries %v:%v of %v", i, to, total)
+		logger.Infof("Batching QRNS entries %v:%v of %v", i, to, total)
 
 		g := new(errgroup.Group)
 		g.SetLimit(10) // limit load on the node
@@ -405,7 +402,7 @@ func (bigtable *Bigtable) ImportZnsUpdates(client *ethclient.Client, readBatchSi
 		time.Sleep(time.Millisecond * 100)
 	}
 
-	logger.WithField("updates", total).Info("Import of ZNS updates completed")
+	logger.WithField("updates", total).Info("Import of QRNS updates completed")
 	return nil
 }
 
@@ -681,4 +678,3 @@ func removeZnsName(client *ethclient.Client, name string) error {
 	logger.Infof("Zns name removed from db: %v", name)
 	return nil
 }
-*/

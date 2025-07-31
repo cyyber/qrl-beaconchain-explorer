@@ -314,8 +314,8 @@ func main() {
 
 	router.HandleFunc("/tables/{tableId}/state", handlers.GetDataTableStateChanges).Methods("GET")
 	router.HandleFunc("/tables/{tableId}/state", handlers.SetDataTableStateChanges).Methods("PUT")
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// router.HandleFunc("/zns/{search}", handlers.ZnsSearch).Methods("GET")
+
+	router.HandleFunc("/zns/{search}", handlers.QrnsSearch).Methods("GET")
 
 	router.HandleFunc("/qrlClients", handlers.QRLClientsServices).Methods("GET")
 

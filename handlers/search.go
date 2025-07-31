@@ -38,16 +38,14 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// var znsData *types.ZnsDomainResponse
-	// if utils.IsValidZnsDomain(search) {
-	// 	znsData, _ = GetZnsDomain(search)
-	// }
+	var qrnsData *types.QrnsDomainResponse
+	if utils.IsValidQrnsDomain(search) {
+		qrnsData, _ = GetQrnsDomain(search)
+	}
 	search = strings.Replace(search, "0x", "", -1)
-	// if znsData != nil && len(znsData.Address) > 0 {
-	// 	http.Redirect(w, r, "/address/"+znsData.Domain, http.StatusMovedPermanently)
-	// } else if utils.IsValidWithdrawalCredentials(search) {
-	if utils.IsValidWithdrawalCredentials(search) {
+	if qrnsData != nil && len(qrnsData.Address) > 0 {
+		http.Redirect(w, r, "/address/"+qrnsData.Domain, http.StatusMovedPermanently)
+	} else if utils.IsValidWithdrawalCredentials(search) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
 	} else if utils.IsValidTxHash(search) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)
@@ -185,18 +183,17 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			ORDER BY index LIMIT 10`, search+"%")
 		}
 	case "eth1_addresses":
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// if utils.IsValidZnsDomain(search) {
-		// 	znsData, _ := GetZnsDomain(search)
-		// 	if len(znsData.Address) > 0 {
-		// 		result = []*types.Eth1AddressSearchItem{{
-		// 			Address: znsData.Address,
-		// 			Name:    znsData.Domain,
-		// 			Token:   "",
-		// 		}}
-		// 		break
-		// 	}
-		// }
+		if utils.IsValidQrnsDomain(search) {
+			znsData, _ := GetQrnsDomain(search)
+			if len(znsData.Address) > 0 {
+				result = []*types.Eth1AddressSearchItem{{
+					Address: znsData.Address,
+					Name:    znsData.Domain,
+					Token:   "",
+				}}
+				break
+			}
+		}
 		if !searchLikeRE.MatchString(strippedSearch) {
 			break
 		}

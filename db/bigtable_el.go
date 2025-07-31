@@ -3,6 +3,7 @@ package db
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -30,7 +31,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/math"
-	zond_types "github.com/theQRL/go-zond/core/types"
+	gzond_types "github.com/theQRL/go-zond/core/types"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -1260,7 +1261,7 @@ func (bigtable *Bigtable) TransformZRC20(blk *types.Eth1Block, cache *freecache.
 				topics = append(topics, common.BytesToHash(lTopic))
 			}
 
-			ethLog := zond_types.Log{
+			ethLog := gzond_types.Log{
 				Address:     common.BytesToAddress(log.GetAddress()),
 				Data:        log.Data,
 				Topics:      topics,
@@ -1416,7 +1417,7 @@ func (bigtable *Bigtable) TransformZRC721(blk *types.Eth1Block, cache *freecache
 				topics = append(topics, common.BytesToHash(lTopic))
 			}
 
-			ethLog := zond_types.Log{
+			ethLog := gzond_types.Log{
 				Address:     common.BytesToAddress(log.GetAddress()),
 				Data:        log.Data,
 				Topics:      topics,
@@ -1575,7 +1576,7 @@ func (bigtable *Bigtable) TransformZRC1155(blk *types.Eth1Block, cache *freecach
 				topics = append(topics, common.BytesToHash(lTopic))
 			}
 
-			ethLog := zond_types.Log{
+			ethLog := gzond_types.Log{
 				Address:     common.BytesToAddress(log.GetAddress()),
 				Data:        log.Data,
 				Topics:      topics,
@@ -2375,11 +2376,10 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 		names[string(to)] = ""
 	}
 
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// err := bigtable.GetAddressNames(names)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err := bigtable.GetAddressNames(names)
+	if err != nil {
+		return nil, err
+	}
 
 	contractInteractionTypes, err := BigtableClient.GetAddressContractInteractionsAtParityTraces(parityTrace)
 	if err != nil {
@@ -3075,7 +3075,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 					balance.Metadata = metadata
 
 					mux.Lock()
-					if isNativeZond {
+					if isNativeQuanta {
 						ret.EthBalance = balance
 					} else {
 						ret.Balances = append(ret.Balances, balance)
@@ -3286,8 +3286,6 @@ func (bigtable *Bigtable) SaveZRC20Metadata(address []byte, metadata *types.ZRC2
 	return bigtable.tableMetadata.Apply(ctx, rowKey, mut)
 }
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
 func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -3302,7 +3300,7 @@ func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
 	add := common.Address{}
 	add.SetBytes(address)
-	name, err := GetZnsNameForAddress(add)
+	name, err := GetQrnsNameForAddress(add)
 	if err == nil && len(name) > 0 {
 		return name, nil
 	}
@@ -3349,7 +3347,7 @@ func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
 
 	keys := make([]string, 0, len(addresses))
 
-	if err := GetZnsNamesForAddress(addresses); err != nil {
+	if err := GetQrnsNamesForAddress(addresses); err != nil {
 		return err
 	}
 
@@ -3372,7 +3370,6 @@ func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
 
 	return err
 }
-*/
 
 type isContractInfo struct {
 	update *types.IsContractUpdate
@@ -3594,8 +3591,6 @@ func (bigtable *Bigtable) GetAddressContractInteractionsAtTransactions(transacti
 	return bigtable.GetAddressContractInteractionsAt(requests)
 }
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
 func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
 	defer cancel()
@@ -3616,7 +3611,6 @@ func (bigtable *Bigtable) SaveContractMetadata(address []byte, metadata *types.C
 
 	return bigtable.tableMetadata.Apply(ctx, fmt.Sprintf("%s:%x", bigtable.chainId, address), mut)
 }
-*/
 
 func (bigtable *Bigtable) SaveBalances(balances []*types.Eth1AddressBalance, deleteKeys []string) error {
 	startTime := time.Now()

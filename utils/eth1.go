@@ -267,10 +267,9 @@ func FormatHashLong(hash common.Hash) template.HTML {
 }
 
 func FormatAddressLong(address string) template.HTML {
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// if IsValidZnsDomain(address) {
-	// 	return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.eth`, strings.TrimSuffix(address, ".eth")))
-	// }
+	if IsValidQrnsDomain(address) {
+		return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.eth`, strings.TrimSuffix(address, ".eth")))
+	}
 	address = FixAddressCasing(address)
 	if len(address) > 4 {
 		htmlFormat := `

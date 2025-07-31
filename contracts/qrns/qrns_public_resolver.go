@@ -29,113 +29,113 @@ var (
 	_ = abi.ConvertType
 )
 
-// ZNSPublicResolverMetaData contains all meta data concerning the ZNSPublicResolver contract.
-var ZNSPublicResolverMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"contractZNS\",\"name\":\"_zns\",\"type\":\"address\"},{\"internalType\":\"contractINameWrapper\",\"name\":\"wrapperAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_trustedZONDController\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_trustedReverseRegistrar\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"contentType\",\"type\":\"uint256\"}],\"name\":\"ABIChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"newAddress\",\"type\":\"bytes\"}],\"name\":\"AddressChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"Approved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"name\",\"type\":\"bytes\"},{\"indexed\":false,\"internalType\":\"uint16\",\"name\":\"resource\",\"type\":\"uint16\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"record\",\"type\":\"bytes\"}],\"name\":\"DNSRecordChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"name\",\"type\":\"bytes\"},{\"indexed\":false,\"internalType\":\"uint16\",\"name\":\"resource\",\"type\":\"uint16\"}],\"name\":\"DNSRecordDeleted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"lastzonehash\",\"type\":\"bytes\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"zonehash\",\"type\":\"bytes\"}],\"name\":\"DNSZonehashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"InterfaceChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"x\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"PubkeyChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"string\",\"name\":\"indexedKey\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"TextChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newVersion\",\"type\":\"uint64\"}],\"name\":\"VersionChanged\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"contentTypes\",\"type\":\"uint256\"}],\"name\":\"ABI\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"addresspayable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"clearRecords\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"name\",\"type\":\"bytes32\"},{\"internalType\":\"uint16\",\"name\":\"resource\",\"type\":\"uint16\"}],\"name\":\"dnsRecord\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"name\",\"type\":\"bytes32\"}],\"name\":\"hasDNSRecords\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"interfaceImplementer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"isApprovedFor\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"data\",\"type\":\"bytes[]\"}],\"name\":\"multicall\",\"outputs\":[{\"internalType\":\"bytes[]\",\"name\":\"results\",\"type\":\"bytes[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"nodehash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes[]\",\"name\":\"data\",\"type\":\"bytes[]\"}],\"name\":\"multicallWithNodeCheck\",\"outputs\":[{\"internalType\":\"bytes[]\",\"name\":\"results\",\"type\":\"bytes[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"pubkey\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"x\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"y\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"recordVersions\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"contentType\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setABI\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"a\",\"type\":\"bytes\"}],\"name\":\"setAddr\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setDNSRecords\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"setInterface\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"newName\",\"type\":\"string\"}],\"name\":\"setName\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"x\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"setPubkey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"setText\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setZonehash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"}],\"name\":\"text\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"zonehash\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+// QRNSPublicResolverMetaData contains all meta data concerning the QRNSPublicResolver contract.
+var QRNSPublicResolverMetaData = &bind.MetaData{
+	ABI: "[{\"inputs\":[{\"internalType\":\"contractQRNS\",\"name\":\"_zns\",\"type\":\"address\"},{\"internalType\":\"contractINameWrapper\",\"name\":\"wrapperAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_trustedZONDController\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_trustedReverseRegistrar\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"contentType\",\"type\":\"uint256\"}],\"name\":\"ABIChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"newAddress\",\"type\":\"bytes\"}],\"name\":\"AddressChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"Approved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"name\",\"type\":\"bytes\"},{\"indexed\":false,\"internalType\":\"uint16\",\"name\":\"resource\",\"type\":\"uint16\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"record\",\"type\":\"bytes\"}],\"name\":\"DNSRecordChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"name\",\"type\":\"bytes\"},{\"indexed\":false,\"internalType\":\"uint16\",\"name\":\"resource\",\"type\":\"uint16\"}],\"name\":\"DNSRecordDeleted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"lastzonehash\",\"type\":\"bytes\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"zonehash\",\"type\":\"bytes\"}],\"name\":\"DNSZonehashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"InterfaceChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"x\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"PubkeyChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"string\",\"name\":\"indexedKey\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"TextChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"newVersion\",\"type\":\"uint64\"}],\"name\":\"VersionChanged\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"contentTypes\",\"type\":\"uint256\"}],\"name\":\"ABI\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"addresspayable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"clearRecords\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"name\",\"type\":\"bytes32\"},{\"internalType\":\"uint16\",\"name\":\"resource\",\"type\":\"uint16\"}],\"name\":\"dnsRecord\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"name\",\"type\":\"bytes32\"}],\"name\":\"hasDNSRecords\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"interfaceImplementer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"isApprovedFor\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"data\",\"type\":\"bytes[]\"}],\"name\":\"multicall\",\"outputs\":[{\"internalType\":\"bytes[]\",\"name\":\"results\",\"type\":\"bytes[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"nodehash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes[]\",\"name\":\"data\",\"type\":\"bytes[]\"}],\"name\":\"multicallWithNodeCheck\",\"outputs\":[{\"internalType\":\"bytes[]\",\"name\":\"results\",\"type\":\"bytes[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"pubkey\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"x\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"y\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"recordVersions\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"contentType\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setABI\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"a\",\"type\":\"bytes\"}],\"name\":\"setAddr\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setDNSRecords\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"setInterface\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"newName\",\"type\":\"string\"}],\"name\":\"setName\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"x\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"setPubkey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"setText\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setZonehash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"}],\"name\":\"text\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"zonehash\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
-// ZNSPublicResolverABI is the input ABI used to generate the binding from.
-// Deprecated: Use ZNSPublicResolverMetaData.ABI instead.
-var ZNSPublicResolverABI = ZNSPublicResolverMetaData.ABI
+// QRNSPublicResolverABI is the input ABI used to generate the binding from.
+// Deprecated: Use QRNSPublicResolverMetaData.ABI instead.
+var QRNSPublicResolverABI = QRNSPublicResolverMetaData.ABI
 
-// ZNSPublicResolver is an auto generated Go binding around a QRL contract.
-type ZNSPublicResolver struct {
-	ZNSPublicResolverCaller     // Read-only binding to the contract
-	ZNSPublicResolverTransactor // Write-only binding to the contract
-	ZNSPublicResolverFilterer   // Log filterer for contract events
+// QRNSPublicResolver is an auto generated Go binding around a QRL contract.
+type QRNSPublicResolver struct {
+	QRNSPublicResolverCaller     // Read-only binding to the contract
+	QRNSPublicResolverTransactor // Write-only binding to the contract
+	QRNSPublicResolverFilterer   // Log filterer for contract events
 }
 
-// ZNSPublicResolverCaller is an auto generated read-only Go binding around a QRL contract.
-type ZNSPublicResolverCaller struct {
+// QRNSPublicResolverCaller is an auto generated read-only Go binding around a QRL contract.
+type QRNSPublicResolverCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSPublicResolverTransactor is an auto generated write-only Go binding around a QRL contract.
-type ZNSPublicResolverTransactor struct {
+// QRNSPublicResolverTransactor is an auto generated write-only Go binding around a QRL contract.
+type QRNSPublicResolverTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSPublicResolverFilterer is an auto generated log filtering Go binding around a QRL contract events.
-type ZNSPublicResolverFilterer struct {
+// QRNSPublicResolverFilterer is an auto generated log filtering Go binding around a QRL contract events.
+type QRNSPublicResolverFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSPublicResolverSession is an auto generated Go binding around a QRL contract,
+// QRNSPublicResolverSession is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
-type ZNSPublicResolverSession struct {
-	Contract     *ZNSPublicResolver // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts      // Call options to use throughout this session
-	TransactOpts bind.TransactOpts  // Transaction auth options to use throughout this session
+type QRNSPublicResolverSession struct {
+	Contract     *QRNSPublicResolver // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts       // Call options to use throughout this session
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
 }
 
-// ZNSPublicResolverCallerSession is an auto generated read-only Go binding around a QRL contract,
+// QRNSPublicResolverCallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
-type ZNSPublicResolverCallerSession struct {
-	Contract *ZNSPublicResolverCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts            // Call options to use throughout this session
+type QRNSPublicResolverCallerSession struct {
+	Contract *QRNSPublicResolverCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts             // Call options to use throughout this session
 }
 
-// ZNSPublicResolverTransactorSession is an auto generated write-only Go binding around a QRL contract,
+// QRNSPublicResolverTransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
-type ZNSPublicResolverTransactorSession struct {
-	Contract     *ZNSPublicResolverTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts            // Transaction auth options to use throughout this session
+type QRNSPublicResolverTransactorSession struct {
+	Contract     *QRNSPublicResolverTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts             // Transaction auth options to use throughout this session
 }
 
-// ZNSPublicResolverRaw is an auto generated low-level Go binding around a QRL contract.
-type ZNSPublicResolverRaw struct {
-	Contract *ZNSPublicResolver // Generic contract binding to access the raw methods on
+// QRNSPublicResolverRaw is an auto generated low-level Go binding around a QRL contract.
+type QRNSPublicResolverRaw struct {
+	Contract *QRNSPublicResolver // Generic contract binding to access the raw methods on
 }
 
-// ZNSPublicResolverCallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
-type ZNSPublicResolverCallerRaw struct {
-	Contract *ZNSPublicResolverCaller // Generic read-only contract binding to access the raw methods on
+// QRNSPublicResolverCallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
+type QRNSPublicResolverCallerRaw struct {
+	Contract *QRNSPublicResolverCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ZNSPublicResolverTransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
-type ZNSPublicResolverTransactorRaw struct {
-	Contract *ZNSPublicResolverTransactor // Generic write-only contract binding to access the raw methods on
+// QRNSPublicResolverTransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
+type QRNSPublicResolverTransactorRaw struct {
+	Contract *QRNSPublicResolverTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewZNSPublicResolver creates a new instance of ZNSPublicResolver, bound to a specific deployed contract.
-func NewZNSPublicResolver(address common.Address, backend bind.ContractBackend) (*ZNSPublicResolver, error) {
-	contract, err := bindZNSPublicResolver(address, backend, backend, backend)
+// NewQRNSPublicResolver creates a new instance of QRNSPublicResolver, bound to a specific deployed contract.
+func NewQRNSPublicResolver(address common.Address, backend bind.ContractBackend) (*QRNSPublicResolver, error) {
+	contract, err := bindQRNSPublicResolver(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolver{ZNSPublicResolverCaller: ZNSPublicResolverCaller{contract: contract}, ZNSPublicResolverTransactor: ZNSPublicResolverTransactor{contract: contract}, ZNSPublicResolverFilterer: ZNSPublicResolverFilterer{contract: contract}}, nil
+	return &QRNSPublicResolver{QRNSPublicResolverCaller: QRNSPublicResolverCaller{contract: contract}, QRNSPublicResolverTransactor: QRNSPublicResolverTransactor{contract: contract}, QRNSPublicResolverFilterer: QRNSPublicResolverFilterer{contract: contract}}, nil
 }
 
-// NewZNSPublicResolverCaller creates a new read-only instance of ZNSPublicResolver, bound to a specific deployed contract.
-func NewZNSPublicResolverCaller(address common.Address, caller bind.ContractCaller) (*ZNSPublicResolverCaller, error) {
-	contract, err := bindZNSPublicResolver(address, caller, nil, nil)
+// NewQRNSPublicResolverCaller creates a new read-only instance of QRNSPublicResolver, bound to a specific deployed contract.
+func NewQRNSPublicResolverCaller(address common.Address, caller bind.ContractCaller) (*QRNSPublicResolverCaller, error) {
+	contract, err := bindQRNSPublicResolver(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverCaller{contract: contract}, nil
+	return &QRNSPublicResolverCaller{contract: contract}, nil
 }
 
-// NewZNSPublicResolverTransactor creates a new write-only instance of ZNSPublicResolver, bound to a specific deployed contract.
-func NewZNSPublicResolverTransactor(address common.Address, transactor bind.ContractTransactor) (*ZNSPublicResolverTransactor, error) {
-	contract, err := bindZNSPublicResolver(address, nil, transactor, nil)
+// NewQRNSPublicResolverTransactor creates a new write-only instance of QRNSPublicResolver, bound to a specific deployed contract.
+func NewQRNSPublicResolverTransactor(address common.Address, transactor bind.ContractTransactor) (*QRNSPublicResolverTransactor, error) {
+	contract, err := bindQRNSPublicResolver(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverTransactor{contract: contract}, nil
+	return &QRNSPublicResolverTransactor{contract: contract}, nil
 }
 
-// NewZNSPublicResolverFilterer creates a new log filterer instance of ZNSPublicResolver, bound to a specific deployed contract.
-func NewZNSPublicResolverFilterer(address common.Address, filterer bind.ContractFilterer) (*ZNSPublicResolverFilterer, error) {
-	contract, err := bindZNSPublicResolver(address, nil, nil, filterer)
+// NewQRNSPublicResolverFilterer creates a new log filterer instance of QRNSPublicResolver, bound to a specific deployed contract.
+func NewQRNSPublicResolverFilterer(address common.Address, filterer bind.ContractFilterer) (*QRNSPublicResolverFilterer, error) {
+	contract, err := bindQRNSPublicResolver(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverFilterer{contract: contract}, nil
+	return &QRNSPublicResolverFilterer{contract: contract}, nil
 }
 
-// bindZNSPublicResolver binds a generic wrapper to an already deployed contract.
-func bindZNSPublicResolver(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := ZNSPublicResolverMetaData.GetAbi()
+// bindQRNSPublicResolver binds a generic wrapper to an already deployed contract.
+func bindQRNSPublicResolver(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := QRNSPublicResolverMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
@@ -146,46 +146,46 @@ func bindZNSPublicResolver(address common.Address, caller bind.ContractCaller, t
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ZNSPublicResolver *ZNSPublicResolverRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _ZNSPublicResolver.Contract.ZNSPublicResolverCaller.contract.Call(opts, result, method, params...)
+func (_QRNSPublicResolver *QRNSPublicResolverRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _QRNSPublicResolver.Contract.QRNSPublicResolverCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ZNSPublicResolver *ZNSPublicResolverRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.ZNSPublicResolverTransactor.contract.Transfer(opts)
+func (_QRNSPublicResolver *QRNSPublicResolverRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.QRNSPublicResolverTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ZNSPublicResolver *ZNSPublicResolverRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.ZNSPublicResolverTransactor.contract.Transact(opts, method, params...)
+func (_QRNSPublicResolver *QRNSPublicResolverRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.QRNSPublicResolverTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_ZNSPublicResolver *ZNSPublicResolverCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _ZNSPublicResolver.Contract.contract.Call(opts, result, method, params...)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _QRNSPublicResolver.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.contract.Transfer(opts)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.contract.Transact(opts, method, params...)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.contract.Transact(opts, method, params...)
 }
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
 // Solidity: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) ABI(opts *bind.CallOpts, node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) ABI(opts *bind.CallOpts, node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "ABI", node, contentTypes)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "ABI", node, contentTypes)
 
 	if err != nil {
 		return *new(*big.Int), *new([]byte), err
@@ -201,23 +201,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) ABI(opts *bind.CallOpts, node
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
 // Solidity: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) ABI(node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
-	return _ZNSPublicResolver.Contract.ABI(&_ZNSPublicResolver.CallOpts, node, contentTypes)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) ABI(node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
+	return _QRNSPublicResolver.Contract.ABI(&_QRNSPublicResolver.CallOpts, node, contentTypes)
 }
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
 // Solidity: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) ABI(node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
-	return _ZNSPublicResolver.Contract.ABI(&_ZNSPublicResolver.CallOpts, node, contentTypes)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) ABI(node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
+	return _QRNSPublicResolver.Contract.ABI(&_QRNSPublicResolver.CallOpts, node, contentTypes)
 }
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
 // Solidity: function addr(bytes32 node) view returns(address)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) Addr(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) Addr(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "addr", node)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "addr", node)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -232,23 +232,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) Addr(opts *bind.CallOpts, nod
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
 // Solidity: function addr(bytes32 node) view returns(address)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Addr(node [32]byte) (common.Address, error) {
-	return _ZNSPublicResolver.Contract.Addr(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Addr(node [32]byte) (common.Address, error) {
+	return _QRNSPublicResolver.Contract.Addr(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
 // Solidity: function addr(bytes32 node) view returns(address)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) Addr(node [32]byte) (common.Address, error) {
-	return _ZNSPublicResolver.Contract.Addr(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Addr(node [32]byte) (common.Address, error) {
+	return _QRNSPublicResolver.Contract.Addr(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Addr0 is a free data retrieval call binding the contract method 0xf1cb7e06.
 //
 // Solidity: function addr(bytes32 node, uint256 coinType) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) Addr0(opts *bind.CallOpts, node [32]byte, coinType *big.Int) ([]byte, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) Addr0(opts *bind.CallOpts, node [32]byte, coinType *big.Int) ([]byte, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "addr0", node, coinType)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "addr0", node, coinType)
 
 	if err != nil {
 		return *new([]byte), err
@@ -263,23 +263,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) Addr0(opts *bind.CallOpts, no
 // Addr0 is a free data retrieval call binding the contract method 0xf1cb7e06.
 //
 // Solidity: function addr(bytes32 node, uint256 coinType) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Addr0(node [32]byte, coinType *big.Int) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.Addr0(&_ZNSPublicResolver.CallOpts, node, coinType)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Addr0(node [32]byte, coinType *big.Int) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.Addr0(&_QRNSPublicResolver.CallOpts, node, coinType)
 }
 
 // Addr0 is a free data retrieval call binding the contract method 0xf1cb7e06.
 //
 // Solidity: function addr(bytes32 node, uint256 coinType) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) Addr0(node [32]byte, coinType *big.Int) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.Addr0(&_ZNSPublicResolver.CallOpts, node, coinType)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Addr0(node [32]byte, coinType *big.Int) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.Addr0(&_QRNSPublicResolver.CallOpts, node, coinType)
 }
 
 // Contenthash is a free data retrieval call binding the contract method 0xbc1c58d1.
 //
 // Solidity: function contenthash(bytes32 node) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) Contenthash(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) Contenthash(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "contenthash", node)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "contenthash", node)
 
 	if err != nil {
 		return *new([]byte), err
@@ -294,23 +294,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) Contenthash(opts *bind.CallOp
 // Contenthash is a free data retrieval call binding the contract method 0xbc1c58d1.
 //
 // Solidity: function contenthash(bytes32 node) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Contenthash(node [32]byte) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.Contenthash(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Contenthash(node [32]byte) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.Contenthash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Contenthash is a free data retrieval call binding the contract method 0xbc1c58d1.
 //
 // Solidity: function contenthash(bytes32 node) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) Contenthash(node [32]byte) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.Contenthash(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Contenthash(node [32]byte) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.Contenthash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
 // Solidity: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) DnsRecord(opts *bind.CallOpts, node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) DnsRecord(opts *bind.CallOpts, node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "dnsRecord", node, name, resource)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "dnsRecord", node, name, resource)
 
 	if err != nil {
 		return *new([]byte), err
@@ -325,23 +325,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) DnsRecord(opts *bind.CallOpts
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
 // Solidity: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) DnsRecord(node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.DnsRecord(&_ZNSPublicResolver.CallOpts, node, name, resource)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) DnsRecord(node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.DnsRecord(&_QRNSPublicResolver.CallOpts, node, name, resource)
 }
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
 // Solidity: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) DnsRecord(node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.DnsRecord(&_ZNSPublicResolver.CallOpts, node, name, resource)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) DnsRecord(node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.DnsRecord(&_QRNSPublicResolver.CallOpts, node, name, resource)
 }
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
 // Solidity: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) HasDNSRecords(opts *bind.CallOpts, node [32]byte, name [32]byte) (bool, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) HasDNSRecords(opts *bind.CallOpts, node [32]byte, name [32]byte) (bool, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "hasDNSRecords", node, name)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "hasDNSRecords", node, name)
 
 	if err != nil {
 		return *new(bool), err
@@ -356,23 +356,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) HasDNSRecords(opts *bind.Call
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
 // Solidity: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) HasDNSRecords(node [32]byte, name [32]byte) (bool, error) {
-	return _ZNSPublicResolver.Contract.HasDNSRecords(&_ZNSPublicResolver.CallOpts, node, name)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) HasDNSRecords(node [32]byte, name [32]byte) (bool, error) {
+	return _QRNSPublicResolver.Contract.HasDNSRecords(&_QRNSPublicResolver.CallOpts, node, name)
 }
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
 // Solidity: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) HasDNSRecords(node [32]byte, name [32]byte) (bool, error) {
-	return _ZNSPublicResolver.Contract.HasDNSRecords(&_ZNSPublicResolver.CallOpts, node, name)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) HasDNSRecords(node [32]byte, name [32]byte) (bool, error) {
+	return _QRNSPublicResolver.Contract.HasDNSRecords(&_QRNSPublicResolver.CallOpts, node, name)
 }
 
 // InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
 //
 // Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) InterfaceImplementer(opts *bind.CallOpts, node [32]byte, interfaceID [4]byte) (common.Address, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) InterfaceImplementer(opts *bind.CallOpts, node [32]byte, interfaceID [4]byte) (common.Address, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "interfaceImplementer", node, interfaceID)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "interfaceImplementer", node, interfaceID)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -387,23 +387,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) InterfaceImplementer(opts *bi
 // InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
 //
 // Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
-	return _ZNSPublicResolver.Contract.InterfaceImplementer(&_ZNSPublicResolver.CallOpts, node, interfaceID)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
+	return _QRNSPublicResolver.Contract.InterfaceImplementer(&_QRNSPublicResolver.CallOpts, node, interfaceID)
 }
 
 // InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
 //
 // Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
-	return _ZNSPublicResolver.Contract.InterfaceImplementer(&_ZNSPublicResolver.CallOpts, node, interfaceID)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
+	return _QRNSPublicResolver.Contract.InterfaceImplementer(&_QRNSPublicResolver.CallOpts, node, interfaceID)
 }
 
 // IsApprovedFor is a free data retrieval call binding the contract method 0xa9784b3e.
 //
 // Solidity: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) IsApprovedFor(opts *bind.CallOpts, owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) IsApprovedFor(opts *bind.CallOpts, owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "isApprovedFor", owner, node, delegate)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "isApprovedFor", owner, node, delegate)
 
 	if err != nil {
 		return *new(bool), err
@@ -418,23 +418,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) IsApprovedFor(opts *bind.Call
 // IsApprovedFor is a free data retrieval call binding the contract method 0xa9784b3e.
 //
 // Solidity: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) IsApprovedFor(owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
-	return _ZNSPublicResolver.Contract.IsApprovedFor(&_ZNSPublicResolver.CallOpts, owner, node, delegate)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) IsApprovedFor(owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
+	return _QRNSPublicResolver.Contract.IsApprovedFor(&_QRNSPublicResolver.CallOpts, owner, node, delegate)
 }
 
 // IsApprovedFor is a free data retrieval call binding the contract method 0xa9784b3e.
 //
 // Solidity: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) IsApprovedFor(owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
-	return _ZNSPublicResolver.Contract.IsApprovedFor(&_ZNSPublicResolver.CallOpts, owner, node, delegate)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) IsApprovedFor(owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
+	return _QRNSPublicResolver.Contract.IsApprovedFor(&_QRNSPublicResolver.CallOpts, owner, node, delegate)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
 // Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) IsApprovedForAll(opts *bind.CallOpts, account common.Address, operator common.Address) (bool, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) IsApprovedForAll(opts *bind.CallOpts, account common.Address, operator common.Address) (bool, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "isApprovedForAll", account, operator)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "isApprovedForAll", account, operator)
 
 	if err != nil {
 		return *new(bool), err
@@ -449,23 +449,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) IsApprovedForAll(opts *bind.C
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
 // Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
-	return _ZNSPublicResolver.Contract.IsApprovedForAll(&_ZNSPublicResolver.CallOpts, account, operator)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
+	return _QRNSPublicResolver.Contract.IsApprovedForAll(&_QRNSPublicResolver.CallOpts, account, operator)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
 // Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
-	return _ZNSPublicResolver.Contract.IsApprovedForAll(&_ZNSPublicResolver.CallOpts, account, operator)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
+	return _QRNSPublicResolver.Contract.IsApprovedForAll(&_QRNSPublicResolver.CallOpts, account, operator)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
 // Solidity: function name(bytes32 node) view returns(string)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) Name(opts *bind.CallOpts, node [32]byte) (string, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) Name(opts *bind.CallOpts, node [32]byte) (string, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "name", node)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "name", node)
 
 	if err != nil {
 		return *new(string), err
@@ -480,26 +480,26 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) Name(opts *bind.CallOpts, nod
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
 // Solidity: function name(bytes32 node) view returns(string)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Name(node [32]byte) (string, error) {
-	return _ZNSPublicResolver.Contract.Name(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Name(node [32]byte) (string, error) {
+	return _QRNSPublicResolver.Contract.Name(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
 // Solidity: function name(bytes32 node) view returns(string)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) Name(node [32]byte) (string, error) {
-	return _ZNSPublicResolver.Contract.Name(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Name(node [32]byte) (string, error) {
+	return _QRNSPublicResolver.Contract.Name(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
 // Solidity: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) Pubkey(opts *bind.CallOpts, node [32]byte) (struct {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) Pubkey(opts *bind.CallOpts, node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
 }, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "pubkey", node)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "pubkey", node)
 
 	outstruct := new(struct {
 		X [32]byte
@@ -519,29 +519,29 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) Pubkey(opts *bind.CallOpts, n
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
 // Solidity: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Pubkey(node [32]byte) (struct {
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
 }, error) {
-	return _ZNSPublicResolver.Contract.Pubkey(&_ZNSPublicResolver.CallOpts, node)
+	return _QRNSPublicResolver.Contract.Pubkey(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
 // Solidity: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) Pubkey(node [32]byte) (struct {
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
 }, error) {
-	return _ZNSPublicResolver.Contract.Pubkey(&_ZNSPublicResolver.CallOpts, node)
+	return _QRNSPublicResolver.Contract.Pubkey(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // RecordVersions is a free data retrieval call binding the contract method 0xd700ff33.
 //
 // Solidity: function recordVersions(bytes32 ) view returns(uint64)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) RecordVersions(opts *bind.CallOpts, arg0 [32]byte) (uint64, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) RecordVersions(opts *bind.CallOpts, arg0 [32]byte) (uint64, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "recordVersions", arg0)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "recordVersions", arg0)
 
 	if err != nil {
 		return *new(uint64), err
@@ -556,23 +556,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) RecordVersions(opts *bind.Cal
 // RecordVersions is a free data retrieval call binding the contract method 0xd700ff33.
 //
 // Solidity: function recordVersions(bytes32 ) view returns(uint64)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) RecordVersions(arg0 [32]byte) (uint64, error) {
-	return _ZNSPublicResolver.Contract.RecordVersions(&_ZNSPublicResolver.CallOpts, arg0)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) RecordVersions(arg0 [32]byte) (uint64, error) {
+	return _QRNSPublicResolver.Contract.RecordVersions(&_QRNSPublicResolver.CallOpts, arg0)
 }
 
 // RecordVersions is a free data retrieval call binding the contract method 0xd700ff33.
 //
 // Solidity: function recordVersions(bytes32 ) view returns(uint64)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) RecordVersions(arg0 [32]byte) (uint64, error) {
-	return _ZNSPublicResolver.Contract.RecordVersions(&_ZNSPublicResolver.CallOpts, arg0)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) RecordVersions(arg0 [32]byte) (uint64, error) {
+	return _QRNSPublicResolver.Contract.RecordVersions(&_QRNSPublicResolver.CallOpts, arg0)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
 // Solidity: function supportsInterface(bytes4 interfaceID) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "supportsInterface", interfaceID)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "supportsInterface", interfaceID)
 
 	if err != nil {
 		return *new(bool), err
@@ -587,23 +587,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) SupportsInterface(opts *bind.
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
 // Solidity: function supportsInterface(bytes4 interfaceID) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
-	return _ZNSPublicResolver.Contract.SupportsInterface(&_ZNSPublicResolver.CallOpts, interfaceID)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
+	return _QRNSPublicResolver.Contract.SupportsInterface(&_QRNSPublicResolver.CallOpts, interfaceID)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
 // Solidity: function supportsInterface(bytes4 interfaceID) view returns(bool)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
-	return _ZNSPublicResolver.Contract.SupportsInterface(&_ZNSPublicResolver.CallOpts, interfaceID)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
+	return _QRNSPublicResolver.Contract.SupportsInterface(&_QRNSPublicResolver.CallOpts, interfaceID)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
 // Solidity: function text(bytes32 node, string key) view returns(string)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) Text(opts *bind.CallOpts, node [32]byte, key string) (string, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) Text(opts *bind.CallOpts, node [32]byte, key string) (string, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "text", node, key)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "text", node, key)
 
 	if err != nil {
 		return *new(string), err
@@ -618,23 +618,23 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) Text(opts *bind.CallOpts, nod
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
 // Solidity: function text(bytes32 node, string key) view returns(string)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Text(node [32]byte, key string) (string, error) {
-	return _ZNSPublicResolver.Contract.Text(&_ZNSPublicResolver.CallOpts, node, key)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Text(node [32]byte, key string) (string, error) {
+	return _QRNSPublicResolver.Contract.Text(&_QRNSPublicResolver.CallOpts, node, key)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
 // Solidity: function text(bytes32 node, string key) view returns(string)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) Text(node [32]byte, key string) (string, error) {
-	return _ZNSPublicResolver.Contract.Text(&_ZNSPublicResolver.CallOpts, node, key)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Text(node [32]byte, key string) (string, error) {
+	return _QRNSPublicResolver.Contract.Text(&_QRNSPublicResolver.CallOpts, node, key)
 }
 
 // Zonehash is a free data retrieval call binding the contract method 0x5c98042b.
 //
 // Solidity: function zonehash(bytes32 node) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCaller) Zonehash(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverCaller) Zonehash(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
 	var out []interface{}
-	err := _ZNSPublicResolver.contract.Call(opts, &out, "zonehash", node)
+	err := _QRNSPublicResolver.contract.Call(opts, &out, "zonehash", node)
 
 	if err != nil {
 		return *new([]byte), err
@@ -649,335 +649,335 @@ func (_ZNSPublicResolver *ZNSPublicResolverCaller) Zonehash(opts *bind.CallOpts,
 // Zonehash is a free data retrieval call binding the contract method 0x5c98042b.
 //
 // Solidity: function zonehash(bytes32 node) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Zonehash(node [32]byte) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.Zonehash(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Zonehash(node [32]byte) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.Zonehash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Zonehash is a free data retrieval call binding the contract method 0x5c98042b.
 //
 // Solidity: function zonehash(bytes32 node) view returns(bytes)
-func (_ZNSPublicResolver *ZNSPublicResolverCallerSession) Zonehash(node [32]byte) ([]byte, error) {
-	return _ZNSPublicResolver.Contract.Zonehash(&_ZNSPublicResolver.CallOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Zonehash(node [32]byte) ([]byte, error) {
+	return _QRNSPublicResolver.Contract.Zonehash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0xa4b91a01.
 //
 // Solidity: function approve(bytes32 node, address delegate, bool approved) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) Approve(opts *bind.TransactOpts, node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "approve", node, delegate, approved)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) Approve(opts *bind.TransactOpts, node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "approve", node, delegate, approved)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0xa4b91a01.
 //
 // Solidity: function approve(bytes32 node, address delegate, bool approved) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Approve(node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.Approve(&_ZNSPublicResolver.TransactOpts, node, delegate, approved)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Approve(node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.Approve(&_QRNSPublicResolver.TransactOpts, node, delegate, approved)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0xa4b91a01.
 //
 // Solidity: function approve(bytes32 node, address delegate, bool approved) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) Approve(node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.Approve(&_ZNSPublicResolver.TransactOpts, node, delegate, approved)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) Approve(node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.Approve(&_QRNSPublicResolver.TransactOpts, node, delegate, approved)
 }
 
 // ClearRecords is a paid mutator transaction binding the contract method 0x3603d758.
 //
 // Solidity: function clearRecords(bytes32 node) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) ClearRecords(opts *bind.TransactOpts, node [32]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "clearRecords", node)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) ClearRecords(opts *bind.TransactOpts, node [32]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "clearRecords", node)
 }
 
 // ClearRecords is a paid mutator transaction binding the contract method 0x3603d758.
 //
 // Solidity: function clearRecords(bytes32 node) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) ClearRecords(node [32]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.ClearRecords(&_ZNSPublicResolver.TransactOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) ClearRecords(node [32]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.ClearRecords(&_QRNSPublicResolver.TransactOpts, node)
 }
 
 // ClearRecords is a paid mutator transaction binding the contract method 0x3603d758.
 //
 // Solidity: function clearRecords(bytes32 node) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) ClearRecords(node [32]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.ClearRecords(&_ZNSPublicResolver.TransactOpts, node)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) ClearRecords(node [32]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.ClearRecords(&_QRNSPublicResolver.TransactOpts, node)
 }
 
 // Multicall is a paid mutator transaction binding the contract method 0xac9650d8.
 //
 // Solidity: function multicall(bytes[] data) returns(bytes[] results)
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) Multicall(opts *bind.TransactOpts, data [][]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "multicall", data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) Multicall(opts *bind.TransactOpts, data [][]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "multicall", data)
 }
 
 // Multicall is a paid mutator transaction binding the contract method 0xac9650d8.
 //
 // Solidity: function multicall(bytes[] data) returns(bytes[] results)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) Multicall(data [][]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.Multicall(&_ZNSPublicResolver.TransactOpts, data)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) Multicall(data [][]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.Multicall(&_QRNSPublicResolver.TransactOpts, data)
 }
 
 // Multicall is a paid mutator transaction binding the contract method 0xac9650d8.
 //
 // Solidity: function multicall(bytes[] data) returns(bytes[] results)
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) Multicall(data [][]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.Multicall(&_ZNSPublicResolver.TransactOpts, data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) Multicall(data [][]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.Multicall(&_QRNSPublicResolver.TransactOpts, data)
 }
 
 // MulticallWithNodeCheck is a paid mutator transaction binding the contract method 0xe32954eb.
 //
 // Solidity: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) MulticallWithNodeCheck(opts *bind.TransactOpts, nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "multicallWithNodeCheck", nodehash, data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) MulticallWithNodeCheck(opts *bind.TransactOpts, nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "multicallWithNodeCheck", nodehash, data)
 }
 
 // MulticallWithNodeCheck is a paid mutator transaction binding the contract method 0xe32954eb.
 //
 // Solidity: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
-func (_ZNSPublicResolver *ZNSPublicResolverSession) MulticallWithNodeCheck(nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.MulticallWithNodeCheck(&_ZNSPublicResolver.TransactOpts, nodehash, data)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) MulticallWithNodeCheck(nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.MulticallWithNodeCheck(&_QRNSPublicResolver.TransactOpts, nodehash, data)
 }
 
 // MulticallWithNodeCheck is a paid mutator transaction binding the contract method 0xe32954eb.
 //
 // Solidity: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) MulticallWithNodeCheck(nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.MulticallWithNodeCheck(&_ZNSPublicResolver.TransactOpts, nodehash, data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) MulticallWithNodeCheck(nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.MulticallWithNodeCheck(&_QRNSPublicResolver.TransactOpts, nodehash, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
 // Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetABI(opts *bind.TransactOpts, node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setABI", node, contentType, data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetABI(opts *bind.TransactOpts, node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setABI", node, contentType, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
 // Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetABI(&_ZNSPublicResolver.TransactOpts, node, contentType, data)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetABI(&_QRNSPublicResolver.TransactOpts, node, contentType, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
 // Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetABI(&_ZNSPublicResolver.TransactOpts, node, contentType, data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetABI(&_QRNSPublicResolver.TransactOpts, node, contentType, data)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0x8b95dd71.
 //
 // Solidity: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetAddr(opts *bind.TransactOpts, node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setAddr", node, coinType, a)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetAddr(opts *bind.TransactOpts, node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setAddr", node, coinType, a)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0x8b95dd71.
 //
 // Solidity: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetAddr(node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetAddr(&_ZNSPublicResolver.TransactOpts, node, coinType, a)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetAddr(node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetAddr(&_QRNSPublicResolver.TransactOpts, node, coinType, a)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0x8b95dd71.
 //
 // Solidity: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetAddr(node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetAddr(&_ZNSPublicResolver.TransactOpts, node, coinType, a)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetAddr(node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetAddr(&_QRNSPublicResolver.TransactOpts, node, coinType, a)
 }
 
 // SetAddr0 is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
 // Solidity: function setAddr(bytes32 node, address a) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetAddr0(opts *bind.TransactOpts, node [32]byte, a common.Address) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setAddr0", node, a)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetAddr0(opts *bind.TransactOpts, node [32]byte, a common.Address) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setAddr0", node, a)
 }
 
 // SetAddr0 is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
 // Solidity: function setAddr(bytes32 node, address a) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetAddr0(node [32]byte, a common.Address) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetAddr0(&_ZNSPublicResolver.TransactOpts, node, a)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetAddr0(node [32]byte, a common.Address) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetAddr0(&_QRNSPublicResolver.TransactOpts, node, a)
 }
 
 // SetAddr0 is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
 // Solidity: function setAddr(bytes32 node, address a) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetAddr0(node [32]byte, a common.Address) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetAddr0(&_ZNSPublicResolver.TransactOpts, node, a)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetAddr0(node [32]byte, a common.Address) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetAddr0(&_QRNSPublicResolver.TransactOpts, node, a)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
 // Solidity: function setApprovalForAll(address operator, bool approved) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetApprovalForAll(opts *bind.TransactOpts, operator common.Address, approved bool) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setApprovalForAll", operator, approved)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetApprovalForAll(opts *bind.TransactOpts, operator common.Address, approved bool) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setApprovalForAll", operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
 // Solidity: function setApprovalForAll(address operator, bool approved) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetApprovalForAll(&_ZNSPublicResolver.TransactOpts, operator, approved)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetApprovalForAll(&_QRNSPublicResolver.TransactOpts, operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
 // Solidity: function setApprovalForAll(address operator, bool approved) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetApprovalForAll(&_ZNSPublicResolver.TransactOpts, operator, approved)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetApprovalForAll(&_QRNSPublicResolver.TransactOpts, operator, approved)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
 // Solidity: function setContenthash(bytes32 node, bytes hash) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetContenthash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setContenthash", node, hash)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetContenthash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setContenthash", node, hash)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
 // Solidity: function setContenthash(bytes32 node, bytes hash) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetContenthash(&_ZNSPublicResolver.TransactOpts, node, hash)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetContenthash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
 // Solidity: function setContenthash(bytes32 node, bytes hash) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetContenthash(&_ZNSPublicResolver.TransactOpts, node, hash)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetContenthash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
 // Solidity: function setDNSRecords(bytes32 node, bytes data) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetDNSRecords(opts *bind.TransactOpts, node [32]byte, data []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setDNSRecords", node, data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetDNSRecords(opts *bind.TransactOpts, node [32]byte, data []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setDNSRecords", node, data)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
 // Solidity: function setDNSRecords(bytes32 node, bytes data) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetDNSRecords(node [32]byte, data []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetDNSRecords(&_ZNSPublicResolver.TransactOpts, node, data)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetDNSRecords(node [32]byte, data []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetDNSRecords(&_QRNSPublicResolver.TransactOpts, node, data)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
 // Solidity: function setDNSRecords(bytes32 node, bytes data) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetDNSRecords(node [32]byte, data []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetDNSRecords(&_ZNSPublicResolver.TransactOpts, node, data)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetDNSRecords(node [32]byte, data []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetDNSRecords(&_QRNSPublicResolver.TransactOpts, node, data)
 }
 
 // SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
 //
 // Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetInterface(opts *bind.TransactOpts, node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setInterface", node, interfaceID, implementer)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetInterface(opts *bind.TransactOpts, node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setInterface", node, interfaceID, implementer)
 }
 
 // SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
 //
 // Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetInterface(&_ZNSPublicResolver.TransactOpts, node, interfaceID, implementer)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetInterface(&_QRNSPublicResolver.TransactOpts, node, interfaceID, implementer)
 }
 
 // SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
 //
 // Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetInterface(&_ZNSPublicResolver.TransactOpts, node, interfaceID, implementer)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetInterface(&_QRNSPublicResolver.TransactOpts, node, interfaceID, implementer)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
 // Solidity: function setName(bytes32 node, string newName) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetName(opts *bind.TransactOpts, node [32]byte, newName string) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setName", node, newName)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetName(opts *bind.TransactOpts, node [32]byte, newName string) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setName", node, newName)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
 // Solidity: function setName(bytes32 node, string newName) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetName(node [32]byte, newName string) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetName(&_ZNSPublicResolver.TransactOpts, node, newName)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetName(node [32]byte, newName string) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetName(&_QRNSPublicResolver.TransactOpts, node, newName)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
 // Solidity: function setName(bytes32 node, string newName) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetName(node [32]byte, newName string) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetName(&_ZNSPublicResolver.TransactOpts, node, newName)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetName(node [32]byte, newName string) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetName(&_QRNSPublicResolver.TransactOpts, node, newName)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
 // Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetPubkey(opts *bind.TransactOpts, node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setPubkey", node, x, y)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetPubkey(opts *bind.TransactOpts, node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setPubkey", node, x, y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
 // Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetPubkey(&_ZNSPublicResolver.TransactOpts, node, x, y)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetPubkey(&_QRNSPublicResolver.TransactOpts, node, x, y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
 // Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetPubkey(&_ZNSPublicResolver.TransactOpts, node, x, y)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetPubkey(&_QRNSPublicResolver.TransactOpts, node, x, y)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
 // Solidity: function setText(bytes32 node, string key, string value) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetText(opts *bind.TransactOpts, node [32]byte, key string, value string) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setText", node, key, value)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetText(opts *bind.TransactOpts, node [32]byte, key string, value string) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setText", node, key, value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
 // Solidity: function setText(bytes32 node, string key, string value) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetText(&_ZNSPublicResolver.TransactOpts, node, key, value)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetText(&_QRNSPublicResolver.TransactOpts, node, key, value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
 // Solidity: function setText(bytes32 node, string key, string value) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetText(&_ZNSPublicResolver.TransactOpts, node, key, value)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetText(&_QRNSPublicResolver.TransactOpts, node, key, value)
 }
 
 // SetZonehash is a paid mutator transaction binding the contract method 0xce3decdc.
 //
 // Solidity: function setZonehash(bytes32 node, bytes hash) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactor) SetZonehash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.contract.Transact(opts, "setZonehash", node, hash)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetZonehash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.contract.Transact(opts, "setZonehash", node, hash)
 }
 
 // SetZonehash is a paid mutator transaction binding the contract method 0xce3decdc.
 //
 // Solidity: function setZonehash(bytes32 node, bytes hash) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverSession) SetZonehash(node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetZonehash(&_ZNSPublicResolver.TransactOpts, node, hash)
+func (_QRNSPublicResolver *QRNSPublicResolverSession) SetZonehash(node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetZonehash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
 
 // SetZonehash is a paid mutator transaction binding the contract method 0xce3decdc.
 //
 // Solidity: function setZonehash(bytes32 node, bytes hash) returns()
-func (_ZNSPublicResolver *ZNSPublicResolverTransactorSession) SetZonehash(node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ZNSPublicResolver.Contract.SetZonehash(&_ZNSPublicResolver.TransactOpts, node, hash)
+func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetZonehash(node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _QRNSPublicResolver.Contract.SetZonehash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
 
-// ZNSPublicResolverABIChangedIterator is returned from FilterABIChanged and is used to iterate over the raw logs and unpacked data for ABIChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverABIChangedIterator struct {
-	Event *ZNSPublicResolverABIChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverABIChangedIterator is returned from FilterABIChanged and is used to iterate over the raw logs and unpacked data for ABIChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverABIChangedIterator struct {
+	Event *QRNSPublicResolverABIChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -991,7 +991,7 @@ type ZNSPublicResolverABIChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverABIChangedIterator) Next() bool {
+func (it *QRNSPublicResolverABIChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1000,7 +1000,7 @@ func (it *ZNSPublicResolverABIChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverABIChanged)
+			it.Event = new(QRNSPublicResolverABIChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1015,7 +1015,7 @@ func (it *ZNSPublicResolverABIChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverABIChanged)
+		it.Event = new(QRNSPublicResolverABIChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1031,19 +1031,19 @@ func (it *ZNSPublicResolverABIChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverABIChangedIterator) Error() error {
+func (it *QRNSPublicResolverABIChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverABIChangedIterator) Close() error {
+func (it *QRNSPublicResolverABIChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverABIChanged represents a ABIChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverABIChanged struct {
+// QRNSPublicResolverABIChanged represents a ABIChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverABIChanged struct {
 	Node        [32]byte
 	ContentType *big.Int
 	Raw         types.Log // Blockchain specific contextual infos
@@ -1052,7 +1052,7 @@ type ZNSPublicResolverABIChanged struct {
 // FilterABIChanged is a free log retrieval operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
 // Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterABIChanged(opts *bind.FilterOpts, node [][32]byte, contentType []*big.Int) (*ZNSPublicResolverABIChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterABIChanged(opts *bind.FilterOpts, node [][32]byte, contentType []*big.Int) (*QRNSPublicResolverABIChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -1063,17 +1063,17 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterABIChanged(opts *bind
 		contentTypeRule = append(contentTypeRule, contentTypeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "ABIChanged", nodeRule, contentTypeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "ABIChanged", nodeRule, contentTypeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverABIChangedIterator{contract: _ZNSPublicResolver.contract, event: "ABIChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverABIChangedIterator{contract: _QRNSPublicResolver.contract, event: "ABIChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchABIChanged is a free log subscription operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
 // Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchABIChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverABIChanged, node [][32]byte, contentType []*big.Int) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchABIChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverABIChanged, node [][32]byte, contentType []*big.Int) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -1084,7 +1084,7 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchABIChanged(opts *bind.
 		contentTypeRule = append(contentTypeRule, contentTypeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "ABIChanged", nodeRule, contentTypeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "ABIChanged", nodeRule, contentTypeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1094,8 +1094,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchABIChanged(opts *bind.
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverABIChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "ABIChanged", log); err != nil {
+				event := new(QRNSPublicResolverABIChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "ABIChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1119,18 +1119,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchABIChanged(opts *bind.
 // ParseABIChanged is a log parse operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
 // Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseABIChanged(log types.Log) (*ZNSPublicResolverABIChanged, error) {
-	event := new(ZNSPublicResolverABIChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "ABIChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseABIChanged(log types.Log) (*QRNSPublicResolverABIChanged, error) {
+	event := new(QRNSPublicResolverABIChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "ABIChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverAddrChangedIterator is returned from FilterAddrChanged and is used to iterate over the raw logs and unpacked data for AddrChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverAddrChangedIterator struct {
-	Event *ZNSPublicResolverAddrChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverAddrChangedIterator is returned from FilterAddrChanged and is used to iterate over the raw logs and unpacked data for AddrChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverAddrChangedIterator struct {
+	Event *QRNSPublicResolverAddrChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1144,7 +1144,7 @@ type ZNSPublicResolverAddrChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverAddrChangedIterator) Next() bool {
+func (it *QRNSPublicResolverAddrChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1153,7 +1153,7 @@ func (it *ZNSPublicResolverAddrChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverAddrChanged)
+			it.Event = new(QRNSPublicResolverAddrChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1168,7 +1168,7 @@ func (it *ZNSPublicResolverAddrChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverAddrChanged)
+		it.Event = new(QRNSPublicResolverAddrChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1184,19 +1184,19 @@ func (it *ZNSPublicResolverAddrChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverAddrChangedIterator) Error() error {
+func (it *QRNSPublicResolverAddrChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverAddrChangedIterator) Close() error {
+func (it *QRNSPublicResolverAddrChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverAddrChanged represents a AddrChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverAddrChanged struct {
+// QRNSPublicResolverAddrChanged represents a AddrChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverAddrChanged struct {
 	Node [32]byte
 	A    common.Address
 	Raw  types.Log // Blockchain specific contextual infos
@@ -1205,31 +1205,31 @@ type ZNSPublicResolverAddrChanged struct {
 // FilterAddrChanged is a free log retrieval operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
 // Solidity: event AddrChanged(bytes32 indexed node, address a)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterAddrChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverAddrChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterAddrChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverAddrChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "AddrChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "AddrChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverAddrChangedIterator{contract: _ZNSPublicResolver.contract, event: "AddrChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverAddrChangedIterator{contract: _QRNSPublicResolver.contract, event: "AddrChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchAddrChanged is a free log subscription operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
 // Solidity: event AddrChanged(bytes32 indexed node, address a)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchAddrChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverAddrChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchAddrChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverAddrChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "AddrChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "AddrChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1239,8 +1239,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchAddrChanged(opts *bind
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverAddrChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "AddrChanged", log); err != nil {
+				event := new(QRNSPublicResolverAddrChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "AddrChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1264,18 +1264,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchAddrChanged(opts *bind
 // ParseAddrChanged is a log parse operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
 // Solidity: event AddrChanged(bytes32 indexed node, address a)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseAddrChanged(log types.Log) (*ZNSPublicResolverAddrChanged, error) {
-	event := new(ZNSPublicResolverAddrChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "AddrChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseAddrChanged(log types.Log) (*QRNSPublicResolverAddrChanged, error) {
+	event := new(QRNSPublicResolverAddrChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "AddrChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverAddressChangedIterator is returned from FilterAddressChanged and is used to iterate over the raw logs and unpacked data for AddressChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverAddressChangedIterator struct {
-	Event *ZNSPublicResolverAddressChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverAddressChangedIterator is returned from FilterAddressChanged and is used to iterate over the raw logs and unpacked data for AddressChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverAddressChangedIterator struct {
+	Event *QRNSPublicResolverAddressChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1289,7 +1289,7 @@ type ZNSPublicResolverAddressChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverAddressChangedIterator) Next() bool {
+func (it *QRNSPublicResolverAddressChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1298,7 +1298,7 @@ func (it *ZNSPublicResolverAddressChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverAddressChanged)
+			it.Event = new(QRNSPublicResolverAddressChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1313,7 +1313,7 @@ func (it *ZNSPublicResolverAddressChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverAddressChanged)
+		it.Event = new(QRNSPublicResolverAddressChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1329,19 +1329,19 @@ func (it *ZNSPublicResolverAddressChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverAddressChangedIterator) Error() error {
+func (it *QRNSPublicResolverAddressChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverAddressChangedIterator) Close() error {
+func (it *QRNSPublicResolverAddressChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverAddressChanged represents a AddressChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverAddressChanged struct {
+// QRNSPublicResolverAddressChanged represents a AddressChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverAddressChanged struct {
 	Node       [32]byte
 	CoinType   *big.Int
 	NewAddress []byte
@@ -1351,31 +1351,31 @@ type ZNSPublicResolverAddressChanged struct {
 // FilterAddressChanged is a free log retrieval operation binding the contract event 0x65412581168e88a1e60c6459d7f44ae83ad0832e670826c05a4e2476b57af752.
 //
 // Solidity: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterAddressChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverAddressChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterAddressChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverAddressChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "AddressChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "AddressChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverAddressChangedIterator{contract: _ZNSPublicResolver.contract, event: "AddressChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverAddressChangedIterator{contract: _QRNSPublicResolver.contract, event: "AddressChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchAddressChanged is a free log subscription operation binding the contract event 0x65412581168e88a1e60c6459d7f44ae83ad0832e670826c05a4e2476b57af752.
 //
 // Solidity: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchAddressChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverAddressChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchAddressChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverAddressChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "AddressChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "AddressChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1385,8 +1385,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchAddressChanged(opts *b
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverAddressChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "AddressChanged", log); err != nil {
+				event := new(QRNSPublicResolverAddressChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "AddressChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1410,18 +1410,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchAddressChanged(opts *b
 // ParseAddressChanged is a log parse operation binding the contract event 0x65412581168e88a1e60c6459d7f44ae83ad0832e670826c05a4e2476b57af752.
 //
 // Solidity: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseAddressChanged(log types.Log) (*ZNSPublicResolverAddressChanged, error) {
-	event := new(ZNSPublicResolverAddressChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "AddressChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseAddressChanged(log types.Log) (*QRNSPublicResolverAddressChanged, error) {
+	event := new(QRNSPublicResolverAddressChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "AddressChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverApprovalForAllIterator is returned from FilterApprovalForAll and is used to iterate over the raw logs and unpacked data for ApprovalForAll events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverApprovalForAllIterator struct {
-	Event *ZNSPublicResolverApprovalForAll // Event containing the contract specifics and raw log
+// QRNSPublicResolverApprovalForAllIterator is returned from FilterApprovalForAll and is used to iterate over the raw logs and unpacked data for ApprovalForAll events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverApprovalForAllIterator struct {
+	Event *QRNSPublicResolverApprovalForAll // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1435,7 +1435,7 @@ type ZNSPublicResolverApprovalForAllIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverApprovalForAllIterator) Next() bool {
+func (it *QRNSPublicResolverApprovalForAllIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1444,7 +1444,7 @@ func (it *ZNSPublicResolverApprovalForAllIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverApprovalForAll)
+			it.Event = new(QRNSPublicResolverApprovalForAll)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1459,7 +1459,7 @@ func (it *ZNSPublicResolverApprovalForAllIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverApprovalForAll)
+		it.Event = new(QRNSPublicResolverApprovalForAll)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1475,19 +1475,19 @@ func (it *ZNSPublicResolverApprovalForAllIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverApprovalForAllIterator) Error() error {
+func (it *QRNSPublicResolverApprovalForAllIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverApprovalForAllIterator) Close() error {
+func (it *QRNSPublicResolverApprovalForAllIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverApprovalForAll represents a ApprovalForAll event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverApprovalForAll struct {
+// QRNSPublicResolverApprovalForAll represents a ApprovalForAll event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverApprovalForAll struct {
 	Owner    common.Address
 	Operator common.Address
 	Approved bool
@@ -1497,7 +1497,7 @@ type ZNSPublicResolverApprovalForAll struct {
 // FilterApprovalForAll is a free log retrieval operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
 // Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterApprovalForAll(opts *bind.FilterOpts, owner []common.Address, operator []common.Address) (*ZNSPublicResolverApprovalForAllIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterApprovalForAll(opts *bind.FilterOpts, owner []common.Address, operator []common.Address) (*QRNSPublicResolverApprovalForAllIterator, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
@@ -1508,17 +1508,17 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterApprovalForAll(opts *
 		operatorRule = append(operatorRule, operatorItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverApprovalForAllIterator{contract: _ZNSPublicResolver.contract, event: "ApprovalForAll", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverApprovalForAllIterator{contract: _QRNSPublicResolver.contract, event: "ApprovalForAll", logs: logs, sub: sub}, nil
 }
 
 // WatchApprovalForAll is a free log subscription operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
 // Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverApprovalForAll, owner []common.Address, operator []common.Address) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverApprovalForAll, owner []common.Address, operator []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
@@ -1529,7 +1529,7 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApprovalForAll(opts *b
 		operatorRule = append(operatorRule, operatorItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1539,8 +1539,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApprovalForAll(opts *b
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverApprovalForAll)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
+				event := new(QRNSPublicResolverApprovalForAll)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1564,18 +1564,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApprovalForAll(opts *b
 // ParseApprovalForAll is a log parse operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
 // Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseApprovalForAll(log types.Log) (*ZNSPublicResolverApprovalForAll, error) {
-	event := new(ZNSPublicResolverApprovalForAll)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseApprovalForAll(log types.Log) (*QRNSPublicResolverApprovalForAll, error) {
+	event := new(QRNSPublicResolverApprovalForAll)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverApprovedIterator is returned from FilterApproved and is used to iterate over the raw logs and unpacked data for Approved events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverApprovedIterator struct {
-	Event *ZNSPublicResolverApproved // Event containing the contract specifics and raw log
+// QRNSPublicResolverApprovedIterator is returned from FilterApproved and is used to iterate over the raw logs and unpacked data for Approved events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverApprovedIterator struct {
+	Event *QRNSPublicResolverApproved // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1589,7 +1589,7 @@ type ZNSPublicResolverApprovedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverApprovedIterator) Next() bool {
+func (it *QRNSPublicResolverApprovedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1598,7 +1598,7 @@ func (it *ZNSPublicResolverApprovedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverApproved)
+			it.Event = new(QRNSPublicResolverApproved)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1613,7 +1613,7 @@ func (it *ZNSPublicResolverApprovedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverApproved)
+		it.Event = new(QRNSPublicResolverApproved)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1629,19 +1629,19 @@ func (it *ZNSPublicResolverApprovedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverApprovedIterator) Error() error {
+func (it *QRNSPublicResolverApprovedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverApprovedIterator) Close() error {
+func (it *QRNSPublicResolverApprovedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverApproved represents a Approved event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverApproved struct {
+// QRNSPublicResolverApproved represents a Approved event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverApproved struct {
 	Owner    common.Address
 	Node     [32]byte
 	Delegate common.Address
@@ -1652,7 +1652,7 @@ type ZNSPublicResolverApproved struct {
 // FilterApproved is a free log retrieval operation binding the contract event 0xf0ddb3b04746704017f9aa8bd728fcc2c1d11675041205350018915f5e4750a0.
 //
 // Solidity: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterApproved(opts *bind.FilterOpts, node [][32]byte, delegate []common.Address, approved []bool) (*ZNSPublicResolverApprovedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterApproved(opts *bind.FilterOpts, node [][32]byte, delegate []common.Address, approved []bool) (*QRNSPublicResolverApprovedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -1667,17 +1667,17 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterApproved(opts *bind.F
 		approvedRule = append(approvedRule, approvedItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "Approved", nodeRule, delegateRule, approvedRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "Approved", nodeRule, delegateRule, approvedRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverApprovedIterator{contract: _ZNSPublicResolver.contract, event: "Approved", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverApprovedIterator{contract: _QRNSPublicResolver.contract, event: "Approved", logs: logs, sub: sub}, nil
 }
 
 // WatchApproved is a free log subscription operation binding the contract event 0xf0ddb3b04746704017f9aa8bd728fcc2c1d11675041205350018915f5e4750a0.
 //
 // Solidity: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApproved(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverApproved, node [][32]byte, delegate []common.Address, approved []bool) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchApproved(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverApproved, node [][32]byte, delegate []common.Address, approved []bool) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -1692,7 +1692,7 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApproved(opts *bind.Wa
 		approvedRule = append(approvedRule, approvedItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "Approved", nodeRule, delegateRule, approvedRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "Approved", nodeRule, delegateRule, approvedRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1702,8 +1702,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApproved(opts *bind.Wa
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverApproved)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "Approved", log); err != nil {
+				event := new(QRNSPublicResolverApproved)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "Approved", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1727,18 +1727,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchApproved(opts *bind.Wa
 // ParseApproved is a log parse operation binding the contract event 0xf0ddb3b04746704017f9aa8bd728fcc2c1d11675041205350018915f5e4750a0.
 //
 // Solidity: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseApproved(log types.Log) (*ZNSPublicResolverApproved, error) {
-	event := new(ZNSPublicResolverApproved)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "Approved", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseApproved(log types.Log) (*QRNSPublicResolverApproved, error) {
+	event := new(QRNSPublicResolverApproved)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "Approved", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverContenthashChangedIterator is returned from FilterContenthashChanged and is used to iterate over the raw logs and unpacked data for ContenthashChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverContenthashChangedIterator struct {
-	Event *ZNSPublicResolverContenthashChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverContenthashChangedIterator is returned from FilterContenthashChanged and is used to iterate over the raw logs and unpacked data for ContenthashChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverContenthashChangedIterator struct {
+	Event *QRNSPublicResolverContenthashChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1752,7 +1752,7 @@ type ZNSPublicResolverContenthashChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverContenthashChangedIterator) Next() bool {
+func (it *QRNSPublicResolverContenthashChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1761,7 +1761,7 @@ func (it *ZNSPublicResolverContenthashChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverContenthashChanged)
+			it.Event = new(QRNSPublicResolverContenthashChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1776,7 +1776,7 @@ func (it *ZNSPublicResolverContenthashChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverContenthashChanged)
+		it.Event = new(QRNSPublicResolverContenthashChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1792,19 +1792,19 @@ func (it *ZNSPublicResolverContenthashChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverContenthashChangedIterator) Error() error {
+func (it *QRNSPublicResolverContenthashChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverContenthashChangedIterator) Close() error {
+func (it *QRNSPublicResolverContenthashChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverContenthashChanged represents a ContenthashChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverContenthashChanged struct {
+// QRNSPublicResolverContenthashChanged represents a ContenthashChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverContenthashChanged struct {
 	Node [32]byte
 	Hash []byte
 	Raw  types.Log // Blockchain specific contextual infos
@@ -1813,31 +1813,31 @@ type ZNSPublicResolverContenthashChanged struct {
 // FilterContenthashChanged is a free log retrieval operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
 // Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterContenthashChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverContenthashChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterContenthashChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverContenthashChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "ContenthashChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "ContenthashChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverContenthashChangedIterator{contract: _ZNSPublicResolver.contract, event: "ContenthashChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverContenthashChangedIterator{contract: _QRNSPublicResolver.contract, event: "ContenthashChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchContenthashChanged is a free log subscription operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
 // Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchContenthashChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverContenthashChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchContenthashChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverContenthashChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "ContenthashChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "ContenthashChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1847,8 +1847,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchContenthashChanged(opt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverContenthashChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "ContenthashChanged", log); err != nil {
+				event := new(QRNSPublicResolverContenthashChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "ContenthashChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1872,18 +1872,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchContenthashChanged(opt
 // ParseContenthashChanged is a log parse operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
 // Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseContenthashChanged(log types.Log) (*ZNSPublicResolverContenthashChanged, error) {
-	event := new(ZNSPublicResolverContenthashChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "ContenthashChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseContenthashChanged(log types.Log) (*QRNSPublicResolverContenthashChanged, error) {
+	event := new(QRNSPublicResolverContenthashChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "ContenthashChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverDNSRecordChangedIterator is returned from FilterDNSRecordChanged and is used to iterate over the raw logs and unpacked data for DNSRecordChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverDNSRecordChangedIterator struct {
-	Event *ZNSPublicResolverDNSRecordChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverDNSRecordChangedIterator is returned from FilterDNSRecordChanged and is used to iterate over the raw logs and unpacked data for DNSRecordChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverDNSRecordChangedIterator struct {
+	Event *QRNSPublicResolverDNSRecordChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1897,7 +1897,7 @@ type ZNSPublicResolverDNSRecordChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverDNSRecordChangedIterator) Next() bool {
+func (it *QRNSPublicResolverDNSRecordChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1906,7 +1906,7 @@ func (it *ZNSPublicResolverDNSRecordChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverDNSRecordChanged)
+			it.Event = new(QRNSPublicResolverDNSRecordChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1921,7 +1921,7 @@ func (it *ZNSPublicResolverDNSRecordChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverDNSRecordChanged)
+		it.Event = new(QRNSPublicResolverDNSRecordChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1937,19 +1937,19 @@ func (it *ZNSPublicResolverDNSRecordChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverDNSRecordChangedIterator) Error() error {
+func (it *QRNSPublicResolverDNSRecordChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverDNSRecordChangedIterator) Close() error {
+func (it *QRNSPublicResolverDNSRecordChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverDNSRecordChanged represents a DNSRecordChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverDNSRecordChanged struct {
+// QRNSPublicResolverDNSRecordChanged represents a DNSRecordChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverDNSRecordChanged struct {
 	Node     [32]byte
 	Name     []byte
 	Resource uint16
@@ -1960,31 +1960,31 @@ type ZNSPublicResolverDNSRecordChanged struct {
 // FilterDNSRecordChanged is a free log retrieval operation binding the contract event 0x52a608b3303a48862d07a73d82fa221318c0027fbbcfb1b2329bface3f19ff2b.
 //
 // Solidity: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterDNSRecordChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverDNSRecordChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSRecordChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverDNSRecordChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "DNSRecordChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "DNSRecordChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverDNSRecordChangedIterator{contract: _ZNSPublicResolver.contract, event: "DNSRecordChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverDNSRecordChangedIterator{contract: _QRNSPublicResolver.contract, event: "DNSRecordChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchDNSRecordChanged is a free log subscription operation binding the contract event 0x52a608b3303a48862d07a73d82fa221318c0027fbbcfb1b2329bface3f19ff2b.
 //
 // Solidity: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSRecordChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverDNSRecordChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSRecordChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverDNSRecordChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "DNSRecordChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "DNSRecordChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1994,8 +1994,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSRecordChanged(opts 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverDNSRecordChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "DNSRecordChanged", log); err != nil {
+				event := new(QRNSPublicResolverDNSRecordChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSRecordChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2019,18 +2019,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSRecordChanged(opts 
 // ParseDNSRecordChanged is a log parse operation binding the contract event 0x52a608b3303a48862d07a73d82fa221318c0027fbbcfb1b2329bface3f19ff2b.
 //
 // Solidity: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseDNSRecordChanged(log types.Log) (*ZNSPublicResolverDNSRecordChanged, error) {
-	event := new(ZNSPublicResolverDNSRecordChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "DNSRecordChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseDNSRecordChanged(log types.Log) (*QRNSPublicResolverDNSRecordChanged, error) {
+	event := new(QRNSPublicResolverDNSRecordChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSRecordChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverDNSRecordDeletedIterator is returned from FilterDNSRecordDeleted and is used to iterate over the raw logs and unpacked data for DNSRecordDeleted events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverDNSRecordDeletedIterator struct {
-	Event *ZNSPublicResolverDNSRecordDeleted // Event containing the contract specifics and raw log
+// QRNSPublicResolverDNSRecordDeletedIterator is returned from FilterDNSRecordDeleted and is used to iterate over the raw logs and unpacked data for DNSRecordDeleted events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverDNSRecordDeletedIterator struct {
+	Event *QRNSPublicResolverDNSRecordDeleted // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2044,7 +2044,7 @@ type ZNSPublicResolverDNSRecordDeletedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverDNSRecordDeletedIterator) Next() bool {
+func (it *QRNSPublicResolverDNSRecordDeletedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2053,7 +2053,7 @@ func (it *ZNSPublicResolverDNSRecordDeletedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverDNSRecordDeleted)
+			it.Event = new(QRNSPublicResolverDNSRecordDeleted)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2068,7 +2068,7 @@ func (it *ZNSPublicResolverDNSRecordDeletedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverDNSRecordDeleted)
+		it.Event = new(QRNSPublicResolverDNSRecordDeleted)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2084,19 +2084,19 @@ func (it *ZNSPublicResolverDNSRecordDeletedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverDNSRecordDeletedIterator) Error() error {
+func (it *QRNSPublicResolverDNSRecordDeletedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverDNSRecordDeletedIterator) Close() error {
+func (it *QRNSPublicResolverDNSRecordDeletedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverDNSRecordDeleted represents a DNSRecordDeleted event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverDNSRecordDeleted struct {
+// QRNSPublicResolverDNSRecordDeleted represents a DNSRecordDeleted event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverDNSRecordDeleted struct {
 	Node     [32]byte
 	Name     []byte
 	Resource uint16
@@ -2106,31 +2106,31 @@ type ZNSPublicResolverDNSRecordDeleted struct {
 // FilterDNSRecordDeleted is a free log retrieval operation binding the contract event 0x03528ed0c2a3ebc993b12ce3c16bb382f9c7d88ef7d8a1bf290eaf35955a1207.
 //
 // Solidity: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterDNSRecordDeleted(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverDNSRecordDeletedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSRecordDeleted(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverDNSRecordDeletedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "DNSRecordDeleted", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "DNSRecordDeleted", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverDNSRecordDeletedIterator{contract: _ZNSPublicResolver.contract, event: "DNSRecordDeleted", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverDNSRecordDeletedIterator{contract: _QRNSPublicResolver.contract, event: "DNSRecordDeleted", logs: logs, sub: sub}, nil
 }
 
 // WatchDNSRecordDeleted is a free log subscription operation binding the contract event 0x03528ed0c2a3ebc993b12ce3c16bb382f9c7d88ef7d8a1bf290eaf35955a1207.
 //
 // Solidity: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSRecordDeleted(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverDNSRecordDeleted, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSRecordDeleted(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverDNSRecordDeleted, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "DNSRecordDeleted", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "DNSRecordDeleted", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2140,8 +2140,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSRecordDeleted(opts 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverDNSRecordDeleted)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "DNSRecordDeleted", log); err != nil {
+				event := new(QRNSPublicResolverDNSRecordDeleted)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSRecordDeleted", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2165,18 +2165,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSRecordDeleted(opts 
 // ParseDNSRecordDeleted is a log parse operation binding the contract event 0x03528ed0c2a3ebc993b12ce3c16bb382f9c7d88ef7d8a1bf290eaf35955a1207.
 //
 // Solidity: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseDNSRecordDeleted(log types.Log) (*ZNSPublicResolverDNSRecordDeleted, error) {
-	event := new(ZNSPublicResolverDNSRecordDeleted)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "DNSRecordDeleted", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseDNSRecordDeleted(log types.Log) (*QRNSPublicResolverDNSRecordDeleted, error) {
+	event := new(QRNSPublicResolverDNSRecordDeleted)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSRecordDeleted", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverDNSZonehashChangedIterator is returned from FilterDNSZonehashChanged and is used to iterate over the raw logs and unpacked data for DNSZonehashChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverDNSZonehashChangedIterator struct {
-	Event *ZNSPublicResolverDNSZonehashChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverDNSZonehashChangedIterator is returned from FilterDNSZonehashChanged and is used to iterate over the raw logs and unpacked data for DNSZonehashChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverDNSZonehashChangedIterator struct {
+	Event *QRNSPublicResolverDNSZonehashChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2190,7 +2190,7 @@ type ZNSPublicResolverDNSZonehashChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverDNSZonehashChangedIterator) Next() bool {
+func (it *QRNSPublicResolverDNSZonehashChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2199,7 +2199,7 @@ func (it *ZNSPublicResolverDNSZonehashChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverDNSZonehashChanged)
+			it.Event = new(QRNSPublicResolverDNSZonehashChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2214,7 +2214,7 @@ func (it *ZNSPublicResolverDNSZonehashChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverDNSZonehashChanged)
+		it.Event = new(QRNSPublicResolverDNSZonehashChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2230,19 +2230,19 @@ func (it *ZNSPublicResolverDNSZonehashChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverDNSZonehashChangedIterator) Error() error {
+func (it *QRNSPublicResolverDNSZonehashChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverDNSZonehashChangedIterator) Close() error {
+func (it *QRNSPublicResolverDNSZonehashChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverDNSZonehashChanged represents a DNSZonehashChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverDNSZonehashChanged struct {
+// QRNSPublicResolverDNSZonehashChanged represents a DNSZonehashChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverDNSZonehashChanged struct {
 	Node         [32]byte
 	Lastzonehash []byte
 	Zonehash     []byte
@@ -2252,31 +2252,31 @@ type ZNSPublicResolverDNSZonehashChanged struct {
 // FilterDNSZonehashChanged is a free log retrieval operation binding the contract event 0x8f15ed4b723ef428f250961da8315675b507046737e19319fc1a4d81bfe87f85.
 //
 // Solidity: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterDNSZonehashChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverDNSZonehashChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSZonehashChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverDNSZonehashChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "DNSZonehashChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "DNSZonehashChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverDNSZonehashChangedIterator{contract: _ZNSPublicResolver.contract, event: "DNSZonehashChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverDNSZonehashChangedIterator{contract: _QRNSPublicResolver.contract, event: "DNSZonehashChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchDNSZonehashChanged is a free log subscription operation binding the contract event 0x8f15ed4b723ef428f250961da8315675b507046737e19319fc1a4d81bfe87f85.
 //
 // Solidity: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSZonehashChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverDNSZonehashChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSZonehashChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverDNSZonehashChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "DNSZonehashChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "DNSZonehashChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2286,8 +2286,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSZonehashChanged(opt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverDNSZonehashChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "DNSZonehashChanged", log); err != nil {
+				event := new(QRNSPublicResolverDNSZonehashChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSZonehashChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2311,18 +2311,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchDNSZonehashChanged(opt
 // ParseDNSZonehashChanged is a log parse operation binding the contract event 0x8f15ed4b723ef428f250961da8315675b507046737e19319fc1a4d81bfe87f85.
 //
 // Solidity: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseDNSZonehashChanged(log types.Log) (*ZNSPublicResolverDNSZonehashChanged, error) {
-	event := new(ZNSPublicResolverDNSZonehashChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "DNSZonehashChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseDNSZonehashChanged(log types.Log) (*QRNSPublicResolverDNSZonehashChanged, error) {
+	event := new(QRNSPublicResolverDNSZonehashChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSZonehashChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverInterfaceChangedIterator is returned from FilterInterfaceChanged and is used to iterate over the raw logs and unpacked data for InterfaceChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverInterfaceChangedIterator struct {
-	Event *ZNSPublicResolverInterfaceChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverInterfaceChangedIterator is returned from FilterInterfaceChanged and is used to iterate over the raw logs and unpacked data for InterfaceChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverInterfaceChangedIterator struct {
+	Event *QRNSPublicResolverInterfaceChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2336,7 +2336,7 @@ type ZNSPublicResolverInterfaceChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverInterfaceChangedIterator) Next() bool {
+func (it *QRNSPublicResolverInterfaceChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2345,7 +2345,7 @@ func (it *ZNSPublicResolverInterfaceChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverInterfaceChanged)
+			it.Event = new(QRNSPublicResolverInterfaceChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2360,7 +2360,7 @@ func (it *ZNSPublicResolverInterfaceChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverInterfaceChanged)
+		it.Event = new(QRNSPublicResolverInterfaceChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2376,19 +2376,19 @@ func (it *ZNSPublicResolverInterfaceChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverInterfaceChangedIterator) Error() error {
+func (it *QRNSPublicResolverInterfaceChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverInterfaceChangedIterator) Close() error {
+func (it *QRNSPublicResolverInterfaceChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverInterfaceChanged represents a InterfaceChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverInterfaceChanged struct {
+// QRNSPublicResolverInterfaceChanged represents a InterfaceChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverInterfaceChanged struct {
 	Node        [32]byte
 	InterfaceID [4]byte
 	Implementer common.Address
@@ -2398,7 +2398,7 @@ type ZNSPublicResolverInterfaceChanged struct {
 // FilterInterfaceChanged is a free log retrieval operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
 //
 // Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterInterfaceChanged(opts *bind.FilterOpts, node [][32]byte, interfaceID [][4]byte) (*ZNSPublicResolverInterfaceChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterInterfaceChanged(opts *bind.FilterOpts, node [][32]byte, interfaceID [][4]byte) (*QRNSPublicResolverInterfaceChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -2409,17 +2409,17 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterInterfaceChanged(opts
 		interfaceIDRule = append(interfaceIDRule, interfaceIDItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "InterfaceChanged", nodeRule, interfaceIDRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "InterfaceChanged", nodeRule, interfaceIDRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverInterfaceChangedIterator{contract: _ZNSPublicResolver.contract, event: "InterfaceChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverInterfaceChangedIterator{contract: _QRNSPublicResolver.contract, event: "InterfaceChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchInterfaceChanged is a free log subscription operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
 //
 // Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchInterfaceChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverInterfaceChanged, node [][32]byte, interfaceID [][4]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchInterfaceChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverInterfaceChanged, node [][32]byte, interfaceID [][4]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -2430,7 +2430,7 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchInterfaceChanged(opts 
 		interfaceIDRule = append(interfaceIDRule, interfaceIDItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "InterfaceChanged", nodeRule, interfaceIDRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "InterfaceChanged", nodeRule, interfaceIDRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2440,8 +2440,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchInterfaceChanged(opts 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverInterfaceChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "InterfaceChanged", log); err != nil {
+				event := new(QRNSPublicResolverInterfaceChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "InterfaceChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2465,18 +2465,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchInterfaceChanged(opts 
 // ParseInterfaceChanged is a log parse operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
 //
 // Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseInterfaceChanged(log types.Log) (*ZNSPublicResolverInterfaceChanged, error) {
-	event := new(ZNSPublicResolverInterfaceChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "InterfaceChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseInterfaceChanged(log types.Log) (*QRNSPublicResolverInterfaceChanged, error) {
+	event := new(QRNSPublicResolverInterfaceChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "InterfaceChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverNameChangedIterator is returned from FilterNameChanged and is used to iterate over the raw logs and unpacked data for NameChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverNameChangedIterator struct {
-	Event *ZNSPublicResolverNameChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverNameChangedIterator is returned from FilterNameChanged and is used to iterate over the raw logs and unpacked data for NameChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverNameChangedIterator struct {
+	Event *QRNSPublicResolverNameChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2490,7 +2490,7 @@ type ZNSPublicResolverNameChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverNameChangedIterator) Next() bool {
+func (it *QRNSPublicResolverNameChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2499,7 +2499,7 @@ func (it *ZNSPublicResolverNameChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverNameChanged)
+			it.Event = new(QRNSPublicResolverNameChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2514,7 +2514,7 @@ func (it *ZNSPublicResolverNameChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverNameChanged)
+		it.Event = new(QRNSPublicResolverNameChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2530,19 +2530,19 @@ func (it *ZNSPublicResolverNameChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverNameChangedIterator) Error() error {
+func (it *QRNSPublicResolverNameChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverNameChangedIterator) Close() error {
+func (it *QRNSPublicResolverNameChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverNameChanged represents a NameChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverNameChanged struct {
+// QRNSPublicResolverNameChanged represents a NameChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverNameChanged struct {
 	Node [32]byte
 	Name string
 	Raw  types.Log // Blockchain specific contextual infos
@@ -2551,31 +2551,31 @@ type ZNSPublicResolverNameChanged struct {
 // FilterNameChanged is a free log retrieval operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
 // Solidity: event NameChanged(bytes32 indexed node, string name)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterNameChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverNameChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterNameChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverNameChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "NameChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "NameChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverNameChangedIterator{contract: _ZNSPublicResolver.contract, event: "NameChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverNameChangedIterator{contract: _QRNSPublicResolver.contract, event: "NameChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchNameChanged is a free log subscription operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
 // Solidity: event NameChanged(bytes32 indexed node, string name)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchNameChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverNameChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchNameChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverNameChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "NameChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "NameChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2585,8 +2585,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchNameChanged(opts *bind
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverNameChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "NameChanged", log); err != nil {
+				event := new(QRNSPublicResolverNameChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "NameChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2610,18 +2610,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchNameChanged(opts *bind
 // ParseNameChanged is a log parse operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
 // Solidity: event NameChanged(bytes32 indexed node, string name)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseNameChanged(log types.Log) (*ZNSPublicResolverNameChanged, error) {
-	event := new(ZNSPublicResolverNameChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "NameChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseNameChanged(log types.Log) (*QRNSPublicResolverNameChanged, error) {
+	event := new(QRNSPublicResolverNameChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "NameChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverPubkeyChangedIterator is returned from FilterPubkeyChanged and is used to iterate over the raw logs and unpacked data for PubkeyChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverPubkeyChangedIterator struct {
-	Event *ZNSPublicResolverPubkeyChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverPubkeyChangedIterator is returned from FilterPubkeyChanged and is used to iterate over the raw logs and unpacked data for PubkeyChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverPubkeyChangedIterator struct {
+	Event *QRNSPublicResolverPubkeyChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2635,7 +2635,7 @@ type ZNSPublicResolverPubkeyChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverPubkeyChangedIterator) Next() bool {
+func (it *QRNSPublicResolverPubkeyChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2644,7 +2644,7 @@ func (it *ZNSPublicResolverPubkeyChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverPubkeyChanged)
+			it.Event = new(QRNSPublicResolverPubkeyChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2659,7 +2659,7 @@ func (it *ZNSPublicResolverPubkeyChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverPubkeyChanged)
+		it.Event = new(QRNSPublicResolverPubkeyChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2675,19 +2675,19 @@ func (it *ZNSPublicResolverPubkeyChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverPubkeyChangedIterator) Error() error {
+func (it *QRNSPublicResolverPubkeyChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverPubkeyChangedIterator) Close() error {
+func (it *QRNSPublicResolverPubkeyChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverPubkeyChanged represents a PubkeyChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverPubkeyChanged struct {
+// QRNSPublicResolverPubkeyChanged represents a PubkeyChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverPubkeyChanged struct {
 	Node [32]byte
 	X    [32]byte
 	Y    [32]byte
@@ -2697,31 +2697,31 @@ type ZNSPublicResolverPubkeyChanged struct {
 // FilterPubkeyChanged is a free log retrieval operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
 // Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterPubkeyChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverPubkeyChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterPubkeyChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverPubkeyChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "PubkeyChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "PubkeyChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverPubkeyChangedIterator{contract: _ZNSPublicResolver.contract, event: "PubkeyChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverPubkeyChangedIterator{contract: _QRNSPublicResolver.contract, event: "PubkeyChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchPubkeyChanged is a free log subscription operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
 // Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchPubkeyChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverPubkeyChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchPubkeyChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverPubkeyChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "PubkeyChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "PubkeyChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2731,8 +2731,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchPubkeyChanged(opts *bi
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverPubkeyChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "PubkeyChanged", log); err != nil {
+				event := new(QRNSPublicResolverPubkeyChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "PubkeyChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2756,18 +2756,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchPubkeyChanged(opts *bi
 // ParsePubkeyChanged is a log parse operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
 // Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParsePubkeyChanged(log types.Log) (*ZNSPublicResolverPubkeyChanged, error) {
-	event := new(ZNSPublicResolverPubkeyChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "PubkeyChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParsePubkeyChanged(log types.Log) (*QRNSPublicResolverPubkeyChanged, error) {
+	event := new(QRNSPublicResolverPubkeyChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "PubkeyChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverTextChangedIterator is returned from FilterTextChanged and is used to iterate over the raw logs and unpacked data for TextChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverTextChangedIterator struct {
-	Event *ZNSPublicResolverTextChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverTextChangedIterator is returned from FilterTextChanged and is used to iterate over the raw logs and unpacked data for TextChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverTextChangedIterator struct {
+	Event *QRNSPublicResolverTextChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2781,7 +2781,7 @@ type ZNSPublicResolverTextChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverTextChangedIterator) Next() bool {
+func (it *QRNSPublicResolverTextChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2790,7 +2790,7 @@ func (it *ZNSPublicResolverTextChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverTextChanged)
+			it.Event = new(QRNSPublicResolverTextChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2805,7 +2805,7 @@ func (it *ZNSPublicResolverTextChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverTextChanged)
+		it.Event = new(QRNSPublicResolverTextChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2821,19 +2821,19 @@ func (it *ZNSPublicResolverTextChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverTextChangedIterator) Error() error {
+func (it *QRNSPublicResolverTextChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverTextChangedIterator) Close() error {
+func (it *QRNSPublicResolverTextChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverTextChanged represents a TextChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverTextChanged struct {
+// QRNSPublicResolverTextChanged represents a TextChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverTextChanged struct {
 	Node       [32]byte
 	IndexedKey common.Hash
 	Key        string
@@ -2844,7 +2844,7 @@ type ZNSPublicResolverTextChanged struct {
 // FilterTextChanged is a free log retrieval operation binding the contract event 0x448bc014f1536726cf8d54ff3d6481ed3cbc683c2591ca204274009afa09b1a1.
 //
 // Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterTextChanged(opts *bind.FilterOpts, node [][32]byte, indexedKey []string) (*ZNSPublicResolverTextChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterTextChanged(opts *bind.FilterOpts, node [][32]byte, indexedKey []string) (*QRNSPublicResolverTextChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -2855,17 +2855,17 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterTextChanged(opts *bin
 		indexedKeyRule = append(indexedKeyRule, indexedKeyItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "TextChanged", nodeRule, indexedKeyRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "TextChanged", nodeRule, indexedKeyRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverTextChangedIterator{contract: _ZNSPublicResolver.contract, event: "TextChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverTextChangedIterator{contract: _QRNSPublicResolver.contract, event: "TextChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchTextChanged is a free log subscription operation binding the contract event 0x448bc014f1536726cf8d54ff3d6481ed3cbc683c2591ca204274009afa09b1a1.
 //
 // Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchTextChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverTextChanged, node [][32]byte, indexedKey []string) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchTextChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverTextChanged, node [][32]byte, indexedKey []string) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
@@ -2876,7 +2876,7 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchTextChanged(opts *bind
 		indexedKeyRule = append(indexedKeyRule, indexedKeyItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "TextChanged", nodeRule, indexedKeyRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "TextChanged", nodeRule, indexedKeyRule)
 	if err != nil {
 		return nil, err
 	}
@@ -2886,8 +2886,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchTextChanged(opts *bind
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverTextChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "TextChanged", log); err != nil {
+				event := new(QRNSPublicResolverTextChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "TextChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2911,18 +2911,18 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchTextChanged(opts *bind
 // ParseTextChanged is a log parse operation binding the contract event 0x448bc014f1536726cf8d54ff3d6481ed3cbc683c2591ca204274009afa09b1a1.
 //
 // Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseTextChanged(log types.Log) (*ZNSPublicResolverTextChanged, error) {
-	event := new(ZNSPublicResolverTextChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "TextChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseTextChanged(log types.Log) (*QRNSPublicResolverTextChanged, error) {
+	event := new(QRNSPublicResolverTextChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "TextChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// ZNSPublicResolverVersionChangedIterator is returned from FilterVersionChanged and is used to iterate over the raw logs and unpacked data for VersionChanged events raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverVersionChangedIterator struct {
-	Event *ZNSPublicResolverVersionChanged // Event containing the contract specifics and raw log
+// QRNSPublicResolverVersionChangedIterator is returned from FilterVersionChanged and is used to iterate over the raw logs and unpacked data for VersionChanged events raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverVersionChangedIterator struct {
+	Event *QRNSPublicResolverVersionChanged // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2936,7 +2936,7 @@ type ZNSPublicResolverVersionChangedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ZNSPublicResolverVersionChangedIterator) Next() bool {
+func (it *QRNSPublicResolverVersionChangedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2945,7 +2945,7 @@ func (it *ZNSPublicResolverVersionChangedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ZNSPublicResolverVersionChanged)
+			it.Event = new(QRNSPublicResolverVersionChanged)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2960,7 +2960,7 @@ func (it *ZNSPublicResolverVersionChangedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ZNSPublicResolverVersionChanged)
+		it.Event = new(QRNSPublicResolverVersionChanged)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2976,19 +2976,19 @@ func (it *ZNSPublicResolverVersionChangedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ZNSPublicResolverVersionChangedIterator) Error() error {
+func (it *QRNSPublicResolverVersionChangedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ZNSPublicResolverVersionChangedIterator) Close() error {
+func (it *QRNSPublicResolverVersionChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ZNSPublicResolverVersionChanged represents a VersionChanged event raised by the ZNSPublicResolver contract.
-type ZNSPublicResolverVersionChanged struct {
+// QRNSPublicResolverVersionChanged represents a VersionChanged event raised by the QRNSPublicResolver contract.
+type QRNSPublicResolverVersionChanged struct {
 	Node       [32]byte
 	NewVersion uint64
 	Raw        types.Log // Blockchain specific contextual infos
@@ -2997,31 +2997,31 @@ type ZNSPublicResolverVersionChanged struct {
 // FilterVersionChanged is a free log retrieval operation binding the contract event 0xc6621ccb8f3f5a04bb6502154b2caf6adf5983fe76dfef1cfc9c42e3579db444.
 //
 // Solidity: event VersionChanged(bytes32 indexed node, uint64 newVersion)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) FilterVersionChanged(opts *bind.FilterOpts, node [][32]byte) (*ZNSPublicResolverVersionChangedIterator, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterVersionChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverVersionChangedIterator, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.FilterLogs(opts, "VersionChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.FilterLogs(opts, "VersionChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ZNSPublicResolverVersionChangedIterator{contract: _ZNSPublicResolver.contract, event: "VersionChanged", logs: logs, sub: sub}, nil
+	return &QRNSPublicResolverVersionChangedIterator{contract: _QRNSPublicResolver.contract, event: "VersionChanged", logs: logs, sub: sub}, nil
 }
 
 // WatchVersionChanged is a free log subscription operation binding the contract event 0xc6621ccb8f3f5a04bb6502154b2caf6adf5983fe76dfef1cfc9c42e3579db444.
 //
 // Solidity: event VersionChanged(bytes32 indexed node, uint64 newVersion)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchVersionChanged(opts *bind.WatchOpts, sink chan<- *ZNSPublicResolverVersionChanged, node [][32]byte) (event.Subscription, error) {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchVersionChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverVersionChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
 	for _, nodeItem := range node {
 		nodeRule = append(nodeRule, nodeItem)
 	}
 
-	logs, sub, err := _ZNSPublicResolver.contract.WatchLogs(opts, "VersionChanged", nodeRule)
+	logs, sub, err := _QRNSPublicResolver.contract.WatchLogs(opts, "VersionChanged", nodeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -3031,8 +3031,8 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchVersionChanged(opts *b
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ZNSPublicResolverVersionChanged)
-				if err := _ZNSPublicResolver.contract.UnpackLog(event, "VersionChanged", log); err != nil {
+				event := new(QRNSPublicResolverVersionChanged)
+				if err := _QRNSPublicResolver.contract.UnpackLog(event, "VersionChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -3056,9 +3056,9 @@ func (_ZNSPublicResolver *ZNSPublicResolverFilterer) WatchVersionChanged(opts *b
 // ParseVersionChanged is a log parse operation binding the contract event 0xc6621ccb8f3f5a04bb6502154b2caf6adf5983fe76dfef1cfc9c42e3579db444.
 //
 // Solidity: event VersionChanged(bytes32 indexed node, uint64 newVersion)
-func (_ZNSPublicResolver *ZNSPublicResolverFilterer) ParseVersionChanged(log types.Log) (*ZNSPublicResolverVersionChanged, error) {
-	event := new(ZNSPublicResolverVersionChanged)
-	if err := _ZNSPublicResolver.contract.UnpackLog(event, "VersionChanged", log); err != nil {
+func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseVersionChanged(log types.Log) (*QRNSPublicResolverVersionChanged, error) {
+	event := new(QRNSPublicResolverVersionChanged)
+	if err := _QRNSPublicResolver.contract.UnpackLog(event, "VersionChanged", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

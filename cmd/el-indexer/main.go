@@ -59,9 +59,8 @@ func main() {
 
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// enableZnsUpdater := flag.Bool("zns.enabled", false, "Enable zns update process")
-	// znsBatchSize := flag.Int64("zns.batch", 200, "Batch size for zns updates")
+	enableQrnsUpdater := flag.Bool("qrns.enabled", false, "Enable qrns update process")
+	qrnsBatchSize := flag.Int64("qrns.batch", 200, "Batch size for qrns updates")
 
 	flag.Parse()
 
@@ -166,8 +165,7 @@ func main() {
 		bt.TransformZRC721,
 		bt.TransformZRC1155,
 		bt.TransformWithdrawals,
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// bt.TransformZnsNameRegistered,
+		bt.TransformQrnsNameRegistered,
 		bt.TransformContract)
 
 	cache := freecache.NewCache(100 * 1024 * 1024) // 100 MB limit
@@ -354,14 +352,13 @@ func main() {
 			ProcessMetadataUpdates(bt, client, balanceUpdaterPrefix, *balanceUpdaterBatchSize, 10)
 		}
 
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// if *enableZnsUpdater {
-		// 	err := bt.ImportZnsUpdates(client.GetNativeClient(), *znsBatchSize)
-		// 	if err != nil {
-		// 		utils.LogError(err, "error importing zns updates", 0, nil)
-		// 		continue
-		// 	}
-		// }
+		if *enableQrnsUpdater {
+			err := bt.ImportQrnsUpdates(client.GetNativeClient(), *qrnsBatchSize)
+			if err != nil {
+				utils.LogError(err, "error importing qrns updates", 0, nil)
+				continue
+			}
+		}
 
 		logrus.Infof("index run completed")
 		services.ReportStatus("elIndexer", "Running", nil)

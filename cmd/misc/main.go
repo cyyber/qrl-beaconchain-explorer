@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"database/sql"
 
 	"encoding/json"
 	"flag"
@@ -15,6 +16,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/theQRL/qrl-beaconchain-explorer/cmd/misc/commands"
 	"github.com/theQRL/qrl-beaconchain-explorer/db"
 	"github.com/theQRL/qrl-beaconchain-explorer/exporter"
@@ -408,11 +410,10 @@ func main() {
 	case "partition-validator-stats":
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// case "fix-zns":
-	// 	err = fixZns(gzondClient)
-	// case "fix-zns-addresses":
-	// 	err = fixZnsAddresses(gzondClient)
+	case "fix-qrns":
+		err = fixQrns(gzondClient)
+	case "fix-qrns-addresses":
+		err = fixQrnsAddresses(gzondClient)
 	case "fix-epochs":
 		err = fixEpochs()
 	default:
@@ -454,20 +455,18 @@ func fixEpoch(e uint64) error {
 	return tx.Commit()
 }
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
-func fixZns(gzondClient *rpc.GzondClient) error {
-	logrus.WithField("dry", opts.DryRun).Infof("command: fix-zns")
+func fixQrns(gzondClient *rpc.GzondClient) error {
+	logrus.WithField("dry", opts.DryRun).Infof("command: fix-qrns")
 	addrs := []struct {
-		Address []byte `db:"address"`
-		ZnsName string `db:"zns_name"`
+		Address  []byte `db:"address"`
+		QrnsName string `db:"qrns_name"`
 	}{}
-	err := db.WriterDb.Select(&addrs, `select address, zns_name from zns where is_primary_name = true`)
+	err := db.WriterDb.Select(&addrs, `select address, qrns_name from qrns where is_primary_name = true`)
 	if err != nil {
 		return err
 	}
 
-	logrus.Infof("found %v zns entries", len(addrs))
+	logrus.Infof("found %v qrns entries", len(addrs))
 
 	g := new(errgroup.Group)
 	g.SetLimit(10) // limit load on the node
@@ -485,7 +484,7 @@ func fixZns(gzondClient *rpc.GzondClient) error {
 		for _, addr := range batch {
 			addr := addr
 			g.Go(func() error {
-				znsAddr, err := go_zns.Resolve(gzondClient.GetNativeClient(), addr.ZnsName)
+				qrnsAddr, err := go_qrns.Resolve(gzondClient.GetNativeClient(), addr.QrnsName)
 				if err != nil {
 					if err.Error() == "unregistered name" ||
 						err.Error() == "no address" ||
@@ -493,9 +492,9 @@ func fixZns(gzondClient *rpc.GzondClient) error {
 						err.Error() == "abi: attempting to unmarshall an empty string while arguments are expected" ||
 						strings.Contains(err.Error(), "execution reverted") ||
 						err.Error() == "invalid jump destination" {
-						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting zns entry")
+						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.QrnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting qrns entry")
 						if !opts.DryRun {
-							_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
+							_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.QrnsName)
 							if err != nil {
 								return err
 							}
@@ -694,7 +693,6 @@ func fixZnsAddresses(gzondClient *rpc.GzondClient) error {
 	}
 	return nil
 }
-*/
 
 func fixExecTransactionsCount() error {
 	startBlockNumber := uint64(opts.StartBlock)
@@ -1267,8 +1265,7 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 		return
 	}
 	logrus.Infof("transformers: %v", transformerList)
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// importZNSChanges := false
+	importQRNSChanges := false
 	/**
 	* Add additional transformers you want to sync to this switch case
 	**/
@@ -1288,10 +1285,9 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformZRC1155)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// case "TransformZnsNameRegistered":
-		// 	transforms = append(transforms, bt.TransformZnsNameRegistered)
-		// 	importZNSChanges = true
+		case "TransformQrnsNameRegistered":
+			transforms = append(transforms, bt.TransformQrnsNameRegistered)
+			importQRNSChanges = true
 		case "TransformContract":
 			transforms = append(transforms, bt.TransformContract)
 		default:
@@ -1327,13 +1323,12 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 
 	}
 
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// if importZNSChanges {
-	// 	if err := bt.ImportZnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
-	// 		utils.LogError(err, "error importing zns from events", 0)
-	// 		return
-	// 	}
-	// }
+	if importQRNSChanges {
+		if err := bt.ImportQrnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
+			utils.LogError(err, "error importing zns from events", 0)
+			return
+		}
+	}
 
 	logrus.Infof("index run completed")
 }

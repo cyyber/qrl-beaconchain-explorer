@@ -8,62 +8,62 @@ import (
 	"github.com/theQRL/go-zond/common"
 )
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-var ZNSCrontractAddressesZond = map[string]string{
+// TODO(rgeraldes24)
+var QRNSCrontractAddressesZond = map[string]string{
 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
 	"Q253553366Da8546fC250F225fe3d25d0C782303b": "ZONDRegistrarController",
 	"Q283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldZnsRegistrarController",
 }
 
-var ZNSRegistryParsedABI, ZNSBaseRegistrarParsedABI, ZNSOldRegistrarControllerParsedABI, ZNSPublicResolverParsedABI, ZNSZONDRegistrarControllerParsedABI *abi.ABI
+var QRNSRegistryParsedABI, QRNSBaseRegistrarParsedABI, QRNSOldRegistrarControllerParsedABI, QRNSPublicResolverParsedABI, QRNSZONDRegistrarControllerParsedABI *abi.ABI
 
-var ZNSRegistryContract, ZNSBaseRegistrarContract, ZNSOldRegistrarControllerContract, ZNSPublicResolverContract, ZNSZONDRegistrarControllerContract *bind.BoundContract
+var QRNSRegistryContract, QRNSBaseRegistrarContract, QRNSOldRegistrarControllerContract, QRNSPublicResolverContract, QRNSZONDRegistrarControllerContract *bind.BoundContract
 
 func init() {
 	var err error
 
-	ZNSRegistryParsedABI, err = ZNSRegistryMetaData.GetAbi()
+	QRNSRegistryParsedABI, err = QRNSRegistryMetaData.GetAbi()
 	if err != nil {
 		utils.LogFatal(err, "error getting zns-registry-abi", 0)
 	}
-	ZNSRegistryParsedABI, err = ZNSRegistryMetaData.GetAbi()
+	QRNSRegistryParsedABI, err = QRNSRegistryMetaData.GetAbi()
 	if err != nil {
 		utils.LogFatal(err, "error getting zns-registry-abi", 0)
 	}
-	ZNSBaseRegistrarParsedABI, err = ZNSBaseRegistrarMetaData.GetAbi()
+	QRNSBaseRegistrarParsedABI, err = QRNSBaseRegistrarMetaData.GetAbi()
 	if err != nil {
 		utils.LogFatal(err, "error getting zns-base-regsitrar-abi", 0)
 	}
-	ZNSOldRegistrarControllerParsedABI, err = ZNSOldRegistrarControllerMetaData.GetAbi()
+	QRNSOldRegistrarControllerParsedABI, err = QRNSOldRegistrarControllerMetaData.GetAbi()
 	if err != nil {
 		utils.LogFatal(err, "error getting zns-old-registrar-controller-abi", 0)
 	}
-	ZNSPublicResolverParsedABI, err = ZNSPublicResolverMetaData.GetAbi()
+	QRNSPublicResolverParsedABI, err = QRNSPublicResolverMetaData.GetAbi()
 	if err != nil {
 		utils.LogFatal(err, "error getting zns-public-resolver-abi", 0)
 	}
-	ZNSZONDRegistrarControllerParsedABI, err = ZNSZONDRegistrarControllerMetaData.GetAbi()
+	QRNSZONDRegistrarControllerParsedABI, err = QRNSZONDRegistrarControllerMetaData.GetAbi()
 	if err != nil {
 		utils.LogFatal(err, "error getting zns-eth-registrar-controller-abi", 0)
 	}
 
-	ZNSRegistryContract = bind.NewBoundContract(common.Address{}, *ZNSRegistryParsedABI, nil, nil, nil)
+	QRNSRegistryContract = bind.NewBoundContract(common.Address{}, *QRNSRegistryParsedABI, nil, nil, nil)
 	if err != nil {
 		utils.LogFatal(err, "error creating zns-registry-contract", 0)
 	}
-	ZNSBaseRegistrarContract = bind.NewBoundContract(common.Address{}, *ZNSBaseRegistrarParsedABI, nil, nil, nil)
+	QRNSBaseRegistrarContract = bind.NewBoundContract(common.Address{}, *QRNSBaseRegistrarParsedABI, nil, nil, nil)
 	if err != nil {
 		utils.LogFatal(err, "error creating zns-base-registrar-contract", 0)
 	}
-	ZNSOldRegistrarControllerContract = bind.NewBoundContract(common.Address{}, *ZNSOldRegistrarControllerParsedABI, nil, nil, nil)
+	QRNSOldRegistrarControllerContract = bind.NewBoundContract(common.Address{}, *QRNSOldRegistrarControllerParsedABI, nil, nil, nil)
 	if err != nil {
 		utils.LogFatal(err, "error creating zns-old-registrar-controller-contract", 0)
 	}
-	ZNSPublicResolverContract = bind.NewBoundContract(common.Address{}, *ZNSPublicResolverParsedABI, nil, nil, nil)
+	QRNSPublicResolverContract = bind.NewBoundContract(common.Address{}, *QRNSPublicResolverParsedABI, nil, nil, nil)
 	if err != nil {
 		utils.LogFatal(err, "error creating zns-public-resolver-contract", 0)
 	}
-	ZNSZONDRegistrarControllerContract = bind.NewBoundContract(common.Address{}, *ZNSZONDRegistrarControllerParsedABI, nil, nil, nil)
+	QRNSZONDRegistrarControllerContract = bind.NewBoundContract(common.Address{}, *QRNSZONDRegistrarControllerParsedABI, nil, nil, nil)
 	if err != nil {
 		utils.LogFatal(err, "error creating zns-eth-registrar-controller-contract", 0)
 	}

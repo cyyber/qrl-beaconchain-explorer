@@ -1,7 +1,5 @@
 package handlers
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
 import (
 	"net/http"
 
@@ -23,11 +21,11 @@ func ZnsSearch(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	search := vars["search"]
 
-	result, err := GetZnsDomain(search)
+	result, err := GetQrnsDomain(search)
 
 	var pageData types.ZnsSearchPageData
 	if err != nil {
-		pageData.Error = "No matching ZNS registration found"
+		pageData.Error = "No matching QRNS registration found"
 	} else {
 		pageData.Result = result
 	}
@@ -39,4 +37,3 @@ func ZnsSearch(w http.ResponseWriter, r *http.Request) {
 		return // an error has occurred and was processed
 	}
 }
-*/
