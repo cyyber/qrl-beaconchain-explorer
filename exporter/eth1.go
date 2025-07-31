@@ -18,8 +18,8 @@ import (
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 	gzondTypes "github.com/theQRL/go-zond/core/types"
+	"github.com/theQRL/go-zond/qrlclient"
 	gzondRPC "github.com/theQRL/go-zond/rpc"
-	"github.com/theQRL/go-zond/zondclient"
 	"github.com/theQRL/qrysm/contracts/deposit"
 	"github.com/theQRL/qrysm/crypto/hash"
 	"github.com/theQRL/qrysm/encoding/bytesutil"
@@ -30,8 +30,8 @@ var elLookBack = uint64(100)
 var elMaxFetch = uint64(1000)
 var elDepositEventSignature = hash.HashKeccak256([]byte("DepositEvent(bytes,bytes,bytes,bytes,bytes)"))
 var depositContractFirstBlock uint64
-var zondDepositContractAddress common.Address
-var elClient *zondclient.Client
+var qrlDepositContractAddress common.Address
+var elClient *qrlclient.Client
 var elRPCClient *gzondRPC.Client
 var gzondRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too Large")
 
@@ -52,7 +52,7 @@ func eth1DepositsExporter() {
 		utils.LogFatal(err, "new exporter gzond client error", 0)
 	}
 	elRPCClient = rpcClient
-	client := zondclient.NewClient(rpcClient)
+	client := qrlclient.NewClient(rpcClient)
 	elClient = client
 
 	lastFetchedBlock := uint64(0)
@@ -169,7 +169,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 	topic := common.BytesToHash(elDepositEventSignature[:])
 	qry := zond.FilterQuery{
 		Addresses: []common.Address{
-			zondDepositContractAddress,
+			qrlDepositContractAddress,
 		},
 		FromBlock: new(big.Int).SetUint64(fromBlock),
 		ToBlock:   new(big.Int).SetUint64(toBlock),

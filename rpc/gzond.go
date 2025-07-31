@@ -19,8 +19,8 @@ import (
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 	gzond_types "github.com/theQRL/go-zond/core/types"
+	"github.com/theQRL/go-zond/qrlclient"
 	gzond_rpc "github.com/theQRL/go-zond/rpc"
-	"github.com/theQRL/go-zond/zondclient"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -28,7 +28,7 @@ import (
 type GzondClient struct {
 	endpoint     string
 	rpcClient    *gzond_rpc.Client
-	zondClient   *zondclient.Client
+	qrlClient    *qrlclient.Client
 	chainID      *big.Int
 	multiChecker *Balance
 }
@@ -101,21 +101,21 @@ func NewGzondClient(endpoint string) (*GzondClient, error) {
 
 	client.rpcClient = rpcClient
 
-	zondClient, err := zondclient.Dial(client.endpoint)
+	qrlClient, err := qrlclient.Dial(client.endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("error dialing rpc node: %v", err)
 	}
-	client.zondClient = zondClient
+	client.qrlClient = qrlClient
 
 	addr, _ := common.NewAddressFromString("Qb1F8e55c7f64D203C1400B9D8555d050F94aDF39")
-	client.multiChecker, err = NewBalance(addr, client.zondClient)
+	client.multiChecker, err = NewBalance(addr, client.qrlClient)
 	if err != nil {
 		return nil, fmt.Errorf("error initiation balance checker contract: %v", err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	chainID, err := client.zondClient.ChainID(ctx)
+	chainID, err := client.qrlClient.ChainID(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting chainid of rpcclient: %w", err)
 	}
@@ -126,11 +126,11 @@ func NewGzondClient(endpoint string) (*GzondClient, error) {
 
 func (client *GzondClient) Close() {
 	client.rpcClient.Close()
-	client.zondClient.Close()
+	client.qrlClient.Close()
 }
 
-func (client *GzondClient) GetNativeClient() *zondclient.Client {
-	return client.zondClient
+func (client *GzondClient) GetNativeClient() *qrlclient.Client {
+	return client.qrlClient
 }
 
 func (client *GzondClient) GetBlockNumberByHash(hash string) (uint64, error) {
@@ -142,7 +142,7 @@ func (client *GzondClient) GetBlockNumberByHash(hash string) (uint64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	block, err := client.zondClient.BlockByHash(ctx, common.HexToHash(hash))
+	block, err := client.qrlClient.BlockByHash(ctx, common.HexToHash(hash))
 	if err != nil {
 		return 0, err
 	}
@@ -156,7 +156,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 	start := time.Now()
 	timings := &types.GetBlockTimings{}
 
-	block, err := client.zondClient.BlockByNumber(ctx, big.NewInt(int64(number)))
+	block, err := client.qrlClient.BlockByNumber(ctx, big.NewInt(int64(number)))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -275,7 +275,7 @@ func (client *GzondClient) GetLatestEth1BlockNumber() (uint64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	latestBlock, err := client.zondClient.BlockByNumber(ctx, nil)
+	latestBlock, err := client.qrlClient.BlockByNumber(ctx, nil)
 	if err != nil {
 		return 0, fmt.Errorf("error getting latest block: %v", err)
 	}
@@ -375,7 +375,7 @@ func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*ty
 func (client *GzondClient) GetZRC20TokenMetadata(token []byte) (*types.ZRC20Metadata, error) {
 	logger.Infof("retrieving metadata for token %x", token)
 
-	contract, err := zrc20.NewZrc20(common.BytesToAddress(token), client.zondClient)
+	contract, err := zrc20.NewZrc20(common.BytesToAddress(token), client.qrlClient)
 	if err != nil {
 		return nil, fmt.Errorf("error getting token-contract: zrc20.NewZrc20: %w", err)
 	}

@@ -1,4 +1,4 @@
-package zondclients
+package qrlclients
 
 import (
 	"encoding/json"
