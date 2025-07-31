@@ -265,14 +265,14 @@ $(document).ready(function () {
   })
   bhValidators.remote.transport._get = debounce(bhValidators.remote.transport, bhValidators.remote.transport._get)
 
-  var bhZns = new Bloodhound({
+  var bhQrns = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     identify: function (obj) {
       return obj?.domain
     },
     remote: {
-      url: "/search/zns/%QUERY",
+      url: "/search/qrns/%QUERY",
       wildcard: "%QUERY",
       maxPendingRequests: requestNum,
       transform: function (data) {
@@ -280,7 +280,7 @@ $(document).ready(function () {
       },
     },
   })
-  bhZns.remote.transport._get = debounce(bhZns.remote.transport, bhZns.remote.transport._get)
+  bhQrns.remote.transport._get = debounce(bhQrns.remote.transport, bhQrns.remote.transport._get)
 
   var bhSlots = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -442,15 +442,15 @@ $(document).ready(function () {
     },
     {
       limit: 5,
-      name: "zns",
-      source: bhZns,
+      name: "qrns",
+      source: bhQrns,
       display: function (data) {
         return data?.address && data?.domain ? data.domain : null
       },
       templates: {
-        header: '<h3 class="h5">Zns</h3>',
+        header: '<h3 class="h5">Qrns</h3>',
         suggestion: function (data) {
-          return `<div class="text-monospace text-truncate"><a href="/zns/${data.domain}">${data.domain} Registration Overview</a></div>`
+          return `<div class="text-monospace text-truncate"><a href="/qrns/${data.domain}">${data.domain} Registration Overview</a></div>`
         },
       },
     },

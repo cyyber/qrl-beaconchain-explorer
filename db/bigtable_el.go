@@ -3010,7 +3010,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 		Balances: []*types.Eth1AddressBalance{},
 		ZRC20:    &types.ZRC20Metadata{},
 		Name:     "",
-		EthBalance: &types.Eth1AddressBalance{
+		QuantaBalance: &types.Eth1AddressBalance{
 			Metadata: &types.ZRC20Metadata{},
 		},
 		ZRC20TokenLimit: ZRC20TokensPerAddressLimit,
@@ -3076,7 +3076,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 
 					mux.Lock()
 					if isNativeQuanta {
-						ret.EthBalance = balance
+						ret.QuantaBalance = balance
 					} else {
 						ret.Balances = append(ret.Balances, balance)
 					}

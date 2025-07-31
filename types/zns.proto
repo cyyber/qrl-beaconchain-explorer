@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "./types";
 
-message ZnsNameRegistered {
+message QrnsNameRegistered {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes register_contract = 3;
@@ -19,7 +19,7 @@ message ZnsNameRegistered {
     google.protobuf.Timestamp expires = 11;
 }
 
-message ZnsNameRenewed {
+message QrnsNameRenewed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     google.protobuf.Timestamp time = 3;
@@ -28,7 +28,7 @@ message ZnsNameRenewed {
     google.protobuf.Timestamp expires = 6;
 }
 
-message ZnsAddressChanged {
+message QrnsAddressChanged {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes resolve_contract = 3;
@@ -38,7 +38,7 @@ message ZnsAddressChanged {
     bytes new_address = 7;
 }
 
-message ZnsNameChanged {
+message QrnsNameChanged {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes resolve_contract = 3;

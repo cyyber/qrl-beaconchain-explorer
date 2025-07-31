@@ -21,11 +21,11 @@ import (
 )
 
 
-func GetZnsDomain(search string) (*types.ZnsDomainResponse, error) {
-	data := &types.ZnsDomainResponse{}
+func GetQrnsDomain(search string) (*types.QrnsDomainResponse, error) {
+	data := &types.QrnsDomainResponse{}
 	var returnError error
 
-	if utils.IsValidZnsDomain(search) {
+	if utils.IsValidQrnsDomain(search) {
 		cacheKey := fmt.Sprintf("%d:ens:address:%v", utils.Config.Chain.ClConfig.DepositChainID, search)
 
 		if address, err := cache.TieredCache.GetStringWithLocalTimeout(cacheKey, time.Minute); err == nil && len(address) > 0 {
@@ -33,14 +33,14 @@ func GetZnsDomain(search string) (*types.ZnsDomainResponse, error) {
 			return data, nil
 		}
 
-		address, err := db.GetAddressForZnsName(search)
+		address, err := db.GetAddressForQrnsName(search)
 		if err != nil {
 			data.Domain = search
 			return data, err // We want to return the data if it was a valid domain even if there was an error getting the address from bigtable. A valid domain might be enough for the caller.
 		}
 		data.Address = address.Hex()
 
-		name, err := db.GetZnsNameForAddress(*address)
+		name, err := db.GetQrnsNameForAddress(*address)
 		if err != nil && err != sql.ErrNoRows {
 			return data, err // We want to return the data if it was a valid address even if there was an error getting the domain from bigtable. A valid address might be enough for the caller.
 		}
@@ -60,7 +60,7 @@ func GetZnsDomain(search string) (*types.ZnsDomainResponse, error) {
 			data.Domain = domain
 			return data, nil
 		}
-		name, err := db.GetZnsNameForAddress(common.HexToAddress(search))
+		name, err := db.GetQrnsNameForAddress(common.HexToAddress(search))
 		if err != nil && err != sql.ErrNoRows {
 			return data, err // We want to return the data if it was a valid address even if there was an error getting the domain from bigtable. A valid address might be enough for the caller.
 		}
@@ -75,9 +75,9 @@ func GetZnsDomain(search string) (*types.ZnsDomainResponse, error) {
 	return data, returnError //We always want to return the data if it was a valid address/domain even if there was an error getting data. A valid address might be enough for the caller.
 }
 
-func ReplaceZnsNameWithAddress(search string) string {
-	if utils.IsValidZnsDomain(search) {
-		ensData, _ := GetZnsDomain(search)
+func ReplaceQrnsNameWithAddress(search string) string {
+	if utils.IsValidQrnsDomain(search) {
+		ensData, _ := GetQrnsDomain(search)
 		if len(ensData.Address) > 0 {
 			search = strings.Replace(ensData.Address, "0x", "", -1)
 		}

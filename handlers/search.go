@@ -184,11 +184,11 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 		}
 	case "eth1_addresses":
 		if utils.IsValidQrnsDomain(search) {
-			znsData, _ := GetQrnsDomain(search)
-			if len(znsData.Address) > 0 {
+			qrnsData, _ := GetQrnsDomain(search)
+			if len(qrnsData.Address) > 0 {
 				result = []*types.Eth1AddressSearchItem{{
-					Address: znsData.Address,
-					Name:    znsData.Domain,
+					Address: qrnsData.Address,
+					Name:    qrnsData.Domain,
 					Token:   "",
 				}}
 				break
@@ -237,21 +237,19 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			LEFT JOIN validators ON validators.pubkey = eth1_deposits.publickey
 			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_eth1_addresses":
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// search = ReplaceZnsNameWithAddress(search)
+		search = ReplaceQrnsNameWithAddress(search)
 		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
 	case "count_indexed_validators_by_eth1_address":
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// var znsData *types.ZnsDomainResponse
-		// if utils.IsValidZnsDomain(search) {
-		// 	znsData, _ = GetZnsDomain(search)
-		// 	if len(znsData.Address) > 0 {
-		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(znsData.Address, "Z", "", -1))
-		// 	}
-		// }
+		var qrnsData *types.QrnsDomainResponse
+		if utils.IsValidQrnsDomain(search) {
+			qrnsData, _ = GetQrnsDomain(search)
+			if len(qrnsData.Address) > 0 {
+				lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "Q", "", -1))
+			}
+		}
 		if !searchLikeRE.MatchString(lowerStrippedSearch) {
 			break
 		}
@@ -273,11 +271,11 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
 		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// var znsData *types.ZnsDomainResponse
-		// if utils.IsValidZnsDomain(search) {
-		// 	znsData, _ = GetZnsDomain(search)
-		// 	if len(znsData.Address) > 0 {
-		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(znsData.Address, "0x", "", -1))
+		// var qrnsData *types.QrnsDomainResponse
+		// if utils.IsValidQrnsDomain(search) {
+		// 	qrnsData, _ = GetQrnsDomain(search)
+		// 	if len(qrnsData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "0x", "", -1))
 		// 	}
 		// }
 		if len(lowerStrippedSearch) == 40 {
@@ -371,10 +369,10 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 		}
 		result = &res
 	// case "ens":
-	// 	if !utils.IsValidZnsDomain(search) {
+	// 	if !utils.IsValidQrnsDomain(search) {
 	// 		break
 	// 	}
-	// 	data, ensErr := GetZnsDomain(search)
+	// 	data, ensErr := GetQrnsDomain(search)
 	// 	if ensErr != nil {
 	// 		if ensErr != sql.ErrNoRows {
 	// 			err = ensErr
@@ -401,7 +399,7 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 
 // search can either be a valid QRL address or an QRNS name mapping to one
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
-	// search = strings.ToLower(strings.Replace(ReplaceZnsNameWithAddress(search), "0x", "", -1))
+	// search = strings.ToLower(strings.Replace(ReplaceQrnsNameWithAddress(search), "0x", "", -1))
 	search = strings.ToLower(search)
 	if !utils.IsAddress(search) {
 		return nil, fmt.Errorf("not a valid QRL address: %v", search)

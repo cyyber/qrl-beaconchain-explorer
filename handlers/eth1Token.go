@@ -25,9 +25,9 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
-	token := common.FromHex(strings.TrimPrefix(vars["token"], "Z"))
+	token := common.FromHex(strings.TrimPrefix(vars["token"], "Q"))
 
-	address := common.FromHex(strings.TrimPrefix(r.URL.Query().Get("a"), "Z"))
+	address := common.FromHex(strings.TrimPrefix(r.URL.Query().Get("a"), "Q"))
 
 	g := new(errgroup.Group)
 	g.SetLimit(3)
@@ -97,8 +97,8 @@ func Eth1TokenTransfers(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	vars := mux.Vars(r)
 
-	token := common.FromHex(strings.TrimPrefix(vars["token"], "Z"))
-	address := common.FromHex(strings.TrimPrefix(q.Get("a"), "Z"))
+	token := common.FromHex(strings.TrimPrefix(vars["token"], "Q"))
+	address := common.FromHex(strings.TrimPrefix(q.Get("a"), "Q"))
 	pageToken := q.Get("pageToken")
 
 	// logger.Infof("GETTING TRANSACTION table data for address: %v search: %v draw: %v start: %v length: %v", address, search, draw, start, length)

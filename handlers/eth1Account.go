@@ -42,7 +42,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	addressHex := strings.Replace(address, "Z", "", -1)
+	addressHex := strings.Replace(address, "Q", "", -1)
 	addressHex = strings.ToLower(addressHex)
 
 	addressBytes := common.FromHex(addressHex)
@@ -208,7 +208,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 
 	data.Data = types.Eth1AddressPageData{
 		Address:            address,
-		ZnsName:            znsData.Domain,
+		QrnsName:           qrnsData.Domain,
 		IsContract:         isContract,
 		QRCode:             pngStr,
 		QRCodeInverse:      pngStrInverse,
@@ -429,16 +429,16 @@ func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, er
 	vars := mux.Vars(r)
 	address := vars["address"]
 	if utils.IsValidQrnsDomain(address) {
-		znsData, err := GetQrnsDomain(address)
+		qrnsData, err := GetQrnsDomain(address)
 		if err != nil {
 			handleNotFoundJson(address, w, r, err)
 			return "", err
 		}
-		if len(znsData.Address) > 0 {
-			address = znsData.Address
+		if len(qrnsData.Address) > 0 {
+			address = qrnsData.Address
 		}
 	}
-	return strings.ToLower(strings.Replace(address, "Z", "", -1)), nil
+	return strings.ToLower(strings.Replace(address, "Q", "", -1)), nil
 }
 
 func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {

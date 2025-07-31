@@ -47,7 +47,7 @@ Before continuing, restarting your computer now might save you from unexplained 
 # Clone the explorer repository
 ```
 cd ~
-git clone https://github.com/theQRL/zond-beaconchain-explorer.git
+git clone https://github.com/theQRL/qrl-beaconchain-explorer.git
 cd zond-beaconchain-explorer
 ```
 

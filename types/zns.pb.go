@@ -2,16 +2,17 @@
 // versions:
 // 	protoc-gen-go v1.30.0
 // 	protoc        v4.25.0
-// source: types/zns.proto
+// source: types/qrns.proto
 
 package types
 
 import (
+	reflect "reflect"
+	sync "sync"
+
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-	reflect "reflect"
-	sync "sync"
 )
 
 const (
@@ -21,7 +22,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ZnsNameRegistered struct {
+type QrnsNameRegistered struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -39,23 +40,23 @@ type ZnsNameRegistered struct {
 	Expires          *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=expires,proto3" json:"expires,omitempty"`
 }
 
-func (x *ZnsNameRegistered) Reset() {
-	*x = ZnsNameRegistered{}
+func (x *QrnsNameRegistered) Reset() {
+	*x = QrnsNameRegistered{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_zns_proto_msgTypes[0]
+		mi := &file_types_qrns_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *ZnsNameRegistered) String() string {
+func (x *QrnsNameRegistered) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ZnsNameRegistered) ProtoMessage() {}
+func (*QrnsNameRegistered) ProtoMessage() {}
 
-func (x *ZnsNameRegistered) ProtoReflect() protoreflect.Message {
-	mi := &file_types_zns_proto_msgTypes[0]
+func (x *QrnsNameRegistered) ProtoReflect() protoreflect.Message {
+	mi := &file_types_qrns_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -66,89 +67,89 @@ func (x *ZnsNameRegistered) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ZnsNameRegistered.ProtoReflect.Descriptor instead.
-func (*ZnsNameRegistered) Descriptor() ([]byte, []int) {
-	return file_types_zns_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use QrnsNameRegistered.ProtoReflect.Descriptor instead.
+func (*QrnsNameRegistered) Descriptor() ([]byte, []int) {
+	return file_types_qrns_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ZnsNameRegistered) GetParentHash() []byte {
+func (x *QrnsNameRegistered) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetBlockNumber() uint64 {
+func (x *QrnsNameRegistered) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ZnsNameRegistered) GetRegisterContract() []byte {
+func (x *QrnsNameRegistered) GetRegisterContract() []byte {
 	if x != nil {
 		return x.RegisterContract
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetResolverContract() []byte {
+func (x *QrnsNameRegistered) GetResolverContract() []byte {
 	if x != nil {
 		return x.ResolverContract
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetTime() *timestamppb.Timestamp {
+func (x *QrnsNameRegistered) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetLabel() []byte {
+func (x *QrnsNameRegistered) GetLabel() []byte {
 	if x != nil {
 		return x.Label
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetOwner() []byte {
+func (x *QrnsNameRegistered) GetOwner() []byte {
 	if x != nil {
 		return x.Owner
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetResolver() []byte {
+func (x *QrnsNameRegistered) GetResolver() []byte {
 	if x != nil {
 		return x.Resolver
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetNode() []byte {
+func (x *QrnsNameRegistered) GetNode() []byte {
 	if x != nil {
 		return x.Node
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetName() []byte {
+func (x *QrnsNameRegistered) GetName() []byte {
 	if x != nil {
 		return x.Name
 	}
 	return nil
 }
 
-func (x *ZnsNameRegistered) GetExpires() *timestamppb.Timestamp {
+func (x *QrnsNameRegistered) GetExpires() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Expires
 	}
 	return nil
 }
 
-type ZnsNameRenewed struct {
+type QrnsNameRenewed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -161,23 +162,23 @@ type ZnsNameRenewed struct {
 	Expires     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=expires,proto3" json:"expires,omitempty"`
 }
 
-func (x *ZnsNameRenewed) Reset() {
-	*x = ZnsNameRenewed{}
+func (x *QrnsNameRenewed) Reset() {
+	*x = QrnsNameRenewed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_zns_proto_msgTypes[1]
+		mi := &file_types_qrns_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *ZnsNameRenewed) String() string {
+func (x *QrnsNameRenewed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ZnsNameRenewed) ProtoMessage() {}
+func (*QrnsNameRenewed) ProtoMessage() {}
 
-func (x *ZnsNameRenewed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_zns_proto_msgTypes[1]
+func (x *QrnsNameRenewed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_qrns_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -188,54 +189,54 @@ func (x *ZnsNameRenewed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ZnsNameRenewed.ProtoReflect.Descriptor instead.
-func (*ZnsNameRenewed) Descriptor() ([]byte, []int) {
-	return file_types_zns_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use QrnsNameRenewed.ProtoReflect.Descriptor instead.
+func (*QrnsNameRenewed) Descriptor() ([]byte, []int) {
+	return file_types_qrns_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ZnsNameRenewed) GetParentHash() []byte {
+func (x *QrnsNameRenewed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ZnsNameRenewed) GetBlockNumber() uint64 {
+func (x *QrnsNameRenewed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ZnsNameRenewed) GetTime() *timestamppb.Timestamp {
+func (x *QrnsNameRenewed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ZnsNameRenewed) GetLabel() []byte {
+func (x *QrnsNameRenewed) GetLabel() []byte {
 	if x != nil {
 		return x.Label
 	}
 	return nil
 }
 
-func (x *ZnsNameRenewed) GetName() []byte {
+func (x *QrnsNameRenewed) GetName() []byte {
 	if x != nil {
 		return x.Name
 	}
 	return nil
 }
 
-func (x *ZnsNameRenewed) GetExpires() *timestamppb.Timestamp {
+func (x *QrnsNameRenewed) GetExpires() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Expires
 	}
 	return nil
 }
 
-type ZnsAddressChanged struct {
+type QrnsAddressChanged struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -249,23 +250,23 @@ type ZnsAddressChanged struct {
 	NewAddress      []byte                 `protobuf:"bytes,7,opt,name=new_address,json=newAddress,proto3" json:"new_address,omitempty"`
 }
 
-func (x *ZnsAddressChanged) Reset() {
-	*x = ZnsAddressChanged{}
+func (x *QrnsAddressChanged) Reset() {
+	*x = QrnsAddressChanged{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_zns_proto_msgTypes[2]
+		mi := &file_types_qrns_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *ZnsAddressChanged) String() string {
+func (x *QrnsAddressChanged) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ZnsAddressChanged) ProtoMessage() {}
+func (*QrnsAddressChanged) ProtoMessage() {}
 
-func (x *ZnsAddressChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_types_zns_proto_msgTypes[2]
+func (x *QrnsAddressChanged) ProtoReflect() protoreflect.Message {
+	mi := &file_types_qrns_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -276,61 +277,61 @@ func (x *ZnsAddressChanged) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ZnsAddressChanged.ProtoReflect.Descriptor instead.
-func (*ZnsAddressChanged) Descriptor() ([]byte, []int) {
-	return file_types_zns_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use QrnsAddressChanged.ProtoReflect.Descriptor instead.
+func (*QrnsAddressChanged) Descriptor() ([]byte, []int) {
+	return file_types_qrns_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ZnsAddressChanged) GetParentHash() []byte {
+func (x *QrnsAddressChanged) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ZnsAddressChanged) GetBlockNumber() uint64 {
+func (x *QrnsAddressChanged) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ZnsAddressChanged) GetResolveContract() []byte {
+func (x *QrnsAddressChanged) GetResolveContract() []byte {
 	if x != nil {
 		return x.ResolveContract
 	}
 	return nil
 }
 
-func (x *ZnsAddressChanged) GetTime() *timestamppb.Timestamp {
+func (x *QrnsAddressChanged) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ZnsAddressChanged) GetNode() []byte {
+func (x *QrnsAddressChanged) GetNode() []byte {
 	if x != nil {
 		return x.Node
 	}
 	return nil
 }
 
-func (x *ZnsAddressChanged) GetCoinType() uint64 {
+func (x *QrnsAddressChanged) GetCoinType() uint64 {
 	if x != nil {
 		return x.CoinType
 	}
 	return 0
 }
 
-func (x *ZnsAddressChanged) GetNewAddress() []byte {
+func (x *QrnsAddressChanged) GetNewAddress() []byte {
 	if x != nil {
 		return x.NewAddress
 	}
 	return nil
 }
 
-type ZnsNameChanged struct {
+type QrnsNameChanged struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -343,23 +344,23 @@ type ZnsNameChanged struct {
 	NewName         []byte                 `protobuf:"bytes,6,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`
 }
 
-func (x *ZnsNameChanged) Reset() {
-	*x = ZnsNameChanged{}
+func (x *QrnsNameChanged) Reset() {
+	*x = QrnsNameChanged{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_zns_proto_msgTypes[3]
+		mi := &file_types_qrns_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *ZnsNameChanged) String() string {
+func (x *QrnsNameChanged) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ZnsNameChanged) ProtoMessage() {}
+func (*QrnsNameChanged) ProtoMessage() {}
 
-func (x *ZnsNameChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_types_zns_proto_msgTypes[3]
+func (x *QrnsNameChanged) ProtoReflect() protoreflect.Message {
+	mi := &file_types_qrns_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -370,56 +371,56 @@ func (x *ZnsNameChanged) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ZnsNameChanged.ProtoReflect.Descriptor instead.
-func (*ZnsNameChanged) Descriptor() ([]byte, []int) {
-	return file_types_zns_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use QrnsNameChanged.ProtoReflect.Descriptor instead.
+func (*QrnsNameChanged) Descriptor() ([]byte, []int) {
+	return file_types_qrns_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ZnsNameChanged) GetParentHash() []byte {
+func (x *QrnsNameChanged) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ZnsNameChanged) GetBlockNumber() uint64 {
+func (x *QrnsNameChanged) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ZnsNameChanged) GetResolveContract() []byte {
+func (x *QrnsNameChanged) GetResolveContract() []byte {
 	if x != nil {
 		return x.ResolveContract
 	}
 	return nil
 }
 
-func (x *ZnsNameChanged) GetTime() *timestamppb.Timestamp {
+func (x *QrnsNameChanged) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ZnsNameChanged) GetNode() []byte {
+func (x *QrnsNameChanged) GetNode() []byte {
 	if x != nil {
 		return x.Node
 	}
 	return nil
 }
 
-func (x *ZnsNameChanged) GetNewName() []byte {
+func (x *QrnsNameChanged) GetNewName() []byte {
 	if x != nil {
 		return x.NewName
 	}
 	return nil
 }
 
-var File_types_zns_proto protoreflect.FileDescriptor
+var File_types_qrns_proto protoreflect.FileDescriptor
 
-var file_types_zns_proto_rawDesc = []byte{
+var file_types_qrns_proto_rawDesc = []byte{
 	0x0a, 0x0f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2f, 0x7a, 0x6e, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x12, 0x05, 0x74, 0x79, 0x70, 0x65, 0x73, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
 	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74,
@@ -498,32 +499,32 @@ var file_types_zns_proto_rawDesc = []byte{
 }
 
 var (
-	file_types_zns_proto_rawDescOnce sync.Once
-	file_types_zns_proto_rawDescData = file_types_zns_proto_rawDesc
+	file_types_qrns_proto_rawDescOnce sync.Once
+	file_types_qrns_proto_rawDescData = file_types_qrns_proto_rawDesc
 )
 
-func file_types_zns_proto_rawDescGZIP() []byte {
-	file_types_zns_proto_rawDescOnce.Do(func() {
-		file_types_zns_proto_rawDescData = protoimpl.X.CompressGZIP(file_types_zns_proto_rawDescData)
+func file_types_qrns_proto_rawDescGZIP() []byte {
+	file_types_qrns_proto_rawDescOnce.Do(func() {
+		file_types_qrns_proto_rawDescData = protoimpl.X.CompressGZIP(file_types_qrns_proto_rawDescData)
 	})
-	return file_types_zns_proto_rawDescData
+	return file_types_qrns_proto_rawDescData
 }
 
-var file_types_zns_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_types_zns_proto_goTypes = []interface{}{
-	(*ZnsNameRegistered)(nil),     // 0: types.ZnsNameRegistered
-	(*ZnsNameRenewed)(nil),        // 1: types.ZnsNameRenewed
-	(*ZnsAddressChanged)(nil),     // 2: types.ZnsAddressChanged
-	(*ZnsNameChanged)(nil),        // 3: types.ZnsNameChanged
+var file_types_qrns_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_types_qrns_proto_goTypes = []interface{}{
+	(*QrnsNameRegistered)(nil),    // 0: types.QrnsNameRegistered
+	(*QrnsNameRenewed)(nil),       // 1: types.QrnsNameRenewed
+	(*QrnsAddressChanged)(nil),    // 2: types.QrnsAddressChanged
+	(*QrnsNameChanged)(nil),       // 3: types.QrnsNameChanged
 	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
 }
-var file_types_zns_proto_depIdxs = []int32{
-	4, // 0: types.ZnsNameRegistered.time:type_name -> google.protobuf.Timestamp
-	4, // 1: types.ZnsNameRegistered.expires:type_name -> google.protobuf.Timestamp
-	4, // 2: types.ZnsNameRenewed.time:type_name -> google.protobuf.Timestamp
-	4, // 3: types.ZnsNameRenewed.expires:type_name -> google.protobuf.Timestamp
-	4, // 4: types.ZnsAddressChanged.time:type_name -> google.protobuf.Timestamp
-	4, // 5: types.ZnsNameChanged.time:type_name -> google.protobuf.Timestamp
+var file_types_qrns_proto_depIdxs = []int32{
+	4, // 0: types.QrnsNameRegistered.time:type_name -> google.protobuf.Timestamp
+	4, // 1: types.QrnsNameRegistered.expires:type_name -> google.protobuf.Timestamp
+	4, // 2: types.QrnsNameRenewed.time:type_name -> google.protobuf.Timestamp
+	4, // 3: types.QrnsNameRenewed.expires:type_name -> google.protobuf.Timestamp
+	4, // 4: types.QrnsAddressChanged.time:type_name -> google.protobuf.Timestamp
+	4, // 5: types.QrnsNameChanged.time:type_name -> google.protobuf.Timestamp
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -531,14 +532,14 @@ var file_types_zns_proto_depIdxs = []int32{
 	0, // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_types_zns_proto_init() }
-func file_types_zns_proto_init() {
-	if File_types_zns_proto != nil {
+func init() { file_types_qrns_proto_init() }
+func file_types_qrns_proto_init() {
+	if File_types_qrns_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_types_zns_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ZnsNameRegistered); i {
+		file_types_qrns_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QrnsNameRegistered); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -549,8 +550,8 @@ func file_types_zns_proto_init() {
 				return nil
 			}
 		}
-		file_types_zns_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ZnsNameRenewed); i {
+		file_types_qrns_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QrnsNameRenewed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -561,8 +562,8 @@ func file_types_zns_proto_init() {
 				return nil
 			}
 		}
-		file_types_zns_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ZnsAddressChanged); i {
+		file_types_qrns_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QrnsAddressChanged); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -573,8 +574,8 @@ func file_types_zns_proto_init() {
 				return nil
 			}
 		}
-		file_types_zns_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ZnsNameChanged); i {
+		file_types_qrns_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QrnsNameChanged); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -590,18 +591,18 @@ func file_types_zns_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_types_zns_proto_rawDesc,
+			RawDescriptor: file_types_qrns_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_types_zns_proto_goTypes,
-		DependencyIndexes: file_types_zns_proto_depIdxs,
-		MessageInfos:      file_types_zns_proto_msgTypes,
+		GoTypes:           file_types_qrns_proto_goTypes,
+		DependencyIndexes: file_types_qrns_proto_depIdxs,
+		MessageInfos:      file_types_qrns_proto_msgTypes,
 	}.Build()
-	File_types_zns_proto = out.File
-	file_types_zns_proto_rawDesc = nil
-	file_types_zns_proto_goTypes = nil
-	file_types_zns_proto_depIdxs = nil
+	File_types_qrns_proto = out.File
+	file_types_qrns_proto_rawDesc = nil
+	file_types_qrns_proto_goTypes = nil
+	file_types_qrns_proto_depIdxs = nil
 }
