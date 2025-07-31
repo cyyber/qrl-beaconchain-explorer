@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
 
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
@@ -155,7 +155,7 @@ func formatCurrencyString(valIf interface{}, digitsAfterComma int, showCurrencyS
 
 	currencyStr := ""
 	if showCurrencySymbol {
-		currencyStr = " Zond"
+		currencyStr = " Quanta"
 	}
 
 	amountStr := ""
@@ -621,7 +621,7 @@ func AddressToWithdrawalCredentials(address []byte) ([]byte, error) {
 		credentials = append(credentials, address...)
 		return credentials, nil
 	}
-	return nil, fmt.Errorf("invalid zond address")
+	return nil, fmt.Errorf("invalid qrl address")
 }
 
 func FormatHashWithCopy(hash []byte) template.HTML {
@@ -1080,7 +1080,7 @@ func DerefString(str *string) string {
 	return ""
 }
 
-func FormatZond(num string) string {
+func FormatQuanta(num string) string {
 	floatNum, _ := strconv.ParseFloat(num, 64)
 	return fmt.Sprintf("%.4f", floatNum/math.Pow10(18)) + " " + MainCurrency
 }
@@ -1136,13 +1136,13 @@ func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
 	e := new(big.Int).SetBytes(balance.Metadata.Decimals)
 	d := new(big.Int).Exp(big.NewInt(10), e, nil)
 	balPlanck := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0)
-	balZond := balPlanck.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
+	balQuanta := balPlanck.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
 
 	p := message.NewPrinter(language.English)
 	return template.HTML(p.Sprintf(`
 		<div class="d-flex align-items-center">
-			<span class="token-holdings">%v Zond</span>
-		</div>`, balZond))
+			<span class="token-holdings">%v Quanta</span>
+		</div>`, balQuanta))
 }
 
 func FormatTokenValue(balance *types.Eth1AddressBalance, fullAmountTooltip bool) template.HTML {

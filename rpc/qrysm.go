@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/theQRL/go-bitfield"
@@ -51,7 +51,7 @@ func NewQrysmClient(endpoint string, chainID *big.Int) (*QrysmClient, error) {
 
 // GetChainHead gets the chain head from Qrysm
 func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
-	headResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/head", lc.endpoint))
+	headResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/headers/head", lc.endpoint))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving chain head: %w", err)
 	}
@@ -70,7 +70,7 @@ func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
 	// TODO(now.youtrack.cloud/issue/TZB-7)
 	time.Sleep(60 * time.Second)
 
-	finalityResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/finality_checkpoints", lc.endpoint, id))
+	finalityResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%s/finality_checkpoints", lc.endpoint, id))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving finality checkpoints of head: %w", err)
 	}
@@ -109,7 +109,7 @@ func (lc *QrysmClient) GetChainHead() (*types.ChainHead, error) {
 
 func (lc *QrysmClient) GetValidatorQueue() (*types.ValidatorQueue, error) {
 	// pre-filter the status, to return much less validators, thus much faster!
-	validatorsResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/head/validators?status=pending_queued,active_exiting,active_slashed", lc.endpoint))
+	validatorsResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/head/validators?status=pending_queued,active_exiting,active_slashed", lc.endpoint))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving validator for head valiqdator queue check: %w", err)
 	}
@@ -144,7 +144,7 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 	}
 	lc.assignmentsCacheMux.Unlock()
 
-	proposerResp, err := lc.get(fmt.Sprintf("%s/zond/v1/validator/duties/proposer/%d", lc.endpoint, epoch))
+	proposerResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/validator/duties/proposer/%d", lc.endpoint, epoch))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving proposer duties for epoch %v: %w", epoch, err)
 	}
@@ -158,10 +158,10 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 	var url string
 	if epoch == 0 {
 		depStateRoot = "genesis"
-		url = fmt.Sprintf("%s/zond/v1/beacon/states/%s/committees", lc.endpoint, depStateRoot)
+		url = fmt.Sprintf("%s/qrl/v1/beacon/states/%s/committees", lc.endpoint, depStateRoot)
 	} else {
 		// fetch the block root that the proposer data is dependent on
-		headerResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%s", lc.endpoint, parsedProposerResponse.DependentRoot))
+		headerResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/headers/%s", lc.endpoint, parsedProposerResponse.DependentRoot))
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving chain header: %w", err)
 		}
@@ -171,7 +171,7 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 			return nil, fmt.Errorf("error parsing chain header: %w", err)
 		}
 		depStateRoot = parsedHeader.Data.Header.Message.StateRoot
-		url = fmt.Sprintf("%s/zond/v1/beacon/states/%s/committees?epoch=%d", lc.endpoint, depStateRoot, epoch)
+		url = fmt.Sprintf("%s/qrl/v1/beacon/states/%s/committees?epoch=%d", lc.endpoint, depStateRoot, epoch)
 	}
 
 	// Now use the state root to make a consistent committee query
@@ -239,7 +239,7 @@ func (lc *QrysmClient) GetEpochAssignments(epoch uint64) (*types.EpochAssignment
 func (lc *QrysmClient) GetEpochProposerAssignments(epoch uint64) (*StandardProposerDutiesResponse, error) {
 	var err error
 
-	proposerResp, err := lc.get(fmt.Sprintf("%s/zond/v1/validator/duties/proposer/%d", lc.endpoint, epoch))
+	proposerResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/validator/duties/proposer/%d", lc.endpoint, epoch))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving proposer duties for epoch %v: %w", epoch, err)
 	}
@@ -253,9 +253,9 @@ func (lc *QrysmClient) GetEpochProposerAssignments(epoch uint64) (*StandardPropo
 }
 
 func (lc *QrysmClient) GetValidatorState(epoch uint64) (*StandardValidatorsResponse, error) {
-	validatorsResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
+	validatorsResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
 	if err != nil && epoch == 0 {
-		validatorsResp, err = lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
+		validatorsResp, err = lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving validators for genesis: %w", err)
 		}
@@ -294,9 +294,9 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 		data.Finalized = false
 	}
 
-	validatorsResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
+	validatorsResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
 	if err != nil && epoch == 0 {
-		validatorsResp, err = lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
+		validatorsResp, err = lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving validators for genesis: %w", err)
 		}
@@ -376,8 +376,8 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 				data.EpochParticipationStats = &types.ValidatorParticipation{
 					Epoch:                   epoch,
 					GlobalParticipationRate: 0.0,
-					VotedZond:               0,
-					EligibleZond:            0,
+					VotedQuanta:             0,
+					EligibleQuanta:          0,
 				}
 			}
 			return nil
@@ -386,8 +386,8 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 		data.EpochParticipationStats = &types.ValidatorParticipation{
 			Epoch:                   epoch,
 			GlobalParticipationRate: 0.0,
-			VotedZond:               0,
-			EligibleZond:            0,
+			VotedQuanta:             0,
+			EligibleQuanta:          0,
 		}
 	}
 
@@ -548,9 +548,9 @@ func (lc *QrysmClient) GetBalancesForEpoch(epoch int64) (map[uint64]uint64, erro
 
 	validatorBalances := make(map[uint64]uint64)
 
-	resp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%d/validator_balances", lc.endpoint, epoch*int64(utils.Config.Chain.ClConfig.SlotsPerEpoch)))
+	resp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%d/validator_balances", lc.endpoint, epoch*int64(utils.Config.Chain.ClConfig.SlotsPerEpoch)))
 	if err != nil && epoch == 0 {
-		resp, err = lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/genesis/validator_balances", lc.endpoint))
+		resp, err = lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/genesis/validator_balances", lc.endpoint))
 		if err != nil {
 			return validatorBalances, err
 		}
@@ -575,9 +575,9 @@ func (lc *QrysmClient) GetBalancesForEpoch(epoch int64) (map[uint64]uint64, erro
 func (lc *QrysmClient) GetBlockHeader(slot uint64) (*StandardBeaconHeaderResponse, error) {
 	var parsedHeaders *StandardBeaconHeaderResponse
 
-	resHeaders, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%d", lc.endpoint, slot))
+	resHeaders, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/headers/%d", lc.endpoint, slot))
 	if err != nil && slot == 0 {
-		headResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers", lc.endpoint))
+		headResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/headers", lc.endpoint))
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving chain head for slot %v: %w", slot, err)
 		}
@@ -621,9 +621,9 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 
 	var parsedHeaders *StandardBeaconHeaderResponse
 
-	resHeaders, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers/%d", lc.endpoint, slot))
+	resHeaders, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/headers/%d", lc.endpoint, slot))
 	if err != nil && slot == 0 {
-		headResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/headers", lc.endpoint))
+		headResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/headers", lc.endpoint))
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving chain head for slot %v: %w", slot, err)
 		}
@@ -684,9 +684,9 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 
 				block.EpochAssignments = assignments
 
-				validatorsResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
+				validatorsResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
 				if err != nil && epoch == 0 {
-					validatorsResp, err = lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
+					validatorsResp, err = lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
 					if err != nil {
 						return nil, fmt.Errorf("error retrieving validators for genesis: %w", err)
 					}
@@ -745,7 +745,7 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 	}
 	lc.slotsCacheMux.Unlock()
 
-	resp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/blocks/%s", lc.endpoint, parsedHeaders.Data.Root))
+	resp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/blocks/%s", lc.endpoint, parsedHeaders.Data.Root))
 	if err != nil && slot == 0 {
 		return nil, fmt.Errorf("error retrieving block data at slot %v: %w", slot, err)
 	}
@@ -770,9 +770,9 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 			return nil, err
 		}
 
-		validatorsResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
+		validatorsResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%d/validators", lc.endpoint, epoch*utils.Config.Chain.ClConfig.SlotsPerEpoch))
 		if err != nil && epoch == 0 {
-			validatorsResp, err = lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
+			validatorsResp, err = lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%v/validators", lc.endpoint, "genesis"))
 			if err != nil {
 				return nil, fmt.Errorf("error retrieving validators for genesis: %w", err)
 			}
@@ -1120,7 +1120,7 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 
 	logger.Infof("requesting validator inclusion data for epoch %v", request_epoch)
 
-	resp, err := lc.get(fmt.Sprintf("%s/zond/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch))
+	resp, err := lc.get(fmt.Sprintf("%s/qrl/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving validator participation data for epoch %v: %w", request_epoch, err)
 	}
@@ -1137,7 +1137,7 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 
 		prevEpochActiveGplanck := parsedResponse.Data.PreviousEpochActiveGplanck
 		if prevEpochActiveGplanck == 0 {
-			prevResp, err := lc.get(fmt.Sprintf("%s/zond/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch-1))
+			prevResp, err := lc.get(fmt.Sprintf("%s/qrl/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch-1))
 			if err != nil {
 				return nil, fmt.Errorf("error retrieving validator participation data for prevEpoch %v: %w", request_epoch-1, err)
 			}
@@ -1152,16 +1152,16 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
 			GlobalParticipationRate: float32(parsedResponse.Data.PreviousEpochTargetAttestingGplanck) / float32(prevEpochActiveGplanck),
-			VotedZond:               uint64(parsedResponse.Data.PreviousEpochTargetAttestingGplanck),
-			EligibleZond:            uint64(prevEpochActiveGplanck),
+			VotedQuanta:             uint64(parsedResponse.Data.PreviousEpochTargetAttestingGplanck),
+			EligibleQuanta:          uint64(prevEpochActiveGplanck),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	} else {
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
 			GlobalParticipationRate: float32(parsedResponse.Data.CurrentEpochTargetAttestingGplanck) / float32(parsedResponse.Data.CurrentEpochActiveGplanck),
-			VotedZond:               uint64(parsedResponse.Data.CurrentEpochTargetAttestingGplanck),
-			EligibleZond:            uint64(parsedResponse.Data.CurrentEpochActiveGplanck),
+			VotedQuanta:             uint64(parsedResponse.Data.CurrentEpochTargetAttestingGplanck),
+			EligibleQuanta:          uint64(parsedResponse.Data.CurrentEpochActiveGplanck),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	}
@@ -1169,7 +1169,7 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 }
 
 func (lc *QrysmClient) GetSyncCommittee(stateID string, epoch uint64) (*StandardSyncCommittee, error) {
-	syncCommitteesResp, err := lc.get(fmt.Sprintf("%s/zond/v1/beacon/states/%s/sync_committees?epoch=%d", lc.endpoint, stateID, epoch))
+	syncCommitteesResp, err := lc.get(fmt.Sprintf("%s/qrl/v1/beacon/states/%s/sync_committees?epoch=%d", lc.endpoint, stateID, epoch))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving sync_committees for epoch %v (state: %v): %w", epoch, stateID, err)
 	}

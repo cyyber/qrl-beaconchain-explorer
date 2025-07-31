@@ -401,7 +401,7 @@
         {{ end }}
       {{ end }}
       <h4 class="my-3">Execution Layer</h4>
-      <h6 class="">This table displays the deposits made to the Zond staking deposit contract.</h6>
+      <h6 class="">This table displays the deposits made to the QRL staking deposit contract.</h6>
       <div class="table-responsive card card-body p-0">
         <table class="table" style="margin-top: 0 !important;" id="deposits-eth1-table" width="100%">
           <thead>
@@ -428,7 +428,7 @@
                   {{ end }}
                   {{ formatWithdawalCredentials $deposit.WithdrawalCredentials true }}
                 </td>
-                <td>{{ formatDepositAmount $deposit.Amount "Zond" }}</td>
+                <td>{{ formatDepositAmount $deposit.Amount "Quanta" }}</td>
                 <td>
                   {{ if $deposit.ValidSignature }}
                     <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">{{ $deposit.ValidSignature }}</span>
@@ -588,7 +588,7 @@
                     {{ end }}
                     {{ formatWithdawalCredentials $deposit.Withdrawalcredentials true }}
                   </td>
-                  <td>{{ formatDepositAmount $deposit.Amount "Zond" }}</td>
+                  <td>{{ formatDepositAmount $deposit.Amount "Quanta" }}</td>
                   <!-- <td>{{ formatHash $deposit.Proof }}</td> -->
                   <td>
                     {{ formatHash $deposit.Signature }}
@@ -846,8 +846,8 @@
         <td><span data-toggle="tooltip" data-placement="top" title="Entering">{{ .NetworkStats.EnteringValidators }}</span>/<span data-toggle="tooltip" data-placement="top" title="Exiting">{{ .NetworkStats.ExitingValidators }}</span></td>
       </tr>
       <tr>
-        <th scope="row">Staked Zond</th>
-        <td>{{ .NetworkStats.StakedZond }}</td>
+        <th scope="row">Staked Quanta</th>
+        <td>{{ .NetworkStats.StakedQuanta }}</td>
       </tr>
       <tr>
         <th scope="row">Average Balance</th>

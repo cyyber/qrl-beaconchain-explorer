@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"strings"
 
-	zond "github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
@@ -22,7 +22,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = zond.NotFound
+	_ = qrl.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -43,7 +43,7 @@ var Zrc721ABI = Zrc721MetaData.ABI
 // Deprecated: Use Zrc721MetaData.Bin instead.
 var Zrc721Bin = Zrc721MetaData.Bin
 
-// DeployZrc721 deploys a new Zond contract, binding an instance of Zrc721 to it.
+// DeployZrc721 deploys a new QRL contract, binding an instance of Zrc721 to it.
 func DeployZrc721(auth *bind.TransactOpts, backend bind.ContractBackend, name_ string, symbol_ string) (common.Address, *types.Transaction, *Zrc721, error) {
 	parsed, err := Zrc721MetaData.GetAbi()
 	if err != nil {
@@ -60,29 +60,29 @@ func DeployZrc721(auth *bind.TransactOpts, backend bind.ContractBackend, name_ s
 	return address, tx, &Zrc721{Zrc721Caller: Zrc721Caller{contract: contract}, Zrc721Transactor: Zrc721Transactor{contract: contract}, Zrc721Filterer: Zrc721Filterer{contract: contract}}, nil
 }
 
-// Zrc721 is an auto generated Go binding around a Zond contract.
+// Zrc721 is an auto generated Go binding around a QRL contract.
 type Zrc721 struct {
 	Zrc721Caller     // Read-only binding to the contract
 	Zrc721Transactor // Write-only binding to the contract
 	Zrc721Filterer   // Log filterer for contract events
 }
 
-// Zrc721Caller is an auto generated read-only Go binding around a Zond contract.
+// Zrc721Caller is an auto generated read-only Go binding around a QRL contract.
 type Zrc721Caller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc721Transactor is an auto generated write-only Go binding around a Zond contract.
+// Zrc721Transactor is an auto generated write-only Go binding around a QRL contract.
 type Zrc721Transactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc721Filterer is an auto generated log filtering Go binding around a Zond contract events.
+// Zrc721Filterer is an auto generated log filtering Go binding around a QRL contract events.
 type Zrc721Filterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc721Session is an auto generated Go binding around a Zond contract,
+// Zrc721Session is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
 type Zrc721Session struct {
 	Contract     *Zrc721           // Generic contract binding to set the session for
@@ -90,31 +90,31 @@ type Zrc721Session struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Zrc721CallerSession is an auto generated read-only Go binding around a Zond contract,
+// Zrc721CallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
 type Zrc721CallerSession struct {
 	Contract *Zrc721Caller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts // Call options to use throughout this session
 }
 
-// Zrc721TransactorSession is an auto generated write-only Go binding around a Zond contract,
+// Zrc721TransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
 type Zrc721TransactorSession struct {
 	Contract     *Zrc721Transactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Zrc721Raw is an auto generated low-level Go binding around a Zond contract.
+// Zrc721Raw is an auto generated low-level Go binding around a QRL contract.
 type Zrc721Raw struct {
 	Contract *Zrc721 // Generic contract binding to access the raw methods on
 }
 
-// Zrc721CallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
+// Zrc721CallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
 type Zrc721CallerRaw struct {
 	Contract *Zrc721Caller // Generic read-only contract binding to access the raw methods on
 }
 
-// Zrc721TransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
+// Zrc721TransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
 type Zrc721TransactorRaw struct {
 	Contract *Zrc721Transactor // Generic write-only contract binding to access the raw methods on
 }
@@ -562,10 +562,10 @@ type Zrc721ApprovalIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -724,10 +724,10 @@ type Zrc721ApprovalForAllIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -878,10 +878,10 @@ type Zrc721TransferIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there

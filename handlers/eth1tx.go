@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/eth1data"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/eth1data"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/theQRL/go-zond"
@@ -46,7 +46,7 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 		data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)
 		txTemplate = txNotFoundTemplate
 	} else {
-		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "Zond")
+		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "Quanta")
 		if err != nil {
 			mempool := services.LatestMempoolTransactions()
 			mempoolTx := mempool.FindTxByHash(txHashString)
@@ -93,7 +93,7 @@ func Eth1TransactionTxData(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	txHashString := vars["hash"]
 
-	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, "Zond"))
+	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, "Quanta"))
 	if err != nil {
 		logger.Errorf("error enconding json response for %v route: %v", r.URL.String(), err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

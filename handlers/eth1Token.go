@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/shopspring/decimal"

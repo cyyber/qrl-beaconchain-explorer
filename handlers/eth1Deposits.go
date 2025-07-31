@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
 // Deposits will return information about deposits using a go template
@@ -119,7 +119,7 @@ func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
 			utils.FormatEth1Address(d.FromAddress),
 			utils.FormatPublicKey(d.PublicKey),
 			utils.FormatWithdawalCredentials(d.WithdrawalCredentials, true),
-			utils.FormatDepositAmount(d.Amount, "Zond"),
+			utils.FormatDepositAmount(d.Amount, "Quanta"),
 			utils.FormatEth1TxHash(d.TxHash),
 			utils.FormatTimestamp(d.BlockTs.Unix()),
 			utils.FormatEth1Block(d.BlockNumber),

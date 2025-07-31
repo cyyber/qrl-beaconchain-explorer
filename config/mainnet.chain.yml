@@ -53,10 +53,10 @@ PROPOSER_SCORE_BOOST: 40
 
 # Deposit contract
 # ---------------------------------------------------------------
-# Zond Mainnet
+# QRL Mainnet
 DEPOSIT_CHAIN_ID: 1
 DEPOSIT_NETWORK_ID: 1
-DEPOSIT_CONTRACT_ADDRESS: Z00000000219ab540356cBB839Cbe05303d7705Fa
+DEPOSIT_CONTRACT_ADDRESS: Q00000000219ab540356cBB839Cbe05303d7705Fa
 
 # Sync committee
 # ---------------------------------------------------------------

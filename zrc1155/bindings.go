@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"strings"
 
-	zond "github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
@@ -22,7 +22,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = zond.NotFound
+	_ = qrl.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -43,7 +43,7 @@ var Zrc1155ABI = Zrc1155MetaData.ABI
 // Deprecated: Use Zrc1155MetaData.Bin instead.
 var Zrc1155Bin = Zrc1155MetaData.Bin
 
-// DeployZrc1155 deploys a new Zond contract, binding an instance of Zrc1155 to it.
+// DeployZrc1155 deploys a new QRL contract, binding an instance of Zrc1155 to it.
 func DeployZrc1155(auth *bind.TransactOpts, backend bind.ContractBackend, uri_ string) (common.Address, *types.Transaction, *Zrc1155, error) {
 	parsed, err := Zrc1155MetaData.GetAbi()
 	if err != nil {
@@ -60,29 +60,29 @@ func DeployZrc1155(auth *bind.TransactOpts, backend bind.ContractBackend, uri_ s
 	return address, tx, &Zrc1155{Zrc1155Caller: Zrc1155Caller{contract: contract}, Zrc1155Transactor: Zrc1155Transactor{contract: contract}, Zrc1155Filterer: Zrc1155Filterer{contract: contract}}, nil
 }
 
-// Zrc1155 is an auto generated Go binding around a Zond contract.
+// Zrc1155 is an auto generated Go binding around a QRL contract.
 type Zrc1155 struct {
 	Zrc1155Caller     // Read-only binding to the contract
 	Zrc1155Transactor // Write-only binding to the contract
 	Zrc1155Filterer   // Log filterer for contract events
 }
 
-// Zrc1155Caller is an auto generated read-only Go binding around a Zond contract.
+// Zrc1155Caller is an auto generated read-only Go binding around a QRL contract.
 type Zrc1155Caller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc1155Transactor is an auto generated write-only Go binding around a Zond contract.
+// Zrc1155Transactor is an auto generated write-only Go binding around a QRL contract.
 type Zrc1155Transactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc1155Filterer is an auto generated log filtering Go binding around a Zond contract events.
+// Zrc1155Filterer is an auto generated log filtering Go binding around a QRL contract events.
 type Zrc1155Filterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// Zrc1155Session is an auto generated Go binding around a Zond contract,
+// Zrc1155Session is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
 type Zrc1155Session struct {
 	Contract     *Zrc1155          // Generic contract binding to set the session for
@@ -90,31 +90,31 @@ type Zrc1155Session struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// Zrc1155CallerSession is an auto generated read-only Go binding around a Zond contract,
+// Zrc1155CallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
 type Zrc1155CallerSession struct {
 	Contract *Zrc1155Caller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts  // Call options to use throughout this session
 }
 
-// Zrc1155TransactorSession is an auto generated write-only Go binding around a Zond contract,
+// Zrc1155TransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
 type Zrc1155TransactorSession struct {
 	Contract     *Zrc1155Transactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts  // Transaction auth options to use throughout this session
 }
 
-// Zrc1155Raw is an auto generated low-level Go binding around a Zond contract.
+// Zrc1155Raw is an auto generated low-level Go binding around a QRL contract.
 type Zrc1155Raw struct {
 	Contract *Zrc1155 // Generic contract binding to access the raw methods on
 }
 
-// Zrc1155CallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
+// Zrc1155CallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
 type Zrc1155CallerRaw struct {
 	Contract *Zrc1155Caller // Generic read-only contract binding to access the raw methods on
 }
 
-// Zrc1155TransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
+// Zrc1155TransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
 type Zrc1155TransactorRaw struct {
 	Contract *Zrc1155Transactor // Generic write-only contract binding to access the raw methods on
 }
@@ -427,10 +427,10 @@ type Zrc1155ApprovalForAllIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -581,10 +581,10 @@ type Zrc1155TransferBatchIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -745,10 +745,10 @@ type Zrc1155TransferSingleIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -909,10 +909,10 @@ type Zrc1155URIIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there

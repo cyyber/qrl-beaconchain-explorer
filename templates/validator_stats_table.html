@@ -73,16 +73,16 @@
             <th title="Amount of included attester slashings" data-toggle="tooltip">Att</th>
             <th title="Amount of proposer attester slashings" data-toggle="tooltip">Prop</th>
             <th title="Amount of deposits" data-toggle="tooltip">#</th>
-            <th title="Zond deposited" data-toggle="tooltip">Amount</th>
+            <th title="Quanta deposited" data-toggle="tooltip">Amount</th>
           </tr>
         </thead>
         <tbod>
           {{ range .Rows }}
             <tr>
               <td data-order="{{ .Day }}">{{ (dayToTime .Day).Format "02 Jan 2006" }}</td>
-              <td>{{ formatIncome .Income "Zond" true }}</td>
-              <td>{{ formatBalanceSql .StartBalance "Zond" }}</td>
-              <td>{{ formatBalanceSql .EndBalance "Zond" }}</td>
+              <td>{{ formatIncome .Income "Quanta" true }}</td>
+              <td>{{ formatBalanceSql .StartBalance "Quanta" }}</td>
+              <td>{{ formatBalanceSql .EndBalance "Quanta" }}</td>
               <td>{{ formatSqlInt64 .MissedAttestations }}</td>
               <td>{{ formatSqlInt64 .ProposedBlocks }}</td>
               <td>{{ formatSqlInt64 .MissedBlocks }}</td>
@@ -90,7 +90,7 @@
               <td>{{ formatSqlInt64 .AttesterSlashings }}</td>
               <td>{{ formatSqlInt64 .ProposerSlashings }}</td>
               <td>{{ formatSqlInt64 .Deposits }}</td>
-              <td>{{ formatIncomeSql .DepositsAmount "Zond" }}</td>
+              <td>{{ formatIncomeSql .DepositsAmount "Quanta" }}</td>
             </tr>
           {{ end }}
         </tbod>

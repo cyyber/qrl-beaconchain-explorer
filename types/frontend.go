@@ -94,7 +94,7 @@ type Signature struct {
 }
 
 type SearchValidatorsByEth1Result []struct {
-	ZondAddress      string        `db:"from_address_text" json:"zond_address"`
+	QRLAddress       string        `db:"from_address_text" json:"qrl_address"`
 	ValidatorIndices pq.Int64Array `db:"validatorindices" json:"validator_indices"`
 	Count            uint64        `db:"count" json:"-"`
 }

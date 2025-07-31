@@ -11,19 +11,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/exporter"
-	"github.com/theQRL/zond-beaconchain-explorer/handlers"
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/ratelimit"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/static"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
-	zondclients "github.com/theQRL/zond-beaconchain-explorer/zondClients"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/exporter"
+	"github.com/theQRL/qrl-beaconchain-explorer/handlers"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	qrlclients "github.com/theQRL/qrl-beaconchain-explorer/qrlClients"
+	"github.com/theQRL/qrl-beaconchain-explorer/ratelimit"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/static"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 
 	"github.com/gorilla/mux"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -209,9 +209,9 @@ func main() {
 	router.HandleFunc("/api/healthz-loadbalancer", handlers.ApiHealthzLoadbalancer).Methods("GET", "HEAD")
 
 	if !utils.Config.Frontend.Debug {
-		logrus.Infof("initializing zondclients")
-		zondclients.Init()
-		logrus.Infof("zondclients initialized")
+		logrus.Infof("initializing qrlclients")
+		qrlclients.Init()
+		logrus.Infof("qrlclients initialized")
 	}
 
 	if cfg.Frontend.SessionSecret == "" {
@@ -317,7 +317,7 @@ func main() {
 	// TODO(now.youtrack.cloud/issue/TZB-1)
 	// router.HandleFunc("/zns/{search}", handlers.ZnsSearch).Methods("GET")
 
-	router.HandleFunc("/zondClients", handlers.ZondClientsServices).Methods("GET")
+	router.HandleFunc("/qrlClients", handlers.QRLClientsServices).Methods("GET")
 
 	// TODO(now.youtrack.cloud/issue/TZB-13)
 	// router.HandleFunc("/rewards", handlers.ValidatorRewards).Methods("GET")

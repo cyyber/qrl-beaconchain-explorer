@@ -4,10 +4,10 @@ import (
 	"math/big"
 	"net/http"
 
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/theQRL/go-zond/common"
 )
@@ -60,7 +60,7 @@ func toTableDataRow(tx *types.RawMempoolTransaction) []interface{} {
 		utils.FormatTxHashWithLimits(tx.Hash.Bytes(), "", false, "tx", 15, 18, true),
 		utils.FormatAddressAll(tx.From.Bytes(), "", false, "address", int(12), int(12), true),
 		_isContractCreation(tx.To),
-		utils.FormatAmount((*big.Int)(tx.Value), "Zond", 8),
+		utils.FormatAmount((*big.Int)(tx.Value), "Quanta", 8),
 		utils.FormatAddCommasFormatted(float64(tx.Gas.ToInt().Int64()), 0),
 		utils.FormatAmountFormatted(tx.GasPrice.ToInt(), "GPlanck", 5, 0, true, true, false),
 		tx.Nonce.ToInt(),

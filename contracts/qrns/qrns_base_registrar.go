@@ -1,14 +1,14 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package zns
+package qrns
 
 import (
 	"errors"
 	"math/big"
 	"strings"
 
-	zond "github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
@@ -21,7 +21,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = zond.NotFound
+	_ = qrl.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -38,29 +38,29 @@ var ZNSBaseRegistrarMetaData = &bind.MetaData{
 // Deprecated: Use ZNSBaseRegistrarMetaData.ABI instead.
 var ZNSBaseRegistrarABI = ZNSBaseRegistrarMetaData.ABI
 
-// ZNSBaseRegistrar is an auto generated Go binding around a Zond contract.
+// ZNSBaseRegistrar is an auto generated Go binding around a QRL contract.
 type ZNSBaseRegistrar struct {
 	ZNSBaseRegistrarCaller     // Read-only binding to the contract
 	ZNSBaseRegistrarTransactor // Write-only binding to the contract
 	ZNSBaseRegistrarFilterer   // Log filterer for contract events
 }
 
-// ZNSBaseRegistrarCaller is an auto generated read-only Go binding around a Zond contract.
+// ZNSBaseRegistrarCaller is an auto generated read-only Go binding around a QRL contract.
 type ZNSBaseRegistrarCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSBaseRegistrarTransactor is an auto generated write-only Go binding around a Zond contract.
+// ZNSBaseRegistrarTransactor is an auto generated write-only Go binding around a QRL contract.
 type ZNSBaseRegistrarTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSBaseRegistrarFilterer is an auto generated log filtering Go binding around a Zond contract events.
+// ZNSBaseRegistrarFilterer is an auto generated log filtering Go binding around a QRL contract events.
 type ZNSBaseRegistrarFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSBaseRegistrarSession is an auto generated Go binding around a Zond contract,
+// ZNSBaseRegistrarSession is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
 type ZNSBaseRegistrarSession struct {
 	Contract     *ZNSBaseRegistrar // Generic contract binding to set the session for
@@ -68,31 +68,31 @@ type ZNSBaseRegistrarSession struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// ZNSBaseRegistrarCallerSession is an auto generated read-only Go binding around a Zond contract,
+// ZNSBaseRegistrarCallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
 type ZNSBaseRegistrarCallerSession struct {
 	Contract *ZNSBaseRegistrarCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts           // Call options to use throughout this session
 }
 
-// ZNSBaseRegistrarTransactorSession is an auto generated write-only Go binding around a Zond contract,
+// ZNSBaseRegistrarTransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
 type ZNSBaseRegistrarTransactorSession struct {
 	Contract     *ZNSBaseRegistrarTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts           // Transaction auth options to use throughout this session
 }
 
-// ZNSBaseRegistrarRaw is an auto generated low-level Go binding around a Zond contract.
+// ZNSBaseRegistrarRaw is an auto generated low-level Go binding around a QRL contract.
 type ZNSBaseRegistrarRaw struct {
 	Contract *ZNSBaseRegistrar // Generic contract binding to access the raw methods on
 }
 
-// ZNSBaseRegistrarCallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
+// ZNSBaseRegistrarCallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
 type ZNSBaseRegistrarCallerRaw struct {
 	Contract *ZNSBaseRegistrarCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ZNSBaseRegistrarTransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
+// ZNSBaseRegistrarTransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
 type ZNSBaseRegistrarTransactorRaw struct {
 	Contract *ZNSBaseRegistrarTransactor // Generic write-only contract binding to access the raw methods on
 }
@@ -884,10 +884,10 @@ type ZNSBaseRegistrarApprovalIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1046,10 +1046,10 @@ type ZNSBaseRegistrarApprovalForAllIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1200,10 +1200,10 @@ type ZNSBaseRegistrarControllerAddedIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1344,10 +1344,10 @@ type ZNSBaseRegistrarControllerRemovedIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1488,10 +1488,10 @@ type ZNSBaseRegistrarNameMigratedIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1642,10 +1642,10 @@ type ZNSBaseRegistrarNameRegisteredIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1796,10 +1796,10 @@ type ZNSBaseRegistrarNameRenewedIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -1941,10 +1941,10 @@ type ZNSBaseRegistrarOwnershipTransferredIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -2094,10 +2094,10 @@ type ZNSBaseRegistrarTransferIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan types.Log    // Log channel receiving the found contract events
-	sub  zond.Subscription // Subscription for errors, completion and termination
-	done bool              // Whether the subscription completed delivering logs
-	fail error             // Occurred error to stop iteration
+	logs chan types.Log   // Log channel receiving the found contract events
+	sub  qrl.Subscription // Subscription for errors, completion and termination
+	done bool             // Whether the subscription completed delivering logs
+	fail error            // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there

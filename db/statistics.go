@@ -9,11 +9,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
@@ -1234,14 +1234,14 @@ func WriteConsensusChartSeriesForDay(day int64) error {
 
 	var err error
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'STAKED_ZOND' as indicator, eligiblezond/1e9 as value from epochs where epoch = $2 limit 1 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, lastEpoch-1)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'STAKED_QUANTA' as indicator, eligiblequanta/1e9 as value from epochs where epoch = $2 limit 1 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, lastEpoch-1)
 	if err != nil {
-		return fmt.Errorf("error inserting STAKED_ZOND into chart_series: %w", err)
+		return fmt.Errorf("error inserting STAKED_QUANTA into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_VALIDATOR_BALANCE_ZOND' as indicator, avg(averagevalidatorbalance)/1e9 as value from epochs where epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_VALIDATOR_BALANCE_QUANTA' as indicator, avg(averagevalidatorbalance)/1e9 as value from epochs where epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
 	if err != nil {
-		return fmt.Errorf("error inserting AVG_VALIDATOR_BALANCE_ZOND into chart_series: %w", err)
+		return fmt.Errorf("error inserting AVG_VALIDATOR_BALANCE_QUANTA into chart_series: %w", err)
 	}
 
 	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_PARTICIPATION_RATE' as indicator, avg(globalparticipationrate) as value from epochs where epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
@@ -1249,29 +1249,29 @@ func WriteConsensusChartSeriesForDay(day int64) error {
 		return fmt.Errorf("error inserting AVG_PARTICIPATION_RATE into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_STAKE_EFFECTIVENESS' as indicator, coalesce(avg(eligiblezond) / avg(totalvalidatorbalance), 0) as value from epochs where totalvalidatorbalance != 0 AND eligiblezond != 0 and epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'AVG_STAKE_EFFECTIVENESS' as indicator, coalesce(avg(eligiblequanta) / avg(totalvalidatorbalance), 0) as value from epochs where totalvalidatorbalance != 0 AND eligiblequanta != 0 and epoch >= $2 and epoch < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstEpoch, lastEpoch)
 	if err != nil {
 		return fmt.Errorf("error inserting AVG_STAKE_EFFECTIVENESS into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_VALID_DEPOSITS_ZOND' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = true and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_VALID_DEPOSITS_QUANTA' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = true and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
 	if err != nil {
-		return fmt.Errorf("error inserting EL_VALID_DEPOSITS_ZOND into chart_series: %w", err)
+		return fmt.Errorf("error inserting EL_VALID_DEPOSITS_QUANTA into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_INVALID_DEPOSITS_ZOND' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = false and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'EL_INVALID_DEPOSITS_QUANTA' as indicator, coalesce(sum(amount)/1e9,0) as value from eth1_deposits where valid_signature = false and block_ts >= $1 and block_ts < ($1 + interval '24 hour') on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc)
 	if err != nil {
-		return fmt.Errorf("error inserting EL_INVALID_DEPOSITS_ZOND into chart_series: %w", err)
+		return fmt.Errorf("error inserting EL_INVALID_DEPOSITS_QUANTA into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'CL_DEPOSITS_ZOND' as indicator, coalesce(sum(amount)/1e9,0) as value from blocks_deposits where block_slot >= $2 and block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'CL_DEPOSITS_QUANTA' as indicator, coalesce(sum(amount)/1e9,0) as value from blocks_deposits where block_slot >= $2 and block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
 	if err != nil {
-		return fmt.Errorf("error inserting CL_DEPOSITS_ZOND into chart_series: %w", err)
+		return fmt.Errorf("error inserting CL_DEPOSITS_QUANTA into chart_series: %w", err)
 	}
 
-	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'WITHDRAWALS_ZOND' as indicator, coalesce(sum(w.amount)/1e9,0) as value from blocks_withdrawals w inner join blocks b ON w.block_root = b.blockroot AND b.status = '1' where w.block_slot >= $2 and w.block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
+	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'WITHDRAWALS_QUANTA' as indicator, coalesce(sum(w.amount)/1e9,0) as value from blocks_withdrawals w inner join blocks b ON w.block_root = b.blockroot AND b.status = '1' where w.block_slot >= $2 and w.block_slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)
 	if err != nil {
-		return fmt.Errorf("error inserting WITHDRAWALS_ZOND into chart_series: %w", err)
+		return fmt.Errorf("error inserting WITHDRAWALS_QUANTA into chart_series: %w", err)
 	}
 
 	_, err = WriterDb.Exec(`insert into chart_series select $1 as time, 'PROPOSED_BLOCKS' as indicator, count(*) as value from blocks where status = '1' and slot >= $2 and slot < $3 on conflict (time, indicator) do update set time = excluded.time, indicator = excluded.indicator, value = excluded.value`, dateTrunc, firstSlot, lastSlot)

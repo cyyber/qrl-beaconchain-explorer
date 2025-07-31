@@ -4,8 +4,8 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
 var imprintTemplate *template.Template

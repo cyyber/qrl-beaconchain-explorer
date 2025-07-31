@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
@@ -402,17 +402,17 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// search can either be a valid Zond address or an ZNS name mapping to one
+// search can either be a valid QRL address or an QRNS name mapping to one
 func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
 	// search = strings.ToLower(strings.Replace(ReplaceZnsNameWithAddress(search), "0x", "", -1))
 	search = strings.ToLower(search)
 	if !utils.IsAddress(search) {
-		return nil, fmt.Errorf("not a valid Zond address: %v", search)
+		return nil, fmt.Errorf("not a valid QRL address: %v", search)
 	}
 	// find validators per eth1-address (limit result by N addresses and M validators per address)
 
 	result := &[]struct {
-		ZondAddress      string        `db:"from_address_text" json:"zond_address"`
+		QRLAddress       string        `db:"from_address_text" json:"qrl_address"`
 		ValidatorIndices pq.Int64Array `db:"validatorindices" json:"validator_indices"`
 		Count            uint64        `db:"count" json:"-"`
 	}{}

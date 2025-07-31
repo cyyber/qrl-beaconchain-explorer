@@ -14,12 +14,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/juliangruber/go-intersect"
@@ -1435,7 +1435,7 @@ func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 			} else if len(tableData) >= pageLength {
 				continue
 			}
-			tableData = append(tableData, incomeToTableData(i, incomeDetails[index][i], withdrawalMap[i], "Zond"))
+			tableData = append(tableData, incomeToTableData(i, incomeDetails[index][i], withdrawalMap[i], "Quanta"))
 		}
 	}
 
@@ -1476,7 +1476,7 @@ func ValidatorHistory(w http.ResponseWriter, r *http.Request) {
 				}
 				continue
 			}
-			tableData = append(tableData, incomeToTableData(epoch, incomeDetails[index][epoch], withdrawalMap[epoch], "Zond"))
+			tableData = append(tableData, incomeToTableData(epoch, incomeDetails[index][epoch], withdrawalMap[epoch], "Quanta"))
 
 		}
 	}

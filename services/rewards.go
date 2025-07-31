@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/jung-kurt/gofpdf"
 	"github.com/lib/pq"
@@ -18,9 +18,9 @@ import (
 )
 
 type rewardHistory struct {
-	History    [][]string `json:"history"`
-	TotalZond  string     `json:"total_zond"`
-	Validators []uint64   `json:"validators"`
+	History     [][]string `json:"history"`
+	TotalQuanta string     `json:"total_quanta"`
+	Validators  []uint64   `json:"validators"`
 }
 
 func GetValidatorHist(validatorArr []uint64, start uint64, end uint64) rewardHistory {
@@ -45,24 +45,24 @@ func GetValidatorHist(validatorArr []uint64, start uint64, end uint64) rewardHis
 	}
 
 	data := make([][]string, len(income))
-	tZond := 0.0
+	tQuanta := 0.0
 
 	for i, item := range income {
 		key := fmt.Sprintf("%v", utils.DayToTime(item.Day))
 		key = strings.Split(key, " ")[0]
-		iZond := float64(item.ClRewards) / 1e9
-		tZond += iZond
+		iQuanta := float64(item.ClRewards) / 1e9
+		tQuanta += iQuanta
 		data[i] = []string{
 			key,
 			addCommas(float64(item.EndBalance.Int64)/1e9, "%.5f"), // end of day balance
-			addCommas(iZond, "%.5f"),                              // income of day Zond
+			addCommas(iQuanta, "%.5f"),                            // income of day Quanta
 		}
 	}
 
 	return rewardHistory{
-		History:    data,
-		TotalZond:  addCommas(tZond, "%.5f"),
-		Validators: validatorArr,
+		History:     data,
+		TotalQuanta: addCommas(tQuanta, "%.5f"),
+		Validators:  validatorArr,
 	}
 }
 
@@ -130,7 +130,7 @@ func GeneratePdfReport(hist rewardHistory) []byte {
 	pdf.SetTextColor(24, 24, 24)
 	pdf.SetFillColor(255, 255, 255)
 	// pdf.Ln(-1)
-	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalZond), "", 0, "CM", true, 0, "")
+	pdf.CellFormat(0, maxHt, fmt.Sprintf("Income For Timeframe %s", hist.TotalQuanta), "", 0, "CM", true, 0, "")
 
 	header := [colCount]string{"Date", "Balance", "Income"}
 

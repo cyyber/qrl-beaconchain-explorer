@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
 )
 
 // StakingCalculator renders stakingCalculatorTemplate
@@ -15,9 +15,9 @@ func StakingCalculator(w http.ResponseWriter, r *http.Request) {
 
 	calculatorPageData := types.StakingCalculatorPageData{}
 
-	total, err := db.GetTotalEligibleZond()
+	total, err := db.GetTotalEligibleQuanta()
 	if err != nil {
-		logger.WithError(err).Error("error getting total staked Zond")
+		logger.WithError(err).Error("error getting total staked Quanta")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}

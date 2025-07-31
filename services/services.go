@@ -13,11 +13,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
@@ -388,9 +388,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 	for _, epoch := range epochs {
 		epoch.Ts = utils.EpochToTime(epoch.Epoch)
 		epoch.FinalizedFormatted = utils.FormatYesNo(epoch.Finalized)
-		epoch.VotedZondFormatted = utils.FormatBalance(epoch.VotedZond, "Zond")
-		epoch.EligibleZondFormatted = utils.FormatEligibleBalance(epoch.EligibleZond, "Zond")
-		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZond, epoch.GlobalParticipationRate, "Zond")
+		epoch.VotedQuantaFormatted = utils.FormatBalance(epoch.VotedQuanta, "Quanta")
+		epoch.EligibleQuantaFormatted = utils.FormatEligibleBalance(epoch.EligibleQuanta, "Quanta")
+		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedQuanta, epoch.GlobalParticipationRate, "Quanta")
 		epochsMap[epoch.Epoch] = true
 	}
 
@@ -450,12 +450,12 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				Ts:                               utils.EpochToTime(block.Epoch),
 				Finalized:                        false,
 				FinalizedFormatted:               utils.FormatYesNo(false),
-				EligibleZond:                     0,
-				EligibleZondFormatted:            utils.FormatEligibleBalance(0, "Zond"),
+				EligibleQuanta:                   0,
+				EligibleQuantaFormatted:          utils.FormatEligibleBalance(0, "Quanta"),
 				GlobalParticipationRate:          0,
 				GlobalParticipationRateFormatted: utils.FormatGlobalParticipationRate(0, 1, ""),
-				VotedZond:                        0,
-				VotedZondFormatted:               "",
+				VotedQuanta:                      0,
+				VotedQuantaFormatted:             "",
 			})
 			epochsMap[block.Epoch] = true
 		}
@@ -493,9 +493,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		epochLowerBound = epoch - 1600
 	}
 	var epochHistory []*types.IndexPageEpochHistory
-	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligiblezond, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
+	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligiblequanta, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving staked Zond history: %v", err)
+		return nil, fmt.Errorf("error retrieving staked Quanta history: %v", err)
 	}
 
 	if len(epochHistory) > 0 {
@@ -503,19 +503,19 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			if epochHistory[i].Finalized {
 				data.CurrentFinalizedEpoch = epochHistory[i].Epoch
 				data.FinalityDelay = FinalizationDelay()
-				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "Zond"))
+				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "Quanta"))
 				break
 			}
 		}
 
-		data.StakedZond = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZond, "Zond"))
+		data.StakedQuanta = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleQuanta, "Quanta"))
 		data.ActiveValidators = epochHistory[len(epochHistory)-1].ValidatorsCount
 	}
 
-	data.StakedZondChartData = make([][]float64, len(epochHistory))
+	data.StakedQuantaChartData = make([][]float64, len(epochHistory))
 	data.ActiveValidatorsChartData = make([][]float64, len(epochHistory))
 	for i, history := range epochHistory {
-		data.StakedZondChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleZond).InexactFloat64()}
+		data.StakedQuantaChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleQuanta).InexactFloat64()}
 		data.ActiveValidatorsChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), float64(history.ValidatorsCount)}
 	}
 
@@ -773,7 +773,7 @@ func getGasNowData() (*types.GasNowPageData, error) {
 		return nil, err
 	}
 	var raw json.RawMessage
-	err = client.Call(&raw, "zond_getBlockByNumber", "pending", true)
+	err = client.Call(&raw, "qrl_getBlockByNumber", "pending", true)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving pending block data: %.1000s", err) // limit error message to 1000 characters
 	}

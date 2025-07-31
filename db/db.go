@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jmoiron/sqlx"
@@ -640,9 +640,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount, 
 			averagevalidatorbalance, 
 			totalvalidatorbalance,
-			eligiblezond, 
+			eligiblequanta, 
 			globalparticipationrate, 
-			votedzond,
+			votedquanta,
 			finalized
 		)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
@@ -657,9 +657,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount         = excluded.validatorscount,
 			averagevalidatorbalance = excluded.averagevalidatorbalance,
 			totalvalidatorbalance   = excluded.totalvalidatorbalance,
-			eligiblezond             = excluded.eligiblezond,
+			eligiblequanta          = excluded.eligiblequanta,
 			globalparticipationrate = excluded.globalparticipationrate,
-			votedzond                = excluded.votedzond,
+			votedquanta             = excluded.votedquanta,
 			finalized               = excluded.finalized`,
 		epoch,
 		0,
@@ -1345,9 +1345,9 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 
 	_, err := tx.Exec(`
 		UPDATE epochs SET
-			eligiblezond = $1,
+			eligiblequanta = $1,
 			globalparticipationrate = $2,
-			votedzond = $3,
+			votedquanta = $3,
 			finalized = $4,
 			blockscount = (SELECT COUNT(*) FROM blocks WHERE epoch = $5 AND status = '1'),
 			proposerslashingscount = (SELECT COALESCE(SUM(proposerslashingscount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
@@ -1537,11 +1537,11 @@ func GetPendingValidatorCount() (uint64, error) {
 	return count, nil
 }
 
-func GetTotalEligibleZond() (uint64, error) {
+func GetTotalEligibleQuanta() (uint64, error) {
 	var total uint64
 
 	err := ReaderDb.Get(&total, `
-		SELECT eligiblezond FROM epochs ORDER BY epoch DESC LIMIT 1
+		SELECT eligiblequanta FROM epochs ORDER BY epoch DESC LIMIT 1
 	`)
 	if err == sql.ErrNoRows {
 		return 0, nil

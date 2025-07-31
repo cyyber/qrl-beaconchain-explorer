@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
 // Eth2Deposits will return information about deposits using a go template
@@ -77,7 +77,7 @@ func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
 		tableData[i] = []interface{}{
 			utils.FormatBlockSlot(d.BlockSlot),
 			utils.FormatPublicKey(d.Publickey),
-			utils.FormatDepositAmount(d.Amount, "Zond"),
+			utils.FormatDepositAmount(d.Amount, "Quanta"),
 			utils.FormatWithdawalCredentials(d.Withdrawalcredentials, false),
 			utils.FormatHash(d.Signature),
 			utils.FormatHash(d.Withdrawalcredentials, false),

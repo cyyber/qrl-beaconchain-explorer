@@ -195,12 +195,12 @@
             <div class="col-md-3">Voting Participation:</div>
             <div class="col-md-9">
               <div>
-                {{ if or .Finalized .VotedZond }}
-                  {{ formatBalance .VotedZond "Zond" }} of
-                  {{ formatBalance .EligibleZond "Zond" }}
+                {{ if or .Finalized .VotedQuanta }}
+                  {{ formatBalance .VotedQuanta "Quanta" }} of
+                  {{ formatBalance .EligibleQuant "Quanta" }}
                   <small class="text-muted ml-1">({{ formatPercentageWithPrecision .GlobalParticipationRate 1 }} %)</small>
                 {{ else }}
-                  Calculating… (total stake: {{ formatBalance .EligibleZond "Zond" }})
+                  Calculating… (total stake: {{ formatBalance .EligibleQuanta "Quanta" }})
                 {{ end }}
               </div>
               <div class="progress" style="height: 5px; width: 250px;">
@@ -223,7 +223,7 @@
           </div>
           <div class="row border-bottom p-3 mx-0">
             <div class="col-md-3">Avg. Validator Balance:</div>
-            <div class="col-md-9">{{ formatBalance .AverageValidatorBalance "Zond" }}</div>
+            <div class="col-md-9">{{ formatBalance .AverageValidatorBalance "Quanta" }}</div>
           </div>
           <div class="row p-3 mx-0 collapsed">
             <div style="position:relative" class="col-md-3">Slots:</div>

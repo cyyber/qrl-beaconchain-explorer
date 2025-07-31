@@ -14,7 +14,7 @@
               <th>Epoch</th>
               <th>Time</th>
               <th>Final</th>
-              <th>Eligible (Zond)</th>
+              <th>Eligible (Quanta)</th>
               <th>Voted</th>
             </tr>
           </thead>
@@ -23,7 +23,7 @@
               <td><a v-bind:href="'/epoch/' + epoch.epoch" v-html="addCommas(epoch.epoch)"></a></td>
               <td><span data-toggle="tooltip" data-placement="top" v-bind:data-original-title="epoch.ts | timestampTooltip">${epoch.ts | fromNow}</span></td>
               <td v-html="epoch.finalized_formatted"></td>
-              <td v-html="epoch.eligiblezond_formatted"></td>
+              <td v-html="epoch.eligiblequanta_formatted"></td>
               <td v-html="epoch.globalparticipationrate_formatted"></td>
             </tr>
           </tbody>

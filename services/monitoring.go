@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/go-redis/redis/v8"
 )

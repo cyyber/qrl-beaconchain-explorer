@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package zns
+package qrns
 
 import (
 	"errors"
@@ -38,29 +38,29 @@ var ZNSReverseRegistrarMetaData = &bind.MetaData{
 // Deprecated: Use ZNSReverseRegistrarMetaData.ABI instead.
 var ZNSReverseRegistrarABI = ZNSReverseRegistrarMetaData.ABI
 
-// ZNSReverseRegistrar is an auto generated Go binding around a Zond contract.
+// ZNSReverseRegistrar is an auto generated Go binding around a QRL contract.
 type ZNSReverseRegistrar struct {
 	ZNSReverseRegistrarCaller     // Read-only binding to the contract
 	ZNSReverseRegistrarTransactor // Write-only binding to the contract
 	ZNSReverseRegistrarFilterer   // Log filterer for contract events
 }
 
-// ZNSReverseRegistrarCaller is an auto generated read-only Go binding around a Zond contract.
+// ZNSReverseRegistrarCaller is an auto generated read-only Go binding around a QRL contract.
 type ZNSReverseRegistrarCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSReverseRegistrarTransactor is an auto generated write-only Go binding around a Zond contract.
+// ZNSReverseRegistrarTransactor is an auto generated write-only Go binding around a QRL contract.
 type ZNSReverseRegistrarTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSReverseRegistrarFilterer is an auto generated log filtering Go binding around a Zond contract events.
+// ZNSReverseRegistrarFilterer is an auto generated log filtering Go binding around a QRL contract events.
 type ZNSReverseRegistrarFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSReverseRegistrarSession is an auto generated Go binding around a Zond contract,
+// ZNSReverseRegistrarSession is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
 type ZNSReverseRegistrarSession struct {
 	Contract     *ZNSReverseRegistrar // Generic contract binding to set the session for
@@ -68,31 +68,31 @@ type ZNSReverseRegistrarSession struct {
 	TransactOpts bind.TransactOpts    // Transaction auth options to use throughout this session
 }
 
-// ZNSReverseRegistrarCallerSession is an auto generated read-only Go binding around a Zond contract,
+// ZNSReverseRegistrarCallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
 type ZNSReverseRegistrarCallerSession struct {
 	Contract *ZNSReverseRegistrarCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts              // Call options to use throughout this session
 }
 
-// ZNSReverseRegistrarTransactorSession is an auto generated write-only Go binding around a Zond contract,
+// ZNSReverseRegistrarTransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
 type ZNSReverseRegistrarTransactorSession struct {
 	Contract     *ZNSReverseRegistrarTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts              // Transaction auth options to use throughout this session
 }
 
-// ZNSReverseRegistrarRaw is an auto generated low-level Go binding around a Zond contract.
+// ZNSReverseRegistrarRaw is an auto generated low-level Go binding around a QRL contract.
 type ZNSReverseRegistrarRaw struct {
 	Contract *ZNSReverseRegistrar // Generic contract binding to access the raw methods on
 }
 
-// ZNSReverseRegistrarCallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
+// ZNSReverseRegistrarCallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
 type ZNSReverseRegistrarCallerRaw struct {
 	Contract *ZNSReverseRegistrarCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ZNSReverseRegistrarTransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
+// ZNSReverseRegistrarTransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
 type ZNSReverseRegistrarTransactorRaw struct {
 	Contract *ZNSReverseRegistrarTransactor // Generic write-only contract binding to access the raw methods on
 }

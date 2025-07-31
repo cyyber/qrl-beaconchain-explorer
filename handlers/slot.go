@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/juliangruber/go-intersect"
 	"github.com/lib/pq"
@@ -460,7 +460,7 @@ func SlotDepositData(w http.ResponseWriter, r *http.Request) {
 		tableData = append(tableData, []interface{}{
 			i + 1 + int(start),
 			utils.FormatPublicKey(deposit.PublicKey),
-			utils.FormatBalance(deposit.Amount, "Zond"),
+			utils.FormatBalance(deposit.Amount, "Quanta"),
 			utils.FormatWithdawalCredentials(deposit.WithdrawalCredentials, true),
 			fmt.Sprintf("0x%v", hex.EncodeToString(deposit.Signature)),
 			utils.FormatHash(deposit.Signature, true),
@@ -674,8 +674,8 @@ func BlockTransactionsData(w http.ResponseWriter, r *http.Request) {
 			Method:        methodFormatted,
 			FromFormatted: v.FromFormatted,
 			ToFormatted:   v.ToFormatted,
-			Value:         utils.FormatAmountFormatted(v.Value, "Zond", 5, 0, true, true, false),
-			Fee:           utils.FormatAmountFormatted(v.Fee, "Zond", 5, 0, true, true, false),
+			Value:         utils.FormatAmountFormatted(v.Value, "Quanta", 5, 0, true, true, false),
+			Fee:           utils.FormatAmountFormatted(v.Fee, "Quanta", 5, 0, true, true, false),
 			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GPlanck", 5, 0, true, true, false),
 		}
 	}

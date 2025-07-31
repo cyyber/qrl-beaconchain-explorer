@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 )
 
 var layoutTemplateFiles = []string{
@@ -27,7 +27,7 @@ func InitPageData(w http.ResponseWriter, r *http.Request, active, path, title st
 	data := &types.PageData{
 		Meta: &types.Meta{
 			Title:       fullTitle,
-			Description: "explorer.zond.theqrl.org makes Zond accessible to non-technical end users",
+			Description: "explorer.zond.theqrl.org makes QRL accessible to non-technical end users",
 			Path:        path,
 			GATag:       utils.Config.Frontend.GATag,
 			NoTrack:     false,
@@ -210,8 +210,8 @@ func createMenuItems(active string) []types.MainMenuItem {
 					Label: "Services",
 					Links: []types.NavigationLink{
 						{
-							Label: "Zond Clients",
-							Path:  "/zondClients",
+							Label: "QRL Clients",
+							Path:  "/qrlClients",
 							Icon:  "fa-desktop",
 						},
 						{

@@ -52,7 +52,7 @@ function getIncomeChartOptions(clIncomeHistory, elIncomeHistory, title, height) 
     yAxis: [
       {
         title: {
-          text: `Income Zond`,
+          text: `Income Quanta`,
         },
         opposite: false,
         labels: {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
 
 	"github.com/sirupsen/logrus"
 )

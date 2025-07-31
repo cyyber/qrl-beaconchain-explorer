@@ -1,7 +1,7 @@
-package zns
+package qrns
 
 import (
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
@@ -10,9 +10,9 @@ import (
 
 // TODO(now.youtrack.cloud/issue/TZB-1)
 var ZNSCrontractAddressesZond = map[string]string{
-	"Z00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
-	"Z253553366Da8546fC250F225fe3d25d0C782303b": "ZONDRegistrarController",
-	"Z283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldZnsRegistrarController",
+	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
+	"Q253553366Da8546fC250F225fe3d25d0C782303b": "ZONDRegistrarController",
+	"Q283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldZnsRegistrarController",
 }
 
 var ZNSRegistryParsedABI, ZNSBaseRegistrarParsedABI, ZNSOldRegistrarControllerParsedABI, ZNSPublicResolverParsedABI, ZNSZONDRegistrarControllerParsedABI *abi.ABI

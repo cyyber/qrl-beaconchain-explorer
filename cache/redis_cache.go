@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/go-redis/redis/v8"
 )

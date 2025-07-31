@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"

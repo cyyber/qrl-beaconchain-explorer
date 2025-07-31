@@ -7,7 +7,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
 
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
@@ -299,7 +299,7 @@ func formatAmount(amount *big.Int, unit string, digits int, maxPreCommaDigitsBef
 	// define display unit & digits used per unit max
 	displayUnit := " " + unit
 	var unitDigits int
-	if unit == "Zond" {
+	if unit == "Quanta" {
 		unitDigits = 18
 	} else if unit == "GPlanck" {
 		unitDigits = 9

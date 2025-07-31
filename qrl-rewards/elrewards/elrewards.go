@@ -6,12 +6,12 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
 
 	"github.com/sirupsen/logrus"
 	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/go-zond/qrlclient"
 	"github.com/theQRL/go-zond/rpc"
-	"github.com/theQRL/go-zond/zondclient"
 )
 
 func GetELRewardForBlock(executionBlockNumber uint64, endpoint string) (*big.Int, error) {
@@ -22,7 +22,7 @@ func GetELRewardForBlock(executionBlockNumber uint64, endpoint string) (*big.Int
 	if err != nil {
 		return nil, err
 	}
-	nativeClient, err := zondclient.Dial(endpoint)
+	nativeClient, err := qrlclient.Dial(endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func batchRequestReceipts(ctx context.Context, elClient *rpc.Client, txHashes []
 		txReceipt := &types.TxReceipt{}
 		err := error(nil)
 		elems = append(elems, rpc.BatchElem{
-			Method: "zond_getTransactionReceipt",
+			Method: "qrl_getTransactionReceipt",
 			Args:   []interface{}{h.Hex()},
 			Result: txReceipt,
 			Error:  err,

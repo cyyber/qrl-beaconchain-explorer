@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
 )
 
 type customFileServer struct {

@@ -2,7 +2,7 @@ GITCOMMIT=`git describe --always`
 VERSION=`git describe --always --tags`
 GITDATE=`TZ=UTC git show -s --date=iso-strict-local --format=%cd HEAD`
 BUILDDATE=`date -u +"%Y-%m-%dT%H:%M:%S%:z"`
-PACKAGE=github.com/theQRL/zond-beaconchain-explorer
+PACKAGE=github.com/theQRL/qrl-beaconchain-explorer
 LDFLAGS="-X ${PACKAGE}/version.Version=${VERSION} -X ${PACKAGE}/version.BuildDate=${BUILDDATE} -X ${PACKAGE}/version.GitCommit=${GITCOMMIT} -X ${PACKAGE}/version.GitDate=${GITDATE} -s -w"
 
 # TODO(now.youtrack.cloud/issue/TZB-2)

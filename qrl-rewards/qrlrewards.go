@@ -1,12 +1,12 @@
-package zondrewards
+package qrlrewards
 
 import (
 	"fmt"
 	"sync"
 
-	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/beacon"
-	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/elrewards"
-	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/beacon"
+	"github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/elrewards"
+	"github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"

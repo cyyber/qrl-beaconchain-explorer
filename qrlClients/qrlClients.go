@@ -10,12 +10,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
 )
 
-var logger = logrus.New().WithField("module", "zondClients")
+var logger = logrus.New().WithField("module", "qrlClients")
 
 type gitAPIResponse struct {
 	URL           string        `json:"url"`
@@ -38,25 +38,25 @@ type gitAPIResponse struct {
 	Body          string        `json:"body"`
 }
 
-type ZondClients struct {
+type QRLClients struct {
 	ClientReleaseVersion string
 	ClientReleaseDate    template.HTML
 	IsUserSubscribed     bool
 }
 
-type ZondClientServicesPageData struct {
+type QRLClientServicesPageData struct {
 	LastUpdate time.Time
-	Gzond      ZondClients
-	Qrysm      ZondClients
+	Gzond      QRLClients
+	Qrysm      QRLClients
 	CsrfField  template.HTML
 }
 
-var zondClients = ZondClientServicesPageData{}
-var zondClientsMux = &sync.RWMutex{}
+var qrlClients = QRLClientServicesPageData{}
+var qrlClientsMux = &sync.RWMutex{}
 
 var httpClient = &http.Client{Timeout: time.Second * 10}
 
-// Init starts a go routine to update the Zond Clients Info
+// Init starts a go routine to update the QRL Clients Info
 func Init() {
 	go update()
 }
@@ -71,21 +71,21 @@ func fetchClientData(repo string) *gitAPIResponse {
 	resp, err := httpClient.Get(fmt.Sprintf("https://%s/repos%s/releases/latest", githubAPIHost, repo))
 
 	if err != nil {
-		logger.Errorf("error retrieving ZOND Client Data: %v", err)
+		logger.Errorf("error retrieving QRL Client Data: %v", err)
 		return nil
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		logger.Errorf("error retrieving ZOND Client Data, status code: %v", resp.StatusCode)
+		logger.Errorf("error retrieving QRL Client Data, status code: %v", resp.StatusCode)
 		return nil
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&gitAPI)
 
 	if err != nil {
-		logger.Errorf("error decoding ZOND Clients json response to struct: %v", err)
+		logger.Errorf("error decoding QRL Clients json response to struct: %v", err)
 		return nil
 	}
 
@@ -123,7 +123,7 @@ func getRepoTime(date string, dTime string) (time.Time, error) {
 	return time.Date(int(year), time.Month(int(month)), int(day), int(hour), int(min), 0, 0, time.UTC), nil
 }
 
-func prepareZondClientData(repo string) (string, template.HTML) {
+func prepareQRLClientData(repo string) (string, template.HTML) {
 	client := fetchClientData(repo)
 	time.Sleep(time.Millisecond * 250) // consider github rate limit
 
@@ -144,34 +144,34 @@ func prepareZondClientData(repo string) (string, template.HTML) {
 	return "Github", "searching" // If API limit is exceeded
 }
 
-func updateZondClient() {
+func updateQRLClient() {
 	curTime := time.Now()
 	// sending 8 requests to github per call
 	// git api rate-limit 60 per hour : 60/8 = 7.5 minutes minimum
-	if curTime.Sub(zondClients.LastUpdate) < time.Hour { // LastUpdate is initialized at January 1, year 1 so no need to check for nil
+	if curTime.Sub(qrlClients.LastUpdate) < time.Hour { // LastUpdate is initialized at January 1, year 1 so no need to check for nil
 		return
 	}
 
-	logger.Println("Updating Zond Clients Information")
-	zondClientsMux.Lock()
-	defer zondClientsMux.Unlock()
-	zondClients.Gzond.ClientReleaseVersion, zondClients.Gzond.ClientReleaseDate = prepareZondClientData("/theQRL/go-zond")
+	logger.Println("Updating QRL Clients Information")
+	qrlClientsMux.Lock()
+	defer qrlClientsMux.Unlock()
+	qrlClients.Gzond.ClientReleaseVersion, qrlClients.Gzond.ClientReleaseDate = prepareQRLClientData("/theQRL/go-zond")
 
-	zondClients.Qrysm.ClientReleaseVersion, zondClients.Qrysm.ClientReleaseDate = prepareZondClientData("/theQRL/qrysm")
+	qrlClients.Qrysm.ClientReleaseVersion, qrlClients.Qrysm.ClientReleaseDate = prepareQRLClientData("/theQRL/qrysm")
 
-	zondClients.LastUpdate = curTime
+	qrlClients.LastUpdate = curTime
 }
 
 func update() {
 	for {
-		updateZondClient()
+		updateQRLClient()
 		time.Sleep(time.Minute * 5)
 	}
 }
 
-// GetZondClientData returns a ZondClientServicesPageData
-func GetZondClientData() ZondClientServicesPageData {
-	zondClientsMux.Lock()
-	defer zondClientsMux.Unlock()
-	return zondClients
+// GetQRLClientData returns a QRLClientServicesPageData
+func GetQRLClientData() QRLClientServicesPageData {
+	qrlClientsMux.Lock()
+	defer qrlClientsMux.Unlock()
+	return qrlClients
 }

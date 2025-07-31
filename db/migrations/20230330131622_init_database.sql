@@ -225,9 +225,9 @@ CREATE TABLE IF NOT EXISTS
         averagevalidatorbalance BIGINT NOT NULL,
         totalvalidatorbalance BIGINT NOT NULL,
         finalized bool,
-        eligiblezond BIGINT,
+        eligiblequanta BIGINT,
         globalparticipationrate FLOAT,
-        votedzond BIGINT,
+        votedquanta BIGINT,
         rewards_exported bool NOT NULL DEFAULT FALSE,
         PRIMARY KEY (epoch)
     );

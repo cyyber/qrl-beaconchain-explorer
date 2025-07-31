@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 )

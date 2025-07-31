@@ -8,10 +8,10 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
 	zond "github.com/theQRL/go-zond"
@@ -326,7 +326,7 @@ func eth1BatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) 
 		header := &gzondTypes.Header{}
 		err := error(nil)
 		elems = append(elems, gzondRPC.BatchElem{
-			Method: "zond_getBlockByNumber",
+			Method: "qrl_getBlockByNumber",
 			Args:   []interface{}{hexutil.EncodeBig(big.NewInt(int64(b))), false},
 			Result: header,
 			Error:  err,
@@ -339,7 +339,7 @@ func eth1BatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) 
 		tx := &gzondTypes.Transaction{}
 		err := error(nil)
 		elems = append(elems, gzondRPC.BatchElem{
-			Method: "zond_getTransactionByHash",
+			Method: "qrl_getTransactionByHash",
 			Args:   []interface{}{txHashHex},
 			Result: tx,
 			Error:  err,

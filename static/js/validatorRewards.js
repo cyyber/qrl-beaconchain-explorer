@@ -109,7 +109,7 @@ function create_typeahead(input_container) {
       source: bhEth1Addresses,
       display: "address",
       templates: {
-        header: "<h3>Validators by Zond Addresses</h3>",
+        header: "<h3>Validators by QRL Addresses</h3>",
         suggestion: function (data) {
           var len = data.validator_indices.length > VALLIMIT ? VALLIMIT + "+" : data.validator_indices.length
           return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">${data.eth1_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
@@ -209,7 +209,7 @@ function showTable(data) {
       $("#form-div").removeClass("d-flex").addClass("d-none")
       $("#table-div").removeClass("d-none")
       $("#subscriptions-div").addClass("d-none")
-      $("#total-income-zond-span").html("Zond " + data.total_zond)
+      $("#total-income-quanta-span").html("Quanta " + data.total_quanta)
       $("#totals-div").removeClass("d-none")
       $(".dt-button").addClass("ml-2 ")
       hideSpinner()

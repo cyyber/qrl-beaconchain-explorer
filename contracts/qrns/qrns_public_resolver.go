@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package zns
+package qrns
 
 import (
 	"errors"
@@ -38,29 +38,29 @@ var ZNSPublicResolverMetaData = &bind.MetaData{
 // Deprecated: Use ZNSPublicResolverMetaData.ABI instead.
 var ZNSPublicResolverABI = ZNSPublicResolverMetaData.ABI
 
-// ZNSPublicResolver is an auto generated Go binding around a Zond contract.
+// ZNSPublicResolver is an auto generated Go binding around a QRL contract.
 type ZNSPublicResolver struct {
 	ZNSPublicResolverCaller     // Read-only binding to the contract
 	ZNSPublicResolverTransactor // Write-only binding to the contract
 	ZNSPublicResolverFilterer   // Log filterer for contract events
 }
 
-// ZNSPublicResolverCaller is an auto generated read-only Go binding around a Zond contract.
+// ZNSPublicResolverCaller is an auto generated read-only Go binding around a QRL contract.
 type ZNSPublicResolverCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSPublicResolverTransactor is an auto generated write-only Go binding around a Zond contract.
+// ZNSPublicResolverTransactor is an auto generated write-only Go binding around a QRL contract.
 type ZNSPublicResolverTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSPublicResolverFilterer is an auto generated log filtering Go binding around a Zond contract events.
+// ZNSPublicResolverFilterer is an auto generated log filtering Go binding around a QRL contract events.
 type ZNSPublicResolverFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// ZNSPublicResolverSession is an auto generated Go binding around a Zond contract,
+// ZNSPublicResolverSession is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
 type ZNSPublicResolverSession struct {
 	Contract     *ZNSPublicResolver // Generic contract binding to set the session for
@@ -68,31 +68,31 @@ type ZNSPublicResolverSession struct {
 	TransactOpts bind.TransactOpts  // Transaction auth options to use throughout this session
 }
 
-// ZNSPublicResolverCallerSession is an auto generated read-only Go binding around a Zond contract,
+// ZNSPublicResolverCallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
 type ZNSPublicResolverCallerSession struct {
 	Contract *ZNSPublicResolverCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts            // Call options to use throughout this session
 }
 
-// ZNSPublicResolverTransactorSession is an auto generated write-only Go binding around a Zond contract,
+// ZNSPublicResolverTransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
 type ZNSPublicResolverTransactorSession struct {
 	Contract     *ZNSPublicResolverTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts            // Transaction auth options to use throughout this session
 }
 
-// ZNSPublicResolverRaw is an auto generated low-level Go binding around a Zond contract.
+// ZNSPublicResolverRaw is an auto generated low-level Go binding around a QRL contract.
 type ZNSPublicResolverRaw struct {
 	Contract *ZNSPublicResolver // Generic contract binding to access the raw methods on
 }
 
-// ZNSPublicResolverCallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
+// ZNSPublicResolverCallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
 type ZNSPublicResolverCallerRaw struct {
 	Contract *ZNSPublicResolverCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// ZNSPublicResolverTransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
+// ZNSPublicResolverTransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
 type ZNSPublicResolverTransactorRaw struct {
 	Contract *ZNSPublicResolverTransactor // Generic write-only contract binding to access the raw methods on
 }

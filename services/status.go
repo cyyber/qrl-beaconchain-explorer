@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 )
 
 // Report the status of a particular service, will add current Pid and executable name

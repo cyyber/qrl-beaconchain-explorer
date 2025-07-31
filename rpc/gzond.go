@@ -8,14 +8,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/zrc20"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/sirupsen/logrus"
-	zond "github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 	gzond_types "github.com/theQRL/go-zond/core/types"
@@ -107,7 +107,7 @@ func NewGzondClient(endpoint string) (*GzondClient, error) {
 	}
 	client.zondClient = zondClient
 
-	addr, _ := common.NewAddressFromString("Zb1F8e55c7f64D203C1400B9D8555d050F94aDF39")
+	addr, _ := common.NewAddressFromString("Qb1F8e55c7f64D203C1400B9D8555d050F94aDF39")
 	client.multiChecker, err = NewBalance(addr, client.zondClient)
 	if err != nil {
 		return nil, fmt.Errorf("error initiation balance checker contract: %v", err)
@@ -225,7 +225,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 
 	for i := range reqs {
 		reqs[i] = gzond_rpc.BatchElem{
-			Method: "zond_getTransactionReceipt",
+			Method: "qrl_getTransactionReceipt",
 			Args:   []interface{}{txs[i].Hash().String()},
 			Result: &receipts[i],
 		}
@@ -301,7 +301,7 @@ type GzondTraceCallResult struct {
 	Type                string
 }
 
-func toCallArg(msg zond.CallMsg) interface{} {
+func toCallArg(msg qrl.CallMsg) interface{} {
 	arg := map[string]interface{}{
 		"from": msg.From,
 		"to":   msg.To,
@@ -335,20 +335,20 @@ func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*ty
 		if len(pair.Token) < 20 {
 			addr := common.BytesToAddress(pair.Address)
 			batchElements = append(batchElements, gzond_rpc.BatchElem{
-				Method: "zond_getBalance",
+				Method: "qrl_getBalance",
 				Args:   []interface{}{addr, "latest"},
 				Result: &result,
 			})
 		} else {
 			to := common.BytesToAddress(pair.Token)
-			msg := zond.CallMsg{
+			msg := qrl.CallMsg{
 				To:   &to,
 				Gas:  1000000,
 				Data: common.Hex2Bytes(fmt.Sprintf("70a08231000000000000000000000000%x", pair.Address)),
 			}
 
 			batchElements = append(batchElements, gzond_rpc.BatchElem{
-				Method: "zond_call",
+				Method: "qrl_call",
 				Args:   []interface{}{toCallArg(msg), "latest"},
 				Result: &result,
 			})

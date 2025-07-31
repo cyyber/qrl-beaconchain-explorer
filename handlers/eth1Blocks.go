@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/shopspring/decimal"
@@ -26,7 +26,7 @@ func Eth1Blocks(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	data := InitPageData(w, r, "blockchain", "/eth1blocks", "Zond Blocks", templateFiles)
+	data := InitPageData(w, r, "blockchain", "/eth1blocks", "QRL Blocks", templateFiles)
 
 	if handleTemplateError(w, r, "eth1Blocks.go", "Eth1Blocks", "", eth1BlocksTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
@@ -222,8 +222,8 @@ func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.Da
 			template.HTML(fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="Gas Used %%" style="font-size: .63rem; color: grey;">%.2f%%</span>&nbsp;<span data-toggle="tooltip" data-placement="top" title="%% of Gas Target" style="font-size: .63rem; color: grey;">(%+.2f%%)</span>`, utils.FormatAddCommas(b.GetGasUsed()), float64(int64(float64(b.GetGasUsed())/float64(b.GetGasLimit())*10000.0))/100.0, float64(int64(((float64(b.GetGasUsed())-gasHalf)/gasHalf)*10000.0))/100.0)), // Gas Used
 			utils.FormatAddCommas(b.GetGasLimit()),                                  // Gas Limit
 			utils.FormatAmountFormatted(baseFee, "GPlanck", 5, 4, true, true, true), // Base Fee
-			utils.FormatAmountFormatted(txReward, "Zond", 5, 4, true, true, true),   // Reward
-			fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="%% of Transactions Fees" style="font-size: .63rem; color: grey;">%.2f%%</span>`, utils.FormatAmountFormatted(burned, "Zond", 5, 4, true, true, false), float64(int64(burnedPercentage*10000.0))/100.0), // Burned Fees
+			utils.FormatAmountFormatted(txReward, "Quanta", 5, 4, true, true, true), // Reward
+			fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="%% of Transactions Fees" style="font-size: .63rem; color: grey;">%.2f%%</span>`, utils.FormatAmountFormatted(burned, "Quanta", 5, 4, true, true, false), float64(int64(burnedPercentage*10000.0))/100.0), // Burned Fees
 		}
 	}
 

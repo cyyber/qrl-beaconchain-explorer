@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
 
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
@@ -125,7 +125,7 @@ type IndexPageData struct {
 	ActiveValidators          uint64                 `json:"active_validators"`
 	EnteringValidators        uint64                 `json:"entering_validators"`
 	ExitingValidators         uint64                 `json:"exiting_validators"`
-	StakedZond                string                 `json:"staked_zond"`
+	StakedQuanta              string                 `json:"staked_quanta"`
 	AverageBalance            string                 `json:"average_balance"`
 	DepositedTotal            float64                `json:"deposit_total"`
 	DepositThreshold          float64                `json:"deposit_threshold"`
@@ -134,7 +134,7 @@ type IndexPageData struct {
 	MinGenesisTime            int64                  `json:"minGenesisTime"`
 	Blocks                    []*IndexPageDataBlocks `json:"blocks"`
 	Epochs                    []*IndexPageDataEpochs `json:"epochs"`
-	StakedZondChartData       [][]float64            `json:"staked_zond_chart_data"`
+	StakedQuantaChartData     [][]float64            `json:"staked_quanta_chart_data"`
 	ActiveValidatorsChartData [][]float64            `json:"active_validators_chart_data"`
 	Title                     template.HTML          `json:"title"`
 	Subtitle                  template.HTML          `json:"subtitle"`
@@ -159,12 +159,12 @@ type IndexPageDataEpochs struct {
 	Ts                               time.Time     `json:"ts"`
 	Finalized                        bool          `json:"finalized"`
 	FinalizedFormatted               template.HTML `json:"finalized_formatted"`
-	EligibleZond                     uint64        `json:"eligiblezond"`
-	EligibleZondFormatted            template.HTML `json:"eligiblezond_formatted"`
+	EligibleQuanta                   uint64        `json:"eligiblequanta"`
+	EligibleQuantaFormatted          template.HTML `json:"eligiblequanta_formatted"`
 	GlobalParticipationRate          float64       `json:"globalparticipationrate"`
 	GlobalParticipationRateFormatted template.HTML `json:"globalparticipationrate_formatted"`
-	VotedZond                        uint64        `json:"votedzond"`
-	VotedZondFormatted               template.HTML `json:"votedzond_formatted"`
+	VotedQuanta                      uint64        `json:"votedquanta"`
+	VotedQuantaFormatted             template.HTML `json:"votedquanta_formatted"`
 }
 
 // IndexPageDataBlocks is a struct to hold detail data for the main web page
@@ -196,7 +196,7 @@ type IndexPageDataBlocks struct {
 type IndexPageEpochHistory struct {
 	Epoch                   uint64 `db:"epoch"`
 	ValidatorsCount         uint64 `db:"validatorscount"`
-	EligibleZond            uint64 `db:"eligiblezond"`
+	EligibleQuanta          uint64 `db:"eligiblequanta"`
 	Finalized               bool   `db:"finalized"`
 	AverageValidatorBalance uint64 `db:"averagevalidatorbalance"`
 }
@@ -724,9 +724,9 @@ type EpochsPageData struct {
 	ValidatorsCount         uint64  `db:"validatorscount"`
 	AverageValidatorBalance uint64  `db:"averagevalidatorbalance"`
 	Finalized               bool    `db:"finalized"`
-	EligibleZond            uint64  `db:"eligiblezond"`
+	EligibleQuanta          uint64  `db:"eligiblequanta"`
 	GlobalParticipationRate float64 `db:"globalparticipationrate"`
-	VotedZond               uint64  `db:"votedzond"`
+	VotedQuanta             uint64  `db:"votedquanta"`
 }
 
 // EpochPageData is a struct to hold detailed epoch data for the epoch page
@@ -744,9 +744,9 @@ type EpochPageData struct {
 	ValidatorsCount         uint64        `db:"validatorscount"`
 	AverageValidatorBalance uint64        `db:"averagevalidatorbalance"`
 	Finalized               bool          `db:"finalized"`
-	EligibleZond            uint64        `db:"eligiblezond"`
+	EligibleQuanta          uint64        `db:"eligiblequanta"`
 	GlobalParticipationRate float64       `db:"globalparticipationrate"`
-	VotedZond               uint64        `db:"votedzond"`
+	VotedQuanta             uint64        `db:"votedquanta"`
 
 	Blocks []*IndexPageDataBlocks
 

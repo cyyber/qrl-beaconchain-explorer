@@ -5,9 +5,9 @@ import (
 	"regexp"
 )
 
-var ZNS_ZOND_REGEXP = regexp.MustCompile(`^.{3,}\.zond$`)
+var QRNS_QRL_REGEXP = regexp.MustCompile(`^.{3,}\.qrl$`)
 
-func IsValidZnsDomain(text string) bool {
-	return ZNS_ZOND_REGEXP.MatchString(text)
+func IsValidQrnsDomain(text string) bool {
+	return QRNS_QRL_REGEXP.MatchString(text)
 }
 */

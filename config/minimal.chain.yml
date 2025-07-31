@@ -56,11 +56,11 @@ PROPOSER_SCORE_BOOST: 40
 
 # Deposit contract
 # ---------------------------------------------------------------
-# Zond testnet
+# QRL testnet
 DEPOSIT_CHAIN_ID: 5
 DEPOSIT_NETWORK_ID: 5
 # Configured on a per testnet basis
-DEPOSIT_CONTRACT_ADDRESS: Z1234567890123456789012345678901234567890
+DEPOSIT_CONTRACT_ADDRESS: Q1234567890123456789012345678901234567890
 
 # Minimal preset
 
