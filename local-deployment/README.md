@@ -48,7 +48,7 @@ Before continuing, restarting your computer now might save you from unexplained 
 ```
 cd ~
 git clone https://github.com/theQRL/qrl-beaconchain-explorer.git
-cd zond-beaconchain-explorer
+cd qrl-beaconchain-explorer
 ```
 
 # Build the explorer binaries
@@ -57,9 +57,9 @@ sudo apt install build-essential
 make all
 ```
 
-# Start postgres, redis, little_bigtable & the zond test network
+# Start postgres, redis, little_bigtable & the qrl test network
 ```
-cd ~/zond-beaconchain-explorer/local-deployment/
+cd ~/qrl-beaconchain-explorer/local-deployment/
 kurtosis clean -a && kurtosis run --enclave my-testnet . --args-file network_params.yaml
 ```
 Later in your developer life (after having started Kurtosis and stopped it a few times), if you encounter an error at this step, you might need to clean up bugged cache files from previous runs that Kurtosis or Docker left behind.
@@ -67,14 +67,14 @@ The `./stop` script [in this repository](https://github.com/thib-wien/scripts-lo
 
 # Generate the explorer config file for the deployed testnet
 ```
-cd ~/zond-beaconchain-explorer/local-deployment/
+cd ~/qrl-beaconchain-explorer/local-deployment/
 bash provision-explorer-config.sh
 ```
 This will generate a _config.yml_ to be used by the explorer and then create the bigtable & postgres schema.
 
 # Start the explorer modules
 ```
-cd ~/zond-beaconchain-explorer/local-deployment/
+cd ~/qrl-beaconchain-explorer/local-deployment/
 docker compose up -d
 ```
 You can start / stop the exporter submodules using `docker compose`

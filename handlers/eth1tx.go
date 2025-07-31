@@ -15,7 +15,7 @@ import (
 	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
-	"github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common"
 )
 
@@ -63,7 +63,7 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 
 				data.Data = mempoolPageData
 			} else {
-				if !errors.Is(err, zond.NotFound) && !errors.Is(err, eth1data.ErrTxIsPending) {
+				if !errors.Is(err, qrl.NotFound) && !errors.Is(err, eth1data.ErrTxIsPending) {
 					utils.LogError(err, "error getting eth1 transaction data", 0, errFields)
 				}
 				data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)

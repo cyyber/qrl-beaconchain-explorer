@@ -11,13 +11,13 @@ import (
 // TODO(rgeraldes24)
 var QRNSCrontractAddressesZond = map[string]string{
 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
-	"Q253553366Da8546fC250F225fe3d25d0C782303b": "ZONDRegistrarController",
+	"Q253553366Da8546fC250F225fe3d25d0C782303b": "QRLRegistrarController",
 	"Q283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldQrnsRegistrarController",
 }
 
-var QRNSRegistryParsedABI, QRNSBaseRegistrarParsedABI, QRNSOldRegistrarControllerParsedABI, QRNSPublicResolverParsedABI, QRNSZONDRegistrarControllerParsedABI *abi.ABI
+var QRNSRegistryParsedABI, QRNSBaseRegistrarParsedABI, QRNSOldRegistrarControllerParsedABI, QRNSPublicResolverParsedABI, QRNSQRLRegistrarControllerParsedABI *abi.ABI
 
-var QRNSRegistryContract, QRNSBaseRegistrarContract, QRNSOldRegistrarControllerContract, QRNSPublicResolverContract, QRNSZONDRegistrarControllerContract *bind.BoundContract
+var QRNSRegistryContract, QRNSBaseRegistrarContract, QRNSOldRegistrarControllerContract, QRNSPublicResolverContract, QRNSQRLRegistrarControllerContract *bind.BoundContract
 
 func init() {
 	var err error
@@ -42,7 +42,7 @@ func init() {
 	if err != nil {
 		utils.LogFatal(err, "error getting qrns-public-resolver-abi", 0)
 	}
-	QRNSZONDRegistrarControllerParsedABI, err = QRNSZONDRegistrarControllerMetaData.GetAbi()
+	QRNSQRLRegistrarControllerParsedABI, err = QRNSQRLRegistrarControllerMetaData.GetAbi()
 	if err != nil {
 		utils.LogFatal(err, "error getting qrns-eth-registrar-controller-abi", 0)
 	}
@@ -63,7 +63,7 @@ func init() {
 	if err != nil {
 		utils.LogFatal(err, "error creating qrns-public-resolver-contract", 0)
 	}
-	QRNSZONDRegistrarControllerContract = bind.NewBoundContract(common.Address{}, *QRNSZONDRegistrarControllerParsedABI, nil, nil, nil)
+	QRNSQRLRegistrarControllerContract = bind.NewBoundContract(common.Address{}, *QRNSQRLRegistrarControllerParsedABI, nil, nil, nil)
 	if err != nil {
 		utils.LogFatal(err, "error creating qrns-eth-registrar-controller-contract", 0)
 	}

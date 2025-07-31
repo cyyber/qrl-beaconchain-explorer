@@ -14,7 +14,7 @@ import (
 	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
-	zond "github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 	gzondTypes "github.com/theQRL/go-zond/core/types"
@@ -41,7 +41,7 @@ var gzondRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too La
 // removed deposits.
 func eth1DepositsExporter() {
 	var err error
-	zondDepositContractAddress, err = common.NewAddressFromString(utils.Config.Chain.ClConfig.DepositContractAddress)
+	qrlDepositContractAddress, err = common.NewAddressFromString(utils.Config.Chain.ClConfig.DepositContractAddress)
 	if err != nil {
 		utils.LogFatal(err, "deposit contract address error", 0)
 	}
@@ -167,7 +167,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	topic := common.BytesToHash(elDepositEventSignature[:])
-	qry := zond.FilterQuery{
+	qry := qrl.FilterQuery{
 		Addresses: []common.Address{
 			qrlDepositContractAddress,
 		},

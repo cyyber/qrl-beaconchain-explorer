@@ -1357,7 +1357,7 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 			withdrawalcount = (SELECT COALESCE(SUM(withdrawalcount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
 			voluntaryexitscount = (SELECT COALESCE(SUM(voluntaryexitscount),0) FROM blocks WHERE epoch = $5 AND status = '1')
 		WHERE epoch = $5`,
-		stats.EligibleZond, stats.GlobalParticipationRate, stats.VotedZond, stats.Finalized, stats.Epoch)
+		stats.EligibleQuanta, stats.GlobalParticipationRate, stats.VotedQuanta, stats.Finalized, stats.Epoch)
 
 	return err
 }
@@ -1420,7 +1420,7 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 		return err
 	}
 
-	// efficiently collect the tnx that pushed each validator over 40000 Zond.
+	// efficiently collect the tnx that pushed each validator over 40000 quanta.
 	_, err = tx.Exec(`
 		UPDATE validator_queue_deposits 
 		SET 
@@ -1447,7 +1447,7 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 			FROM CumSum
 			/* join so we can retrieve the validator index again */
 			left join validators on validators.pubkey = CumSum.publickey
-			/* we want the deposit that pushed the cum sum over 40000 Zond */
+			/* we want the deposit that pushed the cum sum over 40000 Quanta */
 			WHERE cumTotal>=40000000000000
 			ORDER BY publickey, cumTotal asc 
 		) AS data

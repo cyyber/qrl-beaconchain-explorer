@@ -694,11 +694,11 @@ func depositsChartData() (*types.GenericChartData, error) {
 
 	for _, d := range data {
 		switch d.Indicator {
-		case "EL_VALID_DEPOSITS_ZOND":
+		case "EL_VALID_DEPOSITS_QUANTA":
 			elValidSeries = append(elValidSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
-		case "EL_INVALID_DEPOSITS_ZOND":
+		case "EL_INVALID_DEPOSITS_QUANTA":
 			elInvalidSeries = append(elInvalidSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
-		case "CL_DEPOSITS_ZOND":
+		case "CL_DEPOSITS_QUANTA":
 			clSeries = append(clSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
 		default:
 			return nil, fmt.Errorf("unexpected indicator %v when generating depositsChartData", d.Indicator)
@@ -747,7 +747,7 @@ func withdrawalsChartData() (*types.GenericChartData, error) {
 		Value float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&rows, "SELECT time, value FROM chart_series WHERE indicator = 'WITHDRAWALS_ZOND' ORDER BY time")
+	err := db.ReaderDb.Select(&rows, "SELECT time, value FROM chart_series WHERE indicator = 'WITHDRAWALS_QUANTA' ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -1354,7 +1354,7 @@ func MarketCapChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:                           "Market Cap",
-		Subtitle:                        "The Evolution of the Zond Market Cap.",
+		Subtitle:                        "The Evolution of the QRL Market Cap.",
 		XAxisTitle:                      "",
 		YAxisTitle:                      "Market Cap [$]",
 		StackingMode:                    "false",
