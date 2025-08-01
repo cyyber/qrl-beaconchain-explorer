@@ -55,9 +55,7 @@ func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
-	search := q.Get("search[value]")
+	search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)
 	if err != nil {
@@ -227,9 +225,7 @@ func DilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
-	search := q.Get("search[value]")
+	search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)
 	if err != nil {

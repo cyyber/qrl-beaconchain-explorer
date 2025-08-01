@@ -1,13 +1,9 @@
 package handlers
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
 import (
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
@@ -16,10 +12,8 @@ import (
 	"github.com/theQRL/qrl-beaconchain-explorer/types"
 	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
-	"github.com/gorilla/mux"
 	"github.com/theQRL/go-zond/common"
 )
-
 
 func GetQrnsDomain(search string) (*types.QrnsDomainResponse, error) {
 	data := &types.QrnsDomainResponse{}
@@ -84,4 +78,3 @@ func ReplaceQrnsNameWithAddress(search string) string {
 	}
 	return search
 }
-*/

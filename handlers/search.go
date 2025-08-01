@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -270,14 +271,13 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
-		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// var qrnsData *types.QrnsDomainResponse
-		// if utils.IsValidQrnsDomain(search) {
-		// 	qrnsData, _ = GetQrnsDomain(search)
-		// 	if len(qrnsData.Address) > 0 {
-		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "0x", "", -1))
-		// 	}
-		// }
+		var qrnsData *types.QrnsDomainResponse
+		if utils.IsValidQrnsDomain(search) {
+			qrnsData, _ = GetQrnsDomain(search)
+			if len(qrnsData.Address) > 0 {
+				lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "0x", "", -1))
+			}
+		}
 		if len(lowerStrippedSearch) == 40 {
 			// when the user gives an address (that validators might withdraw to) we transform the address into credentials
 			lowerStrippedSearch = utils.BeginningOfSetWithdrawalCredentials + lowerStrippedSearch
@@ -368,18 +368,18 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			res[i].Name = string(utils.FormatValidatorName(res[i].Name))
 		}
 		result = &res
-	// case "ens":
-	// 	if !utils.IsValidQrnsDomain(search) {
-	// 		break
-	// 	}
-	// 	data, ensErr := GetQrnsDomain(search)
-	// 	if ensErr != nil {
-	// 		if ensErr != sql.ErrNoRows {
-	// 			err = ensErr
-	// 		}
-	// 		break
-	// 	}
-	// 	result = &data
+	case "qrns":
+		if !utils.IsValidQrnsDomain(search) {
+			break
+		}
+		data, ensErr := GetQrnsDomain(search)
+		if ensErr != nil {
+			if ensErr != sql.ErrNoRows {
+				err = ensErr
+			}
+			break
+		}
+		result = &data
 	default:
 		http.Error(w, "Not found", 404)
 		return
