@@ -27,14 +27,15 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
 	address := template.HTMLEscapeString(vars["address"])
-	qrnsData, err := GetQrnsDomain(address)
-	if err != nil && utils.IsValidQrnsDomain(address) {
-		handleNotFoundHtml(w, r)
-		return
-	}
-	if len(qrnsData.Address) > 0 {
-		address = qrnsData.Address
-	}
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// qrnsData, err := GetQrnsDomain(address)
+	// if err != nil && utils.IsValidQrnsDomain(address) {
+	// 	handleNotFoundHtml(w, r)
+	// 	return
+	// }
+	// if len(qrnsData.Address) > 0 {
+	// 	address = qrnsData.Address
+	// }
 
 	isValid := utils.IsAddress(address)
 	if !isValid {
@@ -207,8 +208,9 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.Data = types.ExecutionAddressPageData{
-		Address:            address,
-		QrnsName:           qrnsData.Domain,
+		Address: address,
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// QrnsName:           qrnsData.Domain,
 		IsContract:         isContract,
 		QRCode:             pngStr,
 		QRCodeInverse:      pngStrInverse,
@@ -428,16 +430,16 @@ func ExecutionAddressSqrcTb1Transactions(w http.ResponseWriter, r *http.Request)
 func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, error) {
 	vars := mux.Vars(r)
 	address := vars["address"]
-	if utils.IsValidQrnsDomain(address) {
-		qrnsData, err := GetQrnsDomain(address)
-		if err != nil {
-			handleNotFoundJson(address, w, r, err)
-			return "", err
-		}
-		if len(qrnsData.Address) > 0 {
-			address = qrnsData.Address
-		}
-	}
+	// if utils.IsValidQrnsDomain(address) {
+	// 	qrnsData, err := GetQrnsDomain(address)
+	// 	if err != nil {
+	// 		handleNotFoundJson(address, w, r, err)
+	// 		return "", err
+	// 	}
+	// 	if len(qrnsData.Address) > 0 {
+	// 		address = qrnsData.Address
+	// 	}
+	// }
 	return strings.ToLower(strings.Replace(address, "Q", "", -1)), nil
 }
 

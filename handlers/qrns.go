@@ -1,5 +1,7 @@
 package handlers
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
 import (
 	"database/sql"
 	"errors"
@@ -78,3 +80,4 @@ func ReplaceQrnsNameWithAddress(search string) string {
 	}
 	return search
 }
+*/

@@ -1,5 +1,7 @@
 package handlers
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
 import (
 	"net/http"
 
@@ -37,3 +39,4 @@ func QrnsSearch(w http.ResponseWriter, r *http.Request) {
 		return // an error has occurred and was processed
 	}
 }
+*/

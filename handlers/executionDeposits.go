@@ -53,7 +53,9 @@ func ExecutionDepositsData(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
+	search := q.Get("search[value]")
 	search = strings.Replace(search, "0x", "", -1)
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)

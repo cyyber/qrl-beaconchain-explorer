@@ -1,5 +1,7 @@
 package db
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
 import (
 	"bytes"
 	"context"
@@ -678,3 +680,4 @@ func removeQrnsName(client *qrlclient.Client, name string) error {
 	logger.Infof("Qrns name removed from db: %v", name)
 	return nil
 }
+*/

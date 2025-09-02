@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -39,14 +38,16 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var qrnsData *types.QrnsDomainResponse
-	if utils.IsValidQrnsDomain(search) {
-		qrnsData, _ = GetQrnsDomain(search)
-	}
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// var qrnsData *types.QrnsDomainResponse
+	// if utils.IsValidQrnsDomain(search) {
+	// 	qrnsData, _ = GetQrnsDomain(search)
+	// }
 	search = strings.Replace(search, "0x", "", -1)
-	if qrnsData != nil && len(qrnsData.Address) > 0 {
-		http.Redirect(w, r, "/address/"+qrnsData.Domain, http.StatusMovedPermanently)
-	} else if utils.IsValidWithdrawalCredentials(search) {
+	// if qrnsData != nil && len(qrnsData.Address) > 0 {
+	// 	http.Redirect(w, r, "/address/"+qrnsData.Domain, http.StatusMovedPermanently)
+	// } else if utils.IsValidWithdrawalCredentials(search) {
+	if utils.IsValidWithdrawalCredentials(search) {
 		http.Redirect(w, r, "/validators/deposits?q="+search, http.StatusMovedPermanently)
 	} else if utils.IsValidTxHash(search) {
 		http.Redirect(w, r, "/tx/"+search, http.StatusMovedPermanently)
@@ -184,17 +185,18 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			ORDER BY index LIMIT 10`, search+"%")
 		}
 	case "execution_addresses":
-		if utils.IsValidQrnsDomain(search) {
-			qrnsData, _ := GetQrnsDomain(search)
-			if len(qrnsData.Address) > 0 {
-				result = []*types.ExecutionAddressSearchItem{{
-					Address: qrnsData.Address,
-					Name:    qrnsData.Domain,
-					Token:   "",
-				}}
-				break
-			}
-		}
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// if utils.IsValidQrnsDomain(search) {
+		// 	qrnsData, _ := GetQrnsDomain(search)
+		// 	if len(qrnsData.Address) > 0 {
+		// 		result = []*types.ExecutionAddressSearchItem{{
+		// 			Address: qrnsData.Address,
+		// 			Name:    qrnsData.Domain,
+		// 			Token:   "",
+		// 		}}
+		// 		break
+		// 	}
+		// }
 		if !searchLikeRE.MatchString(strippedSearch) {
 			break
 		}
@@ -238,19 +240,21 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			LEFT JOIN validators ON validators.pubkey = execution_deposits.publickey
 			WHERE validators.pubkey IS NULL AND ENCODE(execution_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
 	case "indexed_validators_by_execution_addresses":
-		search = ReplaceQrnsNameWithAddress(search)
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// search = ReplaceQrnsNameWithAddress(search)
 		if !utils.IsAddress(search) {
 			break
 		}
 		result, err = FindValidatorIndicesByExecutionAddress(strings.ToLower(search))
 	case "count_indexed_validators_by_execution_address":
-		var qrnsData *types.QrnsDomainResponse
-		if utils.IsValidQrnsDomain(search) {
-			qrnsData, _ = GetQrnsDomain(search)
-			if len(qrnsData.Address) > 0 {
-				lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "Q", "", -1))
-			}
-		}
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// var qrnsData *types.QrnsDomainResponse
+		// if utils.IsValidQrnsDomain(search) {
+		// 	qrnsData, _ = GetQrnsDomain(search)
+		// 	if len(qrnsData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "Q", "", -1))
+		// 	}
+		// }
 		if !searchLikeRE.MatchString(lowerStrippedSearch) {
 			break
 		}
@@ -271,13 +275,14 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
 	case "count_indexed_validators_by_withdrawal_credential":
-		var qrnsData *types.QrnsDomainResponse
-		if utils.IsValidQrnsDomain(search) {
-			qrnsData, _ = GetQrnsDomain(search)
-			if len(qrnsData.Address) > 0 {
-				lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "0x", "", -1))
-			}
-		}
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// var qrnsData *types.QrnsDomainResponse
+		// if utils.IsValidQrnsDomain(search) {
+		// 	qrnsData, _ = GetQrnsDomain(search)
+		// 	if len(qrnsData.Address) > 0 {
+		// 		lowerStrippedSearch = strings.ToLower(strings.Replace(qrnsData.Address, "0x", "", -1))
+		// 	}
+		// }
 		if len(lowerStrippedSearch) == 40 {
 			// when the user gives an address (that validators might withdraw to) we transform the address into credentials
 			lowerStrippedSearch = utils.BeginningOfSetWithdrawalCredentials + lowerStrippedSearch
@@ -368,18 +373,18 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			res[i].Name = string(utils.FormatValidatorName(res[i].Name))
 		}
 		result = &res
-	case "qrns":
-		if !utils.IsValidQrnsDomain(search) {
-			break
-		}
-		data, ensErr := GetQrnsDomain(search)
-		if ensErr != nil {
-			if ensErr != sql.ErrNoRows {
-				err = ensErr
-			}
-			break
-		}
-		result = &data
+	// case "qrns":
+	// 	if !utils.IsValidQrnsDomain(search) {
+	// 		break
+	// 	}
+	// 	data, ensErr := GetQrnsDomain(search)
+	// 	if ensErr != nil {
+	// 		if ensErr != sql.ErrNoRows {
+	// 			err = ensErr
+	// 		}
+	// 		break
+	// 	}
+	// 	result = &data
 	default:
 		http.Error(w, "Not found", 404)
 		return

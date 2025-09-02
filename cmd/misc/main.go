@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -15,7 +14,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/qrl-beaconchain-explorer/cmd/misc/commands"
 	"github.com/theQRL/qrl-beaconchain-explorer/db"
 	"github.com/theQRL/qrl-beaconchain-explorer/exporter"
@@ -409,10 +407,11 @@ func main() {
 	case "partition-validator-stats":
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
-	case "fix-qrns":
-		err = fixQrns(gzondClient)
-	case "fix-qrns-addresses":
-		err = fixQrnsAddresses(gzondClient)
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// case "fix-qrns":
+	// 	err = fixQrns(gzondClient)
+	// case "fix-qrns-addresses":
+	// 	err = fixQrnsAddresses(gzondClient)
 	case "fix-epochs":
 		err = fixEpochs()
 	default:
@@ -454,6 +453,8 @@ func fixEpoch(e uint64) error {
 	return tx.Commit()
 }
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
 func fixQrns(gzondClient *rpc.GzondClient) error {
 	logrus.WithField("dry", opts.DryRun).Infof("command: fix-qrns")
 	addrs := []struct {
@@ -692,6 +693,7 @@ func fixQrnsAddresses(gzondClient *rpc.GzondClient) error {
 	}
 	return nil
 }
+*/
 
 func fixExecTransactionsCount() error {
 	startBlockNumber := uint64(opts.StartBlock)
@@ -1264,7 +1266,8 @@ func indexOldExecutionBlocks(startBlock uint64, endBlock uint64, batchSize uint6
 		return
 	}
 	logrus.Infof("transformers: %v", transformerList)
-	importQRNSChanges := false
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// importQRNSChanges := false
 	/**
 	* Add additional transformers you want to sync to this switch case
 	**/
@@ -1284,9 +1287,10 @@ func indexOldExecutionBlocks(startBlock uint64, endBlock uint64, batchSize uint6
 			transforms = append(transforms, bt.TransformSQRCTB1)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
-		case "TransformQrnsNameRegistered":
-			transforms = append(transforms, bt.TransformQrnsNameRegistered)
-			importQRNSChanges = true
+		// TODO(now.youtrack.cloud/issue/TZB-1)
+		// case "TransformQrnsNameRegistered":
+		// 	transforms = append(transforms, bt.TransformQrnsNameRegistered)
+		// 	importQRNSChanges = true
 		case "TransformContract":
 			transforms = append(transforms, bt.TransformContract)
 		default:
@@ -1322,12 +1326,13 @@ func indexOldExecutionBlocks(startBlock uint64, endBlock uint64, batchSize uint6
 
 	}
 
-	if importQRNSChanges {
-		if err := bt.ImportQrnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
-			utils.LogError(err, "error importing qrns from events", 0)
-			return
-		}
-	}
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// if importQRNSChanges {
+	// 	if err := bt.ImportQrnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
+	// 		utils.LogError(err, "error importing qrns from events", 0)
+	// 		return
+	// 	}
+	// }
 
 	logrus.Infof("index run completed")
 }

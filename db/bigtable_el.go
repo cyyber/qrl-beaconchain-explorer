@@ -3,7 +3,6 @@ package db
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -2376,10 +2375,11 @@ func (bigtable *Bigtable) GetInternalTransfersForTransaction(transaction []byte,
 		names[string(to)] = ""
 	}
 
-	err := bigtable.GetAddressNames(names)
-	if err != nil {
-		return nil, err
-	}
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// err := bigtable.GetAddressNames(names)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	contractInteractionTypes, err := BigtableClient.GetAddressContractInteractionsAtParityTraces(parityTrace)
 	if err != nil {
@@ -3286,6 +3286,8 @@ func (bigtable *Bigtable) SaveSQRCTF1Metadata(address []byte, metadata *types.SQ
 	return bigtable.tableMetadata.Apply(ctx, rowKey, mut)
 }
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
 func (bigtable *Bigtable) GetAddressName(address []byte) (string, error) {
 
 	tmr := time.AfterFunc(REPORT_TIMEOUT, func() {
@@ -3370,6 +3372,7 @@ func (bigtable *Bigtable) GetAddressNames(addresses map[string]string) error {
 
 	return err
 }
+*/
 
 type isContractInfo struct {
 	update *types.IsContractUpdate
