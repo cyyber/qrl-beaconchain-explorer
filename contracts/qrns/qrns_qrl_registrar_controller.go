@@ -61,12 +61,12 @@ type QRNSQRLRegistrarControllerTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// QRNSQRLRegistrarControllerFilterer is an auto generated log filtering Go binding around a Zond contract events.
+// QRNSQRLRegistrarControllerFilterer is an auto generated log filtering Go binding around a QRL contract events.
 type QRNSQRLRegistrarControllerFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// QRNSQRLRegistrarControllerSession is an auto generated Go binding around a Zond contract,
+// QRNSQRLRegistrarControllerSession is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
 type QRNSQRLRegistrarControllerSession struct {
 	Contract     *QRNSQRLRegistrarController // Generic contract binding to set the session for
@@ -74,14 +74,14 @@ type QRNSQRLRegistrarControllerSession struct {
 	TransactOpts bind.TransactOpts           // Transaction auth options to use throughout this session
 }
 
-// QRNSQRLRegistrarControllerCallerSession is an auto generated read-only Go binding around a Zond contract,
+// QRNSQRLRegistrarControllerCallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
 type QRNSQRLRegistrarControllerCallerSession struct {
 	Contract *QRNSQRLRegistrarControllerCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts                     // Call options to use throughout this session
 }
 
-// QRNSQRLRegistrarControllerTransactorSession is an auto generated write-only Go binding around a Zond contract,
+// QRNSQRLRegistrarControllerTransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
 type QRNSQRLRegistrarControllerTransactorSession struct {
 	Contract     *QRNSQRLRegistrarControllerTransactor // Generic contract transactor binding to set the session for
