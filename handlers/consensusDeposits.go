@@ -16,7 +16,7 @@ func ConsensusDeposits(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/validators/deposits", http.StatusMovedPermanently)
 }
 
-// ConsensusDepositsData will return information eth1-deposits in json
+// ConsensusDepositsData will return information execution-deposits in json
 func ConsensusDepositsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

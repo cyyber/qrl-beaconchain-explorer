@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
-
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -1259,7 +1258,7 @@ func indexOldExecutionBlocks(startBlock uint64, endBlock uint64, batchSize uint6
 	logrus.Infof("transformerFlag: %v", transformerFlag)
 	transformerList := strings.Split(transformerFlag, ",")
 	if transformerFlag == "all" {
-		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformZRC20", "TransformZRC721", "TransformZRC1155", "TransformWithdrawals", "TransformQrnsNameRegistered", "TransformContract"}
+		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformSQRCTF1", "TransformSQRCTN1", "TransformSQRCTB1", "TransformWithdrawals", "TransformQrnsNameRegistered", "TransformContract"}
 	} else if len(transformerList) == 0 {
 		utils.LogError(nil, "no transformer functions provided", 0)
 		return
@@ -1277,12 +1276,12 @@ func indexOldExecutionBlocks(startBlock uint64, endBlock uint64, batchSize uint6
 			transforms = append(transforms, bt.TransformTx)
 		case "TransformItx":
 			transforms = append(transforms, bt.TransformItx)
-		case "TransformZRC20":
-			transforms = append(transforms, bt.TransformZRC20)
-		case "TransformZRC721":
-			transforms = append(transforms, bt.TransformZRC721)
-		case "TransformZRC1155":
-			transforms = append(transforms, bt.TransformZRC1155)
+		case "TransformSQRCTF1":
+			transforms = append(transforms, bt.TransformSQRCTF1)
+		case "TransformSQRCTN1":
+			transforms = append(transforms, bt.TransformSQRCTN1)
+		case "TransformSQRCTB1":
+			transforms = append(transforms, bt.TransformSQRCTB1)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
 		case "TransformQrnsNameRegistered":

@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/sqrctf1"
 	"github.com/theQRL/qrl-beaconchain-explorer/types"
 	"github.com/theQRL/qrl-beaconchain-explorer/utils"
-	"github.com/theQRL/qrl-beaconchain-explorer/zrc20"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/sirupsen/logrus"
@@ -362,7 +362,7 @@ func (client *GzondClient) GetBalances(pairs []*types.ExecutionAddressBalance) (
 
 	for i, el := range batchElements {
 		if el.Error != nil {
-			logrus.Warnf("error in batch call: %v", el.Error) // PPR: are smart contracts that pretend to implement the zrc20 standard but are somehow buggy
+			logrus.Warnf("error in batch call: %v", el.Error) // PPR: are smart contracts that pretend to implement the sqrctf1 standard but are somehow buggy
 		}
 
 		res := strings.TrimPrefix(*el.Result.(*string), "0x")
@@ -372,17 +372,17 @@ func (client *GzondClient) GetBalances(pairs []*types.ExecutionAddressBalance) (
 	return ret, nil
 }
 
-func (client *GzondClient) GetZRC20TokenMetadata(token []byte) (*types.ZRC20Metadata, error) {
+func (client *GzondClient) GetSQRCTF1TokenMetadata(token []byte) (*types.SQRCTF1Metadata, error) {
 	logger.Infof("retrieving metadata for token %x", token)
 
-	contract, err := zrc20.NewZrc20(common.BytesToAddress(token), client.qrlClient)
+	contract, err := sqrctf1.NewSqrcTf1(common.BytesToAddress(token), client.qrlClient)
 	if err != nil {
-		return nil, fmt.Errorf("error getting token-contract: zrc20.NewZrc20: %w", err)
+		return nil, fmt.Errorf("error getting token-contract: sqrctf1.NewSqrcTf1: %w", err)
 	}
 
 	g := new(errgroup.Group)
 
-	ret := &types.ZRC20Metadata{}
+	ret := &types.SQRCTF1Metadata{}
 
 	g.Go(func() error {
 		symbol, err := contract.Symbol(nil)
@@ -423,8 +423,8 @@ func (client *GzondClient) GetZRC20TokenMetadata(token []byte) (*types.ZRC20Meta
 	}
 
 	if len(ret.Decimals) == 0 && ret.Symbol == "" && len(ret.TotalSupply) == 0 {
-		// it's possible that a token contract implements the ZRC20 interfaces but does not return any values; we use a backup in this case
-		ret = &types.ZRC20Metadata{
+		// it's possible that a token contract implements the SQRCTF1 interfaces but does not return any values; we use a backup in this case
+		ret = &types.SQRCTF1Metadata{
 			Decimals:    []byte{0x0},
 			Symbol:      "UNKNOWN",
 			TotalSupply: []byte{0x0}}

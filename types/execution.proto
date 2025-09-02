@@ -145,7 +145,7 @@ message ExecutionInternalTransactionIndexed {
     bytes value = 7;
 }
 
-message ExecutionZRC20Indexed {
+message ExecutionSQRCTF1Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;
@@ -155,7 +155,7 @@ message ExecutionZRC20Indexed {
     bytes value = 7;
 }
 
-message ExecutionZRC721Indexed {
+message ExecutionSQRCTN1Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;
@@ -166,7 +166,7 @@ message ExecutionZRC721Indexed {
 }
 
 // https://eips.ethereum.org/EIPS/eip-1155
-message ExecutionZRC1155Indexed {
+message ExecutionSQRCTB1Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;

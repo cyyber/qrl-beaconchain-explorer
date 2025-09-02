@@ -1161,7 +1161,7 @@ func FormatTokenValue(balance *types.ExecutionAddressBalance, fullAmountTooltip 
 	return template.HTML(p.Sprintf("<span%s>%s</span>", tooltip, tokenValueFormatted))
 }
 
-func FormatZrc20Decimals(balance []byte, metadata *types.ZRC20Metadata) decimal.Decimal {
+func FormatSqrcTf1Decimals(balance []byte, metadata *types.SQRCTF1Metadata) decimal.Decimal {
 	decimals := new(big.Int).SetBytes(metadata.Decimals)
 	mul := decimal.NewFromFloat(float64(10)).Pow(decimal.NewFromBigInt(decimals, 0))
 	num := decimal.NewFromBigInt(new(big.Int).SetBytes(balance), 0)

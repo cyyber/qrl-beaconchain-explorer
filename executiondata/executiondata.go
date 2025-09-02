@@ -176,14 +176,14 @@ func GetExecutionTransaction(hash common.Hash, currency string) (*types.Executio
 				if len(log.Topics) > 0 {
 					name = db.BigtableClient.GetEventLabel(log.Topics[0][:])
 				}
-				eth1Event := &types.ExecutionEventData{
+				executionEvent := &types.ExecutionEventData{
 					Address: log.Address,
 					Name:    name,
 					Topics:  log.Topics,
 					Data:    log.Data,
 				}
 
-				txPageData.Events = append(txPageData.Events, eth1Event)
+				txPageData.Events = append(txPageData.Events, executionEvent)
 			} else {
 				boundContract := bind.NewBoundContract(*txPageData.To, *cmEntry.meta.ABI, nil, nil, nil)
 
@@ -196,12 +196,12 @@ func GetExecutionTransaction(hash common.Hash, currency string) (*types.Executio
 							logger.Warnf("error decoding event [%v] for tx [0x%x]", name, tx.Hash())
 						}
 
-						eth1Event := &types.ExecutionEventData{
+						executionEvent := &types.ExecutionEventData{
 							Address:     log.Address,
 							Name:        strings.Replace(event.String(), "event ", "", 1),
 							Topics:      log.Topics,
 							Data:        log.Data,
-							DecodedData: map[string]types.Eth1DecodedEventData{},
+							DecodedData: map[string]types.ExecutionDecodedEventData{},
 						}
 						typeMap := make(map[string]string)
 						for _, input := range cmEntry.meta.ABI.Events[name].Inputs {
@@ -209,7 +209,7 @@ func GetExecutionTransaction(hash common.Hash, currency string) (*types.Executio
 						}
 
 						for lName, val := range logData {
-							a := types.Eth1DecodedEventData{
+							a := types.ExecutionDecodedEventData{
 								Type:  typeMap[lName],
 								Raw:   fmt.Sprintf("0x%x", val),
 								Value: fmt.Sprintf("%v", val),
@@ -221,10 +221,10 @@ func GetExecutionTransaction(hash common.Hash, currency string) (*types.Executio
 							if strings.HasPrefix(b, "byte") {
 								a.Value = a.Raw
 							}
-							eth1Event.DecodedData[lName] = a
+							executionEvent.DecodedData[lName] = a
 						}
 
-						txPageData.Events = append(txPageData.Events, eth1Event)
+						txPageData.Events = append(txPageData.Events, executionEvent)
 					}
 				}
 			}

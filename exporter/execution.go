@@ -35,11 +35,11 @@ var elClient *qrlclient.Client
 var elRPCClient *gzondRPC.Client
 var gzondRequestEntityTooLargeRE = regexp.MustCompile("413 Request Entity Too Large")
 
-// eth1DepositsExporter regularly fetches the depositcontract-logs of the
+// executionDepositsExporter regularly fetches the depositcontract-logs of the
 // last 100 blocks and exports the deposits into the database.
-// If a reorg of the eth1-chain happened within these 100 blocks it will delete
+// If a reorg of the execution-chain happened within these 100 blocks it will delete
 // removed deposits.
-func eth1DepositsExporter() {
+func executionDepositsExporter() {
 	var err error
 	qrlDepositContractAddress, err = common.NewAddressFromString(utils.Config.Chain.ClConfig.DepositContractAddress)
 	if err != nil {
@@ -61,9 +61,9 @@ func eth1DepositsExporter() {
 		t0 := time.Now()
 
 		var lastDepositBlock uint64
-		err = db.WriterDb.Get(&lastDepositBlock, "select coalesce(max(block_number),0) from eth1_deposits")
+		err = db.WriterDb.Get(&lastDepositBlock, "select coalesce(max(block_number),0) from execution_deposits")
 		if err != nil {
-			logger.WithError(err).Errorf("error retrieving highest block_number of eth1-deposits from db")
+			logger.WithError(err).Errorf("error retrieving highest block_number of execution-deposits from db")
 			time.Sleep(time.Second * 5)
 			continue
 		}
@@ -71,7 +71,7 @@ func eth1DepositsExporter() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		header, err := elClient.HeaderByNumber(ctx, nil)
 		if err != nil {
-			logger.WithError(err).Errorf("error getting header from eth1-client")
+			logger.WithError(err).Errorf("error getting header from execution-client")
 			cancel()
 			time.Sleep(time.Second * 5)
 			continue
@@ -114,11 +114,11 @@ func eth1DepositsExporter() {
 				if toBlock > blockHeight {
 					toBlock = blockHeight
 				}
-				logger.Infof("limiting block-range to %v-%v when fetching eth1-deposits due to too much results", fromBlock, toBlock)
+				logger.Infof("limiting block-range to %v-%v when fetching execution-deposits due to too much results", fromBlock, toBlock)
 				depositsToSave, err = fetchExecutionDeposits(fromBlock, toBlock)
 			}
 			if err != nil {
-				logger.WithError(err).WithField("fromBlock", fromBlock).WithField("toBlock", toBlock).Errorf("error fetching eth1-deposits")
+				logger.WithError(err).WithField("fromBlock", fromBlock).WithField("toBlock", toBlock).Errorf("error fetching execution-deposits")
 				time.Sleep(time.Second * 5)
 				continue
 			}
@@ -126,7 +126,7 @@ func eth1DepositsExporter() {
 
 		err = saveExecutionDeposits(depositsToSave)
 		if err != nil {
-			logger.WithError(err).Errorf("error saving eth1-deposits")
+			logger.WithError(err).Errorf("error saving execution-deposits")
 			time.Sleep(time.Second * 5)
 			continue
 		}
@@ -134,7 +134,7 @@ func eth1DepositsExporter() {
 		if len(depositsToSave) > 0 {
 			err = aggregateDeposits()
 			if err != nil {
-				logger.WithError(err).Errorf("error saving eth1-deposits-leaderboard")
+				logger.WithError(err).Errorf("error saving execution-deposits-leaderboard")
 				time.Sleep(time.Second * 5)
 				continue
 			}
@@ -150,7 +150,7 @@ func eth1DepositsExporter() {
 				"fromBlock":     fromBlock,
 				"toBlock":       toBlock,
 				"depositsSaved": len(depositsToSave),
-			}).Info("exported eth1-deposits")
+			}).Info("exported execution-deposits")
 		}
 
 		// progress faster if we are not synced to head yet
@@ -178,7 +178,7 @@ func fetchExecutionDeposits(fromBlock, toBlock uint64) (depositsToSave []*types.
 
 	depositLogs, err := elClient.FilterLogs(ctx, qry)
 	if err != nil {
-		return depositsToSave, fmt.Errorf("error getting logs from eth1-client: %w", err)
+		return depositsToSave, fmt.Errorf("error getting logs from execution-client: %w", err)
 	}
 
 	blocksToFetch := []uint64{}
@@ -220,16 +220,16 @@ func fetchExecutionDeposits(fromBlock, toBlock uint64) (depositsToSave []*types.
 		})
 	}
 
-	headers, txs, err := eth1BatchRequestHeadersAndTxs(blocksToFetch, txsToFetch)
+	headers, txs, err := executionBatchRequestHeadersAndTxs(blocksToFetch, txsToFetch)
 	if err != nil {
-		return depositsToSave, fmt.Errorf("error getting eth1-blocks: %w\nblocks to fetch: %v\n tx to fetch: %v", err, blocksToFetch, txsToFetch)
+		return depositsToSave, fmt.Errorf("error getting execution-blocks: %w\nblocks to fetch: %v\n tx to fetch: %v", err, blocksToFetch, txsToFetch)
 	}
 
 	for _, d := range depositsToSave {
 		// get corresponding block (for the tx-time)
 		b, exists := headers[d.BlockNumber]
 		if !exists {
-			return depositsToSave, fmt.Errorf("error getting block for eth1-deposit: block does not exist in fetched map")
+			return depositsToSave, fmt.Errorf("error getting block for execution-deposit: block does not exist in fetched map")
 		}
 		d.BlockTs = int64(b.Time)
 
@@ -301,22 +301,22 @@ func saveExecutionDeposits(depositsToSave []*types.ExecutionDeposit) error {
 	for _, d := range depositsToSave {
 		_, err := insertDepositStmt.Exec(d.TxHash, d.TxInput, d.TxIndex, d.BlockNumber, d.BlockTs, d.FromAddress, d.FromAddress, d.PublicKey, d.WithdrawalCredentials, d.Amount, d.Signature, d.MerkletreeIndex, d.Removed, d.ValidSignature)
 		if err != nil {
-			return fmt.Errorf("error saving eth1-deposit to db: %v: %w", fmt.Sprintf("%x", d.TxHash), err)
+			return fmt.Errorf("error saving execution-deposit to db: %v: %w", fmt.Sprintf("%x", d.TxHash), err)
 		}
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return fmt.Errorf("error committing db-tx for eth1-deposits: %w", err)
+		return fmt.Errorf("error committing db-tx for execution-deposits: %w", err)
 	}
 
 	return nil
 }
 
-// eth1BatchRequestHeadersAndTxs requests the block range specified in the arguments.
+// executionBatchRequestHeadersAndTxs requests the block range specified in the arguments.
 // Instead of requesting each block in one call, it batches all requests into a single rpc call.
 // This code is shamelessly stolen and adapted from https://github.com/prysmaticlabs/prysm/blob/2eac24c/beacon-chain/powchain/service.go#L473
-func eth1BatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) (map[uint64]*gzondTypes.Header, map[string]*gzondTypes.Transaction, error) {
+func executionBatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) (map[uint64]*gzondTypes.Header, map[string]*gzondTypes.Transaction, error) {
 	elems := make([]gzondRPC.BatchElem, 0, len(blocksToFetch)+len(txsToFetch))
 	headers := make(map[uint64]*gzondTypes.Header, len(blocksToFetch))
 	txs := make(map[string]*gzondTypes.Transaction, len(txsToFetch))
@@ -383,12 +383,12 @@ func aggregateDeposits() error {
 		metrics.TaskDuration.WithLabelValues("exporter_aggregate_execution_deposits").Observe(time.Since(start).Seconds())
 	}()
 	_, err := db.WriterDb.Exec(`
-		INSERT INTO eth1_deposits_aggregated (from_address, amount, validcount, invalidcount, slashedcount, totalcount, activecount, pendingcount, voluntary_exit_count)
+		INSERT INTO execution_deposits_aggregated (from_address, amount, validcount, invalidcount, slashedcount, totalcount, activecount, pendingcount, voluntary_exit_count)
 		SELECT
-			eth1.from_address,
-			SUM(eth1.amount) as amount,
-			SUM(eth1.validcount) AS validcount,
-			SUM(eth1.invalidcount) AS invalidcount,
+			execution.from_address,
+			SUM(execution.amount) as amount,
+			SUM(execution.validcount) AS validcount,
+			SUM(execution.invalidcount) AS invalidcount,
 			COUNT(CASE WHEN v.status = 'slashed' THEN 1 END) AS slashedcount,
 			COUNT(v.pubkey) AS totalcount,
 			COUNT(CASE WHEN v.status = 'active_online' OR v.status = 'active_offline' THEN 1 END) as activecount,
@@ -401,11 +401,11 @@ func aggregateDeposits() error {
 				SUM(amount) AS amount,
 				COUNT(CASE WHEN valid_signature = 't' THEN 1 END) AS validcount,
 				COUNT(CASE WHEN valid_signature = 'f' THEN 1 END) AS invalidcount
-			FROM eth1_deposits
+			FROM execution_deposits
 			GROUP BY from_address, publickey
-		) eth1
-		LEFT JOIN (SELECT pubkey, status FROM validators) v ON v.pubkey = eth1.publickey
-		GROUP BY eth1.from_address
+		) execution
+		LEFT JOIN (SELECT pubkey, status FROM validators) v ON v.pubkey = execution.publickey
+		GROUP BY execution.from_address
 		ON CONFLICT (from_address) DO UPDATE SET
 			amount               = excluded.amount,
 			validcount           = excluded.validcount,

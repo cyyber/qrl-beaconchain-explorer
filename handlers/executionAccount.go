@@ -22,7 +22,7 @@ import (
 
 func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/address.html")
-	var eth1AddressTemplate = templates.GetTemplate(templateFiles...)
+	var executionAddressTemplate = templates.GetTemplate(templateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
@@ -48,7 +48,7 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	addressBytes := common.FromHex(addressHex)
 	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address Z%x", addressBytes), templateFiles)
 
-	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.ZRC20TokensPerAddressLimit)
+	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.SQRCTF1TokensPerAddressLimit)
 	if err != nil {
 		logger.Errorf("error retrieving balances for %v route: %v", r.URL.String(), err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -60,9 +60,9 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	isContract := false
 	txns := &types.DataTableResponse{}
 	internal := &types.DataTableResponse{}
-	zrc20 := &types.DataTableResponse{}
-	zrc721 := &types.DataTableResponse{}
-	zrc1155 := &types.DataTableResponse{}
+	sqrctf1 := &types.DataTableResponse{}
+	sqrctn1 := &types.DataTableResponse{}
+	sqrctb1 := &types.DataTableResponse{}
 	blocksMined := &types.DataTableResponse{}
 	withdrawals := &types.DataTableResponse{}
 	withdrawalSummary := template.HTML("0")
@@ -96,25 +96,25 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	})
 	g.Go(func() error {
 		var err error
-		zrc20, err = db.BigtableClient.GetAddressZrc20TableData(addressBytes, "")
+		sqrctf1, err = db.BigtableClient.GetAddressSqrcTf1TableData(addressBytes, "")
 		if err != nil {
-			return fmt.Errorf("GetAddressZrc20TableData: %w", err)
+			return fmt.Errorf("GetAddressSqrcTf1TableData: %w", err)
 		}
 		return nil
 	})
 	g.Go(func() error {
 		var err error
-		zrc721, err = db.BigtableClient.GetAddressZrc721TableData(addressBytes, "")
+		sqrctn1, err = db.BigtableClient.GetAddressSqrcTn1TableData(addressBytes, "")
 		if err != nil {
-			return fmt.Errorf("GetAddressZrc721TableData: %w", err)
+			return fmt.Errorf("GetAddressSqrcTn1TableData: %w", err)
 		}
 		return nil
 	})
 	g.Go(func() error {
 		var err error
-		zrc1155, err = db.BigtableClient.GetAddressZrc1155TableData(addressBytes, "")
+		sqrctb1, err = db.BigtableClient.GetAddressSqrcTb1TableData(addressBytes, "")
 		if err != nil {
-			return fmt.Errorf("GetAddressZrc1155TableData: %w", err)
+			return fmt.Errorf("GetAddressSqrcTb1TableData: %w", err)
 		}
 		return nil
 	})
@@ -144,7 +144,7 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err = g.Wait(); err != nil {
-		if handleTemplateError(w, r, "eth1Account.go", "ExecutionAddress", "g.Wait()", err) != nil {
+		if handleTemplateError(w, r, "executionAccount.go", "ExecutionAddress", "g.Wait()", err) != nil {
 			return // an error has occurred and was processed
 		}
 		return
@@ -165,20 +165,20 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 			Data: internal,
 		})
 	}
-	if zrc20 != nil && len(zrc20.Data) != 0 {
+	if sqrctf1 != nil && len(sqrctf1.Data) != 0 {
 		tabs = append(tabs, types.ExecutionAddressPageTabs{
-			Id:   "zrc20Txns",
-			Href: "#zrc20Txns",
-			Text: "Zrc20 Token Txns",
-			Data: zrc20,
+			Id:   "sqrctf1Txns",
+			Href: "#sqrctf1Txns",
+			Text: "SqrcTf1 Token Txns",
+			Data: sqrctf1,
 		})
 	}
-	if zrc721 != nil && len(zrc721.Data) != 0 {
+	if sqrctn1 != nil && len(sqrctn1.Data) != 0 {
 		tabs = append(tabs, types.ExecutionAddressPageTabs{
-			Id:   "zrc721Txns",
-			Href: "#zrc721Txns",
-			Text: "Zrc721 Token Txns",
-			Data: zrc721,
+			Id:   "sqrctn1Txns",
+			Href: "#sqrctn1Txns",
+			Text: "SqrcTn1 Token Txns",
+			Data: sqrctn1,
 		})
 	}
 	if blocksMined != nil && len(blocksMined.Data) != 0 {
@@ -189,12 +189,12 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 			Data: blocksMined,
 		})
 	}
-	if zrc1155 != nil && len(zrc1155.Data) != 0 {
+	if sqrctb1 != nil && len(sqrctb1.Data) != 0 {
 		tabs = append(tabs, types.ExecutionAddressPageTabs{
-			Id:   "zrc1155Txns",
-			Href: "#zrc1155Txns",
-			Text: "Zrc1155 Token Txns",
-			Data: zrc1155,
+			Id:   "sqrctb1Txns",
+			Href: "#sqrctb1Txns",
+			Text: "SqrcTb1 Token Txns",
+			Data: sqrctb1,
 		})
 	}
 	if withdrawals != nil && len(withdrawals.Data) != 0 {
@@ -216,15 +216,15 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 		WithdrawalsSummary: withdrawalSummary,
 		TransactionsTable:  txns,
 		InternalTxnsTable:  internal,
-		Zrc20Table:         zrc20,
-		Zrc721Table:        zrc721,
-		Zrc1155Table:       zrc1155,
+		SqrcTf1Table:       sqrctf1,
+		SqrcTn1Table:       sqrctn1,
+		SqrcTb1Table:       sqrctb1,
 		WithdrawalsTable:   withdrawals,
 		BlocksMinedTable:   blocksMined,
 		Tabs:               tabs,
 	}
 
-	if handleTemplateError(w, r, "eth1Account.go", "ExecutionAddress", "Done", eth1AddressTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionAccount.go", "ExecutionAddress", "Done", executionAddressTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }
@@ -246,7 +246,7 @@ func ExecutionAddressTransactions(w http.ResponseWriter, r *http.Request) {
 
 	data, err := db.BigtableClient.GetAddressTransactionsTableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 tx table data", 0, errFields)
+		utils.LogError(err, "error getting execution tx table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -274,7 +274,7 @@ func ExecutionAddressBlocksMined(w http.ResponseWriter, r *http.Request) {
 
 	data, err := db.BigtableClient.GetAddressBlocksMinedTableData(address, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 blocks mined table data", 0, errFields)
+		utils.LogError(err, "error getting execution blocks mined table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -332,7 +332,7 @@ func ExecutionAddressInternalTransactions(w http.ResponseWriter, r *http.Request
 	pageToken := q.Get("pageToken")
 	data, err := db.BigtableClient.GetAddressInternalTableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 internal tx table data", 0, errFields)
+		utils.LogError(err, "error getting execution internal tx table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -343,7 +343,7 @@ func ExecutionAddressInternalTransactions(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func ExecutionAddressZrc20Transactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressSqrcTf1Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -357,9 +357,9 @@ func ExecutionAddressZrc20Transactions(w http.ResponseWriter, r *http.Request) {
 		"route": r.URL.String()}
 
 	pageToken := q.Get("pageToken")
-	data, err := db.BigtableClient.GetAddressZrc20TableData(addressBytes, pageToken)
+	data, err := db.BigtableClient.GetAddressSqrcTf1TableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 ZRC20 transactions table data", 0, errFields)
+		utils.LogError(err, "error getting execution SQRCTF1 transactions table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -370,7 +370,7 @@ func ExecutionAddressZrc20Transactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ExecutionAddressZrc721Transactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressSqrcTn1Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -384,9 +384,9 @@ func ExecutionAddressZrc721Transactions(w http.ResponseWriter, r *http.Request) 
 		"route": r.URL.String()}
 
 	pageToken := q.Get("pageToken")
-	data, err := db.BigtableClient.GetAddressZrc721TableData(addressBytes, pageToken)
+	data, err := db.BigtableClient.GetAddressSqrcTn1TableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 ZRC721 transactions table data", 0, errFields)
+		utils.LogError(err, "error getting execution SQRCTN1 transactions table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -397,7 +397,7 @@ func ExecutionAddressZrc721Transactions(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func ExecutionAddressZrc1155Transactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressSqrcTb1Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -411,9 +411,9 @@ func ExecutionAddressZrc1155Transactions(w http.ResponseWriter, r *http.Request)
 		"route": r.URL.String()}
 
 	pageToken := q.Get("pageToken")
-	data, err := db.BigtableClient.GetAddressZrc1155TableData(addressBytes, pageToken)
+	data, err := db.BigtableClient.GetAddressSqrcTb1TableData(addressBytes, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 ZRC1155 transactions table data", 0, errFields)
+		utils.LogError(err, "error getting execution SQRCTB1 transactions table data", 0, errFields)
 	}
 
 	err = json.NewEncoder(w).Encode(data)

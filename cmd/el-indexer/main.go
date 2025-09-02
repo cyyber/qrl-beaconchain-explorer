@@ -161,9 +161,9 @@ func main() {
 		bt.TransformBlock,
 		bt.TransformTx,
 		bt.TransformItx,
-		bt.TransformZRC20,
-		bt.TransformZRC721,
-		bt.TransformZRC1155,
+		bt.TransformSQRCTF1,
+		bt.TransformSQRCTN1,
+		bt.TransformSQRCTB1,
 		bt.TransformWithdrawals,
 		bt.TransformQrnsNameRegistered,
 		bt.TransformContract)

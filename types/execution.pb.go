@@ -1194,7 +1194,7 @@ func (x *ExecutionInternalTransactionIndexed) GetValue() []byte {
 	return nil
 }
 
-type ExecutionZRC20Indexed struct {
+type ExecutionSQRCTF1Indexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1208,8 +1208,8 @@ type ExecutionZRC20Indexed struct {
 	Value        []byte                 `protobuf:"bytes,7,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *ExecutionZRC20Indexed) Reset() {
-	*x = ExecutionZRC20Indexed{}
+func (x *ExecutionSQRCTF1Indexed) Reset() {
+	*x = ExecutionSQRCTF1Indexed{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_execution_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1217,13 +1217,13 @@ func (x *ExecutionZRC20Indexed) Reset() {
 	}
 }
 
-func (x *ExecutionZRC20Indexed) String() string {
+func (x *ExecutionSQRCTF1Indexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExecutionZRC20Indexed) ProtoMessage() {}
+func (*ExecutionSQRCTF1Indexed) ProtoMessage() {}
 
-func (x *ExecutionZRC20Indexed) ProtoReflect() protoreflect.Message {
+func (x *ExecutionSQRCTF1Indexed) ProtoReflect() protoreflect.Message {
 	mi := &file_types_execution_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1235,61 +1235,61 @@ func (x *ExecutionZRC20Indexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExecutionZRC20Indexed.ProtoReflect.Descriptor instead.
-func (*ExecutionZRC20Indexed) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExecutionSQRCTF1Indexed.ProtoReflect.Descriptor instead.
+func (*ExecutionSQRCTF1Indexed) Descriptor() ([]byte, []int) {
 	return file_types_execution_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ExecutionZRC20Indexed) GetParentHash() []byte {
+func (x *ExecutionSQRCTF1Indexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ExecutionZRC20Indexed) GetBlockNumber() uint64 {
+func (x *ExecutionSQRCTF1Indexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ExecutionZRC20Indexed) GetTokenAddress() []byte {
+func (x *ExecutionSQRCTF1Indexed) GetTokenAddress() []byte {
 	if x != nil {
 		return x.TokenAddress
 	}
 	return nil
 }
 
-func (x *ExecutionZRC20Indexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionSQRCTF1Indexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ExecutionZRC20Indexed) GetFrom() []byte {
+func (x *ExecutionSQRCTF1Indexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *ExecutionZRC20Indexed) GetTo() []byte {
+func (x *ExecutionSQRCTF1Indexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *ExecutionZRC20Indexed) GetValue() []byte {
+func (x *ExecutionSQRCTF1Indexed) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-type ExecutionZRC721Indexed struct {
+type ExecutionSQRCTN1Indexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1303,8 +1303,8 @@ type ExecutionZRC721Indexed struct {
 	TokenId      []byte                 `protobuf:"bytes,7,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
 }
 
-func (x *ExecutionZRC721Indexed) Reset() {
-	*x = ExecutionZRC721Indexed{}
+func (x *ExecutionSQRCTN1Indexed) Reset() {
+	*x = ExecutionSQRCTN1Indexed{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_execution_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1312,13 +1312,13 @@ func (x *ExecutionZRC721Indexed) Reset() {
 	}
 }
 
-func (x *ExecutionZRC721Indexed) String() string {
+func (x *ExecutionSQRCTN1Indexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExecutionZRC721Indexed) ProtoMessage() {}
+func (*ExecutionSQRCTN1Indexed) ProtoMessage() {}
 
-func (x *ExecutionZRC721Indexed) ProtoReflect() protoreflect.Message {
+func (x *ExecutionSQRCTN1Indexed) ProtoReflect() protoreflect.Message {
 	mi := &file_types_execution_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1330,54 +1330,54 @@ func (x *ExecutionZRC721Indexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExecutionZRC721Indexed.ProtoReflect.Descriptor instead.
-func (*ExecutionZRC721Indexed) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExecutionSQRCTN1Indexed.ProtoReflect.Descriptor instead.
+func (*ExecutionSQRCTN1Indexed) Descriptor() ([]byte, []int) {
 	return file_types_execution_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ExecutionZRC721Indexed) GetParentHash() []byte {
+func (x *ExecutionSQRCTN1Indexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ExecutionZRC721Indexed) GetBlockNumber() uint64 {
+func (x *ExecutionSQRCTN1Indexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ExecutionZRC721Indexed) GetTokenAddress() []byte {
+func (x *ExecutionSQRCTN1Indexed) GetTokenAddress() []byte {
 	if x != nil {
 		return x.TokenAddress
 	}
 	return nil
 }
 
-func (x *ExecutionZRC721Indexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionSQRCTN1Indexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ExecutionZRC721Indexed) GetFrom() []byte {
+func (x *ExecutionSQRCTN1Indexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *ExecutionZRC721Indexed) GetTo() []byte {
+func (x *ExecutionSQRCTN1Indexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *ExecutionZRC721Indexed) GetTokenId() []byte {
+func (x *ExecutionSQRCTN1Indexed) GetTokenId() []byte {
 	if x != nil {
 		return x.TokenId
 	}
@@ -1385,7 +1385,7 @@ func (x *ExecutionZRC721Indexed) GetTokenId() []byte {
 }
 
 // https://eips.ethereum.org/EIPS/eip-1155
-type ExecutionZRC1155Indexed struct {
+type ExecutionSQRCTB1Indexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1402,8 +1402,8 @@ type ExecutionZRC1155Indexed struct {
 	Operator []byte `protobuf:"bytes,9,opt,name=operator,proto3" json:"operator,omitempty"`
 }
 
-func (x *ExecutionZRC1155Indexed) Reset() {
-	*x = ExecutionZRC1155Indexed{}
+func (x *ExecutionSQRCTB1Indexed) Reset() {
+	*x = ExecutionSQRCTB1Indexed{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_execution_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1411,13 +1411,13 @@ func (x *ExecutionZRC1155Indexed) Reset() {
 	}
 }
 
-func (x *ExecutionZRC1155Indexed) String() string {
+func (x *ExecutionSQRCTB1Indexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ExecutionZRC1155Indexed) ProtoMessage() {}
+func (*ExecutionSQRCTB1Indexed) ProtoMessage() {}
 
-func (x *ExecutionZRC1155Indexed) ProtoReflect() protoreflect.Message {
+func (x *ExecutionSQRCTB1Indexed) ProtoReflect() protoreflect.Message {
 	mi := &file_types_execution_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1429,68 +1429,68 @@ func (x *ExecutionZRC1155Indexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExecutionZRC1155Indexed.ProtoReflect.Descriptor instead.
-func (*ExecutionZRC1155Indexed) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExecutionSQRCTB1Indexed.ProtoReflect.Descriptor instead.
+func (*ExecutionSQRCTB1Indexed) Descriptor() ([]byte, []int) {
 	return file_types_execution_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ExecutionZRC1155Indexed) GetParentHash() []byte {
+func (x *ExecutionSQRCTB1Indexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ExecutionZRC1155Indexed) GetBlockNumber() uint64 {
+func (x *ExecutionSQRCTB1Indexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ExecutionZRC1155Indexed) GetTokenAddress() []byte {
+func (x *ExecutionSQRCTB1Indexed) GetTokenAddress() []byte {
 	if x != nil {
 		return x.TokenAddress
 	}
 	return nil
 }
 
-func (x *ExecutionZRC1155Indexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionSQRCTB1Indexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ExecutionZRC1155Indexed) GetFrom() []byte {
+func (x *ExecutionSQRCTB1Indexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *ExecutionZRC1155Indexed) GetTo() []byte {
+func (x *ExecutionSQRCTB1Indexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *ExecutionZRC1155Indexed) GetTokenId() []byte {
+func (x *ExecutionSQRCTB1Indexed) GetTokenId() []byte {
 	if x != nil {
 		return x.TokenId
 	}
 	return nil
 }
 
-func (x *ExecutionZRC1155Indexed) GetValue() []byte {
+func (x *ExecutionSQRCTB1Indexed) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-func (x *ExecutionZRC1155Indexed) GetOperator() []byte {
+func (x *ExecutionSQRCTB1Indexed) GetOperator() []byte {
 	if x != nil {
 		return x.Operator
 	}
@@ -1769,9 +1769,9 @@ var file_types_execution_proto_goTypes = []interface{}{
 	(*ExecutionWithdrawalIndexed)(nil),          // 8: types.ExecutionWithdrawalIndexed
 	(*ExecutionTransactionIndexed)(nil),         // 9: types.ExecutionTransactionIndexed
 	(*ExecutionInternalTransactionIndexed)(nil), // 10: types.ExecutionInternalTransactionIndexed
-	(*ExecutionZRC20Indexed)(nil),               // 11: types.ExecutionZRC20Indexed
-	(*ExecutionZRC721Indexed)(nil),              // 12: types.ExecutionZRC721Indexed
-	(*ExecutionZRC1155Indexed)(nil),             // 13: types.ExecutionZRC1155Indexed
+	(*ExecutionSQRCTF1Indexed)(nil),             // 11: types.ExecutionSQRCTF1Indexed
+	(*ExecutionSQRCTN1Indexed)(nil),             // 12: types.ExecutionSQRCTN1Indexed
+	(*ExecutionSQRCTB1Indexed)(nil),             // 13: types.ExecutionSQRCTB1Indexed
 	(*timestamppb.Timestamp)(nil),               // 14: google.protobuf.Timestamp
 }
 var file_types_execution_proto_depIdxs = []int32{
@@ -1785,9 +1785,9 @@ var file_types_execution_proto_depIdxs = []int32{
 	14, // 7: types.ExecutionWithdrawalIndexed.time:type_name -> google.protobuf.Timestamp
 	14, // 8: types.ExecutionTransactionIndexed.time:type_name -> google.protobuf.Timestamp
 	14, // 9: types.ExecutionInternalTransactionIndexed.time:type_name -> google.protobuf.Timestamp
-	14, // 10: types.ExecutionZRC20Indexed.time:type_name -> google.protobuf.Timestamp
-	14, // 11: types.ExecutionZRC721Indexed.time:type_name -> google.protobuf.Timestamp
-	14, // 12: types.ExecutionZRC1155Indexed.time:type_name -> google.protobuf.Timestamp
+	14, // 10: types.ExecutionSQRCTF1Indexed.time:type_name -> google.protobuf.Timestamp
+	14, // 11: types.ExecutionSQRCTN1Indexed.time:type_name -> google.protobuf.Timestamp
+	14, // 12: types.ExecutionSQRCTB1Indexed.time:type_name -> google.protobuf.Timestamp
 	13, // [13:13] is the sub-list for method output_type
 	13, // [13:13] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
@@ -1934,7 +1934,7 @@ func file_types_execution_proto_init() {
 			}
 		}
 		file_types_execution_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExecutionZRC20Indexed); i {
+			switch v := v.(*ExecutionSQRCTF1Indexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1946,7 +1946,7 @@ func file_types_execution_proto_init() {
 			}
 		}
 		file_types_execution_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExecutionZRC721Indexed); i {
+			switch v := v.(*ExecutionSQRCTN1Indexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1958,7 +1958,7 @@ func file_types_execution_proto_init() {
 			}
 		}
 		file_types_execution_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExecutionZRC1155Indexed); i {
+			switch v := v.(*ExecutionSQRCTB1Indexed); i {
 			case 0:
 				return &v.state
 			case 1:

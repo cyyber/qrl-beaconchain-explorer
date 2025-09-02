@@ -1091,9 +1091,9 @@ type ExecutionAddressPageData struct {
 	BlocksMinedTable   *DataTableResponse
 	TransactionsTable  *DataTableResponse
 	InternalTxnsTable  *DataTableResponse
-	Zrc20Table         *DataTableResponse
-	Zrc721Table        *DataTableResponse
-	Zrc1155Table       *DataTableResponse
+	SqrcTf1Table       *DataTableResponse
+	SqrcTn1Table       *DataTableResponse
+	SqrcTb1Table       *DataTableResponse
 	WithdrawalsTable   *DataTableResponse
 	Tabs               []ExecutionAddressPageTabs
 }
@@ -1114,23 +1114,23 @@ type ExecutionAddressPageTabs struct {
 }
 
 type ExecutionAddressMetadata struct {
-	Balances                []*ExecutionAddressBalance
-	ZRC20TokenLimit         uint64
-	ZRC20TokenLimitExceeded bool
-	ZRC20                   *ZRC20Metadata
-	Name                    string
-	Tags                    []template.HTML
-	QuantaBalance           *ExecutionAddressBalance
+	Balances                  []*ExecutionAddressBalance
+	SQRCTF1TokenLimit         uint64
+	SQRCTF1TokenLimitExceeded bool
+	SQRCTF1                   *SQRCTF1Metadata
+	Name                      string
+	Tags                      []template.HTML
+	QuantaBalance             *ExecutionAddressBalance
 }
 
 type ExecutionAddressBalance struct {
 	Address  []byte
 	Token    []byte
 	Balance  []byte
-	Metadata *ZRC20Metadata
+	Metadata *SQRCTF1Metadata
 }
 
-type ZRC20Metadata struct {
+type SQRCTF1Metadata struct {
 	Decimals     []byte
 	Symbol       string
 	Name         string
@@ -1142,11 +1142,11 @@ type ZRC20Metadata struct {
 	Price        []byte
 }
 
-func (metadata ZRC20Metadata) MarshalBinary() ([]byte, error) {
+func (metadata SQRCTF1Metadata) MarshalBinary() ([]byte, error) {
 	return json.Marshal(metadata)
 }
 
-func (metadata ZRC20Metadata) UnmarshalBinary(data []byte) error {
+func (metadata SQRCTF1Metadata) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, &metadata)
 }
 
@@ -1161,7 +1161,7 @@ type ExecutionTokenPageData struct {
 	Address          string `json:"address"`
 	QRCode           string `json:"qr_code_base64"`
 	QRCodeInverse    string
-	Metadata         *ZRC20Metadata
+	Metadata         *SQRCTF1Metadata
 	Balance          *ExecutionAddressBalance
 	Holders          template.HTML `json:"holders"`
 	Transfers        template.HTML `json:"transfers"`

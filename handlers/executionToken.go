@@ -33,7 +33,7 @@ func ExecutionToken(w http.ResponseWriter, r *http.Request) {
 	g.SetLimit(3)
 
 	var txns *types.DataTableResponse
-	var metadata *types.ZRC20Metadata
+	var metadata *types.SQRCTF1Metadata
 	var balance *types.ExecutionAddressBalance
 	// var holders *types.DataTableResponse
 
@@ -45,7 +45,7 @@ func ExecutionToken(w http.ResponseWriter, r *http.Request) {
 
 	g.Go(func() error {
 		var err error
-		metadata, err = db.BigtableClient.GetZRC20MetadataForAddress(token)
+		metadata, err = db.BigtableClient.GetSQRCTF1MetadataForAddress(token)
 		return err
 	})
 

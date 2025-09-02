@@ -13,7 +13,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_validators_activationepoch_status ON
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_dilithium_change_block_root_validatorindex ON public.blocks_dilithium_change USING btree (block_root, validatorindex);
 -- +goose StatementEnd
 -- +goose StatementBegin
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_execution_deposits_from_address_publickey ON public.eth1_deposits USING btree (from_address, publickey);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_execution_deposits_from_address_publickey ON public.execution_deposits USING btree (from_address, publickey);
 -- +goose StatementEnd
 -- +goose StatementBegin
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_blocks_status_proposer ON public.blocks USING btree (status, proposer);

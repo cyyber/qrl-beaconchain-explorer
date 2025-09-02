@@ -184,7 +184,7 @@ func checkValidatorsQuery(validatorIndices []uint64, validatorPubkeys [][]byte) 
 	}
 
 	if len(validatorPubkeys) > 0 {
-		err := db.ReaderDb.Get(&validatorCount, `SELECT COUNT(DISTINCT publickey) AS distinct_count FROM eth1_deposits WHERE publickey = ANY($1)`, validatorPubkeys)
+		err := db.ReaderDb.Get(&validatorCount, `SELECT COUNT(DISTINCT publickey) AS distinct_count FROM execution_deposits WHERE publickey = ANY($1)`, validatorPubkeys)
 		if err != nil {
 			return err
 		}
@@ -742,7 +742,7 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 		SELECT
 			publickey,
 			from_address
-		FROM eth1_deposits
+		FROM execution_deposits
 		WHERE publickey = ANY($1)`, pubkeyFilter)
 	if err != nil {
 		utils.LogError(err, "error retrieving validator deposists", 0, errFieldMap)

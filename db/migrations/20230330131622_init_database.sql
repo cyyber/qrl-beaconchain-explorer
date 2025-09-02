@@ -444,7 +444,7 @@ CREATE TABLE IF NOT EXISTS
     );
     
 CREATE TABLE IF NOT EXISTS
-    eth1_deposits (
+    execution_deposits (
         tx_hash bytea NOT NULL,
         tx_input bytea NOT NULL,
         tx_index INT NOT NULL,
@@ -461,12 +461,12 @@ CREATE TABLE IF NOT EXISTS
         PRIMARY KEY (tx_hash, merkletree_index)
     );
 
-CREATE INDEX IF NOT EXISTS idx_execution_deposits ON eth1_deposits (publickey);
+CREATE INDEX IF NOT EXISTS idx_execution_deposits ON execution_deposits (publickey);
 
-CREATE INDEX IF NOT EXISTS idx_execution_deposits_from_address ON eth1_deposits (from_address);
+CREATE INDEX IF NOT EXISTS idx_execution_deposits_from_address ON execution_deposits (from_address);
 
 CREATE TABLE IF NOT EXISTS
-    eth1_deposits_aggregated (
+    execution_deposits_aggregated (
         from_address bytea NOT NULL,
         amount BIGINT NOT NULL,
         validcount INT NOT NULL,

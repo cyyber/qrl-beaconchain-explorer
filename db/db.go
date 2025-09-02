@@ -202,33 +202,33 @@ func GetExecutionDepositsJoinConsensusDeposits(query string, length, start uint6
 
 	// Define the base queries
 	deposistsCountQuery := `
-		SELECT COUNT(*) FROM eth1_deposits as eth1
+		SELECT COUNT(*) FROM execution_deposits as execution
 		%s`
 
 	deposistsQuery := `
 		SELECT 
-			eth1.tx_hash as tx_hash,
-			eth1.tx_input as tx_input,
-			eth1.tx_index as tx_index,
-			eth1.block_number as block_number,
-			eth1.block_ts as block_ts,
-			eth1.from_address as from_address,
-			eth1.publickey as publickey,
-			eth1.withdrawal_credentials as withdrawal_credentials,
-			eth1.amount as amount,
-			eth1.signature as signature,
-			eth1.merkletree_index as merkletree_index,
-			eth1.valid_signature as valid_signature,
+			execution.tx_hash as tx_hash,
+			execution.tx_input as tx_input,
+			execution.tx_index as tx_index,
+			execution.block_number as block_number,
+			execution.block_ts as block_ts,
+			execution.from_address as from_address,
+			execution.publickey as publickey,
+			execution.withdrawal_credentials as withdrawal_credentials,
+			execution.amount as amount,
+			execution.signature as signature,
+			execution.merkletree_index as merkletree_index,
+			execution.valid_signature as valid_signature,
 			COALESCE(v.state, 'deposited') as state
 		FROM
-			eth1_deposits as eth1
+			execution_deposits as execution
 		LEFT JOIN
 			(
 				SELECT pubkey, status AS state
 				FROM validators
 			) as v
 		ON
-			v.pubkey = eth1.publickey
+			v.pubkey = execution.publickey
 		%s
 		ORDER BY %s %s
 		LIMIT $1
@@ -259,22 +259,22 @@ func GetExecutionDepositsJoinConsensusDeposits(query string, length, start uint6
 
 	param = hash
 	if utils.IsHash(trimmedQuery) {
-		searchQuery = `WHERE eth1.publickey = $3`
+		searchQuery = `WHERE execution.publickey = $3`
 	} else if utils.IsTxHash(trimmedQuery) {
 		// Withdrawal credentials have the same length as a tx hash
 		if utils.IsValidWithdrawalCredentials(trimmedQuery) {
 			searchQuery = `
 				WHERE 
-					eth1.tx_hash = $3
-					OR eth1.withdrawal_credentials = $3`
+					execution.tx_hash = $3
+					OR execution.withdrawal_credentials = $3`
 		} else {
-			searchQuery = `WHERE eth1.tx_hash = $3`
+			searchQuery = `WHERE execution.tx_hash = $3`
 		}
 	} else if utils.IsAddress(trimmedQuery) {
-		searchQuery = `WHERE eth1.from_address = $3`
+		searchQuery = `WHERE execution.from_address = $3`
 	} else if uiQuery, parseErr := strconv.ParseUint(query, 10, 31); parseErr == nil { // Limit to 31 bits to stay within math.MaxInt32
 		param = uiQuery
-		searchQuery = `WHERE eth1.block_number = $3`
+		searchQuery = `WHERE execution.block_number = $3`
 	} else {
 		// The query does not fulfill any of the requirements for a search
 		return deposits, totalCount, nil
@@ -375,8 +375,8 @@ func GetConsensusDeposits(query string, length, start uint64, orderBy, orderDir 
 	} else if utils.IsAddress(trimmedQuery) {
 		param = hash
 		searchQuery = `
-				LEFT JOIN eth1_deposits ON blocks_deposits.publickey = eth1_deposits.publickey
-				WHERE eth1_deposits.from_address = $3`
+				LEFT JOIN execution_deposits ON blocks_deposits.publickey = execution_deposits.publickey
+				WHERE execution_deposits.from_address = $3`
 	} else if uiQuery, parseErr := strconv.ParseUint(query, 10, 31); parseErr == nil { // Limit to 31 bits to stay within math.MaxInt32
 		param = uiQuery
 		searchQuery = `WHERE blocks_deposits.block_slot = $3`
@@ -512,12 +512,12 @@ func GetValidatorDeposits(publicKey []byte) (*types.ValidatorDeposits, error) {
 	deposits := &types.ValidatorDeposits{}
 	err := ReaderDb.Select(&deposits.ExecutionDeposits, `
 		SELECT tx_hash, tx_input, tx_index, block_number, EXTRACT(epoch FROM block_ts)::INT as block_ts, from_address, publickey, withdrawal_credentials, amount, signature, merkletree_index, valid_signature
-		FROM eth1_deposits WHERE publickey = $1 ORDER BY block_number ASC`, publicKey)
+		FROM execution_deposits WHERE publickey = $1 ORDER BY block_number ASC`, publicKey)
 	if err != nil {
 		return nil, err
 	}
 	if len(deposits.ExecutionDeposits) > 0 {
-		deposits.LastEth1DepositTs = deposits.ExecutionDeposits[len(deposits.ExecutionDeposits)-1].BlockTs
+		deposits.LastExecutionDepositTs = deposits.ExecutionDeposits[len(deposits.ExecutionDeposits)-1].BlockTs
 
 		// retrieve address names from bigtable
 		names := make(map[string]string)

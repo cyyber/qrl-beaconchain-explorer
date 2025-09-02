@@ -28,7 +28,7 @@ import (
 	go_qrns "github.com/wealdtech/go-ens/v3"
 )
 
-// TransformQrnsNameRegistered accepts an eth1 block and creates bigtable mutations for QRNS Name events.
+// TransformQrnsNameRegistered accepts an execution block and creates bigtable mutations for QRNS Name events.
 // It transforms the logs contained within a block and indexes qrns relevant transactions and tags changes (to be verified from the node in a separate process)
 // ==================================================
 //
