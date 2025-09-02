@@ -45,7 +45,7 @@ func GetQrnsDomain(search string) (*types.QrnsDomainResponse, error) {
 			logger.Errorf("error caching ens address: %v", err)
 		}
 
-	} else if utils.IsValidEth1Address(search) {
+	} else if utils.IsValidExecutionAddress(search) {
 		data.Address = search
 
 		cacheKey := fmt.Sprintf("%d:ens:domain:%v", utils.Config.Chain.ClConfig.DepositChainID, search)

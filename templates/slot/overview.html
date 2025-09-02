@@ -125,15 +125,15 @@
             <div class="col-md-10">
               <div class="row p-1">
                 <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Hash of the voted on Eth Block">Block Hash:</span></div>
-                <div class="col-md-10 text-monospace text-break">{{ formatEth1BlockHash .Eth1dataBlockhash }}</div>
+                <div class="col-md-10 text-monospace text-break">{{ formatExecutionBlockHash .ExecutiondataBlockhash }}</div>
               </div>
               <div class="row p-1">
                 <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Amount of validator deposits to the deposit contract in this block">Deposit Count:</span></div>
-                <div class="col-md-10 text-monospace text-break">{{ formatAddCommas .Eth1dataDepositcount }}</div>
+                <div class="col-md-10 text-monospace text-break">{{ formatAddCommas .ExecutiondataDepositcount }}</div>
               </div>
               <div class="row p-1">
                 <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="The root of the merkle tree of deposits">Deposit Root:</span></div>
-                <div class="col-md-10 text-monospace text-break">0x{{ printf "%x" .Eth1dataDepositroot }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .Eth1dataDepositroot }}"></i></div>
+                <div class="col-md-10 text-monospace text-break">0x{{ printf "%x" .ExecutiondataDepositroot }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="0x{{ printf "%x" .ExecutiondataDepositroot }}"></i></div>
               </div>
             </div>
           </div>
@@ -213,7 +213,7 @@
 
                 <div class="row p-1">
                   <div class="col-md-2"><span data-toggle="tooltip" data-placement="top" title="Base fee per gas">Base fee per gas:</span></div>
-                  <div class="col-md-10 text-monospace text-break">{{ formatAmount .BaseFeePerGas "GPlanck" 5 }}</div>
+                  <div class="col-md-10 text-monospace text-break">{{ formatAmount .BaseFeePerGas "Shor" 5 }}</div>
                 </div>
 
                 <div class="row p-1">

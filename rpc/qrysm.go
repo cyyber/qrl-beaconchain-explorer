@@ -501,7 +501,7 @@ func (lc *QrysmClient) GetEpochData(epoch uint64, skipHistoricBalances bool) (*t
 				RandaoReveal:      []byte{},
 				Graffiti:          []byte{},
 				BodyRoot:          []byte{},
-				Eth1Data:          &types.Eth1Data{},
+				ExecutionData:     &types.ExecutionData{},
 				ProposerSlashings: make([]*types.ProposerSlashing, 0),
 				AttesterSlashings: make([]*types.AttesterSlashing, 0),
 				Attestations:      make([]*types.Attestation, 0),
@@ -667,7 +667,7 @@ func (lc *QrysmClient) GetBlockBySlot(slot uint64) (*types.Block, error) {
 				RandaoReveal:      []byte{},
 				Graffiti:          []byte{},
 				BodyRoot:          []byte{},
-				Eth1Data:          &types.Eth1Data{},
+				ExecutionData:     &types.ExecutionData{},
 				ProposerSlashings: make([]*types.ProposerSlashing, 0),
 				AttesterSlashings: make([]*types.AttesterSlashing, 0),
 				Attestations:      make([]*types.Attestation, 0),
@@ -825,10 +825,10 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 		Signature:    parsedBlock.Signature,
 		RandaoReveal: utils.MustParseHex(parsedBlock.Message.Body.RandaoReveal),
 		Graffiti:     utils.MustParseHex(parsedBlock.Message.Body.Graffiti),
-		Eth1Data: &types.Eth1Data{
-			DepositRoot:  utils.MustParseHex(parsedBlock.Message.Body.Eth1Data.DepositRoot),
-			DepositCount: uint64(parsedBlock.Message.Body.Eth1Data.DepositCount),
-			BlockHash:    utils.MustParseHex(parsedBlock.Message.Body.Eth1Data.BlockHash),
+		ExecutionData: &types.ExecutionData{
+			DepositRoot:  utils.MustParseHex(parsedBlock.Message.Body.ExecutionData.DepositRoot),
+			DepositCount: uint64(parsedBlock.Message.Body.ExecutionData.DepositCount),
+			BlockHash:    utils.MustParseHex(parsedBlock.Message.Body.ExecutionData.BlockHash),
 		},
 		ProposerSlashings:                make([]*types.ProposerSlashing, len(parsedBlock.Message.Body.ProposerSlashings)),
 		AttesterSlashings:                make([]*types.AttesterSlashing, len(parsedBlock.Message.Body.AttesterSlashings)),
@@ -934,8 +934,8 @@ func (lc *QrysmClient) blockFromResponse(parsedHeaders *StandardBeaconHeaderResp
 	}
 
 	// TODO: this is legacy from old qrysm API. Does it even still apply?
-	if block.Eth1Data.DepositCount > 2147483647 { // Sometimes the qrysm node does return bogus data for the DepositCount value
-		block.Eth1Data.DepositCount = 0
+	if block.ExecutionData.DepositCount > 2147483647 { // Sometimes the qrysm node does return bogus data for the DepositCount value
+		block.ExecutionData.DepositCount = 0
 	}
 
 	for i, proposerSlashing := range parsedBlock.Message.Body.ProposerSlashings {
@@ -1135,8 +1135,8 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 	if epoch < request_epoch {
 		// we requested the next epoch, so we have to use the previous value for everything here
 
-		prevEpochActiveGplanck := parsedResponse.Data.PreviousEpochActiveGplanck
-		if prevEpochActiveGplanck == 0 {
+		prevEpochActiveShor := parsedResponse.Data.PreviousEpochActiveShor
+		if prevEpochActiveShor == 0 {
 			prevResp, err := lc.get(fmt.Sprintf("%s/qrl/v1alpha1/validators/participation?epoch=%d", lc.endpoint, request_epoch-1))
 			if err != nil {
 				return nil, fmt.Errorf("error retrieving validator participation data for prevEpoch %v: %w", request_epoch-1, err)
@@ -1146,22 +1146,22 @@ func (lc *QrysmClient) GetValidatorParticipation(epoch uint64) (*types.Validator
 			if err != nil {
 				return nil, fmt.Errorf("error parsing validator participation data for prevEpoch %v: %w", epoch, err)
 			}
-			prevEpochActiveGplanck = parsedPrevResponse.Data.CurrentEpochActiveGplanck
+			prevEpochActiveShor = parsedPrevResponse.Data.CurrentEpochActiveShor
 		}
 
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
-			GlobalParticipationRate: float32(parsedResponse.Data.PreviousEpochTargetAttestingGplanck) / float32(prevEpochActiveGplanck),
-			VotedQuanta:             uint64(parsedResponse.Data.PreviousEpochTargetAttestingGplanck),
-			EligibleQuanta:          uint64(prevEpochActiveGplanck),
+			GlobalParticipationRate: float32(parsedResponse.Data.PreviousEpochTargetAttestingShor) / float32(prevEpochActiveShor),
+			VotedQuanta:             uint64(parsedResponse.Data.PreviousEpochTargetAttestingShor),
+			EligibleQuanta:          uint64(prevEpochActiveShor),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	} else {
 		res = &types.ValidatorParticipation{
 			Epoch:                   epoch,
-			GlobalParticipationRate: float32(parsedResponse.Data.CurrentEpochTargetAttestingGplanck) / float32(parsedResponse.Data.CurrentEpochActiveGplanck),
-			VotedQuanta:             uint64(parsedResponse.Data.CurrentEpochTargetAttestingGplanck),
-			EligibleQuanta:          uint64(parsedResponse.Data.CurrentEpochActiveGplanck),
+			GlobalParticipationRate: float32(parsedResponse.Data.CurrentEpochTargetAttestingShor) / float32(parsedResponse.Data.CurrentEpochActiveShor),
+			VotedQuanta:             uint64(parsedResponse.Data.CurrentEpochTargetAttestingShor),
+			EligibleQuanta:          uint64(parsedResponse.Data.CurrentEpochActiveShor),
 			Finalized:               epoch <= head.FinalizedEpoch && head.JustifiedEpoch > 0,
 		}
 	}
@@ -1282,11 +1282,11 @@ type StandardSyncCommitteesResponse struct {
 
 type QrysmValidatorParticipationResponse struct {
 	Data struct {
-		CurrentEpochActiveGplanck           uint64Str `json:"currentEpochActiveGplanck"`
-		PreviousEpochActiveGplanck          uint64Str `json:"previousEpochActiveGplanck"`
-		CurrentEpochTargetAttestingGplanck  uint64Str `json:"currentEpochTargetAttestingGplanck"`
-		PreviousEpochTargetAttestingGplanck uint64Str `json:"previousEpochTargetAttestingGplanck"`
-		PreviousEpochHeadAttestingGplanck   uint64Str `json:"previousEpochHeadAttestingGplanck"`
+		CurrentEpochActiveShor           uint64Str `json:"currentEpochActiveShor"`
+		PreviousEpochActiveShor          uint64Str `json:"previousEpochActiveShor"`
+		CurrentEpochTargetAttestingShor  uint64Str `json:"currentEpochTargetAttestingShor"`
+		PreviousEpochTargetAttestingShor uint64Str `json:"previousEpochTargetAttestingShor"`
+		PreviousEpochHeadAttestingShor   uint64Str `json:"previousEpochHeadAttestingShor"`
 	} `json:"participation"`
 }
 
@@ -1386,7 +1386,7 @@ type VoluntaryExit struct {
 	Signature string `json:"signature"`
 }
 
-type Eth1Data struct {
+type ExecutionData struct {
 	DepositRoot  string    `json:"deposit_root"`
 	DepositCount uint64Str `json:"deposit_count"`
 	BlockHash    string    `json:"block_hash"`
@@ -1441,7 +1441,7 @@ type AnySignedBlock struct {
 		StateRoot     string    `json:"state_root"`
 		Body          struct {
 			RandaoReveal      string             `json:"randao_reveal"`
-			Eth1Data          Eth1Data           `json:"eth1_data"`
+			ExecutionData     ExecutionData      `json:"execution_data"`
 			Graffiti          string             `json:"graffiti"`
 			ProposerSlashings []ProposerSlashing `json:"proposer_slashings"`
 			AttesterSlashings []AttesterSlashing `json:"attester_slashings"`

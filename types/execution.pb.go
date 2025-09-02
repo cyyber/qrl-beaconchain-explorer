@@ -2,16 +2,17 @@
 // versions:
 // 	protoc-gen-go v1.30.0
 // 	protoc        v4.25.0
-// source: types/eth1.proto
+// source: types/execution.proto
 
 package types
 
 import (
+	reflect "reflect"
+	sync "sync"
+
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-	reflect "reflect"
-	sync "sync"
 )
 
 const (
@@ -21,47 +22,47 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Eth1Block is stored in the blocks table under <chainID>:<reversePaddedNumber>
-type Eth1Block struct {
+// ExecutionBlock is stored in the blocks table under <chainID>:<reversePaddedNumber>
+type ExecutionBlock struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hash         []byte                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	ParentHash   []byte                 `protobuf:"bytes,2,opt,name=parent_hash,json=parentHash,proto3" json:"parent_hash,omitempty"`
-	Coinbase     []byte                 `protobuf:"bytes,4,opt,name=coinbase,proto3" json:"coinbase,omitempty"`
-	Root         []byte                 `protobuf:"bytes,5,opt,name=root,proto3" json:"root,omitempty"`
-	TxHash       []byte                 `protobuf:"bytes,6,opt,name=tx_hash,json=txHash,proto3" json:"tx_hash,omitempty"`
-	ReceiptHash  []byte                 `protobuf:"bytes,7,opt,name=receipt_hash,json=receiptHash,proto3" json:"receipt_hash,omitempty"`
-	Number       uint64                 `protobuf:"varint,9,opt,name=number,proto3" json:"number,omitempty"`
-	GasLimit     uint64                 `protobuf:"varint,10,opt,name=gas_limit,json=gasLimit,proto3" json:"gas_limit,omitempty"`
-	GasUsed      uint64                 `protobuf:"varint,11,opt,name=gas_used,json=gasUsed,proto3" json:"gas_used,omitempty"`
-	Time         *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=time,proto3" json:"time,omitempty"`
-	Extra        []byte                 `protobuf:"bytes,13,opt,name=extra,proto3" json:"extra,omitempty"`
-	Random       []byte                 `protobuf:"bytes,14,opt,name=random,proto3" json:"random,omitempty"`
-	Bloom        []byte                 `protobuf:"bytes,17,opt,name=bloom,proto3" json:"bloom,omitempty"`
-	BaseFee      []byte                 `protobuf:"bytes,18,opt,name=base_fee,json=baseFee,proto3" json:"base_fee,omitempty"`
-	Transactions []*Eth1Transaction     `protobuf:"bytes,21,rep,name=transactions,proto3" json:"transactions,omitempty"`
-	Withdrawals  []*Eth1Withdrawal      `protobuf:"bytes,22,rep,name=withdrawals,proto3" json:"withdrawals,omitempty"`
+	Hash         []byte                  `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	ParentHash   []byte                  `protobuf:"bytes,2,opt,name=parent_hash,json=parentHash,proto3" json:"parent_hash,omitempty"`
+	Coinbase     []byte                  `protobuf:"bytes,4,opt,name=coinbase,proto3" json:"coinbase,omitempty"`
+	Root         []byte                  `protobuf:"bytes,5,opt,name=root,proto3" json:"root,omitempty"`
+	TxHash       []byte                  `protobuf:"bytes,6,opt,name=tx_hash,json=txHash,proto3" json:"tx_hash,omitempty"`
+	ReceiptHash  []byte                  `protobuf:"bytes,7,opt,name=receipt_hash,json=receiptHash,proto3" json:"receipt_hash,omitempty"`
+	Number       uint64                  `protobuf:"varint,9,opt,name=number,proto3" json:"number,omitempty"`
+	GasLimit     uint64                  `protobuf:"varint,10,opt,name=gas_limit,json=gasLimit,proto3" json:"gas_limit,omitempty"`
+	GasUsed      uint64                  `protobuf:"varint,11,opt,name=gas_used,json=gasUsed,proto3" json:"gas_used,omitempty"`
+	Time         *timestamppb.Timestamp  `protobuf:"bytes,12,opt,name=time,proto3" json:"time,omitempty"`
+	Extra        []byte                  `protobuf:"bytes,13,opt,name=extra,proto3" json:"extra,omitempty"`
+	Random       []byte                  `protobuf:"bytes,14,opt,name=random,proto3" json:"random,omitempty"`
+	Bloom        []byte                  `protobuf:"bytes,17,opt,name=bloom,proto3" json:"bloom,omitempty"`
+	BaseFee      []byte                  `protobuf:"bytes,18,opt,name=base_fee,json=baseFee,proto3" json:"base_fee,omitempty"`
+	Transactions []*ExecutionTransaction `protobuf:"bytes,21,rep,name=transactions,proto3" json:"transactions,omitempty"`
+	Withdrawals  []*ExecutionWithdrawal  `protobuf:"bytes,22,rep,name=withdrawals,proto3" json:"withdrawals,omitempty"`
 }
 
-func (x *Eth1Block) Reset() {
-	*x = Eth1Block{}
+func (x *ExecutionBlock) Reset() {
+	*x = ExecutionBlock{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[0]
+		mi := &file_types_execution_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1Block) String() string {
+func (x *ExecutionBlock) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1Block) ProtoMessage() {}
+func (*ExecutionBlock) ProtoMessage() {}
 
-func (x *Eth1Block) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[0]
+func (x *ExecutionBlock) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -72,124 +73,124 @@ func (x *Eth1Block) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1Block.ProtoReflect.Descriptor instead.
-func (*Eth1Block) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use ExecutionBlock.ProtoReflect.Descriptor instead.
+func (*ExecutionBlock) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Eth1Block) GetHash() []byte {
+func (x *ExecutionBlock) GetHash() []byte {
 	if x != nil {
 		return x.Hash
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetParentHash() []byte {
+func (x *ExecutionBlock) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetCoinbase() []byte {
+func (x *ExecutionBlock) GetCoinbase() []byte {
 	if x != nil {
 		return x.Coinbase
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetRoot() []byte {
+func (x *ExecutionBlock) GetRoot() []byte {
 	if x != nil {
 		return x.Root
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetTxHash() []byte {
+func (x *ExecutionBlock) GetTxHash() []byte {
 	if x != nil {
 		return x.TxHash
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetReceiptHash() []byte {
+func (x *ExecutionBlock) GetReceiptHash() []byte {
 	if x != nil {
 		return x.ReceiptHash
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetNumber() uint64 {
+func (x *ExecutionBlock) GetNumber() uint64 {
 	if x != nil {
 		return x.Number
 	}
 	return 0
 }
 
-func (x *Eth1Block) GetGasLimit() uint64 {
+func (x *ExecutionBlock) GetGasLimit() uint64 {
 	if x != nil {
 		return x.GasLimit
 	}
 	return 0
 }
 
-func (x *Eth1Block) GetGasUsed() uint64 {
+func (x *ExecutionBlock) GetGasUsed() uint64 {
 	if x != nil {
 		return x.GasUsed
 	}
 	return 0
 }
 
-func (x *Eth1Block) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionBlock) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetExtra() []byte {
+func (x *ExecutionBlock) GetExtra() []byte {
 	if x != nil {
 		return x.Extra
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetRandom() []byte {
+func (x *ExecutionBlock) GetRandom() []byte {
 	if x != nil {
 		return x.Random
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetBloom() []byte {
+func (x *ExecutionBlock) GetBloom() []byte {
 	if x != nil {
 		return x.Bloom
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetBaseFee() []byte {
+func (x *ExecutionBlock) GetBaseFee() []byte {
 	if x != nil {
 		return x.BaseFee
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetTransactions() []*Eth1Transaction {
+func (x *ExecutionBlock) GetTransactions() []*ExecutionTransaction {
 	if x != nil {
 		return x.Transactions
 	}
 	return nil
 }
 
-func (x *Eth1Block) GetWithdrawals() []*Eth1Withdrawal {
+func (x *ExecutionBlock) GetWithdrawals() []*ExecutionWithdrawal {
 	if x != nil {
 		return x.Withdrawals
 	}
 	return nil
 }
 
-type Eth1Withdrawal struct {
+type ExecutionWithdrawal struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -200,23 +201,23 @@ type Eth1Withdrawal struct {
 	Amount         []byte `protobuf:"bytes,4,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
-func (x *Eth1Withdrawal) Reset() {
-	*x = Eth1Withdrawal{}
+func (x *ExecutionWithdrawal) Reset() {
+	*x = ExecutionWithdrawal{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[1]
+		mi := &file_types_execution_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1Withdrawal) String() string {
+func (x *ExecutionWithdrawal) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1Withdrawal) ProtoMessage() {}
+func (*ExecutionWithdrawal) ProtoMessage() {}
 
-func (x *Eth1Withdrawal) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[1]
+func (x *ExecutionWithdrawal) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -227,40 +228,40 @@ func (x *Eth1Withdrawal) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1Withdrawal.ProtoReflect.Descriptor instead.
-func (*Eth1Withdrawal) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use ExecutionWithdrawal.ProtoReflect.Descriptor instead.
+func (*ExecutionWithdrawal) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Eth1Withdrawal) GetIndex() uint64 {
+func (x *ExecutionWithdrawal) GetIndex() uint64 {
 	if x != nil {
 		return x.Index
 	}
 	return 0
 }
 
-func (x *Eth1Withdrawal) GetValidatorIndex() uint64 {
+func (x *ExecutionWithdrawal) GetValidatorIndex() uint64 {
 	if x != nil {
 		return x.ValidatorIndex
 	}
 	return 0
 }
 
-func (x *Eth1Withdrawal) GetAddress() []byte {
+func (x *ExecutionWithdrawal) GetAddress() []byte {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *Eth1Withdrawal) GetAmount() []byte {
+func (x *ExecutionWithdrawal) GetAmount() []byte {
 	if x != nil {
 		return x.Amount
 	}
 	return nil
 }
 
-type Eth1Transaction struct {
+type ExecutionTransaction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -278,34 +279,34 @@ type Eth1Transaction struct {
 	AccessList           []*AccessList `protobuf:"bytes,15,rep,name=access_list,json=accessList,proto3" json:"access_list,omitempty"`
 	Hash                 []byte        `protobuf:"bytes,16,opt,name=hash,proto3" json:"hash,omitempty"`
 	// Receipt fields
-	ContractAddress    []byte     `protobuf:"bytes,17,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
-	CommulativeGasUsed uint64     `protobuf:"varint,18,opt,name=commulative_gas_used,json=commulativeGasUsed,proto3" json:"commulative_gas_used,omitempty"`
-	GasUsed            uint64     `protobuf:"varint,19,opt,name=gas_used,json=gasUsed,proto3" json:"gas_used,omitempty"`
-	LogsBloom          []byte     `protobuf:"bytes,20,opt,name=logs_bloom,json=logsBloom,proto3" json:"logs_bloom,omitempty"`
-	Status             uint64     `protobuf:"varint,21,opt,name=status,proto3" json:"status,omitempty"`
-	ErrorMsg           string     `protobuf:"bytes,22,opt,name=error_msg,json=errorMsg,proto3" json:"error_msg,omitempty"`
-	Logs               []*Eth1Log `protobuf:"bytes,23,rep,name=logs,proto3" json:"logs,omitempty"`
+	ContractAddress    []byte          `protobuf:"bytes,17,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty"`
+	CommulativeGasUsed uint64          `protobuf:"varint,18,opt,name=commulative_gas_used,json=commulativeGasUsed,proto3" json:"commulative_gas_used,omitempty"`
+	GasUsed            uint64          `protobuf:"varint,19,opt,name=gas_used,json=gasUsed,proto3" json:"gas_used,omitempty"`
+	LogsBloom          []byte          `protobuf:"bytes,20,opt,name=logs_bloom,json=logsBloom,proto3" json:"logs_bloom,omitempty"`
+	Status             uint64          `protobuf:"varint,21,opt,name=status,proto3" json:"status,omitempty"`
+	ErrorMsg           string          `protobuf:"bytes,22,opt,name=error_msg,json=errorMsg,proto3" json:"error_msg,omitempty"`
+	Logs               []*ExecutionLog `protobuf:"bytes,23,rep,name=logs,proto3" json:"logs,omitempty"`
 	// Internal transactions
-	Itx []*Eth1InternalTransaction `protobuf:"bytes,24,rep,name=itx,proto3" json:"itx,omitempty"`
+	Itx []*ExecutionInternalTransaction `protobuf:"bytes,24,rep,name=itx,proto3" json:"itx,omitempty"`
 }
 
-func (x *Eth1Transaction) Reset() {
-	*x = Eth1Transaction{}
+func (x *ExecutionTransaction) Reset() {
+	*x = ExecutionTransaction{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[2]
+		mi := &file_types_execution_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1Transaction) String() string {
+func (x *ExecutionTransaction) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1Transaction) ProtoMessage() {}
+func (*ExecutionTransaction) ProtoMessage() {}
 
-func (x *Eth1Transaction) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[2]
+func (x *ExecutionTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -316,145 +317,145 @@ func (x *Eth1Transaction) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1Transaction.ProtoReflect.Descriptor instead.
-func (*Eth1Transaction) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use ExecutionTransaction.ProtoReflect.Descriptor instead.
+func (*ExecutionTransaction) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Eth1Transaction) GetType() uint32 {
+func (x *ExecutionTransaction) GetType() uint32 {
 	if x != nil {
 		return x.Type
 	}
 	return 0
 }
 
-func (x *Eth1Transaction) GetNonce() uint64 {
+func (x *ExecutionTransaction) GetNonce() uint64 {
 	if x != nil {
 		return x.Nonce
 	}
 	return 0
 }
 
-func (x *Eth1Transaction) GetMaxPriorityFeePerGas() []byte {
+func (x *ExecutionTransaction) GetMaxPriorityFeePerGas() []byte {
 	if x != nil {
 		return x.MaxPriorityFeePerGas
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetMaxFeePerGas() []byte {
+func (x *ExecutionTransaction) GetMaxFeePerGas() []byte {
 	if x != nil {
 		return x.MaxFeePerGas
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetGas() uint64 {
+func (x *ExecutionTransaction) GetGas() uint64 {
 	if x != nil {
 		return x.Gas
 	}
 	return 0
 }
 
-func (x *Eth1Transaction) GetValue() []byte {
+func (x *ExecutionTransaction) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetData() []byte {
+func (x *ExecutionTransaction) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetTo() []byte {
+func (x *ExecutionTransaction) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetFrom() []byte {
+func (x *ExecutionTransaction) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetChainId() []byte {
+func (x *ExecutionTransaction) GetChainId() []byte {
 	if x != nil {
 		return x.ChainId
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetAccessList() []*AccessList {
+func (x *ExecutionTransaction) GetAccessList() []*AccessList {
 	if x != nil {
 		return x.AccessList
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetHash() []byte {
+func (x *ExecutionTransaction) GetHash() []byte {
 	if x != nil {
 		return x.Hash
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetContractAddress() []byte {
+func (x *ExecutionTransaction) GetContractAddress() []byte {
 	if x != nil {
 		return x.ContractAddress
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetCommulativeGasUsed() uint64 {
+func (x *ExecutionTransaction) GetCommulativeGasUsed() uint64 {
 	if x != nil {
 		return x.CommulativeGasUsed
 	}
 	return 0
 }
 
-func (x *Eth1Transaction) GetGasUsed() uint64 {
+func (x *ExecutionTransaction) GetGasUsed() uint64 {
 	if x != nil {
 		return x.GasUsed
 	}
 	return 0
 }
 
-func (x *Eth1Transaction) GetLogsBloom() []byte {
+func (x *ExecutionTransaction) GetLogsBloom() []byte {
 	if x != nil {
 		return x.LogsBloom
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetStatus() uint64 {
+func (x *ExecutionTransaction) GetStatus() uint64 {
 	if x != nil {
 		return x.Status
 	}
 	return 0
 }
 
-func (x *Eth1Transaction) GetErrorMsg() string {
+func (x *ExecutionTransaction) GetErrorMsg() string {
 	if x != nil {
 		return x.ErrorMsg
 	}
 	return ""
 }
 
-func (x *Eth1Transaction) GetLogs() []*Eth1Log {
+func (x *ExecutionTransaction) GetLogs() []*ExecutionLog {
 	if x != nil {
 		return x.Logs
 	}
 	return nil
 }
 
-func (x *Eth1Transaction) GetItx() []*Eth1InternalTransaction {
+func (x *ExecutionTransaction) GetItx() []*ExecutionInternalTransaction {
 	if x != nil {
 		return x.Itx
 	}
@@ -473,7 +474,7 @@ type IsContractUpdate struct {
 func (x *IsContractUpdate) Reset() {
 	*x = IsContractUpdate{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[3]
+		mi := &file_types_execution_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -486,7 +487,7 @@ func (x *IsContractUpdate) String() string {
 func (*IsContractUpdate) ProtoMessage() {}
 
 func (x *IsContractUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[3]
+	mi := &file_types_execution_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -499,7 +500,7 @@ func (x *IsContractUpdate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsContractUpdate.ProtoReflect.Descriptor instead.
 func (*IsContractUpdate) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{3}
+	return file_types_execution_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *IsContractUpdate) GetIsContract() bool {
@@ -528,7 +529,7 @@ type AccessList struct {
 func (x *AccessList) Reset() {
 	*x = AccessList{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[4]
+		mi := &file_types_execution_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -541,7 +542,7 @@ func (x *AccessList) String() string {
 func (*AccessList) ProtoMessage() {}
 
 func (x *AccessList) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[4]
+	mi := &file_types_execution_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -554,7 +555,7 @@ func (x *AccessList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AccessList.ProtoReflect.Descriptor instead.
 func (*AccessList) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{4}
+	return file_types_execution_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AccessList) GetAddress() []byte {
@@ -571,7 +572,7 @@ func (x *AccessList) GetStorageKeys() [][]byte {
 	return nil
 }
 
-type Eth1Log struct {
+type ExecutionLog struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -582,23 +583,23 @@ type Eth1Log struct {
 	Topics  [][]byte `protobuf:"bytes,4,rep,name=topics,proto3" json:"topics,omitempty"`
 }
 
-func (x *Eth1Log) Reset() {
-	*x = Eth1Log{}
+func (x *ExecutionLog) Reset() {
+	*x = ExecutionLog{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[5]
+		mi := &file_types_execution_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1Log) String() string {
+func (x *ExecutionLog) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1Log) ProtoMessage() {}
+func (*ExecutionLog) ProtoMessage() {}
 
-func (x *Eth1Log) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[5]
+func (x *ExecutionLog) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -609,40 +610,40 @@ func (x *Eth1Log) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1Log.ProtoReflect.Descriptor instead.
-func (*Eth1Log) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{5}
+// Deprecated: Use ExecutionLog.ProtoReflect.Descriptor instead.
+func (*ExecutionLog) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *Eth1Log) GetAddress() []byte {
+func (x *ExecutionLog) GetAddress() []byte {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *Eth1Log) GetData() []byte {
+func (x *ExecutionLog) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-func (x *Eth1Log) GetRemoved() bool {
+func (x *ExecutionLog) GetRemoved() bool {
 	if x != nil {
 		return x.Removed
 	}
 	return false
 }
 
-func (x *Eth1Log) GetTopics() [][]byte {
+func (x *ExecutionLog) GetTopics() [][]byte {
 	if x != nil {
 		return x.Topics
 	}
 	return nil
 }
 
-type Eth1InternalTransaction struct {
+type ExecutionInternalTransaction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -655,23 +656,23 @@ type Eth1InternalTransaction struct {
 	Path     string `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
 }
 
-func (x *Eth1InternalTransaction) Reset() {
-	*x = Eth1InternalTransaction{}
+func (x *ExecutionInternalTransaction) Reset() {
+	*x = ExecutionInternalTransaction{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[6]
+		mi := &file_types_execution_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1InternalTransaction) String() string {
+func (x *ExecutionInternalTransaction) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1InternalTransaction) ProtoMessage() {}
+func (*ExecutionInternalTransaction) ProtoMessage() {}
 
-func (x *Eth1InternalTransaction) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[6]
+func (x *ExecutionInternalTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -682,54 +683,54 @@ func (x *Eth1InternalTransaction) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1InternalTransaction.ProtoReflect.Descriptor instead.
-func (*Eth1InternalTransaction) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{6}
+// Deprecated: Use ExecutionInternalTransaction.ProtoReflect.Descriptor instead.
+func (*ExecutionInternalTransaction) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *Eth1InternalTransaction) GetType() string {
+func (x *ExecutionInternalTransaction) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *Eth1InternalTransaction) GetFrom() []byte {
+func (x *ExecutionInternalTransaction) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *Eth1InternalTransaction) GetTo() []byte {
+func (x *ExecutionInternalTransaction) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *Eth1InternalTransaction) GetValue() []byte {
+func (x *ExecutionInternalTransaction) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-func (x *Eth1InternalTransaction) GetErrorMsg() string {
+func (x *ExecutionInternalTransaction) GetErrorMsg() string {
 	if x != nil {
 		return x.ErrorMsg
 	}
 	return ""
 }
 
-func (x *Eth1InternalTransaction) GetPath() string {
+func (x *ExecutionInternalTransaction) GetPath() string {
 	if x != nil {
 		return x.Path
 	}
 	return ""
 }
 
-type Eth1BlockIndexed struct {
+type ExecutionBlockIndexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -752,23 +753,23 @@ type Eth1BlockIndexed struct {
 	InternalTransactionCount uint64 `protobuf:"varint,29,opt,name=internal_transaction_count,json=internalTransactionCount,proto3" json:"internal_transaction_count,omitempty"`
 }
 
-func (x *Eth1BlockIndexed) Reset() {
-	*x = Eth1BlockIndexed{}
+func (x *ExecutionBlockIndexed) Reset() {
+	*x = ExecutionBlockIndexed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[7]
+		mi := &file_types_execution_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1BlockIndexed) String() string {
+func (x *ExecutionBlockIndexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1BlockIndexed) ProtoMessage() {}
+func (*ExecutionBlockIndexed) ProtoMessage() {}
 
-func (x *Eth1BlockIndexed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[7]
+func (x *ExecutionBlockIndexed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -779,103 +780,103 @@ func (x *Eth1BlockIndexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1BlockIndexed.ProtoReflect.Descriptor instead.
-func (*Eth1BlockIndexed) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{7}
+// Deprecated: Use ExecutionBlockIndexed.ProtoReflect.Descriptor instead.
+func (*ExecutionBlockIndexed) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *Eth1BlockIndexed) GetHash() []byte {
+func (x *ExecutionBlockIndexed) GetHash() []byte {
 	if x != nil {
 		return x.Hash
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetParentHash() []byte {
+func (x *ExecutionBlockIndexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetCoinbase() []byte {
+func (x *ExecutionBlockIndexed) GetCoinbase() []byte {
 	if x != nil {
 		return x.Coinbase
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetNumber() uint64 {
+func (x *ExecutionBlockIndexed) GetNumber() uint64 {
 	if x != nil {
 		return x.Number
 	}
 	return 0
 }
 
-func (x *Eth1BlockIndexed) GetGasLimit() uint64 {
+func (x *ExecutionBlockIndexed) GetGasLimit() uint64 {
 	if x != nil {
 		return x.GasLimit
 	}
 	return 0
 }
 
-func (x *Eth1BlockIndexed) GetGasUsed() uint64 {
+func (x *ExecutionBlockIndexed) GetGasUsed() uint64 {
 	if x != nil {
 		return x.GasUsed
 	}
 	return 0
 }
 
-func (x *Eth1BlockIndexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionBlockIndexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetBaseFee() []byte {
+func (x *ExecutionBlockIndexed) GetBaseFee() []byte {
 	if x != nil {
 		return x.BaseFee
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetTransactionCount() uint64 {
+func (x *ExecutionBlockIndexed) GetTransactionCount() uint64 {
 	if x != nil {
 		return x.TransactionCount
 	}
 	return 0
 }
 
-func (x *Eth1BlockIndexed) GetLowestGasPrice() []byte {
+func (x *ExecutionBlockIndexed) GetLowestGasPrice() []byte {
 	if x != nil {
 		return x.LowestGasPrice
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetHighestGasPrice() []byte {
+func (x *ExecutionBlockIndexed) GetHighestGasPrice() []byte {
 	if x != nil {
 		return x.HighestGasPrice
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetTxReward() []byte {
+func (x *ExecutionBlockIndexed) GetTxReward() []byte {
 	if x != nil {
 		return x.TxReward
 	}
 	return nil
 }
 
-func (x *Eth1BlockIndexed) GetInternalTransactionCount() uint64 {
+func (x *ExecutionBlockIndexed) GetInternalTransactionCount() uint64 {
 	if x != nil {
 		return x.InternalTransactionCount
 	}
 	return 0
 }
 
-type Eth1WithdrawalIndexed struct {
+type ExecutionWithdrawalIndexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -888,23 +889,23 @@ type Eth1WithdrawalIndexed struct {
 	Time           *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=time,proto3" json:"time,omitempty"`
 }
 
-func (x *Eth1WithdrawalIndexed) Reset() {
-	*x = Eth1WithdrawalIndexed{}
+func (x *ExecutionWithdrawalIndexed) Reset() {
+	*x = ExecutionWithdrawalIndexed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[8]
+		mi := &file_types_execution_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1WithdrawalIndexed) String() string {
+func (x *ExecutionWithdrawalIndexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1WithdrawalIndexed) ProtoMessage() {}
+func (*ExecutionWithdrawalIndexed) ProtoMessage() {}
 
-func (x *Eth1WithdrawalIndexed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[8]
+func (x *ExecutionWithdrawalIndexed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -915,54 +916,54 @@ func (x *Eth1WithdrawalIndexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1WithdrawalIndexed.ProtoReflect.Descriptor instead.
-func (*Eth1WithdrawalIndexed) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{8}
+// Deprecated: Use ExecutionWithdrawalIndexed.ProtoReflect.Descriptor instead.
+func (*ExecutionWithdrawalIndexed) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *Eth1WithdrawalIndexed) GetBlockNumber() uint64 {
+func (x *ExecutionWithdrawalIndexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *Eth1WithdrawalIndexed) GetIndex() uint64 {
+func (x *ExecutionWithdrawalIndexed) GetIndex() uint64 {
 	if x != nil {
 		return x.Index
 	}
 	return 0
 }
 
-func (x *Eth1WithdrawalIndexed) GetValidatorIndex() uint64 {
+func (x *ExecutionWithdrawalIndexed) GetValidatorIndex() uint64 {
 	if x != nil {
 		return x.ValidatorIndex
 	}
 	return 0
 }
 
-func (x *Eth1WithdrawalIndexed) GetAddress() []byte {
+func (x *ExecutionWithdrawalIndexed) GetAddress() []byte {
 	if x != nil {
 		return x.Address
 	}
 	return nil
 }
 
-func (x *Eth1WithdrawalIndexed) GetAmount() []byte {
+func (x *ExecutionWithdrawalIndexed) GetAmount() []byte {
 	if x != nil {
 		return x.Amount
 	}
 	return nil
 }
 
-func (x *Eth1WithdrawalIndexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionWithdrawalIndexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-type Eth1TransactionIndexed struct {
+type ExecutionTransactionIndexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -982,23 +983,23 @@ type Eth1TransactionIndexed struct {
 	ErrorMsg        string `protobuf:"bytes,12,opt,name=error_msg,json=errorMsg,proto3" json:"error_msg,omitempty"`
 }
 
-func (x *Eth1TransactionIndexed) Reset() {
-	*x = Eth1TransactionIndexed{}
+func (x *ExecutionTransactionIndexed) Reset() {
+	*x = ExecutionTransactionIndexed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[9]
+		mi := &file_types_execution_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1TransactionIndexed) String() string {
+func (x *ExecutionTransactionIndexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1TransactionIndexed) ProtoMessage() {}
+func (*ExecutionTransactionIndexed) ProtoMessage() {}
 
-func (x *Eth1TransactionIndexed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[9]
+func (x *ExecutionTransactionIndexed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1009,96 +1010,96 @@ func (x *Eth1TransactionIndexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1TransactionIndexed.ProtoReflect.Descriptor instead.
-func (*Eth1TransactionIndexed) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{9}
+// Deprecated: Use ExecutionTransactionIndexed.ProtoReflect.Descriptor instead.
+func (*ExecutionTransactionIndexed) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *Eth1TransactionIndexed) GetHash() []byte {
+func (x *ExecutionTransactionIndexed) GetHash() []byte {
 	if x != nil {
 		return x.Hash
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetBlockNumber() uint64 {
+func (x *ExecutionTransactionIndexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *Eth1TransactionIndexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionTransactionIndexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetMethodId() []byte {
+func (x *ExecutionTransactionIndexed) GetMethodId() []byte {
 	if x != nil {
 		return x.MethodId
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetFrom() []byte {
+func (x *ExecutionTransactionIndexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetTo() []byte {
+func (x *ExecutionTransactionIndexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetValue() []byte {
+func (x *ExecutionTransactionIndexed) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetTxFee() []byte {
+func (x *ExecutionTransactionIndexed) GetTxFee() []byte {
 	if x != nil {
 		return x.TxFee
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetGasPrice() []byte {
+func (x *ExecutionTransactionIndexed) GetGasPrice() []byte {
 	if x != nil {
 		return x.GasPrice
 	}
 	return nil
 }
 
-func (x *Eth1TransactionIndexed) GetIsContractCreation() bool {
+func (x *ExecutionTransactionIndexed) GetIsContractCreation() bool {
 	if x != nil {
 		return x.IsContractCreation
 	}
 	return false
 }
 
-func (x *Eth1TransactionIndexed) GetInvokesContract() bool {
+func (x *ExecutionTransactionIndexed) GetInvokesContract() bool {
 	if x != nil {
 		return x.InvokesContract
 	}
 	return false
 }
 
-func (x *Eth1TransactionIndexed) GetErrorMsg() string {
+func (x *ExecutionTransactionIndexed) GetErrorMsg() string {
 	if x != nil {
 		return x.ErrorMsg
 	}
 	return ""
 }
 
-type Eth1InternalTransactionIndexed struct {
+type ExecutionInternalTransactionIndexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1112,23 +1113,23 @@ type Eth1InternalTransactionIndexed struct {
 	Value       []byte                 `protobuf:"bytes,7,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *Eth1InternalTransactionIndexed) Reset() {
-	*x = Eth1InternalTransactionIndexed{}
+func (x *ExecutionInternalTransactionIndexed) Reset() {
+	*x = ExecutionInternalTransactionIndexed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[10]
+		mi := &file_types_execution_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1InternalTransactionIndexed) String() string {
+func (x *ExecutionInternalTransactionIndexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1InternalTransactionIndexed) ProtoMessage() {}
+func (*ExecutionInternalTransactionIndexed) ProtoMessage() {}
 
-func (x *Eth1InternalTransactionIndexed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[10]
+func (x *ExecutionInternalTransactionIndexed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1139,61 +1140,61 @@ func (x *Eth1InternalTransactionIndexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1InternalTransactionIndexed.ProtoReflect.Descriptor instead.
-func (*Eth1InternalTransactionIndexed) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{10}
+// Deprecated: Use ExecutionInternalTransactionIndexed.ProtoReflect.Descriptor instead.
+func (*ExecutionInternalTransactionIndexed) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *Eth1InternalTransactionIndexed) GetParentHash() []byte {
+func (x *ExecutionInternalTransactionIndexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *Eth1InternalTransactionIndexed) GetBlockNumber() uint64 {
+func (x *ExecutionInternalTransactionIndexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *Eth1InternalTransactionIndexed) GetType() string {
+func (x *ExecutionInternalTransactionIndexed) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *Eth1InternalTransactionIndexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionInternalTransactionIndexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *Eth1InternalTransactionIndexed) GetFrom() []byte {
+func (x *ExecutionInternalTransactionIndexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *Eth1InternalTransactionIndexed) GetTo() []byte {
+func (x *ExecutionInternalTransactionIndexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *Eth1InternalTransactionIndexed) GetValue() []byte {
+func (x *ExecutionInternalTransactionIndexed) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-type Eth1ZRC20Indexed struct {
+type ExecutionZRC20Indexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1207,23 +1208,23 @@ type Eth1ZRC20Indexed struct {
 	Value        []byte                 `protobuf:"bytes,7,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *Eth1ZRC20Indexed) Reset() {
-	*x = Eth1ZRC20Indexed{}
+func (x *ExecutionZRC20Indexed) Reset() {
+	*x = ExecutionZRC20Indexed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[11]
+		mi := &file_types_execution_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1ZRC20Indexed) String() string {
+func (x *ExecutionZRC20Indexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1ZRC20Indexed) ProtoMessage() {}
+func (*ExecutionZRC20Indexed) ProtoMessage() {}
 
-func (x *Eth1ZRC20Indexed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[11]
+func (x *ExecutionZRC20Indexed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1234,61 +1235,61 @@ func (x *Eth1ZRC20Indexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1ZRC20Indexed.ProtoReflect.Descriptor instead.
-func (*Eth1ZRC20Indexed) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{11}
+// Deprecated: Use ExecutionZRC20Indexed.ProtoReflect.Descriptor instead.
+func (*ExecutionZRC20Indexed) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *Eth1ZRC20Indexed) GetParentHash() []byte {
+func (x *ExecutionZRC20Indexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *Eth1ZRC20Indexed) GetBlockNumber() uint64 {
+func (x *ExecutionZRC20Indexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *Eth1ZRC20Indexed) GetTokenAddress() []byte {
+func (x *ExecutionZRC20Indexed) GetTokenAddress() []byte {
 	if x != nil {
 		return x.TokenAddress
 	}
 	return nil
 }
 
-func (x *Eth1ZRC20Indexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionZRC20Indexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *Eth1ZRC20Indexed) GetFrom() []byte {
+func (x *ExecutionZRC20Indexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *Eth1ZRC20Indexed) GetTo() []byte {
+func (x *ExecutionZRC20Indexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *Eth1ZRC20Indexed) GetValue() []byte {
+func (x *ExecutionZRC20Indexed) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-type Eth1ZRC721Indexed struct {
+type ExecutionZRC721Indexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1302,23 +1303,23 @@ type Eth1ZRC721Indexed struct {
 	TokenId      []byte                 `protobuf:"bytes,7,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
 }
 
-func (x *Eth1ZRC721Indexed) Reset() {
-	*x = Eth1ZRC721Indexed{}
+func (x *ExecutionZRC721Indexed) Reset() {
+	*x = ExecutionZRC721Indexed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[12]
+		mi := &file_types_execution_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *Eth1ZRC721Indexed) String() string {
+func (x *ExecutionZRC721Indexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Eth1ZRC721Indexed) ProtoMessage() {}
+func (*ExecutionZRC721Indexed) ProtoMessage() {}
 
-func (x *Eth1ZRC721Indexed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[12]
+func (x *ExecutionZRC721Indexed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1329,54 +1330,54 @@ func (x *Eth1ZRC721Indexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Eth1ZRC721Indexed.ProtoReflect.Descriptor instead.
-func (*Eth1ZRC721Indexed) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{12}
+// Deprecated: Use ExecutionZRC721Indexed.ProtoReflect.Descriptor instead.
+func (*ExecutionZRC721Indexed) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *Eth1ZRC721Indexed) GetParentHash() []byte {
+func (x *ExecutionZRC721Indexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *Eth1ZRC721Indexed) GetBlockNumber() uint64 {
+func (x *ExecutionZRC721Indexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *Eth1ZRC721Indexed) GetTokenAddress() []byte {
+func (x *ExecutionZRC721Indexed) GetTokenAddress() []byte {
 	if x != nil {
 		return x.TokenAddress
 	}
 	return nil
 }
 
-func (x *Eth1ZRC721Indexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionZRC721Indexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *Eth1ZRC721Indexed) GetFrom() []byte {
+func (x *ExecutionZRC721Indexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *Eth1ZRC721Indexed) GetTo() []byte {
+func (x *ExecutionZRC721Indexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *Eth1ZRC721Indexed) GetTokenId() []byte {
+func (x *ExecutionZRC721Indexed) GetTokenId() []byte {
 	if x != nil {
 		return x.TokenId
 	}
@@ -1384,7 +1385,7 @@ func (x *Eth1ZRC721Indexed) GetTokenId() []byte {
 }
 
 // https://eips.ethereum.org/EIPS/eip-1155
-type ETh1ZRC1155Indexed struct {
+type ExecutionZRC1155Indexed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -1401,23 +1402,23 @@ type ETh1ZRC1155Indexed struct {
 	Operator []byte `protobuf:"bytes,9,opt,name=operator,proto3" json:"operator,omitempty"`
 }
 
-func (x *ETh1ZRC1155Indexed) Reset() {
-	*x = ETh1ZRC1155Indexed{}
+func (x *ExecutionZRC1155Indexed) Reset() {
+	*x = ExecutionZRC1155Indexed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_types_eth1_proto_msgTypes[13]
+		mi := &file_types_execution_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *ETh1ZRC1155Indexed) String() string {
+func (x *ExecutionZRC1155Indexed) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ETh1ZRC1155Indexed) ProtoMessage() {}
+func (*ExecutionZRC1155Indexed) ProtoMessage() {}
 
-func (x *ETh1ZRC1155Indexed) ProtoReflect() protoreflect.Message {
-	mi := &file_types_eth1_proto_msgTypes[13]
+func (x *ExecutionZRC1155Indexed) ProtoReflect() protoreflect.Message {
+	mi := &file_types_execution_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1428,77 +1429,77 @@ func (x *ETh1ZRC1155Indexed) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ETh1ZRC1155Indexed.ProtoReflect.Descriptor instead.
-func (*ETh1ZRC1155Indexed) Descriptor() ([]byte, []int) {
-	return file_types_eth1_proto_rawDescGZIP(), []int{13}
+// Deprecated: Use ExecutionZRC1155Indexed.ProtoReflect.Descriptor instead.
+func (*ExecutionZRC1155Indexed) Descriptor() ([]byte, []int) {
+	return file_types_execution_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ETh1ZRC1155Indexed) GetParentHash() []byte {
+func (x *ExecutionZRC1155Indexed) GetParentHash() []byte {
 	if x != nil {
 		return x.ParentHash
 	}
 	return nil
 }
 
-func (x *ETh1ZRC1155Indexed) GetBlockNumber() uint64 {
+func (x *ExecutionZRC1155Indexed) GetBlockNumber() uint64 {
 	if x != nil {
 		return x.BlockNumber
 	}
 	return 0
 }
 
-func (x *ETh1ZRC1155Indexed) GetTokenAddress() []byte {
+func (x *ExecutionZRC1155Indexed) GetTokenAddress() []byte {
 	if x != nil {
 		return x.TokenAddress
 	}
 	return nil
 }
 
-func (x *ETh1ZRC1155Indexed) GetTime() *timestamppb.Timestamp {
+func (x *ExecutionZRC1155Indexed) GetTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Time
 	}
 	return nil
 }
 
-func (x *ETh1ZRC1155Indexed) GetFrom() []byte {
+func (x *ExecutionZRC1155Indexed) GetFrom() []byte {
 	if x != nil {
 		return x.From
 	}
 	return nil
 }
 
-func (x *ETh1ZRC1155Indexed) GetTo() []byte {
+func (x *ExecutionZRC1155Indexed) GetTo() []byte {
 	if x != nil {
 		return x.To
 	}
 	return nil
 }
 
-func (x *ETh1ZRC1155Indexed) GetTokenId() []byte {
+func (x *ExecutionZRC1155Indexed) GetTokenId() []byte {
 	if x != nil {
 		return x.TokenId
 	}
 	return nil
 }
 
-func (x *ETh1ZRC1155Indexed) GetValue() []byte {
+func (x *ExecutionZRC1155Indexed) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-func (x *ETh1ZRC1155Indexed) GetOperator() []byte {
+func (x *ExecutionZRC1155Indexed) GetOperator() []byte {
 	if x != nil {
 		return x.Operator
 	}
 	return nil
 }
 
-var File_types_eth1_proto protoreflect.FileDescriptor
+var File_types_execution_proto protoreflect.FileDescriptor
 
-var file_types_eth1_proto_rawDesc = []byte{
+var file_types_execution_proto_rawDesc = []byte{
 	0x0a, 0x10, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2f, 0x65, 0x74, 0x68, 0x31, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x12, 0x05, 0x74, 0x79, 0x70, 0x65, 0x73, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
 	0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73,
@@ -1744,49 +1745,49 @@ var file_types_eth1_proto_rawDesc = []byte{
 }
 
 var (
-	file_types_eth1_proto_rawDescOnce sync.Once
-	file_types_eth1_proto_rawDescData = file_types_eth1_proto_rawDesc
+	file_types_execution_proto_rawDescOnce sync.Once
+	file_types_execution_proto_rawDescData = file_types_execution_proto_rawDesc
 )
 
-func file_types_eth1_proto_rawDescGZIP() []byte {
-	file_types_eth1_proto_rawDescOnce.Do(func() {
-		file_types_eth1_proto_rawDescData = protoimpl.X.CompressGZIP(file_types_eth1_proto_rawDescData)
+func file_types_execution_proto_rawDescGZIP() []byte {
+	file_types_execution_proto_rawDescOnce.Do(func() {
+		file_types_execution_proto_rawDescData = protoimpl.X.CompressGZIP(file_types_execution_proto_rawDescData)
 	})
-	return file_types_eth1_proto_rawDescData
+	return file_types_execution_proto_rawDescData
 }
 
-var file_types_eth1_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
-var file_types_eth1_proto_goTypes = []interface{}{
-	(*Eth1Block)(nil),                      // 0: types.Eth1Block
-	(*Eth1Withdrawal)(nil),                 // 1: types.Eth1Withdrawal
-	(*Eth1Transaction)(nil),                // 2: types.Eth1Transaction
-	(*IsContractUpdate)(nil),               // 3: types.IsContractUpdate
-	(*AccessList)(nil),                     // 4: types.AccessList
-	(*Eth1Log)(nil),                        // 5: types.Eth1Log
-	(*Eth1InternalTransaction)(nil),        // 6: types.Eth1InternalTransaction
-	(*Eth1BlockIndexed)(nil),               // 7: types.Eth1BlockIndexed
-	(*Eth1WithdrawalIndexed)(nil),          // 8: types.Eth1WithdrawalIndexed
-	(*Eth1TransactionIndexed)(nil),         // 9: types.Eth1TransactionIndexed
-	(*Eth1InternalTransactionIndexed)(nil), // 10: types.Eth1InternalTransactionIndexed
-	(*Eth1ZRC20Indexed)(nil),               // 11: types.Eth1ZRC20Indexed
-	(*Eth1ZRC721Indexed)(nil),              // 12: types.Eth1ZRC721Indexed
-	(*ETh1ZRC1155Indexed)(nil),             // 13: types.ETh1ZRC1155Indexed
-	(*timestamppb.Timestamp)(nil),          // 14: google.protobuf.Timestamp
+var file_types_execution_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_types_execution_proto_goTypes = []interface{}{
+	(*ExecutionBlock)(nil),                      // 0: types.ExecutionBlock
+	(*ExecutionWithdrawal)(nil),                 // 1: types.ExecutionWithdrawal
+	(*ExecutionTransaction)(nil),                // 2: types.ExecutionTransaction
+	(*IsContractUpdate)(nil),                    // 3: types.IsContractUpdate
+	(*AccessList)(nil),                          // 4: types.AccessList
+	(*ExecutionLog)(nil),                        // 5: types.ExecutionLog
+	(*ExecutionInternalTransaction)(nil),        // 6: types.ExecutionInternalTransaction
+	(*ExecutionBlockIndexed)(nil),               // 7: types.ExecutionBlockIndexed
+	(*ExecutionWithdrawalIndexed)(nil),          // 8: types.ExecutionWithdrawalIndexed
+	(*ExecutionTransactionIndexed)(nil),         // 9: types.ExecutionTransactionIndexed
+	(*ExecutionInternalTransactionIndexed)(nil), // 10: types.ExecutionInternalTransactionIndexed
+	(*ExecutionZRC20Indexed)(nil),               // 11: types.ExecutionZRC20Indexed
+	(*ExecutionZRC721Indexed)(nil),              // 12: types.ExecutionZRC721Indexed
+	(*ExecutionZRC1155Indexed)(nil),             // 13: types.ExecutionZRC1155Indexed
+	(*timestamppb.Timestamp)(nil),               // 14: google.protobuf.Timestamp
 }
-var file_types_eth1_proto_depIdxs = []int32{
-	14, // 0: types.Eth1Block.time:type_name -> google.protobuf.Timestamp
-	2,  // 1: types.Eth1Block.transactions:type_name -> types.Eth1Transaction
-	1,  // 2: types.Eth1Block.withdrawals:type_name -> types.Eth1Withdrawal
-	4,  // 3: types.Eth1Transaction.access_list:type_name -> types.AccessList
-	5,  // 4: types.Eth1Transaction.logs:type_name -> types.Eth1Log
-	6,  // 5: types.Eth1Transaction.itx:type_name -> types.Eth1InternalTransaction
-	14, // 6: types.Eth1BlockIndexed.time:type_name -> google.protobuf.Timestamp
-	14, // 7: types.Eth1WithdrawalIndexed.time:type_name -> google.protobuf.Timestamp
-	14, // 8: types.Eth1TransactionIndexed.time:type_name -> google.protobuf.Timestamp
-	14, // 9: types.Eth1InternalTransactionIndexed.time:type_name -> google.protobuf.Timestamp
-	14, // 10: types.Eth1ZRC20Indexed.time:type_name -> google.protobuf.Timestamp
-	14, // 11: types.Eth1ZRC721Indexed.time:type_name -> google.protobuf.Timestamp
-	14, // 12: types.ETh1ZRC1155Indexed.time:type_name -> google.protobuf.Timestamp
+var file_types_execution_proto_depIdxs = []int32{
+	14, // 0: types.ExecutionBlock.time:type_name -> google.protobuf.Timestamp
+	2,  // 1: types.ExecutionBlock.transactions:type_name -> types.ExecutionTransaction
+	1,  // 2: types.ExecutionBlock.withdrawals:type_name -> types.ExecutionWithdrawal
+	4,  // 3: types.ExecutionTransaction.access_list:type_name -> types.AccessList
+	5,  // 4: types.ExecutionTransaction.logs:type_name -> types.ExecutionLog
+	6,  // 5: types.ExecutionTransaction.itx:type_name -> types.ExecutionInternalTransaction
+	14, // 6: types.ExecutionBlockIndexed.time:type_name -> google.protobuf.Timestamp
+	14, // 7: types.ExecutionWithdrawalIndexed.time:type_name -> google.protobuf.Timestamp
+	14, // 8: types.ExecutionTransactionIndexed.time:type_name -> google.protobuf.Timestamp
+	14, // 9: types.ExecutionInternalTransactionIndexed.time:type_name -> google.protobuf.Timestamp
+	14, // 10: types.ExecutionZRC20Indexed.time:type_name -> google.protobuf.Timestamp
+	14, // 11: types.ExecutionZRC721Indexed.time:type_name -> google.protobuf.Timestamp
+	14, // 12: types.ExecutionZRC1155Indexed.time:type_name -> google.protobuf.Timestamp
 	13, // [13:13] is the sub-list for method output_type
 	13, // [13:13] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
@@ -1794,14 +1795,14 @@ var file_types_eth1_proto_depIdxs = []int32{
 	0,  // [0:13] is the sub-list for field type_name
 }
 
-func init() { file_types_eth1_proto_init() }
-func file_types_eth1_proto_init() {
-	if File_types_eth1_proto != nil {
+func init() { file_types_execution_proto_init() }
+func file_types_execution_proto_init() {
+	if File_types_execution_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_types_eth1_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1Block); i {
+		file_types_execution_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionBlock); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1812,8 +1813,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1Withdrawal); i {
+		file_types_execution_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionWithdrawal); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1824,8 +1825,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1Transaction); i {
+		file_types_execution_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionTransaction); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1836,7 +1837,7 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_types_execution_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*IsContractUpdate); i {
 			case 0:
 				return &v.state
@@ -1848,7 +1849,7 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_types_execution_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AccessList); i {
 			case 0:
 				return &v.state
@@ -1860,8 +1861,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1Log); i {
+		file_types_execution_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionLog); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1872,8 +1873,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1InternalTransaction); i {
+		file_types_execution_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionInternalTransaction); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1884,8 +1885,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1BlockIndexed); i {
+		file_types_execution_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionBlockIndexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1896,8 +1897,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1WithdrawalIndexed); i {
+		file_types_execution_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionWithdrawalIndexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1908,8 +1909,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1TransactionIndexed); i {
+		file_types_execution_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionTransactionIndexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1920,8 +1921,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1InternalTransactionIndexed); i {
+		file_types_execution_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionInternalTransactionIndexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1932,8 +1933,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1ZRC20Indexed); i {
+		file_types_execution_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionZRC20Indexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1944,8 +1945,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Eth1ZRC721Indexed); i {
+		file_types_execution_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionZRC721Indexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1956,8 +1957,8 @@ func file_types_eth1_proto_init() {
 				return nil
 			}
 		}
-		file_types_eth1_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ETh1ZRC1155Indexed); i {
+		file_types_execution_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ExecutionZRC1155Indexed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1973,18 +1974,18 @@ func file_types_eth1_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_types_eth1_proto_rawDesc,
+			RawDescriptor: file_types_execution_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_types_eth1_proto_goTypes,
-		DependencyIndexes: file_types_eth1_proto_depIdxs,
-		MessageInfos:      file_types_eth1_proto_msgTypes,
+		GoTypes:           file_types_execution_proto_goTypes,
+		DependencyIndexes: file_types_execution_proto_depIdxs,
+		MessageInfos:      file_types_execution_proto_msgTypes,
 	}.Build()
-	File_types_eth1_proto = out.File
-	file_types_eth1_proto_rawDesc = nil
-	file_types_eth1_proto_goTypes = nil
-	file_types_eth1_proto_depIdxs = nil
+	File_types_execution_proto = out.File
+	file_types_execution_proto_rawDesc = nil
+	file_types_execution_proto_goTypes = nil
+	file_types_execution_proto_depIdxs = nil
 }

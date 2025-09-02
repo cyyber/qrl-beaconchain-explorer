@@ -422,7 +422,7 @@ func getAvgSyncCommitteeInterval(validatorsCount int) float64 {
 	return 1 / probability
 }
 
-// LatestState will return common information that about the current state of the eth2 chain
+// LatestState will return common information that about the current state of the consensus chain
 func LatestState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", utils.Config.Chain.ClConfig.SecondsPerSlot)) // set local cache to the seconds per slot interval
@@ -553,7 +553,7 @@ func getExecutionChartData(indices []uint64, lowerBoundDay uint64) ([]*types.Cha
 		consData := consMap[block.Number]
 		day := int64(consData.Epoch / epochsPerDay)
 
-		totalReward := utils.PlanckToQuanta(utils.Eth1TotalReward(block)).InexactFloat64()
+		totalReward := utils.PlanckToQuanta(utils.ExecutionTotalReward(block)).InexactFloat64()
 
 		// Add the reward to the existing reward for the day or set it if not previously set
 		dayRewardMap[day] += totalReward

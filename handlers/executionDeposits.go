@@ -38,17 +38,17 @@ func Deposits(w http.ResponseWriter, r *http.Request) {
 	data := InitPageData(w, r, "blockchain", "/deposits", "Deposits", templateFiles)
 	data.Data = pageData
 
-	if handleTemplateError(w, r, "eth1Depostis.go", "Deposits", "", DepositsTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionDepostis.go", "Deposits", "", DepositsTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }
 
-func Eth1Deposits(w http.ResponseWriter, r *http.Request) {
+func ExecutionDeposits(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/validators/deposits", http.StatusMovedPermanently)
 }
 
-// Eth1DepositsData will return eth1-deposits as json
-func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
+// ExecutionDepositsData will return execution-deposits as json
+func ExecutionDepositsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -100,9 +100,9 @@ func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
 	latestEpoch := services.LatestEpoch()
 	validatorOnlineThresholdSlot := GetValidatorOnlineThresholdSlot()
 
-	deposits, depositCount, err := db.GetEth1DepositsJoinEth2Deposits(search, length, start, orderBy, orderDir, latestEpoch, validatorOnlineThresholdSlot)
+	deposits, depositCount, err := db.GetExecutionDepositsJoinConsensusDeposits(search, length, start, orderBy, orderDir, latestEpoch, validatorOnlineThresholdSlot)
 	if err != nil {
-		logger.Errorf("GetEth1Deposits error retrieving eth1_deposit data: %v", err)
+		logger.Errorf("GetExecutionDeposits error retrieving execution_deposit data: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -114,13 +114,13 @@ func Eth1DepositsData(w http.ResponseWriter, r *http.Request) {
 			valid = "✅"
 		}
 		tableData[i] = []interface{}{
-			utils.FormatEth1Address(d.FromAddress),
+			utils.FormatExecutionAddress(d.FromAddress),
 			utils.FormatPublicKey(d.PublicKey),
 			utils.FormatWithdawalCredentials(d.WithdrawalCredentials, true),
 			utils.FormatDepositAmount(d.Amount, "Quanta"),
-			utils.FormatEth1TxHash(d.TxHash),
+			utils.FormatExecutionTxHash(d.TxHash),
 			utils.FormatTimestamp(d.BlockTs.Unix()),
-			utils.FormatEth1Block(d.BlockNumber),
+			utils.FormatExecutionBlock(d.BlockNumber),
 			utils.FormatValidatorStatus(d.State),
 			valid,
 		}

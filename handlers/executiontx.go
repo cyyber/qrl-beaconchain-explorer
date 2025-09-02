@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/theQRL/qrl-beaconchain-explorer/eth1data"
+	"github.com/theQRL/qrl-beaconchain-explorer/executiondata"
 	"github.com/theQRL/qrl-beaconchain-explorer/services"
 	"github.com/theQRL/qrl-beaconchain-explorer/templates"
 	"github.com/theQRL/qrl-beaconchain-explorer/types"
@@ -20,9 +20,9 @@ import (
 )
 
 // Tx will show the tx using a go template
-func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
-	txNotFoundTemplateFiles := append(layoutTemplateFiles, "eth1txnotfound.html")
-	txTemplateFiles := append(layoutTemplateFiles, "eth1tx.html")
+func ExecutionTransactionTx(w http.ResponseWriter, r *http.Request) {
+	txNotFoundTemplateFiles := append(layoutTemplateFiles, "executiontxnotfound.html")
+	txTemplateFiles := append(layoutTemplateFiles, "executiontx.html")
 	mempoolTxTemplateFiles := append(layoutTemplateFiles, "mempoolTx.html")
 	var txNotFoundTemplate = templates.GetTemplate(txNotFoundTemplateFiles...)
 	var txTemplate = templates.GetTemplate(txTemplateFiles...)
@@ -46,7 +46,7 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 		data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)
 		txTemplate = txNotFoundTemplate
 	} else {
-		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), "Quanta")
+		txData, err := executiondata.GetExecutionTransaction(common.BytesToHash(txHash), "Quanta")
 		if err != nil {
 			mempool := services.LatestMempoolTransactions()
 			mempoolTx := mempool.FindTxByHash(txHashString)
@@ -63,8 +63,8 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 
 				data.Data = mempoolPageData
 			} else {
-				if !errors.Is(err, qrl.NotFound) && !errors.Is(err, eth1data.ErrTxIsPending) {
-					utils.LogError(err, "error getting eth1 transaction data", 0, errFields)
+				if !errors.Is(err, qrl.NotFound) && !errors.Is(err, executiondata.ErrTxIsPending) {
+					utils.LogError(err, "error getting execution transaction data", 0, errFields)
 				}
 				data = InitPageData(w, r, "blockchain", path, title, txNotFoundTemplateFiles)
 				txTemplate = txNotFoundTemplate
@@ -82,31 +82,31 @@ func Eth1TransactionTx(w http.ResponseWriter, r *http.Request) {
 		err = txTemplate.ExecuteTemplate(w, "layout", data)
 	}
 
-	if handleTemplateError(w, r, "eth1tx.go", "Eth1TransactionTx", "Done", err) != nil {
+	if handleTemplateError(w, r, "executiontx.go", "ExecutionTransactionTx", "Done", err) != nil {
 		return // an error has occurred and was processed
 	}
 }
 
-func Eth1TransactionTxData(w http.ResponseWriter, r *http.Request) {
+func ExecutionTransactionTxData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	txHashString := vars["hash"]
 
-	err := json.NewEncoder(w).Encode(getEth1TransactionTxData(txHashString, "Quanta"))
+	err := json.NewEncoder(w).Encode(getExecutionTransactionTxData(txHashString, "Quanta"))
 	if err != nil {
 		logger.Errorf("error enconding json response for %v route: %v", r.URL.String(), err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 }
 
-func getEth1TransactionTxData(txhash, currency string) *types.DataTableResponse {
+func getExecutionTransactionTxData(txhash, currency string) *types.DataTableResponse {
 	tableData := make([][]interface{}, 0, minimumTransactionsPerUpdate)
 	txHash, err := hex.DecodeString(strings.ReplaceAll(txhash, "0x", ""))
 	if err != nil {
 		logger.Warnf("error parsing tx hash %v: %v", txhash, err)
 	} else {
-		txData, err := eth1data.GetEth1Transaction(common.BytesToHash(txHash), currency)
+		txData, err := executiondata.GetExecutionTransaction(common.BytesToHash(txHash), currency)
 		its := txData.InternalTxns
 		if err != nil {
 			utils.LogError(err, "error getting transaction data", 0, map[string]interface{}{"txhash": txHash})

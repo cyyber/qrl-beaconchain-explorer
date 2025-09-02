@@ -149,7 +149,7 @@ func (client *GzondClient) GetBlockNumberByHash(hash string) (uint64, error) {
 	return block.NumberU64(), nil
 }
 
-func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBlockTimings, error) {
+func (client *GzondClient) GetBlock(number int64) (*types.ExecutionBlock, *types.GetBlockTimings, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
@@ -164,7 +164,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 	timings.Headers = time.Since(start)
 	start = time.Now()
 
-	c := &types.Eth1Block{
+	c := &types.ExecutionBlock{
 		Hash:         block.Hash().Bytes(),
 		ParentHash:   block.ParentHash().Bytes(),
 		Coinbase:     block.Coinbase().Bytes(),
@@ -178,7 +178,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 		Extra:        block.Extra(),
 		Random:       block.Random().Bytes(),
 		Bloom:        block.Bloom().Bytes(),
-		Transactions: []*types.Eth1Transaction{},
+		Transactions: []*types.ExecutionTransaction{},
 	}
 
 	if block.BaseFee() != nil {
@@ -201,7 +201,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 			from = sender.Bytes()
 		}
 
-		pbTx := &types.Eth1Transaction{
+		pbTx := &types.ExecutionTransaction{
 			Type:                 uint32(tx.Type()),
 			Nonce:                tx.Nonce(),
 			MaxPriorityFeePerGas: tx.GasTipCap().Bytes(),
@@ -213,7 +213,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 			ChainId:              tx.ChainId().Bytes(),
 			AccessList:           []*types.AccessList{},
 			Hash:                 tx.Hash().Bytes(),
-			Itx:                  []*types.Eth1InternalTransaction{},
+			Itx:                  []*types.ExecutionInternalTransaction{},
 		}
 
 		if tx.To() != nil {
@@ -251,10 +251,10 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 		c.Transactions[i].CommulativeGasUsed = r.CumulativeGasUsed
 		c.Transactions[i].GasUsed = r.GasUsed
 		c.Transactions[i].LogsBloom = r.Bloom[:]
-		c.Transactions[i].Logs = make([]*types.Eth1Log, 0, len(r.Logs))
+		c.Transactions[i].Logs = make([]*types.ExecutionLog, 0, len(r.Logs))
 
 		for _, l := range r.Logs {
-			pbLog := &types.Eth1Log{
+			pbLog := &types.ExecutionLog{
 				Address: l.Address.Bytes(),
 				Data:    l.Data,
 				Removed: l.Removed,
@@ -271,7 +271,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 	return c, timings, nil
 }
 
-func (client *GzondClient) GetLatestEth1BlockNumber() (uint64, error) {
+func (client *GzondClient) GetLatestExecutionBlockNumber() (uint64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
@@ -319,15 +319,15 @@ func toCallArg(msg qrl.CallMsg) interface{} {
 	return arg
 }
 
-func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*types.Eth1AddressBalance, error) {
+func (client *GzondClient) GetBalances(pairs []*types.ExecutionAddressBalance) ([]*types.ExecutionAddressBalance, error) {
 	batchElements := make([]gzond_rpc.BatchElem, 0, len(pairs))
 
-	ret := make([]*types.Eth1AddressBalance, len(pairs))
+	ret := make([]*types.ExecutionAddressBalance, len(pairs))
 
 	for i, pair := range pairs {
 		result := ""
 
-		ret[i] = &types.Eth1AddressBalance{
+		ret[i] = &types.ExecutionAddressBalance{
 			Address: pair.Address,
 			Token:   pair.Token,
 		}

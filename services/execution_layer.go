@@ -10,17 +10,17 @@ import (
 	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
-const latestBlockNumberCacheKey = "latestEth1BlockNumber"
-const latestBlockHashRootCacheKey = "latestEth1BlockRootHash"
+const latestBlockNumberCacheKey = "latestExecutionBlockNumber"
+const latestBlockHashRootCacheKey = "latestExecutionBlockRootHash"
 
-// latestBlockUpdater updates the most recent eth1 block number variable
+// latestBlockUpdater updates the most recent execution block number variable
 func latestBlockUpdater(wg *sync.WaitGroup) {
 	firstRun := true
 
 	for {
 		recent, err := db.BigtableClient.GetMostRecentBlockFromDataTable()
 		if err != nil {
-			utils.LogError(err, "error getting most recent eth1 block", 0)
+			utils.LogError(err, "error getting most recent execution block", 0)
 		}
 		cacheKey := fmt.Sprintf("%d:frontend:%s", utils.Config.Chain.ClConfig.DepositChainID, latestBlockNumberCacheKey)
 		err = cache.TieredCache.SetUint64(cacheKey, recent.GetNumber(), utils.Day)
@@ -29,7 +29,7 @@ func latestBlockUpdater(wg *sync.WaitGroup) {
 		}
 
 		if firstRun {
-			logger.Info("initialized eth1 block updater")
+			logger.Info("initialized execution block updater")
 			wg.Done()
 			firstRun = false
 		}
@@ -38,8 +38,8 @@ func latestBlockUpdater(wg *sync.WaitGroup) {
 	}
 }
 
-// LatestEth1BlockNumber will return most recent eth1 block number
-func LatestEth1BlockNumber() uint64 {
+// LatestExecutionBlockNumber will return most recent execution block number
+func LatestExecutionBlockNumber() uint64 {
 	cacheKey := fmt.Sprintf("%d:frontend:%s", utils.Config.Chain.ClConfig.DepositChainID, latestBlockNumberCacheKey)
 
 	if wanted, err := cache.TieredCache.GetUint64WithLocalTimeout(cacheKey, time.Second*5); err == nil {
@@ -73,7 +73,7 @@ func headBlockRootHashUpdater(wg *sync.WaitGroup) {
 		}
 
 		if firstRun {
-			logger.Info("initialized eth1 head block root hash updater")
+			logger.Info("initialized execution head block root hash updater")
 			wg.Done()
 			firstRun = false
 		}

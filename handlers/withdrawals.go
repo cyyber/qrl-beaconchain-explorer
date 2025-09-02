@@ -50,7 +50,7 @@ func Withdrawals(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// WithdrawalsData will return eth1-deposits as json
+// WithdrawalsData will return execution-deposits as json
 func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
@@ -220,7 +220,7 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 	return data, nil
 }
 
-// Eth1DepositsData will return eth1-deposits as json
+// ExecutionDepositsData will return execution-deposits as json
 func DilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()

@@ -6,8 +6,8 @@ import "google/protobuf/timestamp.proto";
 option go_package = "./types";
 
 
-// Eth1Block is stored in the blocks table under <chainID>:<reversePaddedNumber>
-message Eth1Block {
+// ExecutionBlock is stored in the blocks table under <chainID>:<reversePaddedNumber>
+message ExecutionBlock {
     bytes hash = 1;
     bytes parent_hash = 2;
     bytes coinbase = 4;
@@ -22,18 +22,18 @@ message Eth1Block {
     bytes random = 14;
     bytes bloom = 17;
     bytes base_fee = 18;
-    repeated Eth1Transaction transactions = 21;
-    repeated Eth1Withdrawal withdrawals = 22;
+    repeated ExecutionTransaction transactions = 21;
+    repeated ExecutionWithdrawal withdrawals = 22;
 }
 
-message Eth1Withdrawal {
+message ExecutionWithdrawal {
     uint64 index = 1;
     uint64 validator_index = 2;
     bytes address = 3;
     bytes amount = 4;
 }
 
-message Eth1Transaction {
+message ExecutionTransaction {
     uint32 type = 1;
     uint64 nonce = 2;
     bytes max_priority_fee_per_gas = 4;
@@ -57,10 +57,10 @@ message Eth1Transaction {
     bytes logs_bloom = 20;
     uint64 status = 21;
     string error_msg = 22;
-    repeated Eth1Log logs = 23;
+    repeated ExecutionLog logs = 23;
 
     // Internal transactions
-    repeated Eth1InternalTransaction itx = 24;
+    repeated ExecutionInternalTransaction itx = 24;
 }
 
 message IsContractUpdate {
@@ -73,14 +73,14 @@ message AccessList {
     repeated bytes storage_keys = 2;
 }
 
-message Eth1Log {
+message ExecutionLog {
     bytes address = 1;
     bytes data = 2;
     bool removed = 3;
     repeated bytes topics = 4;
 }
 
-message Eth1InternalTransaction {
+message ExecutionInternalTransaction {
     string type = 1;
     bytes from = 2;
     bytes to = 3;
@@ -91,7 +91,7 @@ message Eth1InternalTransaction {
 
 // Indexed structs stored in the data table
 
-message Eth1BlockIndexed {
+message ExecutionBlockIndexed {
     bytes hash = 1;
     bytes parent_hash = 2;
     bytes coinbase = 4;
@@ -110,7 +110,7 @@ message Eth1BlockIndexed {
     uint64 internal_transaction_count = 29;
 }
 
-message Eth1WithdrawalIndexed {
+message ExecutionWithdrawalIndexed {
     uint64 block_number =1;
     uint64 index = 2;
     uint64 validator_index = 3;
@@ -119,7 +119,7 @@ message Eth1WithdrawalIndexed {
     google.protobuf.Timestamp time = 6;
 }
 
-message Eth1TransactionIndexed {
+message ExecutionTransactionIndexed {
     bytes hash = 1;
     uint64 block_number = 2;
     google.protobuf.Timestamp time = 3;
@@ -135,7 +135,7 @@ message Eth1TransactionIndexed {
     string error_msg = 12;
 }
 
-message Eth1InternalTransactionIndexed {
+message ExecutionInternalTransactionIndexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     string type = 3;
@@ -145,7 +145,7 @@ message Eth1InternalTransactionIndexed {
     bytes value = 7;
 }
 
-message Eth1ZRC20Indexed {
+message ExecutionZRC20Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;
@@ -155,7 +155,7 @@ message Eth1ZRC20Indexed {
     bytes value = 7;
 }
 
-message Eth1ZRC721Indexed {
+message ExecutionZRC721Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;
@@ -166,7 +166,7 @@ message Eth1ZRC721Indexed {
 }
 
 // https://eips.ethereum.org/EIPS/eip-1155
-message ETh1ZRC1155Indexed {
+message ExecutionZRC1155Indexed {
     bytes parent_hash = 1;
     uint64 block_number = 2;
     bytes token_address = 3;

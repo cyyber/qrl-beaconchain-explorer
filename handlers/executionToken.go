@@ -19,9 +19,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func Eth1Token(w http.ResponseWriter, r *http.Request) {
+func ExecutionToken(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/token.html")
-	var eth1TokenTemplate = templates.GetTemplate(templateFiles...)
+	var executionTokenTemplate = templates.GetTemplate(templateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
 	vars := mux.Vars(r)
@@ -34,7 +34,7 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 
 	var txns *types.DataTableResponse
 	var metadata *types.ZRC20Metadata
-	var balance *types.Eth1AddressBalance
+	var balance *types.ExecutionAddressBalance
 	// var holders *types.DataTableResponse
 
 	g.Go(func() error {
@@ -58,7 +58,7 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := g.Wait(); err != nil {
-		if handleTemplateError(w, r, "eth1Token.go", "Eth1Token", "g.Wait()", err) != nil {
+		if handleTemplateError(w, r, "executionToken.go", "ExecutionToken", "g.Wait()", err) != nil {
 			return // an error has occurred and was processed
 		}
 		return
@@ -75,7 +75,7 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 	tokenDiv := decimal.NewFromInt(10).Pow(tokenDecimals)
 	tokenSupply := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.TotalSupply), 0).DivRound(tokenDiv, 18)
 
-	data.Data = types.Eth1TokenPageData{
+	data.Data = types.ExecutionTokenPageData{
 		Token:          fmt.Sprintf("%x", token),
 		Address:        fmt.Sprintf("%x", address),
 		TransfersTable: txns,
@@ -86,12 +86,12 @@ func Eth1Token(w http.ResponseWriter, r *http.Request) {
 		Supply:         template.HTML(utils.FormatThousandsEnglish(tokenSupply.StringFixed(6))),
 	}
 
-	if handleTemplateError(w, r, "eth1Token.go", "Eth1Token", "Done", eth1TokenTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionToken.go", "ExecutionToken", "Done", executionTokenTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }
 
-func Eth1TokenTransfers(w http.ResponseWriter, r *http.Request) {
+func ExecutionTokenTransfers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -104,7 +104,7 @@ func Eth1TokenTransfers(w http.ResponseWriter, r *http.Request) {
 	// logger.Infof("GETTING TRANSACTION table data for address: %v search: %v draw: %v start: %v length: %v", address, search, draw, start, length)
 	data, err := db.BigtableClient.GetTokenTransactionsTableData(token, address, pageToken)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 block table data", 0)
+		utils.LogError(err, "error getting execution block table data", 0)
 	}
 
 	// logger.Infof("GOT TX: %+v", data)

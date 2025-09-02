@@ -17,10 +17,10 @@ type ClChainConfig struct {
 	GenesisDelay                   uint64 `yaml:"GENESIS_DELAY"`
 	// time parameters
 	SecondsPerSlot                   uint64 `yaml:"SECONDS_PER_SLOT"`
-	SecondsPerEth1Block              uint64 `yaml:"SECONDS_PER_ETH1_BLOCK"`
+	SecondsPerExecutionBlock         uint64 `yaml:"SECONDS_PER_EXECUTION_BLOCK"`
 	MinValidatorWithdrawabilityDelay uint64 `yaml:"MIN_VALIDATOR_WITHDRAWABILITY_DELAY"`
 	ShardCommitteePeriod             uint64 `yaml:"SHARD_COMMITTEE_PERIOD"`
-	Eth1FollowDistance               uint64 `yaml:"ETH1_FOLLOW_DISTANCE"`
+	ExecutionFollowDistance          uint64 `yaml:"EXECUTION_FOLLOW_DISTANCE"`
 	InactivityScoreBias              uint64 `yaml:"INACTIVITY_SCORE_BIAS"`
 	InactivityScoreRecoveryRate      uint64 `yaml:"INACTIVITY_SCORE_RECOVERY_RATE"`
 	EjectionBalance                  uint64 `yaml:"EJECTION_BALANCE"`
@@ -65,7 +65,7 @@ type ClChainConfig struct {
 	SlotsPerEpoch                   uint64 `yaml:"SLOTS_PER_EPOCH"`
 	MinSeedLookahead                uint64 `yaml:"MIN_SEED_LOOKAHEAD"`
 	MaxSeedLookahead                uint64 `yaml:"MAX_SEED_LOOKAHEAD"`
-	EpochsPerEth1VotingPeriod       uint64 `yaml:"EPOCHS_PER_ETH1_VOTING_PERIOD"`
+	EpochsPerExecutionVotingPeriod  uint64 `yaml:"EPOCHS_PER_EXECUTION_VOTING_PERIOD"`
 	SlotsPerHistoricalRoot          uint64 `yaml:"SLOTS_PER_HISTORICAL_ROOT"`
 	MinEpochsToInactivityPenalty    uint64 `yaml:"MIN_EPOCHS_TO_INACTIVITY_PENALTY"`
 	EpochsPerHistoricalVector       uint64 `yaml:"EPOCHS_PER_HISTORICAL_VECTOR"`

@@ -176,7 +176,7 @@ func ApplyEmbeddedDbSchema(version int64) error {
 	return nil
 }
 
-func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy, orderDir string, latestEpoch, validatorOnlineThresholdSlot uint64) ([]*types.EthOneDepositsData, uint64, error) {
+func GetExecutionDepositsJoinConsensusDeposits(query string, length, start uint64, orderBy, orderDir string, latestEpoch, validatorOnlineThresholdSlot uint64) ([]*types.EthOneDepositsData, uint64, error) {
 	// Initialize the return values
 	deposits := []*types.EthOneDepositsData{}
 	totalCount := uint64(0)
@@ -296,7 +296,7 @@ func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy
 	return deposits, totalCount, nil
 }
 
-func GetEth2Deposits(query string, length, start uint64, orderBy, orderDir string) ([]*types.EthTwoDepositData, uint64, error) {
+func GetConsensusDeposits(query string, length, start uint64, orderBy, orderDir string) ([]*types.EthTwoDepositData, uint64, error) {
 	// Initialize the return values
 	deposits := []*types.EthTwoDepositData{}
 	totalCount := uint64(0)
@@ -507,21 +507,21 @@ func GetValidatorIndex(publicKey []byte) (uint64, error) {
 	return index, err
 }
 
-// GetValidatorDeposits will return eth1- and eth2-deposits for a public key from the database
+// GetValidatorDeposits will return execution- and consensus-deposits for a public key from the database
 func GetValidatorDeposits(publicKey []byte) (*types.ValidatorDeposits, error) {
 	deposits := &types.ValidatorDeposits{}
-	err := ReaderDb.Select(&deposits.Eth1Deposits, `
+	err := ReaderDb.Select(&deposits.ExecutionDeposits, `
 		SELECT tx_hash, tx_input, tx_index, block_number, EXTRACT(epoch FROM block_ts)::INT as block_ts, from_address, publickey, withdrawal_credentials, amount, signature, merkletree_index, valid_signature
 		FROM eth1_deposits WHERE publickey = $1 ORDER BY block_number ASC`, publicKey)
 	if err != nil {
 		return nil, err
 	}
-	if len(deposits.Eth1Deposits) > 0 {
-		deposits.LastEth1DepositTs = deposits.Eth1Deposits[len(deposits.Eth1Deposits)-1].BlockTs
+	if len(deposits.ExecutionDeposits) > 0 {
+		deposits.LastEth1DepositTs = deposits.ExecutionDeposits[len(deposits.ExecutionDeposits)-1].BlockTs
 
 		// retrieve address names from bigtable
 		names := make(map[string]string)
-		for _, v := range deposits.Eth1Deposits {
+		for _, v := range deposits.ExecutionDeposits {
 			names[string(v.FromAddress)] = ""
 		}
 		names, _, err = BigtableClient.GetAddressesNamesArMetadata(&names, nil)
@@ -529,12 +529,12 @@ func GetValidatorDeposits(publicKey []byte) (*types.ValidatorDeposits, error) {
 			return nil, err
 		}
 
-		for k, v := range deposits.Eth1Deposits {
-			deposits.Eth1Deposits[k].FromName = names[string(v.FromAddress)]
+		for k, v := range deposits.ExecutionDeposits {
+			deposits.ExecutionDeposits[k].FromName = names[string(v.FromAddress)]
 		}
 	}
 
-	err = ReaderDb.Select(&deposits.Eth2Deposits, `
+	err = ReaderDb.Select(&deposits.ConsensusDeposits, `
 		SELECT 
 			blocks_deposits.block_slot,
 			blocks_deposits.block_index,
@@ -1027,7 +1027,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 	defer stmtExecutionPayload.Close()
 
 	stmtBlock, err := tx.Prepare(`
-		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, randaoreveal, graffiti, graffiti_text, eth1data_depositroot, eth1data_depositcount, eth1data_blockhash, syncaggregate_bits, syncaggregate_signatures, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, syncaggregate_participation, proposer, status, exec_parent_hash, exec_fee_recipient, exec_state_root, exec_receipts_root, exec_logs_bloom, exec_random, exec_block_number, exec_gas_limit, exec_gas_used, exec_timestamp, exec_extra_data, exec_base_fee_per_gas, exec_block_hash, exec_transactions_count)
+		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, randaoreveal, graffiti, graffiti_text, executiondata_depositroot, executiondata_depositcount, executiondata_blockhash, syncaggregate_bits, syncaggregate_signatures, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, syncaggregate_participation, proposer, status, exec_parent_hash, exec_fee_recipient, exec_state_root, exec_receipts_root, exec_logs_bloom, exec_random, exec_block_number, exec_gas_limit, exec_gas_used, exec_timestamp, exec_extra_data, exec_base_fee_per_gas, exec_block_hash, exec_transactions_count)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37)
 		ON CONFLICT (slot, blockroot) DO NOTHING`)
 	if err != nil {
@@ -1214,9 +1214,9 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 				b.RandaoReveal,
 				b.Graffiti,
 				utils.GraffitiToString(b.Graffiti),
-				b.Eth1Data.DepositRoot,
-				b.Eth1Data.DepositCount,
-				b.Eth1Data.BlockHash,
+				b.ExecutionData.DepositRoot,
+				b.ExecutionData.DepositCount,
+				b.ExecutionData.BlockHash,
 				syncAggBits,
 				pq.Array(syncAggSigs),
 				len(b.ProposerSlashings),

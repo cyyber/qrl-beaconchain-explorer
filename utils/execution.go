@@ -15,7 +15,7 @@ import (
 	"golang.org/x/text/message"
 )
 
-func Eth1TotalReward(block *types.Eth1BlockIndexed) *big.Int {
+func ExecutionTotalReward(block *types.ExecutionBlockIndexed) *big.Int {
 	return new(big.Int).SetBytes(block.GetTxReward())
 }
 
@@ -300,7 +300,7 @@ func formatAmount(amount *big.Int, unit string, digits int, maxPreCommaDigitsBef
 	var unitDigits int
 	if unit == "Quanta" {
 		unitDigits = 18
-	} else if unit == "GPlanck" {
+	} else if unit == "Shor" {
 		unitDigits = 9
 	} else {
 		displayUnit = " ?"

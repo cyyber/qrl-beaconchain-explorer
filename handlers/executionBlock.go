@@ -18,7 +18,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Eth1Block(w http.ResponseWriter, r *http.Request) {
+func ExecutionBlock(w http.ResponseWriter, r *http.Request) {
 	blockTemplateFiles := append(layoutTemplateFiles,
 		"slot/slot.html",
 		"slot/attestations.html",
@@ -54,17 +54,17 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 		data := InitPageData(w, r, "blockchain", "/block", fmt.Sprintf("Block %d", 0), notFountTemplateFiles)
 		data.Data = "block"
 
-		if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "number", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+		if handleTemplateError(w, r, "executionBlock.go", "ExecutionBlock", "number", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 			return // an error has occurred and was processed
 		}
 		return
 	}
 
-	eth1BlockPageData, err := GetExecutionBlockPageData(number, 10)
+	executionBlockPageData, err := GetExecutionBlockPageData(number, 10)
 	if err != nil {
 		data := InitPageData(w, r, "blockchain", "/block", fmt.Sprintf("Block %d", 0), notFountTemplateFiles)
 		data.Data = "block"
-		if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "GetExecutionBlockPageData", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+		if handleTemplateError(w, r, "executionBlock.go", "ExecutionBlock", "GetExecutionBlockPageData", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 			return // an error has occurred and was processed
 		}
 		return
@@ -73,7 +73,7 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 	data := InitPageData(w, r, "blockchain", "/block", fmt.Sprintf("Block %d", number), blockTemplateFiles)
 
 	// blockSlot := uint64(0)
-	blockSlot := utils.TimeToSlot(uint64(eth1BlockPageData.Ts.Unix()))
+	blockSlot := utils.TimeToSlot(uint64(executionBlockPageData.Ts.Unix()))
 
 	// retrieve consensus data
 	blockPageData, err := GetSlotPageData(blockSlot)
@@ -83,24 +83,24 @@ func Eth1Block(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data.Data = "block"
-		if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "GetSlotPageData", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+		if handleTemplateError(w, r, "executionBlock.go", "ExecutionBlock", "GetSlotPageData", blockNotFoundTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 			return // an error has occurred and was processed
 		}
 		return
 	}
-	blockPageData.ExecutionData = eth1BlockPageData
+	blockPageData.ExecutionData = executionBlockPageData
 
 	data.Data = blockPageData
 
-	if handleTemplateError(w, r, "eth1Block.go", "Eth1Block", "Done (Post Merge)", blockTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionBlock.go", "ExecutionBlock", "Done (Post Merge)", blockTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 
 }
 
-func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageData, error) {
+func GetExecutionBlockPageData(number uint64, limit int) (*types.ExecutionBlockPageData, error) {
 	block, err := db.BigtableClient.GetBlockFromBlocksTable(number)
-	if diffToHead := int64(services.LatestEth1BlockNumber()) - int64(number); err != nil && diffToHead < 0 && diffToHead >= -5 {
+	if diffToHead := int64(services.LatestExecutionBlockNumber()) - int64(number); err != nil && diffToHead < 0 && diffToHead >= -5 {
 		// TODO(now.youtrack.cloud/issue/TZB-7)
 		block, _, err = rpc.CurrentGzondClient.GetBlock(int64(number) /*, "parity/gzond"*/)
 	}
@@ -121,7 +121,7 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 	}
 
 	// calculate total block reward and set lowest gas price
-	txs := []types.Eth1BlockPageTransaction{}
+	txs := []types.ExecutionBlockPageTransaction{}
 	txFees := new(big.Int)
 	lowestGasPrice := big.NewInt(1 << 62)
 
@@ -156,7 +156,7 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 			contractInteraction = contractInteractionTypes[i]
 		}
 
-		txs = append(txs, types.Eth1BlockPageTransaction{
+		txs = append(txs, types.ExecutionBlockPageTransaction{
 			Hash:          fmt.Sprintf("%#x", tx.Hash),
 			HashFormatted: utils.FormatTransactionHash(tx.Hash, tx.ErrorMsg == ""),
 			From:          fmt.Sprintf("%#x", tx.From),
@@ -182,10 +182,10 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 	reward := new(big.Int).Sub(txFees, burnedTxFees)
 
 	nextBlock := number + 1
-	if nextBlock > services.LatestEth1BlockNumber() {
+	if nextBlock > services.LatestExecutionBlockNumber() {
 		nextBlock = 0
 	}
-	eth1BlockPageData := types.Eth1BlockPageData{
+	executionBlockPageData := types.ExecutionBlockPageData{
 		Number:         number,
 		PreviousBlock:  number - 1,
 		NextBlock:      nextBlock,
@@ -205,5 +205,5 @@ func GetExecutionBlockPageData(number uint64, limit int) (*types.Eth1BlockPageDa
 		Txs:            txs,
 	}
 
-	return &eth1BlockPageData, nil
+	return &executionBlockPageData, nil
 }

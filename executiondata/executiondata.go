@@ -1,4 +1,4 @@
-package eth1data
+package executiondata
 
 import (
 	"bytes"
@@ -24,20 +24,20 @@ import (
 	gzond_types "github.com/theQRL/go-zond/core/types"
 )
 
-var logger = logrus.New().WithField("module", "eth1data")
+var logger = logrus.New().WithField("module", "executiondata")
 var ErrTxIsPending = errors.New("error retrieving data for tx: tx is still pending")
 
-func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, error) {
+func GetExecutionTransaction(hash common.Hash, currency string) (*types.ExecutionTxData, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	cacheKey := fmt.Sprintf("%d:tx:%s", utils.Config.Chain.ClConfig.DepositChainID, hash.String())
 
-	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour, new(types.Eth1TxData)); err == nil {
+	if wanted, err := cache.TieredCache.GetWithLocalTimeout(cacheKey, time.Hour, new(types.ExecutionTxData)); err == nil {
 		logger.Infof("retrieved data for tx %v from cache", hash)
 		logger.Trace(wanted)
 
-		data := wanted.(*types.Eth1TxData)
+		data := wanted.(*types.ExecutionTxData)
 		if data.BlockNumber != 0 {
 			if err := db.GetBlockStatus(data.BlockNumber, services.LatestFinalizedEpoch(), &data.Epoch); err != nil {
 				logger.Warningf("failed to get finalization stats for block %v", data.BlockNumber)
@@ -57,12 +57,12 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 		return nil, ErrTxIsPending
 	}
 
-	txPageData := &types.Eth1TxData{
+	txPageData := &types.ExecutionTxData{
 		Hash:      tx.Hash(),
 		CallData:  fmt.Sprintf("0x%x", tx.Data()),
 		Value:     tx.Value().Bytes(),
 		IsPending: pending,
-		Events:    make([]*types.Eth1EventData, 0, 10),
+		Events:    make([]*types.ExecutionEventData, 0, 10),
 	}
 
 	receipt, err := getTransactionReceipt(ctx, hash)
@@ -176,7 +176,7 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 				if len(log.Topics) > 0 {
 					name = db.BigtableClient.GetEventLabel(log.Topics[0][:])
 				}
-				eth1Event := &types.Eth1EventData{
+				eth1Event := &types.ExecutionEventData{
 					Address: log.Address,
 					Name:    name,
 					Topics:  log.Topics,
@@ -196,7 +196,7 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 							logger.Warnf("error decoding event [%v] for tx [0x%x]", name, tx.Hash())
 						}
 
-						eth1Event := &types.Eth1EventData{
+						eth1Event := &types.ExecutionEventData{
 							Address:     log.Address,
 							Name:        strings.Replace(event.String(), "event ", "", 1),
 							Topics:      log.Topics,
@@ -267,7 +267,7 @@ func GetEth1Transaction(hash common.Hash, currency string) (*types.Eth1TxData, e
 			}
 
 			if amount, found := v.DecodedData["amount"]; found {
-				// amount is a little endian hex denominated in Gplanck so we have to decode and reverse it and then convert to Zond
+				// amount is a little endian hex denominated in Shor so we have to decode and reverse it and then convert to Zond
 				ba, err := hex.DecodeString(amount.Raw[2:])
 				if err != nil {
 					continue

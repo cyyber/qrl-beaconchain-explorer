@@ -108,7 +108,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 	}
 
 	validatorPageData.PendingCount = *pendingCount
-	validatorPageData.InclusionDelay = int64((utils.Config.Chain.ClConfig.Eth1FollowDistance*utils.Config.Chain.ClConfig.SecondsPerEth1Block+utils.Config.Chain.ClConfig.SecondsPerSlot*utils.Config.Chain.ClConfig.SlotsPerEpoch*utils.Config.Chain.ClConfig.EpochsPerEth1VotingPeriod)/3600) + 1
+	validatorPageData.InclusionDelay = int64((utils.Config.Chain.ClConfig.ExecutionFollowDistance*utils.Config.Chain.ClConfig.SecondsPerExecutionBlock+utils.Config.Chain.ClConfig.SecondsPerSlot*utils.Config.Chain.ClConfig.SlotsPerEpoch*utils.Config.Chain.ClConfig.EpochsPerExecutionVotingPeriod)/3600) + 1
 
 	data := InitPageData(w, r, "validators", "/validators", "", validatorTemplateFiles)
 	validatorPageData.NetworkStats = services.LatestIndexPageData()
@@ -166,38 +166,38 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				utils.LogError(err, "error getting validator-deposits from db for pubkey", 0, errFields)
 			}
-			validatorPageData.DepositsCount = uint64(len(deposits.Eth1Deposits))
+			validatorPageData.DepositsCount = uint64(len(deposits.ExecutionDeposits))
 			validatorPageData.ShowMultipleWithdrawalCredentialsWarning = hasMultipleWithdrawalCredentials(deposits)
-			if err != nil || len(deposits.Eth1Deposits) == 0 {
+			if err != nil || len(deposits.ExecutionDeposits) == 0 {
 				validatorNotFound(data, w, r, vars, "")
 				return
 			}
 
-			// there is no validator-index but there are eth1-deposits for the publickey
+			// there is no validator-index but there are execution-deposits for the publickey
 			// which means the validator is in DEPOSITED state
-			// in this state there is nothing to display but the eth1-deposits
+			// in this state there is nothing to display but the execution-deposits
 			validatorPageData.Status = "deposited"
 			validatorPageData.PublicKey = pubKey
-			if deposits != nil && len(deposits.Eth1Deposits) > 0 {
-				deposits.LastEth1DepositTs = deposits.Eth1Deposits[len(deposits.Eth1Deposits)-1].BlockTs
+			if deposits != nil && len(deposits.ExecutionDeposits) > 0 {
+				deposits.LastExecutionDepositTs = deposits.ExecutionDeposits[len(deposits.ExecutionDeposits)-1].BlockTs
 			}
 			validatorPageData.Deposits = deposits
 
 			latestDeposit := time.Now().Unix()
-			if len(deposits.Eth1Deposits) > 1 {
+			if len(deposits.ExecutionDeposits) > 1 {
 			} else if time.Unix(latestDeposit, 0).Before(utils.SlotToTime(0)) {
 				validatorPageData.InclusionDelay = 0
 			}
 
-			for _, deposit := range deposits.Eth1Deposits {
+			for _, deposit := range deposits.ExecutionDeposits {
 				if deposit.ValidSignature {
-					validatorPageData.Eth1DepositAddress = deposit.FromAddress
+					validatorPageData.ExecutionDepositAddress = deposit.FromAddress
 					break
 				}
 			}
 
 			// check if an invalid deposit exists
-			for _, deposit := range deposits.Eth1Deposits {
+			for _, deposit := range deposits.ExecutionDeposits {
 				if !deposit.ValidSignature {
 					validatorPageData.Status = "deposited_invalid"
 					break
@@ -462,11 +462,11 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 			return fmt.Errorf("error getting validator-deposits from db: %w", err)
 		}
 		validatorPageData.Deposits = deposits
-		validatorPageData.DepositsCount = uint64(len(deposits.Eth1Deposits))
+		validatorPageData.DepositsCount = uint64(len(deposits.ExecutionDeposits))
 
-		for _, deposit := range validatorPageData.Deposits.Eth1Deposits {
+		for _, deposit := range validatorPageData.Deposits.ExecutionDeposits {
 			if deposit.ValidSignature {
-				validatorPageData.Eth1DepositAddress = deposit.FromAddress
+				validatorPageData.ExecutionDepositAddress = deposit.FromAddress
 				break
 			}
 		}
@@ -731,7 +731,7 @@ func Validator(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Returns true if there are more than one different withdrawal credentials within both Eth1Deposits and Eth2Deposits
+// Returns true if there are more than one different withdrawal credentials within both ExecutionDeposits and ConsensusDeposits
 func hasMultipleWithdrawalCredentials(deposits *types.ValidatorDeposits) bool {
 	if deposits == nil {
 		return false
@@ -739,8 +739,8 @@ func hasMultipleWithdrawalCredentials(deposits *types.ValidatorDeposits) bool {
 
 	credential := make([]byte, 0)
 
-	// check Eth1Deposits
-	for _, deposit := range deposits.Eth1Deposits {
+	// check ExecutionDeposits
+	for _, deposit := range deposits.ExecutionDeposits {
 		if len(credential) == 0 {
 			credential = deposit.WithdrawalCredentials
 		} else if !bytes.Equal(credential, deposit.WithdrawalCredentials) {
@@ -748,8 +748,8 @@ func hasMultipleWithdrawalCredentials(deposits *types.ValidatorDeposits) bool {
 		}
 	}
 
-	// check Eth2Deposits
-	for _, deposit := range deposits.Eth2Deposits {
+	// check ConsensusDeposits
+	for _, deposit := range deposits.ConsensusDeposits {
 		if len(credential) == 0 {
 			credential = deposit.Withdrawalcredentials
 		} else if !bytes.Equal(credential, deposit.Withdrawalcredentials) {
@@ -1666,7 +1666,7 @@ func ValidatorStatsTable(w http.ResponseWriter, r *http.Request) {
 		COALESCE(participated_sync, 0) AS participated_sync,
 		COALESCE(missed_sync, 0) AS missed_sync,
 		COALESCE(orphaned_sync, 0) AS orphaned_sync,
-		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck
+		COALESCE(cl_rewards_shor, 0) AS cl_rewards_shor
 	FROM validator_stats
 	WHERE validatorindex = $1
 	ORDER BY day DESC`, index)

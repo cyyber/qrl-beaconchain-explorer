@@ -25,7 +25,7 @@ type GasNowPageData struct {
 	} `json:"data"`
 }
 
-type Eth1AddressSearchItem struct {
+type ExecutionAddressSearchItem struct {
 	Address string `json:"address"`
 	Name    string `json:"name"`
 	Token   string `json:"token"`
@@ -90,7 +90,7 @@ type Signature struct {
 	Bytes     string `json:"bytes_signature"`
 }
 
-type SearchValidatorsByEth1Result []struct {
+type SearchValidatorsByExecutionResult []struct {
 	QRLAddress       string        `db:"from_address_text" json:"qrl_address"`
 	ValidatorIndices pq.Int64Array `db:"validatorindices" json:"validator_indices"`
 	Count            uint64        `db:"count" json:"-"`

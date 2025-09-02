@@ -285,13 +285,13 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			SELECT COUNT(*) as total, COALESCE(MAX(block_ts),NOW()) AS block_ts
 			FROM (
 				SELECT publickey, SUM(amount) AS amount, MAX(block_ts) as block_ts
-				FROM eth1_deposits
+				FROM execution_deposits
 				WHERE valid_signature = true
 				GROUP BY publickey
 				HAVING SUM(amount) >= 40000e9
 			) a`)
 		if err != nil {
-			return nil, fmt.Errorf("error retrieving eth1 deposits: %v", err)
+			return nil, fmt.Errorf("error retrieving execution deposits: %v", err)
 		}
 
 		if deposit.Total == 0 { // see if there are any genesis validators
@@ -326,14 +326,14 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		// enough deposits
 		// if data.DepositedTotal > data.DepositThreshold {
 		// 	if depositThresholdReached.Load() == nil {
-		// 		eth1BlockDepositReached.Store(*threshold)
+		// 		executionBlockDepositReached.Store(*threshold)
 		// 		depositThresholdReached.Store(true)
 		// 	}
-		// 	eth1Block := eth1BlockDepositReached.Load().(time.Time)
+		// 	executionBlock := executionBlockDepositReached.Load().(time.Time)
 
-		// 	if !(startSlotTime == time.Unix(0, 0)) && eth1Block.Add(genesisDelay).After(minGenesisTime) {
+		// 	if !(startSlotTime == time.Unix(0, 0)) && executionBlock.Add(genesisDelay).After(minGenesisTime) {
 		// 		// Network starts after min genesis time
-		// 		data.NetworkStartTs = eth1Block.Add(time.Second * time.Duration(utils.Config.Chain.ClConfig.GenesisDelay)).Unix()
+		// 		data.NetworkStartTs = executionBlock.Add(time.Second * time.Duration(utils.Config.Chain.ClConfig.GenesisDelay)).Unix()
 		// 	} else {
 		// 		data.NetworkStartTs = minGenesisTime.Unix()
 		// 	}
@@ -666,7 +666,7 @@ func LatestSlotVizMetrics() []*types.SlotVizEpochs {
 	return []*types.SlotVizEpochs{}
 }
 
-// LatestState returns statistics about the current eth2 state
+// LatestState returns statistics about the current consensus state
 func LatestState() *types.LatestState {
 	data := &types.LatestState{}
 	data.CurrentEpoch = LatestEpoch()
@@ -1033,7 +1033,7 @@ func getBurnPageData() (*types.BurnPageData, error) {
 	start := time.Now()
 
 	latestFinalizedEpoch := LatestFinalizedEpoch()
-	latestBlock := LatestEth1BlockNumber()
+	latestBlock := LatestExecutionBlockNumber()
 
 	lookbackEpoch := latestFinalizedEpoch - 10
 	if lookbackEpoch > latestFinalizedEpoch {

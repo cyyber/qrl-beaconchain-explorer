@@ -202,8 +202,8 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		data.OrphanedSyncTotal = previousDayData.OrphanedSyncTotal + data.OrphanedSync
 
 		// calculate cl reward & update totals
-		data.ClRewardsGPlanck = data.EndBalance - previousDayData.EndBalance + data.WithdrawalsAmount - data.DepositsAmount
-		data.ClRewardsGPlanckTotal = previousDayData.ClRewardsGPlanckTotal + data.ClRewardsGPlanck
+		data.ClRewardsShor = data.EndBalance - previousDayData.EndBalance + data.WithdrawalsAmount - data.DepositsAmount
+		data.ClRewardsShorTotal = previousDayData.ClRewardsShorTotal + data.ClRewardsShor
 
 		// update el reward total
 		data.ElRewardsPlanckTotal = previousDayData.ElRewardsPlanckTotal.Add(data.ElRewardsPlanck)
@@ -217,31 +217,31 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 		data.DepositsAmountTotal = previousDayData.DepositsAmountTotal + data.DepositsAmount
 
 		if statisticsData1d != nil && len(statisticsData1d) > index {
-			data.ClPerformance1d = data.ClRewardsGPlanckTotal - statisticsData1d[index].ClRewardsGPlanckTotal
+			data.ClPerformance1d = data.ClRewardsShorTotal - statisticsData1d[index].ClRewardsShorTotal
 			data.ElPerformance1d = data.ElRewardsPlanckTotal.Sub(statisticsData1d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance1d = data.ClRewardsGPlanckTotal
+			data.ClPerformance1d = data.ClRewardsShorTotal
 			data.ElPerformance1d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData7d != nil && len(statisticsData7d) > index {
-			data.ClPerformance7d = data.ClRewardsGPlanckTotal - statisticsData7d[index].ClRewardsGPlanckTotal
+			data.ClPerformance7d = data.ClRewardsShorTotal - statisticsData7d[index].ClRewardsShorTotal
 			data.ElPerformance7d = data.ElRewardsPlanckTotal.Sub(statisticsData7d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance7d = data.ClRewardsGPlanckTotal
+			data.ClPerformance7d = data.ClRewardsShorTotal
 			data.ElPerformance7d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData31d != nil && len(statisticsData31d) > index {
-			data.ClPerformance31d = data.ClRewardsGPlanckTotal - statisticsData31d[index].ClRewardsGPlanckTotal
+			data.ClPerformance31d = data.ClRewardsShorTotal - statisticsData31d[index].ClRewardsShorTotal
 			data.ElPerformance31d = data.ElRewardsPlanckTotal.Sub(statisticsData31d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance31d = data.ClRewardsGPlanckTotal
+			data.ClPerformance31d = data.ClRewardsShorTotal
 			data.ElPerformance31d = data.ElRewardsPlanckTotal
 		}
 		if statisticsData365d != nil && len(statisticsData365d) > index {
-			data.ClPerformance365d = data.ClRewardsGPlanckTotal - statisticsData365d[index].ClRewardsGPlanckTotal
+			data.ClPerformance365d = data.ClRewardsShorTotal - statisticsData365d[index].ClRewardsShorTotal
 			data.ElPerformance365d = data.ElRewardsPlanckTotal.Sub(statisticsData365d[index].ElRewardsPlanckTotal)
 		} else {
-			data.ClPerformance365d = data.ClRewardsGPlanckTotal
+			data.ClPerformance365d = data.ClRewardsShorTotal
 			data.ElPerformance365d = data.ElRewardsPlanckTotal
 		}
 	}
@@ -303,8 +303,8 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 			"withdrawals_total",
 			"withdrawals_amount",
 			"withdrawals_amount_total",
-			"cl_rewards_gplanck",
-			"cl_rewards_gplanck_total",
+			"cl_rewards_shor",
+			"cl_rewards_shor_total",
 			"el_rewards_planck",
 			"el_rewards_planck_total",
 		}, pgx.CopyFromSlice(len(validatorData), func(i int) ([]interface{}, error) {
@@ -341,8 +341,8 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 				validatorData[i].WithdrawalsTotal,
 				validatorData[i].WithdrawalsAmount,
 				validatorData[i].WithdrawalsAmountTotal,
-				validatorData[i].ClRewardsGPlanck,
-				validatorData[i].ClRewardsGPlanckTotal,
+				validatorData[i].ClRewardsShor,
+				validatorData[i].ClRewardsShorTotal,
 				validatorData[i].ElRewardsPlanck,
 				validatorData[i].ElRewardsPlanckTotal,
 			}, nil
@@ -394,7 +394,7 @@ func WriteValidatorStatisticsForDay(day uint64, client rpc.Client) error {
 					validatorData[i].ClPerformance7d,
 					validatorData[i].ClPerformance31d,
 					validatorData[i].ClPerformance365d,
-					validatorData[i].ClRewardsGPlanckTotal,
+					validatorData[i].ClRewardsShorTotal,
 
 					validatorData[i].ElPerformance1d,
 					validatorData[i].ElPerformance7d,
@@ -998,8 +998,8 @@ func GatherStatisticsForDay(day int64) ([]*types.ValidatorStatsTableDbRow, error
 		COALESCE(withdrawals_total, 0) AS withdrawals_total,
 		COALESCE(withdrawals_amount, 0) AS withdrawals_amount,
 		COALESCE(withdrawals_amount_total, 0) AS withdrawals_amount_total,
-		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck,
-		COALESCE(cl_rewards_gplanck_total, 0) AS cl_rewards_gplanck_total,
+		COALESCE(cl_rewards_shor, 0) AS cl_rewards_shor,
+		COALESCE(cl_rewards_shor_total, 0) AS cl_rewards_shor_total,
 		COALESCE(el_rewards_planck, 0) AS el_rewards_planck,
 		COALESCE(el_rewards_planck_total, 0) AS el_rewards_planck_total
 	 from validator_stats WHERE day = $1 ORDER BY validatorindex
@@ -1059,7 +1059,7 @@ func GetValidatorIncomeHistory(validatorIndices []uint64, lowerBoundDay uint64, 
 	err := ReaderDb.Select(&result, `
 		SELECT 
 			day, 
-			SUM(COALESCE(cl_rewards_gplanck, 0)) AS cl_rewards_gplanck,
+			SUM(COALESCE(cl_rewards_shor, 0)) AS cl_rewards_shor,
 			SUM(COALESCE(end_balance, 0)) AS end_balance
 		FROM validator_stats 
 		WHERE validatorindex = ANY($1) AND day BETWEEN $2 AND $3 
@@ -1346,9 +1346,9 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	}
 	logger.Infof("exporting chart_series for day %v ts: %v (slot %v to %v, block %v to %v)", day, dateTrunc, firstSlot, lastSlot, firstBlock, lastBlock)
 
-	blocksChan := make(chan *types.Eth1Block, 360)
+	blocksChan := make(chan *types.ExecutionBlock, 360)
 	batchSize := int64(360)
-	go func(stream chan *types.Eth1Block) {
+	go func(stream chan *types.ExecutionBlock) {
 		logger.Infof("querying blocks from %v to %v", firstBlock, lastBlock)
 		for b := int64(lastBlock) - 1; b > int64(firstBlock); b -= batchSize {
 			high := b
@@ -1395,7 +1395,7 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 
 	// missedBlockCount := (firstSlot - uint64(lastSlot)) - uint64(blockCount)
 
-	var prevBlock *types.Eth1Block
+	var prevBlock *types.ExecutionBlock
 
 	accumulatedBlockTime := decimal.NewFromInt(0)
 
@@ -1455,10 +1455,10 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 
 	logger.Infof("exporting consensus rewards from %v to %v", firstEpoch, lastEpoch)
 
-	// consensus rewards are in Gplanck
+	// consensus rewards are in Shor
 	totalConsensusRewards := int64(0)
 
-	err = WriterDb.Get(&totalConsensusRewards, "SELECT SUM(COALESCE(cl_rewards_gplanck, 0)) FROM validator_stats WHERE day = $1", day)
+	err = WriterDb.Get(&totalConsensusRewards, "SELECT SUM(COALESCE(cl_rewards_shor, 0)) FROM validator_stats WHERE day = $1", day)
 	if err != nil {
 		return fmt.Errorf("error calculating totalConsensusRewards: %w", err)
 	}
@@ -1488,7 +1488,7 @@ func WriteExecutionChartSeriesForDay(day int64) error {
 	if err != nil {
 		return fmt.Errorf("error calculating BLOCK_TIME_AVG chart_series: %w", err)
 	}
-	// convert consensus rewards to gplanck
+	// convert consensus rewards to shor
 	emission := (totalBaseBlockReward.Add(decimal.NewFromInt(totalConsensusRewards).Mul(decimal.NewFromInt(1000000000))).Add(totalTips)).Sub(totalBurned)
 	logger.Infof("Exporting TOTAL_EMISSION %v day emission", emission)
 

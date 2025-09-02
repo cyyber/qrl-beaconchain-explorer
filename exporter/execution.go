@@ -107,7 +107,7 @@ func eth1DepositsExporter() {
 			}
 		}
 
-		depositsToSave, err := fetchEth1Deposits(fromBlock, toBlock)
+		depositsToSave, err := fetchExecutionDeposits(fromBlock, toBlock)
 		if err != nil {
 			if gzondRequestEntityTooLargeRE.MatchString(err.Error()) {
 				toBlock = fromBlock + 100
@@ -115,7 +115,7 @@ func eth1DepositsExporter() {
 					toBlock = blockHeight
 				}
 				logger.Infof("limiting block-range to %v-%v when fetching eth1-deposits due to too much results", fromBlock, toBlock)
-				depositsToSave, err = fetchEth1Deposits(fromBlock, toBlock)
+				depositsToSave, err = fetchExecutionDeposits(fromBlock, toBlock)
 			}
 			if err != nil {
 				logger.WithError(err).WithField("fromBlock", fromBlock).WithField("toBlock", toBlock).Errorf("error fetching eth1-deposits")
@@ -124,7 +124,7 @@ func eth1DepositsExporter() {
 			}
 		}
 
-		err = saveEth1Deposits(depositsToSave)
+		err = saveExecutionDeposits(depositsToSave)
 		if err != nil {
 			logger.WithError(err).Errorf("error saving eth1-deposits")
 			time.Sleep(time.Second * 5)
@@ -163,7 +163,7 @@ func eth1DepositsExporter() {
 	}
 }
 
-func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1Deposit, err error) {
+func fetchExecutionDeposits(fromBlock, toBlock uint64) (depositsToSave []*types.ExecutionDeposit, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	topic := common.BytesToHash(elDepositEventSignature[:])
@@ -195,7 +195,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 		}
 		pubkey, withdrawalCredentials, amount, signature, merkletreeIndex, err := deposit.UnpackDepositLogData(depositLog.Data)
 		if err != nil {
-			return depositsToSave, fmt.Errorf("error unpacking eth1-deposit-log: %x: %w", depositLog.Data, err)
+			return depositsToSave, fmt.Errorf("error unpacking execution-deposit-log: %x: %w", depositLog.Data, err)
 		}
 		err = deposit.VerifyDepositSignature(&zondpb.Deposit_Data{
 			PublicKey:             pubkey,
@@ -206,7 +206,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 		validSignature := err == nil
 		blocksToFetch = append(blocksToFetch, depositLog.BlockNumber)
 		txsToFetch = append(txsToFetch, depositLog.TxHash.Hex())
-		depositsToSave = append(depositsToSave, &types.Eth1Deposit{
+		depositsToSave = append(depositsToSave, &types.ExecutionDeposit{
 			TxHash:                depositLog.TxHash.Bytes(),
 			TxIndex:               uint64(depositLog.TxIndex),
 			BlockNumber:           depositLog.BlockNumber,
@@ -236,17 +236,17 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 		// get corresponding tx (for input and from-address)
 		tx, exists := txs[fmt.Sprintf("0x%x", d.TxHash)]
 		if !exists {
-			return depositsToSave, fmt.Errorf("error getting tx for eth1-deposit: tx does not exist in fetched map")
+			return depositsToSave, fmt.Errorf("error getting tx for execution-deposit: tx does not exist in fetched map")
 		}
 		d.TxInput = tx.Data()
 		chainID := tx.ChainId()
 		if chainID == nil {
-			return depositsToSave, fmt.Errorf("error getting tx-chainId for eth1-deposit")
+			return depositsToSave, fmt.Errorf("error getting tx-chainId for execution-deposit")
 		}
 		signer := gzondTypes.NewShanghaiSigner(chainID)
 		sender, err := signer.Sender(tx)
 		if err != nil {
-			return depositsToSave, fmt.Errorf("error getting sender for eth1-deposit (txHash: %x, chainID: %v): %w", d.TxHash, chainID, err)
+			return depositsToSave, fmt.Errorf("error getting sender for execution-deposit (txHash: %x, chainID: %v): %w", d.TxHash, chainID, err)
 		}
 		d.FromAddress = sender.Bytes()
 	}
@@ -254,7 +254,7 @@ func fetchEth1Deposits(fromBlock, toBlock uint64) (depositsToSave []*types.Eth1D
 	return depositsToSave, nil
 }
 
-func saveEth1Deposits(depositsToSave []*types.Eth1Deposit) error {
+func saveExecutionDeposits(depositsToSave []*types.ExecutionDeposit) error {
 	tx, err := db.WriterDb.Begin()
 	if err != nil {
 		return err
@@ -262,7 +262,7 @@ func saveEth1Deposits(depositsToSave []*types.Eth1Deposit) error {
 	defer tx.Rollback()
 
 	insertDepositStmt, err := tx.Prepare(`
-		INSERT INTO eth1_deposits (
+		INSERT INTO execution_deposits (
 			tx_hash,
 			tx_input,
 			tx_index,
@@ -380,7 +380,7 @@ func eth1BatchRequestHeadersAndTxs(blocksToFetch []uint64, txsToFetch []string) 
 func aggregateDeposits() error {
 	start := time.Now()
 	defer func() {
-		metrics.TaskDuration.WithLabelValues("exporter_aggregate_eth1_deposits").Observe(time.Since(start).Seconds())
+		metrics.TaskDuration.WithLabelValues("exporter_aggregate_execution_deposits").Observe(time.Since(start).Seconds())
 	}()
 	_, err := db.WriterDb.Exec(`
 		INSERT INTO eth1_deposits_aggregated (from_address, amount, validcount, invalidcount, slashedcount, totalcount, activecount, pendingcount, voluntary_exit_count)

@@ -156,7 +156,7 @@ func main() {
 		return
 	}
 
-	transforms := make([]func(blk *types.Eth1Block, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
+	transforms := make([]func(blk *types.ExecutionBlock, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
 	transforms = append(transforms,
 		bt.TransformBlock,
 		bt.TransformTx,
@@ -224,7 +224,7 @@ func main() {
 			continue
 		}
 
-		lastBlockFromNode, err := client.GetLatestEth1BlockNumber()
+		lastBlockFromNode, err := client.GetLatestExecutionBlockNumber()
 		if err != nil {
 			lastBlockFromNodeSameCount++
 			if lastBlockFromNodeSameCount > 20 { // nearly 5 minutes no new block
@@ -450,7 +450,7 @@ func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.GzondClient, prefix str
 			return
 		}
 
-		balances := make([]*types.Eth1AddressBalance, 0, len(pairs))
+		balances := make([]*types.ExecutionAddressBalance, 0, len(pairs))
 		for b := 0; b < len(pairs); b += batchSize {
 			start := b
 			end := b + batchSize

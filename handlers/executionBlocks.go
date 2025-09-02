@@ -20,20 +20,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Eth1Blocks(w http.ResponseWriter, r *http.Request) {
+func ExecutionBlocks(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/blocks.html")
-	var eth1BlocksTemplate = templates.GetTemplate(templateFiles...)
+	var executionBlocksTemplate = templates.GetTemplate(templateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
 
-	data := InitPageData(w, r, "blockchain", "/eth1blocks", "QRL Blocks", templateFiles)
+	data := InitPageData(w, r, "blockchain", "/executionblocks", "QRL Blocks", templateFiles)
 
-	if handleTemplateError(w, r, "eth1Blocks.go", "Eth1Blocks", "", eth1BlocksTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionBlocks.go", "ExecutionBlocks", "", executionBlocksTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }
 
-func Eth1BlocksData(w http.ResponseWriter, r *http.Request) {
+func ExecutionBlocksData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -64,9 +64,9 @@ func Eth1BlocksData(w http.ResponseWriter, r *http.Request) {
 		length = 100
 	}
 
-	data, err := getEth1BlocksTableData(draw, start, length, recordsTotal)
+	data, err := getExecutionBlocksTableData(draw, start, length, recordsTotal)
 	if err != nil {
-		utils.LogError(err, "error getting eth1 block table data", 0)
+		utils.LogError(err, "error getting execution block table data", 0)
 	}
 
 	err = json.NewEncoder(w).Encode(data)
@@ -123,9 +123,9 @@ func getProposerAndStatusFromSlot(startSlot uint64, endSlot uint64) (map[uint64]
 	return data, nil
 }
 
-func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.DataTableResponse, error) {
+func getExecutionBlocksTableData(draw, start, length, recordsTotal uint64) (*types.DataTableResponse, error) {
 	if recordsTotal == 0 {
-		recordsTotal = services.LatestEth1BlockNumber() + 1 // +1 to include block 0
+		recordsTotal = services.LatestExecutionBlockNumber() + 1 // +1 to include block 0
 	}
 
 	displayStart := start
@@ -221,7 +221,7 @@ func getEth1BlocksTableData(draw, start, length, recordsTotal uint64) (*types.Da
 			template.HTML(fmt.Sprintf(`<span data-toggle="tooltip" data-placement="top" title="%d transactions (%d internal transactions)">%d<BR /><span style="font-size: .63rem; color: grey;">%d</span></span>`, b.GetTransactionCount(), b.GetInternalTransactionCount(), b.GetTransactionCount(), b.GetInternalTransactionCount())),                                                                                                                                                                               // Transactions
 			template.HTML(fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="Gas Used %%" style="font-size: .63rem; color: grey;">%.2f%%</span>&nbsp;<span data-toggle="tooltip" data-placement="top" title="%% of Gas Target" style="font-size: .63rem; color: grey;">(%+.2f%%)</span>`, utils.FormatAddCommas(b.GetGasUsed()), float64(int64(float64(b.GetGasUsed())/float64(b.GetGasLimit())*10000.0))/100.0, float64(int64(((float64(b.GetGasUsed())-gasHalf)/gasHalf)*10000.0))/100.0)), // Gas Used
 			utils.FormatAddCommas(b.GetGasLimit()),                                  // Gas Limit
-			utils.FormatAmountFormatted(baseFee, "GPlanck", 5, 4, true, true, true), // Base Fee
+			utils.FormatAmountFormatted(baseFee, "Shor", 5, 4, true, true, true),    // Base Fee
 			utils.FormatAmountFormatted(txReward, "Quanta", 5, 4, true, true, true), // Reward
 			fmt.Sprintf(`%v<BR /><span data-toggle="tooltip" data-placement="top" title="%% of Transactions Fees" style="font-size: .63rem; color: grey;">%.2f%%</span>`, utils.FormatAmountFormatted(burned, "Quanta", 5, 4, true, true, false), float64(int64(burnedPercentage*10000.0))/100.0), // Burned Fees
 		}

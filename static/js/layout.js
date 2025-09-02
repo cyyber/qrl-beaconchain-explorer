@@ -352,28 +352,28 @@ $(document).ready(function () {
   })
   bhEpochs.remote.transport._get = debounce(bhEpochs.remote.transport, bhEpochs.remote.transport._get)
 
-  var bhEth1Accounts = new Bloodhound({
+  var bhExecutionAccounts = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     identify: function (obj) {
       return obj.account
     },
     remote: {
-      url: "/search/eth1_addresses/%QUERY",
+      url: "/search/execution_addresses/%QUERY",
       wildcard: "%QUERY",
       maxPendingRequests: requestNum,
     },
   })
-  bhEth1Accounts.remote.transport._get = debounce(bhEth1Accounts.remote.transport, bhEth1Accounts.remote.transport._get)
+  bhExecutionAccounts.remote.transport._get = debounce(bhExecutionAccounts.remote.transport, bhExecutionAccounts.remote.transport._get)
 
   var bhValidatorsByAddress = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     identify: function (obj) {
-      return obj.eth1_address
+      return obj.execution_address
     },
     remote: {
-      url: "/search/count_indexed_validators_by_eth1_address/%QUERY",
+      url: "/search/count_indexed_validators_by_execution_address/%QUERY",
       wildcard: "%QUERY",
       maxPendingRequests: requestNum,
     },
@@ -505,7 +505,7 @@ $(document).ready(function () {
     {
       limit: 5,
       name: "addresses",
-      source: bhEth1Accounts,
+      source: bhExecutionAccounts,
       display: (data) => data.address || data.name,
       templates: {
         header: '<h3 class="h5">Address</h3>',
@@ -519,7 +519,7 @@ $(document).ready(function () {
                 </div>
               </div>`
           }
-          return `<div class="text-monospace text-truncate">0x${data.address}</div>`
+          return `<div class="text-monospace text-truncate">Q${data.address}</div>`
         },
       },
     },
@@ -527,11 +527,11 @@ $(document).ready(function () {
       limit: 5,
       name: "validators-by-address",
       source: bhValidatorsByAddress,
-      display: "eth1_address",
+      display: "execution_address",
       templates: {
         header: '<h3 class="h5">Validators by Address</h3>',
         suggestion: function (data) {
-          return `<div class="text-monospace text-truncate">${data.count}: 0x${data.eth1_address}</div>`
+          return `<div class="text-monospace text-truncate">${data.count}: 0x${data.execution_address}</div>`
         },
       },
     },
@@ -599,8 +599,8 @@ $(document).ready(function () {
       window.location = "/epoch/" + sug.epoch
     } else if (sug.address !== undefined) {
       window.location = "/address/" + sug.address
-    } else if (sug.eth1_address !== undefined) {
-      window.location = "/validators/deposits?q=" + sug.eth1_address
+    } else if (sug.execution_address !== undefined) {
+      window.location = "/validators/deposits?q=" + sug.execution_address
     } else if (sug.withdrawalcredentials !== undefined) {
       window.location = "/validators/deposits?q=" + sug.withdrawalcredentials
     } else if (sug.graffiti !== undefined) {

@@ -594,14 +594,14 @@ $(document).ready(function () {
   }))
 
   function create_validators_typeahead(input_container_selector, table_selector) {
-    var bhEth1Addresses = new Bloodhound({
+    var bhExecutionAddresses = new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.whitespace,
       queryTokenizer: Bloodhound.tokenizers.whitespace,
       identify: function (obj) {
-        return obj.eth1_address
+        return obj.execution_address
       },
       remote: {
-        url: "/search/indexed_validators_by_eth1_addresses/%QUERY",
+        url: "/search/indexed_validators_by_execution_addresses/%QUERY",
         wildcard: "%QUERY",
       },
     })
@@ -615,15 +615,15 @@ $(document).ready(function () {
       {
         limit: 5,
         name: "addresses",
-        source: bhEth1Addresses,
+        source: bhExecutionAddresses,
         display: function (data) {
-          return data?.eth1_address || ""
+          return data?.execution_address || ""
         },
         templates: {
           header: '<h5 class="font-weight-bold ml-3">QRL Address</h5>',
           suggestion: function (data) {
             var len = data.validator_indices.length > 10 ? 10 + "+" : data.validator_indices.length
-            return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">0x${data.eth1_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
+            return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">Q${data.execution_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
           },
         },
       }
@@ -637,8 +637,8 @@ $(document).ready(function () {
       $(".tt-suggestion").first().addClass("tt-cursor")
     })
     $(input_container_selector).bind("typeahead:select", function (ev, suggestion) {
-      if (suggestion?.eth1_address) {
-        $(table_selector).DataTable().search(suggestion.eth1_address)
+      if (suggestion?.execution_address) {
+        $(table_selector).DataTable().search(suggestion.execution_address)
         $(table_selector).DataTable().draw()
       }
     })
@@ -696,18 +696,18 @@ $(document).ready(function () {
     },
   })
   bhPubkey.remote.transport._get = debounce(bhPubkey.remote.transport, bhPubkey.remote.transport._get)
-  var bhEth1Addresses = new Bloodhound({
+  var bhExecutionAddresses = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     identify: function (obj) {
-      return obj.eth1_address
+      return obj.execution_address
     },
     remote: {
-      url: "/search/indexed_validators_by_eth1_addresses/%QUERY",
+      url: "/search/indexed_validators_by_execution_addresses/%QUERY",
       wildcard: "%QUERY",
     },
   })
-  bhEth1Addresses.remote.transport._get = debounce(bhEth1Addresses.remote.transport, bhEth1Addresses.remote.transport._get)
+  bhExecutionAddresses.remote.transport._get = debounce(bhExecutionAddresses.remote.transport, bhExecutionAddresses.remote.transport._get)
   var bhName = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -767,13 +767,13 @@ $(document).ready(function () {
     {
       limit: 5,
       name: "addresses",
-      source: bhEth1Addresses,
+      source: bhExecutionAddresses,
       display: "address",
       templates: {
         header: "<h3>Validators by QRL Addresses</h3>",
         suggestion: function (data) {
           var len = data.validator_indices.length > VALLIMIT ? VALLIMIT + "+" : data.validator_indices.length
-          return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">${data.eth1_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
+          return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">${data.execution_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
         },
       },
     },

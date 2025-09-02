@@ -3,10 +3,10 @@
   <script type="text/javascript" src="/js/datatable_loader.js"></script>
 
   <script>
-    activateTabbarSwitcher("eth1tx-tab-content", "eth1TxTabs", "overview")
+    activateTabbarSwitcher("executiontx-tab-content", "executionTxTabs", "overview")
 
     const handleTabChange = (url) => {
-      if ($(`#${"eth1tx-tab-content"}`).find(".tab-pane.active")[0] == $("#internal-txnsTabPanel")[0]) {
+      if ($(`#${"executiontx-tab-content"}`).find(".tab-pane.active")[0] == $("#internal-txnsTabPanel")[0]) {
         $("#advanced-itx").show()
       }
       else {
@@ -24,7 +24,7 @@
         })
       } else {
         //handle Firefox specific way as it does not support the navigation way
-        const tabBarContainer = $(`#eth1TxTabs`)
+        const tabBarContainer = $(`#executionTxTabs`)
         if (!tabBarContainer) {
           return
         }
@@ -121,7 +121,7 @@
               </label>
             </div>
           </div>
-          <ul class="nav nav-tabs card-header-tabs border-bottom-0" id="eth1TxTabs" role="tablist">
+          <ul class="nav nav-tabs card-header-tabs border-bottom-0" id="executionTxTabs" role="tablist">
             <li class="nav-item">
               <a class="nav-link show active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true"><i class="fas fa-info-circle"></i><span class="tab-text" style="margin-left: 6px;">Overview</span></a>
             </li>
@@ -142,7 +142,7 @@
           </ul>
         </div>
         <div class="card-body px-0 py-1">
-          <div class="tab-content h-100" id="eth1tx-tab-content">
+          <div class="tab-content h-100" id="executiontx-tab-content">
             <div id="overviewTabPanel" class="tab-pane fade" role="tabpanel" aria-labelledby="overview-tab">
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-3"><span class="align-middle">Transaction Hash:</span></div>
@@ -162,7 +162,7 @@
                 <div class="col-md-9">
                   <div class="d-flex flex-wrap">
                     <div class="mr-2 flex-shrink-1">
-                      {{ formatEth1TxStatus .Receipt.Status }}
+                      {{ formatExecutionTxStatus .Receipt.Status }}
                     </div>
                   </div>
                 </div>
@@ -205,7 +205,7 @@
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-3">From:</div>
                 <div class="col-md-9 d-flex flex-wrap">
-                  {{ formatEth1AddressFull .From }}
+                  {{ formatExecutionAddressFull .From }}
                   {{ if ne .FromName "" }}
                     <div class="ml-2 flex-shrink-1"><span class="badge badge-pill badge-ens align-middle">{{ .FromName }}</span></div>
                   {{ end }}
@@ -218,7 +218,7 @@
                   <div class="d-flex">
                     <div class="row no-gutters w-100">
                       <div class="col-md-auto" style="min-width: 0;">
-                        <span class="align-middle mr-2">{{ formatEth1AddressFull .To }}</span>
+                        <span class="align-middle mr-2">{{ formatExecutionAddressFull .To }}</span>
                       </div>
                       <div class="col-md-auto">
                         <div class="d-flex flex-wrap">
@@ -311,7 +311,7 @@
               </div>
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-3">Effective Gas Price:</div>
-                <div class="col-md-9">{{ formatBytesAmount .Gas.EffectiveFee "GPlanck" 8 }}</div>
+                <div class="col-md-9">{{ formatBytesAmount .Gas.EffectiveFee "Shor" 8 }}</div>
               </div>
               <div class="collapse" id="collapseExample">
                 <div class="row border-bottom p-3 mx-0">
@@ -330,13 +330,13 @@
                     <div class="col-md-3">Gas Fees:</div>
                     <div class="col-md-9">
                       <span class="text-secondary">Base Block Fee:</span>
-                      <span class="text-black">{{ formatBytesAmount .Gas.BlockBaseFee "GPlanck" 8 }}</span>
+                      <span class="text-black">{{ formatBytesAmount .Gas.BlockBaseFee "Shor" 8 }}</span>
                       <span class="px-2">|</span>
                       <span class="text-secondary">Max Overall Fee:</span>
-                      <span class="text-black">{{ formatBytesAmount .Gas.MaxFee "GPlanck" 8 }}</span>
+                      <span class="text-black">{{ formatBytesAmount .Gas.MaxFee "Shor" 8 }}</span>
                       <span class="px-2">|</span>
                       <span class="text-secondary">Max Priority Fee:</span>
-                      <span class="text-black">{{ formatBytesAmount .Gas.MaxPriorityFee "GPlanck" 8 }}</span>
+                      <span class="text-black">{{ formatBytesAmount .Gas.MaxPriorityFee "Shor" 8 }}</span>
                     </div>
                   </div>
                 {{ end }}
@@ -375,7 +375,7 @@
                 {{ range $index, $event := .Events }}
                   <div class="row p-3 mx-0 {{ if $index }}border-top{{ end }}" {{ if $index }}style="border-width:4px !important;"{{ end }}>
                     <div class="col-md-3">Address:</div>
-                    <div class="col-md-9">{{ formatEth1AddressFull .Address }}</div>
+                    <div class="col-md-9">{{ formatExecutionAddressFull .Address }}</div>
                   </div>
                   {{ if .Name }}
                     <div class="row border-top p-3 mx-0">
@@ -423,7 +423,7 @@
                                     <div class="d-inline-flex">
                                       <div class="flex-shrink-1">
                                         {{ if eq $value.Type "address" }}
-                                          {{ formatEth1AddressFull $value.Address }}
+                                          {{ formatExecutionAddressFull $value.Address }}
                                         {{ else }}
                                           <samp>{{ $value.Value }}</samp>
                                         {{ end }}

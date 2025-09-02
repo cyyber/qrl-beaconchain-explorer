@@ -75,7 +75,7 @@ import (
 //
 // ==================================================
 
-func (bigtable *Bigtable) TransformQrnsNameRegistered(blk *types.Eth1Block, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
+func (bigtable *Bigtable) TransformQrnsNameRegistered(blk *types.ExecutionBlock, cache *freecache.Cache) (bulkData *types.BulkMutations, bulkMetadataUpdates *types.BulkMutations, err error) {
 	startTime := time.Now()
 	defer func() {
 		metrics.TaskDuration.WithLabelValues("bt_transform_qrns").Observe(time.Since(startTime).Seconds())

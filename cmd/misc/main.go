@@ -67,7 +67,7 @@ func main() {
 	statsPartitionCommand := commands.StatsMigratorCommand{}
 
 	configPath := flag.String("config", "config/default.config.yml", "Path to the config file")
-	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, index-missing-blocks, export-epoch-missed-slots, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats")
+	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-execution-blocks, update-aggregation-bits, index-missing-blocks, export-epoch-missed-slots, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats")
 	flag.Uint64Var(&opts.StartEpoch, "start-epoch", 0, "start epoch")
 	flag.Uint64Var(&opts.EndEpoch, "end-epoch", 0, "end epoch")
 	flag.Uint64Var(&opts.User, "user", 0, "user id")
@@ -82,7 +82,7 @@ func main() {
 	flag.Uint64Var(&opts.EndBlock, "blocks.end", 0, "Block to finish indexing")
 	flag.Uint64Var(&opts.DataConcurrency, "data.concurrency", 30, "Concurrency to use when indexing data from bigtable")
 	flag.Uint64Var(&opts.BatchSize, "data.batchSize", 1000, "Batch size")
-	flag.StringVar(&opts.Transformers, "transformers", "", "Comma separated list of transformers used by the eth1 indexer")
+	flag.StringVar(&opts.Transformers, "transformers", "", "Comma separated list of transformers used by the execution indexer")
 	flag.StringVar(&opts.ValidatorNameRanges, "validator-name-ranges", "https://config.dencun-devnet-8.ethpandaops.io/api/v1/nodes/validator-ranges", "url to or json of validator-ranges (format must be: {'ranges':{'X-Y':'name'}})")
 	flag.StringVar(&opts.Addresses, "addresses", "", "Comma separated list of addresses that should be processed by the command")
 	flag.StringVar(&opts.Columns, "columns", "", "Comma separated list of columns that should be affected by the command")
@@ -294,8 +294,8 @@ func main() {
 		err = debugBlocks()
 	case "clear-bigtable":
 		clearBigtable(opts.Table, opts.Family, opts.Columns, opts.Key, opts.DryRun, bt)
-	case "index-old-eth1-blocks":
-		indexOldEth1Blocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, gzondClient)
+	case "index-old-execution-blocks":
+		indexOldExecutionBlocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, gzondClient)
 	case "update-aggregation-bits":
 		updateAggregationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
 	case "update-block-finalization-sequentially":
@@ -383,7 +383,7 @@ func main() {
 		}
 
 		_, err = tx.Exec(`
-		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, syncaggregate_participation, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, proposer, status, exec_transactions_count, eth1data_depositcount)
+		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, syncaggregate_participation, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, proposer, status, exec_transactions_count, executiondata_depositcount)
 		VALUES (0, 0, '\x'::bytea, '\x'::bytea, '\x'::bytea, '\x'::bytea, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 		ON CONFLICT (slot, blockroot) DO NOTHING`)
 		if err != nil {
@@ -713,8 +713,8 @@ func fixExecTransactionsCount() error {
 		if lastBlock > int64(endBlockNumber) {
 			lastBlock = int64(endBlockNumber)
 		}
-		blocksChan := make(chan *types.Eth1Block, batchSize)
-		go func(stream chan *types.Eth1Block) {
+		blocksChan := make(chan *types.ExecutionBlock, batchSize)
+		go func(stream chan *types.ExecutionBlock) {
 			high := lastBlock
 			low := lastBlock - batchSize + 1
 			if int64(firstBlock) > low {
@@ -1120,10 +1120,10 @@ func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Big
 		var dbRewards *int64
 		err = db.ReaderDb.Get(&dbRewards, `
 		SELECT 
-		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck
+		COALESCE(cl_rewards_shor, 0) AS cl_rewards_shor
 		FROM validator_stats WHERE validatorindex = $2 AND day = $1`, day, validator)
 		if err != nil {
-			logrus.Fatalf("error getting cl_rewards_gplanck from db: %v", err)
+			logrus.Fatalf("error getting cl_rewards_shor from db: %v", err)
 			return
 		}
 		if tot != *dbRewards {
@@ -1235,12 +1235,12 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.G
 				}
 			}
 
-			indexOldEth1Blocks(block, block, 1, 1, "all", bt, client)
+			indexOldExecutionBlocks(block, block, 1, 1, "all", bt, client)
 		}
 	}
 }
 
-func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.GzondClient) {
+func indexOldExecutionBlocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.GzondClient) {
 	if endBlock > 0 && endBlock < startBlock {
 		utils.LogError(nil, fmt.Sprintf("endBlock [%v] < startBlock [%v]", endBlock, startBlock), 0)
 		return
@@ -1254,7 +1254,7 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 		return
 	}
 
-	transforms := make([]func(blk *types.Eth1Block, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
+	transforms := make([]func(blk *types.ExecutionBlock, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
 
 	logrus.Infof("transformerFlag: %v", transformerFlag)
 	transformerList := strings.Split(transformerFlag, ",")
@@ -1346,7 +1346,7 @@ func exportStatsTotals(columns string, dayStart, dayEnd, concurrency uint64) {
 	// validate columns input
 	columnsSlice := strings.Split(columns, ",")
 	validColumns := []string{
-		"cl_rewards_gplanck_total",
+		"cl_rewards_shor_total",
 		"el_rewards_planck_total",
 		"missed_attestations_total",
 		"participated_sync_total",

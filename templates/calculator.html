@@ -556,8 +556,8 @@
 
         var now = Date.now()
         var yourStake = this.params.stake
-        var incomeGplanck = this.params.stake
-        var incomeDollar = (incomeGplanck * price) / 1e9
+        var incomeShor = this.params.stake
+        var incomeDollar = (incomeShor * price) / 1e9
         var incomeAll = 0
 
         this.result.start = now
@@ -595,16 +595,16 @@
           price = price * (1 + priceChangePerEpoch)
           if (this.params.stakingFee > 0) {
             costs += (valRewards * (yourStake / valStake) * this.params.stakingFee * price) / 1e9
-            incomeGplanck += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
+            incomeShor += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
             if (this.params.reinvest) yourStake += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
           } else {
-            incomeGplanck += valRewards * (yourStake / valStake)
+            incomeShor += valRewards * (yourStake / valStake)
           }
           costs += costsPerEpoch
           var day = ((i + 1) / epochsPerDay) | 0
           if (day > this.result.incomeDollarChartData.length - 1) {
             var t = now + (i + 1) * 12 * 32 * 1000
-            this.fillChartData(t, (incomeGplanck * price) / 1e9, costs, price)
+            this.fillChartData(t, (incomeShor * price) / 1e9, costs, price)
             this.result.networkIssuanceChartData.push([t, (100 * incomeAll) / totalStake])
           }
         }

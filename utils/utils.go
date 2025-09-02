@@ -75,11 +75,11 @@ func GetTemplateFuncs() template.FuncMap {
 		"fixAddressCasing":                        FixAddressCasing,
 		"formatAddressLong":                       FormatAddressLong,
 		"formatHashLong":                          FormatHashLong,
-		"formatEth1Block":                         FormatEth1Block,
-		"formatEth1BlockHash":                     FormatEth1BlockHash,
-		"formatEth1Address":                       FormatEth1Address,
-		"formatEth1AddressStringLowerCase":        FormatEth1AddressStringLowerCase,
-		"formatEth1TxHash":                        FormatEth1TxHash,
+		"formatExecutionBlock":                    FormatExecutionBlock,
+		"formatExecutionBlockHash":                FormatExecutionBlockHash,
+		"formatExecutionAddress":                  FormatExecutionAddress,
+		"formatExecutionAddressStringLowerCase":   FormatExecutionAddressStringLowerCase,
+		"formatExecutionTxHash":                   FormatExecutionTxHash,
 		"formatGraffiti":                          FormatGraffiti,
 		"formatHash":                              FormatHash,
 		"formatWithdawalCredentials":              FormatWithdawalCredentials,
@@ -181,9 +181,9 @@ func GetTemplateFuncs() template.FuncMap {
 			}
 			return num
 		},
-		// ETH1 related formatting
-		"formatEth1TxStatus":    FormatEth1TxStatus,
-		"formatEth1AddressFull": FormatEth1AddressFull,
+		// Execution related formatting
+		"formatExecutionTxStatus":    FormatExecutionTxStatus,
+		"formatExecutionAddressFull": FormatExecutionAddressFull,
 		"byteToString": func(num []byte) string {
 			return string(num)
 		},
@@ -398,10 +398,10 @@ func ReadConfig(cfg *types.Config, path string) error {
 			GenesisForkVersion:               jr.Data.GenesisForkVersion,
 			GenesisDelay:                     mustParseUint(jr.Data.GenesisDelay),
 			SecondsPerSlot:                   mustParseUint(jr.Data.SecondsPerSlot),
-			SecondsPerEth1Block:              mustParseUint(jr.Data.SecondsPerEth1Block),
+			SecondsPerExecutionBlock:         mustParseUint(jr.Data.SecondsPerExecutionBlock),
 			MinValidatorWithdrawabilityDelay: mustParseUint(jr.Data.MinValidatorWithdrawabilityDelay),
 			ShardCommitteePeriod:             mustParseUint(jr.Data.ShardCommitteePeriod),
-			Eth1FollowDistance:               mustParseUint(jr.Data.Eth1FollowDistance),
+			ExecutionFollowDistance:          mustParseUint(jr.Data.ExecutionFollowDistance),
 			InactivityScoreBias:              mustParseUint(jr.Data.InactivityScoreBias),
 			InactivityScoreRecoveryRate:      mustParseUint(jr.Data.InactivityScoreRecoveryRate),
 			EjectionBalance:                  mustParseUint(jr.Data.EjectionBalance),
@@ -427,7 +427,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 			SlotsPerEpoch:                    mustParseUint(jr.Data.SlotsPerEpoch),
 			MinSeedLookahead:                 mustParseUint(jr.Data.MinSeedLookahead),
 			MaxSeedLookahead:                 mustParseUint(jr.Data.MaxSeedLookahead),
-			EpochsPerEth1VotingPeriod:        mustParseUint(jr.Data.EpochsPerEth1VotingPeriod),
+			EpochsPerExecutionVotingPeriod:   mustParseUint(jr.Data.EpochsPerExecutionVotingPeriod),
 			SlotsPerHistoricalRoot:           mustParseUint(jr.Data.SlotsPerHistoricalRoot),
 			MinEpochsToInactivityPenalty:     mustParseUint(jr.Data.MinEpochsToInactivityPenalty),
 			EpochsPerHistoricalVector:        mustParseUint(jr.Data.EpochsPerHistoricalVector),

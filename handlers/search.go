@@ -154,8 +154,8 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			err = fmt.Errorf("error parsing txHash %v: %v", search, err)
 			break
 		}
-		var tx *types.Eth1TransactionIndexed
-		tx, err = db.BigtableClient.GetIndexedEth1Transaction(txHash)
+		var tx *types.ExecutionTransactionIndexed
+		tx, err = db.BigtableClient.GetIndexedExecutionTransaction(txHash)
 		if err != nil || tx == nil {
 			break
 		}
@@ -183,11 +183,11 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 			WHERE LOWER(validator_names.name) LIKE LOWER($1)
 			ORDER BY index LIMIT 10`, search+"%")
 		}
-	case "eth1_addresses":
+	case "execution_addresses":
 		if utils.IsValidQrnsDomain(search) {
 			qrnsData, _ := GetQrnsDomain(search)
 			if len(qrnsData.Address) > 0 {
-				result = []*types.Eth1AddressSearchItem{{
+				result = []*types.ExecutionAddressSearchItem{{
 					Address: qrnsData.Address,
 					Name:    qrnsData.Domain,
 					Token:   "",
@@ -201,13 +201,13 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 		if len(strippedSearch)%2 != 0 { // pad with 0 if uneven
 			strippedSearch = strippedSearch + "0"
 		}
-		eth1AddressHash, decodeErr := hex.DecodeString(strippedSearch)
+		executionAddressHash, decodeErr := hex.DecodeString(strippedSearch)
 		if decodeErr != nil {
 			break
 		}
-		result, err = db.BigtableClient.SearchForAddress(eth1AddressHash, 10)
+		result, err = db.BigtableClient.SearchForAddress(executionAddressHash, 10)
 		if err != nil {
-			err = fmt.Errorf("error searching for eth1AddressHash: %v", err)
+			err = fmt.Errorf("error searching for executionAddressHash: %v", err)
 		}
 	case "indexed_validators":
 		// find all validators that have a publickey or index like the search-query
@@ -233,17 +233,17 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 		// Find the validators that have made a deposit but have no index yet and therefore are not in the validators table
 		err = db.ReaderDb.Select(result, `
 		SELECT DISTINCT
-			ENCODE(eth1_deposits.publickey, 'hex') AS pubkey
-			FROM eth1_deposits
-			LEFT JOIN validators ON validators.pubkey = eth1_deposits.publickey
-			WHERE validators.pubkey IS NULL AND ENCODE(eth1_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
-	case "indexed_validators_by_eth1_addresses":
+			ENCODE(execution_deposits.publickey, 'hex') AS pubkey
+			FROM execution_deposits
+			LEFT JOIN validators ON validators.pubkey = execution_deposits.publickey
+			WHERE validators.pubkey IS NULL AND ENCODE(execution_deposits.publickey, 'hex') LIKE ($1 || '%')`, lowerStrippedSearch)
+	case "indexed_validators_by_execution_addresses":
 		search = ReplaceQrnsNameWithAddress(search)
 		if !utils.IsAddress(search) {
 			break
 		}
-		result, err = FindValidatorIndicesByEth1Address(strings.ToLower(search))
-	case "count_indexed_validators_by_eth1_address":
+		result, err = FindValidatorIndicesByExecutionAddress(strings.ToLower(search))
+	case "count_indexed_validators_by_execution_address":
 		var qrnsData *types.QrnsDomainResponse
 		if utils.IsValidQrnsDomain(search) {
 			qrnsData, _ = GetQrnsDomain(search)
@@ -254,10 +254,10 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 		if !searchLikeRE.MatchString(lowerStrippedSearch) {
 			break
 		}
-		// find validators per eth1-address
+		// find validators per execution-address
 		result = &[]struct {
-			Eth1Address string `db:"from_address_text" json:"eth1_address"`
-			Count       uint64 `db:"count" json:"count"`
+			ExecutionAddress string `db:"from_address_text" json:"execution_address"`
+			Count            uint64 `db:"count" json:"count"`
 		}{}
 
 		err = db.ReaderDb.Select(result, `
@@ -265,8 +265,8 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 				SELECT 
 					DISTINCT ON(validatorindex) validatorindex,					
 					from_address_text
-				FROM eth1_deposits
-				INNER JOIN validators ON validators.pubkey = eth1_deposits.publickey
+				FROM execution_deposits
+				INNER JOIN validators ON validators.pubkey = execution_deposits.publickey
 				WHERE from_address_text LIKE $1 || '%'
 			) a 
 			GROUP BY from_address_text`, lowerStrippedSearch)
@@ -398,13 +398,13 @@ func SearchAhead(w http.ResponseWriter, r *http.Request) {
 }
 
 // search can either be a valid QRL address or an QRNS name mapping to one
-func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByEth1Result, error) {
+func FindValidatorIndicesByExecutionAddress(search string) (types.SearchValidatorsByExecutionResult, error) {
 	// search = strings.ToLower(strings.Replace(ReplaceQrnsNameWithAddress(search), "0x", "", -1))
 	search = strings.ToLower(search)
 	if !utils.IsAddress(search) {
 		return nil, fmt.Errorf("not a valid QRL address: %v", search)
 	}
-	// find validators per eth1-address (limit result by N addresses and M validators per address)
+	// find validators per execution-address (limit result by N addresses and M validators per address)
 
 	result := &[]struct {
 		QRLAddress       string        `db:"from_address_text" json:"qrl_address"`
@@ -419,15 +419,15 @@ func FindValidatorIndicesByEth1Address(search string) (types.SearchValidatorsByE
 				from_address_text,
 				DENSE_RANK() OVER (PARTITION BY from_address_text ORDER BY validatorindex) AS validatorrow,
 				DENSE_RANK() OVER (ORDER BY from_address_text) AS addressrow
-			FROM eth1_deposits
-			INNER JOIN validators ON validators.pubkey = eth1_deposits.publickey
+			FROM execution_deposits
+			INNER JOIN validators ON validators.pubkey = execution_deposits.publickey
 			WHERE from_address_text = $1
 		) a 
 		WHERE validatorrow <= $2 AND addressrow <= 10
 		GROUP BY from_address_text
 		ORDER BY count DESC`, search, searchValidatorsResultLimit)
 	if err != nil {
-		utils.LogError(err, "error getting validators for eth1 address from db", 0)
+		utils.LogError(err, "error getting validators for execution address from db", 0)
 		return nil, fmt.Errorf("error reading result data: %v", err)
 	}
 	return *result, nil

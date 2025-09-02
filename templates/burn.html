@@ -55,7 +55,7 @@
                 },
                 yAxis: [{
                     title: {
-                        text: 'Base fee (Gplanck)'
+                        text: 'Base fee (Shor)'
                     },
                     labels: {
                         formatter: function () {
@@ -81,7 +81,7 @@
                                 val = (val / 1e18).toFixed(1) + " <b>Quanta</b>";
                             }
                             if (point.series.name === "Base fee") {
-                                val = (val / 1e9).toFixed(1) + " <b>GPlanck</b>";
+                                val = (val / 1e9).toFixed(1) + " <b>Shor</b>";
                             }
 
                             return s + '<br/>' + point.series.name + ': ' +
@@ -238,7 +238,7 @@
             formatQuanta(number, digits) {
                 return (number / 1e18).toFixed(digits)
             },
-            formatGPlanck(number, digits) {
+            formatShor(number, digits) {
                 return (number / 1e9).toFixed(digits)
             }
         },
@@ -465,7 +465,7 @@
                     <span><i class="fas fa-gas-pump mr-1"></i>Base fee</span>
                   </div>
                   <h5 class="font-weight-normal mb-0">
-                    <span data-toggle="tooltip" data-placement="top" title="The current network base fee" class="mr-3">${ page.blocks[0].base_fee_per_gas | formatGPlanck(1) }</span> <span style="font-size: .9rem; opacity: .8; font-weight: 300;">GPlanck</span> <span v-if="page.base_fee_trend === 1" data-toggle="tooltip" data-placement="top" title="Base fee is increasing">⬈</span><span v-if="page.base_fee_trend === -1" data-toggle="tooltip" data-placement="top" title="Base fee is decreasing">⬊</span>
+                    <span data-toggle="tooltip" data-placement="top" title="The current network base fee" class="mr-3">${ page.blocks[0].base_fee_per_gas | formatShor(1) }</span> <span style="font-size: .9rem; opacity: .8; font-weight: 300;">Shor</span> <span v-if="page.base_fee_trend === 1" data-toggle="tooltip" data-placement="top" title="Base fee is increasing">⬈</span><span v-if="page.base_fee_trend === -1" data-toggle="tooltip" data-placement="top" title="Base fee is decreasing">⬊</span>
                     <span data-toggle="tooltip" data-placement="top" title="Base fee is stable" v-if="page.base_fee_trend === 0">—</span>
                   </h5>
                 </div>
@@ -561,7 +561,7 @@
                   <td><span class="badge badge-pill text-white badge-success">${ block.mining_reward | formatQuanta(5)} Quanta</span></td>
                   <td>${ block.tx_count }</td>
                   <td><span data-toggle="tooltip" data-placement="top" v-bind:data-original-title="block.time | timestampTooltip">${ block.time | fromNow }</span></td>
-                  <td><span class="badge badge-pill text-white badge-info">${ block.base_fee_per_gas | formatGPlanck(2)} GPlanck</span></td>
+                  <td><span class="badge badge-pill text-white badge-info">${ block.base_fee_per_gas | formatShor(2)} Shor</span></td>
                   <td><span class="badge badge-pill text-white badge-warning">${ block.burned_fees | formatQuanta(5)} Quanta</span></td>
                 </tr>
               </tbody>

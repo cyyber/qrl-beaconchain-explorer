@@ -11,13 +11,13 @@ import (
 	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
-// Eth2Deposits will return information about deposits using a go template
-func Eth2Deposits(w http.ResponseWriter, r *http.Request) {
+// ConsensusDeposits will return information about deposits using a go template
+func ConsensusDeposits(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/validators/deposits", http.StatusMovedPermanently)
 }
 
-// Eth2DepositsData will return information eth1-deposits in json
-func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
+// ConsensusDepositsData will return information eth1-deposits in json
+func ConsensusDepositsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -63,9 +63,9 @@ func Eth2DepositsData(w http.ResponseWriter, r *http.Request) {
 
 	orderDir := q.Get("order[0][dir]")
 
-	deposits, depositCount, err := db.GetEth2Deposits(search, length, start, orderBy, orderDir)
+	deposits, depositCount, err := db.GetConsensusDeposits(search, length, start, orderBy, orderDir)
 	if err != nil {
-		logger.Errorf("error retrieving eth2_deposit data or count: %v", err)
+		logger.Errorf("error retrieving consensus_deposit data or count: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}

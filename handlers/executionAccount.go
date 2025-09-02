@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/theQRL/qrl-beaconchain-explorer/db"
-	"github.com/theQRL/qrl-beaconchain-explorer/eth1data"
+	"github.com/theQRL/qrl-beaconchain-explorer/executiondata"
 	"github.com/theQRL/qrl-beaconchain-explorer/templates"
 	"github.com/theQRL/qrl-beaconchain-explorer/types"
 	"github.com/theQRL/qrl-beaconchain-explorer/utils"
@@ -20,7 +20,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func Eth1Address(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/address.html")
 	var eth1AddressTemplate = templates.GetTemplate(templateFiles...)
 
@@ -72,7 +72,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		defer cancel()
 
 		var err error
-		isContract, err = eth1data.IsContract(ctx, common.BytesToAddress(addressBytes))
+		isContract, err = executiondata.IsContract(ctx, common.BytesToAddress(addressBytes))
 		if err != nil {
 			return fmt.Errorf("IsContract: %w", err)
 		}
@@ -144,7 +144,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err = g.Wait(); err != nil {
-		if handleTemplateError(w, r, "eth1Account.go", "Eth1Address", "g.Wait()", err) != nil {
+		if handleTemplateError(w, r, "eth1Account.go", "ExecutionAddress", "g.Wait()", err) != nil {
 			return // an error has occurred and was processed
 		}
 		return
@@ -155,10 +155,10 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		logger.WithError(err).Errorf("error generating qr code for address %v", address)
 	}
 
-	tabs := []types.Eth1AddressPageTabs{}
+	tabs := []types.ExecutionAddressPageTabs{}
 
 	if internal != nil && len(internal.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
+		tabs = append(tabs, types.ExecutionAddressPageTabs{
 			Id:   "internalTxns",
 			Href: "#internalTxns",
 			Text: "Internal Txns",
@@ -166,7 +166,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	if zrc20 != nil && len(zrc20.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
+		tabs = append(tabs, types.ExecutionAddressPageTabs{
 			Id:   "zrc20Txns",
 			Href: "#zrc20Txns",
 			Text: "Zrc20 Token Txns",
@@ -174,7 +174,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	if zrc721 != nil && len(zrc721.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
+		tabs = append(tabs, types.ExecutionAddressPageTabs{
 			Id:   "zrc721Txns",
 			Href: "#zrc721Txns",
 			Text: "Zrc721 Token Txns",
@@ -182,7 +182,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	if blocksMined != nil && len(blocksMined.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
+		tabs = append(tabs, types.ExecutionAddressPageTabs{
 			Id:   "blocks",
 			Href: "#blocks",
 			Text: "Produced Blocks",
@@ -190,7 +190,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	if zrc1155 != nil && len(zrc1155.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
+		tabs = append(tabs, types.ExecutionAddressPageTabs{
 			Id:   "zrc1155Txns",
 			Href: "#zrc1155Txns",
 			Text: "Zrc1155 Token Txns",
@@ -198,7 +198,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	if withdrawals != nil && len(withdrawals.Data) != 0 {
-		tabs = append(tabs, types.Eth1AddressPageTabs{
+		tabs = append(tabs, types.ExecutionAddressPageTabs{
 			Id:   "withdrawals",
 			Href: "#withdrawals",
 			Text: "Withdrawals",
@@ -206,7 +206,7 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	data.Data = types.Eth1AddressPageData{
+	data.Data = types.ExecutionAddressPageData{
 		Address:            address,
 		QrnsName:           qrnsData.Domain,
 		IsContract:         isContract,
@@ -224,12 +224,12 @@ func Eth1Address(w http.ResponseWriter, r *http.Request) {
 		Tabs:               tabs,
 	}
 
-	if handleTemplateError(w, r, "eth1Account.go", "Eth1Address", "Done", eth1AddressTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "eth1Account.go", "ExecutionAddress", "Done", eth1AddressTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }
 
-func Eth1AddressTransactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressTransactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -258,7 +258,7 @@ func Eth1AddressTransactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressBlocksMined(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressBlocksMined(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -285,7 +285,7 @@ func Eth1AddressBlocksMined(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressWithdrawals(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressWithdrawals(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -316,7 +316,7 @@ func Eth1AddressWithdrawals(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressInternalTransactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressInternalTransactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -343,7 +343,7 @@ func Eth1AddressInternalTransactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressZrc20Transactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressZrc20Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -370,7 +370,7 @@ func Eth1AddressZrc20Transactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressZrc721Transactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressZrc721Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -397,7 +397,7 @@ func Eth1AddressZrc721Transactions(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Eth1AddressZrc1155Transactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionAddressZrc1155Transactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	q := r.URL.Query()
@@ -450,7 +450,7 @@ func handleNotFoundHtml(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/addressNotFound.html")
 	data := InitPageData(w, r, "blockchain", "/address", "not found", templateFiles)
 
-	if handleTemplateError(w, r, "eth1Account.go", "Eth1Address", "not valid", templates.GetTemplate(templateFiles...).ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionAccount.go", "ExecutionAddress", "not valid", templates.GetTemplate(templateFiles...).ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }

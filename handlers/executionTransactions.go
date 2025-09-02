@@ -22,21 +22,21 @@ const (
 	minimumTransactionsPerUpdate = 25
 )
 
-func Eth1Transactions(w http.ResponseWriter, r *http.Request) {
+func ExecutionTransactions(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/transactions.html")
-	var eth1TransactionsTemplate = templates.GetTemplate(templateFiles...)
+	var executionTransactionsTemplate = templates.GetTemplate(templateFiles...)
 
 	w.Header().Set("Content-Type", "text/html")
 
-	data := InitPageData(w, r, "blockchain", "/eth1transactions", "Transactions", templateFiles)
+	data := InitPageData(w, r, "blockchain", "/executiontransactions", "Transactions", templateFiles)
 	data.Data = getTransactionDataStartingWithPageToken("")
 
-	if handleTemplateError(w, r, "eth1Transactions.go", "Eth1Transactions", "", eth1TransactionsTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionTransactions.go", "ExecutionTransactions", "", executionTransactionsTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }
 
-func Eth1TransactionsData(w http.ResponseWriter, r *http.Request) {
+func ExecutionTransactionsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	err := json.NewEncoder(w).Encode(getTransactionDataStartingWithPageToken(r.URL.Query().Get("pageToken")))
@@ -57,12 +57,12 @@ func getTransactionDataStartingWithPageToken(pageToken string) *types.DataTableR
 		}
 	}
 	if pageTokenId == 0 && pageToken != "0" {
-		pageTokenId = services.LatestEth1BlockNumber()
+		pageTokenId = services.LatestExecutionBlockNumber()
 	}
 
 	tableData := make([][]interface{}, 0, minimumTransactionsPerUpdate)
 	for len(tableData) < minimumTransactionsPerUpdate && pageTokenId != 0 {
-		b, n, err := getEth1BlockAndNext(pageTokenId)
+		b, n, err := getExecutionBlockAndNext(pageTokenId)
 		if err != nil {
 			logger.Errorf("error getting transaction from block %v", err)
 			return nil
@@ -125,7 +125,7 @@ func getTransactionDataStartingWithPageToken(pageToken string) *types.DataTableR
 // Returns the block requested via number and the number of the next block in our bigtable schema (i.e. the block that came chronologically before the requested block)
 //
 // If nextBlock doesn't exists nil, 0, nil is returned
-func getEth1BlockAndNext(number uint64) (*types.Eth1Block, uint64, error) {
+func getExecutionBlockAndNext(number uint64) (*types.ExecutionBlock, uint64, error) {
 	block, err := db.BigtableClient.GetBlockFromBlocksTable(number)
 	if err != nil {
 		return nil, 0, err
