@@ -267,7 +267,7 @@ func GetExecutionTransaction(hash common.Hash, currency string) (*types.Executio
 			}
 
 			if amount, found := v.DecodedData["amount"]; found {
-				// amount is a little endian hex denominated in Shor so we have to decode and reverse it and then convert to Zond
+				// amount is a little endian hex denominated in Shor so we have to decode and reverse it and then convert to Quanta
 				ba, err := hex.DecodeString(amount.Raw[2:])
 				if err != nil {
 					continue

@@ -3040,7 +3040,7 @@ func (bigtable *Bigtable) GetMetadataForAddress(address []byte, offset uint64, l
 
 				isNativeQuanta := bytes.Equal([]byte{0x00}, token)
 				if !isNativeQuanta {
-					// token is not Zond, check if token limit is reached
+					// token is not QRL, check if token limit is reached
 					if tokenCount >= limit {
 						ret.SQRCTF1TokenLimitExceeded = true
 						continue

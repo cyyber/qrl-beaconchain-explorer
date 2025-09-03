@@ -94,7 +94,7 @@ func (bigtable *Bigtable) TransformQrnsNameRegistered(blk *types.ExecutionBlock,
 	bulkData = &types.BulkMutations{}
 	bulkMetadataUpdates = &types.BulkMutations{}
 	keys := make(map[string]bool)
-	ethLog := zond_types.Log{}
+	ethLog := qrl_types.Log{}
 
 	for i, tx := range blk.GetTransactions() {
 		if i >= TX_PER_BLOCK_LIMIT {

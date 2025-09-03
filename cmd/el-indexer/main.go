@@ -518,7 +518,7 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 			// TODO(now.youtrack.cloud/issue/TZB-7)
 			bc, timings, err := client.GetBlock(i /*, traceMode*/)
 			if err != nil {
-				return fmt.Errorf("error getting block: %v from zond node err: %w", i, err)
+				return fmt.Errorf("error getting block: %v from qrl execution node err: %w", i, err)
 			}
 
 			metrics.TaskDuration.WithLabelValues("rpc_el_get_block_headers").Observe(timings.Headers.Seconds())
