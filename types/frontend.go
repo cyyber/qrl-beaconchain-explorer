@@ -8,11 +8,14 @@ import (
 	"github.com/theQRL/go-zond/common/hexutil"
 )
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
 type QrnsSearchPageData = struct {
 	Error  string
 	Search string
 	Result *QrnsDomainResponse
 }
+*/
 
 type GasNowPageData struct {
 	Code int `json:"code"`
