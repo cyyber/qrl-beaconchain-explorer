@@ -603,9 +603,9 @@ func fixQrnsAddresses(gzondClient *rpc.GzondClient) error {
 			}
 		}
 
-		if !strings.HasSuffix(name, ".eth") {
-			logrus.Infof("need to add .eth to %v for addr %v", name, addr.Hex())
-			name = name + ".eth"
+		if !strings.HasSuffix(name, ".qrl") {
+			logrus.Infof("need to add .qrl to %v for addr %v", name, addr.Hex())
+			name = name + ".qrl"
 		}
 
 		resolvedAddr, err := go_qrns.Resolve(gzondClient.GetNativeClient(), name)
