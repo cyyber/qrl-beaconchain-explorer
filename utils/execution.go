@@ -267,9 +267,9 @@ func FormatHashLong(hash common.Hash) template.HTML {
 }
 
 func FormatAddressLong(address string) template.HTML {
-	if IsValidQrnsDomain(address) {
-		return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.qrl`, strings.TrimSuffix(address, ".qrl")))
-	}
+	// if IsValidQrnsDomain(address) {
+	// 	return template.HTML(fmt.Sprintf(`<span data-truncate-middle="%s"></span>.qrl`, strings.TrimSuffix(address, ".qrl")))
+	// }
 	address = FixAddressCasing(address)
 	if len(address) > 4 {
 		htmlFormat := `
