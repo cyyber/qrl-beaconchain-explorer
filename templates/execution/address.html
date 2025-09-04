@@ -282,7 +282,9 @@
       <div class="mb-1 mb-md-0 mt-md-3 d-flex justify-content-between">
         <h1 class="font-weight-bold header-address">
           <span class="mr-1">{{ if .Data.IsContract }}Contract{{ else }}Address{{ end }}</span>
+          <!--
           {{ if len .Data.QrnsName }}<span class="badge badge-pill badge-ens">{{ .Data.QrnsName }}</span>{{ end }}
+           -->
         </h1>
       </div>
       <h4 class="h4 text-monospace mb-md-3 header-address text-truncate">
