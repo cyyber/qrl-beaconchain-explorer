@@ -44,7 +44,7 @@ func init() {
 	}
 	QRNSQRLRegistrarControllerParsedABI, err = QRNSQRLRegistrarControllerMetaData.GetAbi()
 	if err != nil {
-		utils.LogFatal(err, "error getting qrns-eth-registrar-controller-abi", 0)
+		utils.LogFatal(err, "error getting qrns-qrl-registrar-controller-abi", 0)
 	}
 
 	QRNSRegistryContract = bind.NewBoundContract(common.Address{}, *QRNSRegistryParsedABI, nil, nil, nil)
@@ -65,6 +65,6 @@ func init() {
 	}
 	QRNSQRLRegistrarControllerContract = bind.NewBoundContract(common.Address{}, *QRNSQRLRegistrarControllerParsedABI, nil, nil, nil)
 	if err != nil {
-		utils.LogFatal(err, "error creating qrns-eth-registrar-controller-contract", 0)
+		utils.LogFatal(err, "error creating qrns-qrl-registrar-controller-contract", 0)
 	}
 }
