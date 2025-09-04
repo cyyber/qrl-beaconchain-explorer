@@ -38,7 +38,7 @@ func Deposits(w http.ResponseWriter, r *http.Request) {
 	data := InitPageData(w, r, "blockchain", "/deposits", "Deposits", templateFiles)
 	data.Data = pageData
 
-	if handleTemplateError(w, r, "executionDepostis.go", "Deposits", "", DepositsTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+	if handleTemplateError(w, r, "executionDeposits.go", "Deposits", "", DepositsTemplate.ExecuteTemplate(w, "layout", data)) != nil {
 		return // an error has occurred and was processed
 	}
 }
