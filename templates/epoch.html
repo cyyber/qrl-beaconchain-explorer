@@ -197,7 +197,7 @@
               <div>
                 {{ if or .Finalized .VotedQuanta }}
                   {{ formatBalance .VotedQuanta "Quanta" }} of
-                  {{ formatBalance .EligibleQuant "Quanta" }}
+                  {{ formatBalance .EligibleQuanta "Quanta" }}
                   <small class="text-muted ml-1">({{ formatPercentageWithPrecision .GlobalParticipationRate 1 }} %)</small>
                 {{ else }}
                   Calculating… (total stake: {{ formatBalance .EligibleQuanta "Quanta" }})

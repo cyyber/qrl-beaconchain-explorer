@@ -159,21 +159,21 @@ func (bigtable *Bigtable) TransformQrnsNameRegistered(blk *types.ExecutionBlock,
 						}
 						keys[fmt.Sprintf("%s:QRNS:V:H:%x", bigtable.chainId, r.Node)] = true
 					}
-				} else if qrnsContract == "ZONDRegistrarController" {
-					if bytes.Equal(lTopic, qrnsContracts.QRNSZONDRegistrarControllerParsedABI.Events["NameRegistered"].ID.Bytes()) {
+				} else if qrnsContract == "QRLRegistrarController" {
+					if bytes.Equal(lTopic, qrnsContracts.QRNSQRLRegistrarControllerParsedABI.Events["NameRegistered"].ID.Bytes()) {
 						logFields["event"] = "NameRegistered"
-						r := &qrnsContracts.QRNSZONDRegistrarControllerNameRegistered{}
-						err = qrnsContracts.QRNSZONDRegistrarControllerContract.UnpackLog(r, "NameRegistered", ethLog)
+						r := &qrnsContracts.QRNSQRLRegistrarControllerNameRegistered{}
+						err = qrnsContracts.QRNSQRLRegistrarControllerContract.UnpackLog(r, "NameRegistered", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking qrns-log", 0, logFields)
 							continue
 						}
 						keys[fmt.Sprintf("%s:QRNS:V:N:%s", bigtable.chainId, r.Name)] = true
 						keys[fmt.Sprintf("%s:QRNS:V:A:%x", bigtable.chainId, r.Owner)] = true
-					} else if bytes.Equal(lTopic, qrnsContracts.QRNSZONDRegistrarControllerParsedABI.Events["NameRenewed"].ID.Bytes()) {
+					} else if bytes.Equal(lTopic, qrnsContracts.QRNSQRLRegistrarControllerParsedABI.Events["NameRenewed"].ID.Bytes()) {
 						logFields["event"] = "NameRenewed"
-						r := &qrnsContracts.QRNSZONDRegistrarControllerNameRenewed{}
-						err = qrnsContracts.QRNSZONDRegistrarControllerContract.UnpackLog(r, "NameRenewed", ethLog)
+						r := &qrnsContracts.QRNSQRLRegistrarControllerNameRenewed{}
+						err = qrnsContracts.QRNSQRLRegistrarControllerContract.UnpackLog(r, "NameRenewed", ethLog)
 						if err != nil {
 							utils.LogWarn(err, "error unpacking qrns-log", 0, logFields)
 							continue

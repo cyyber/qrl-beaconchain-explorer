@@ -9,7 +9,7 @@ import (
 )
 
 // TODO(rgeraldes24)
-var QRNSCrontractAddressesZond = map[string]string{
+var QRNSCrontractAddressesQRL = map[string]string{
 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
 	"Q253553366Da8546fC250F225fe3d25d0C782303b": "QRLRegistrarController",
 	"Q283Af0B28c62C092C9727F1Ee09c02CA627EB7F5": "OldQrnsRegistrarController",

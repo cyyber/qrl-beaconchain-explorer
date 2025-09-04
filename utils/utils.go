@@ -623,7 +623,7 @@ func IsApiRequest(r *http.Request) bool {
 	return ok && len(query) > 0 && query[0] == "json"
 }
 
-var qrlAddressRE = regexp.MustCompile("^Z[0-9a-fA-F]{40}$")
+var qrlAddressRE = regexp.MustCompile("^Q[0-9a-fA-F]{40}$")
 var withdrawalCredentialsRE = regexp.MustCompile("^(0x)?00[0-9a-fA-F]{62}$")
 var withdrawalCredentialsAddressRE = regexp.MustCompile("^(0x)?" + BeginningOfSetWithdrawalCredentials + "[0-9a-fA-F]{40}$")
 var txHashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{64}$")
@@ -750,7 +750,7 @@ func FormatThousandsEnglish(number string) string {
 // returns two transparent base64 encoded img strings for dark and light theme
 // the first has a black QR code the second a white QR code
 func GenerateQRCodeForAddress(address []byte) (string, string, error) {
-	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("Z%x", address)), qrcode.Medium)
+	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("Q%x", address)), qrcode.Medium)
 	if err != nil {
 		return "", "", err
 	}

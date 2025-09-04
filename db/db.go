@@ -25,7 +25,7 @@ import (
 	"github.com/pressly/goose/v3"
 	"github.com/sirupsen/logrus"
 	qrysm_deposit "github.com/theQRL/qrysm/contracts/deposit"
-	zondpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
+	qrysmpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
 )
 
 //go:embed migrations/*.sql
@@ -1299,7 +1299,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 
 			for i, d := range b.Deposits {
 
-				err := qrysm_deposit.VerifyDepositSignature(&zondpb.Deposit_Data{
+				err := qrysm_deposit.VerifyDepositSignature(&qrysmpb.Deposit_Data{
 					PublicKey:             d.PublicKey,
 					WithdrawalCredentials: d.WithdrawalCredentials,
 					Amount:                d.Amount,

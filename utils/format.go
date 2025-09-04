@@ -477,7 +477,6 @@ func FormatTransactionType(txnType uint8) string {
 	}
 }
 
-// TODO(rgeraldes24)
 // FormatCurrentBalance will return the current balance formated as string with 9 digits after the comma (1 shor = 1e9 eth)
 func FormatCurrentBalance(balanceInt uint64, currency string) template.HTML {
 	return template.HTML(fmt.Sprintf(`%s %v`, exchangeAndTrim(MainCurrency, currency, float64(balanceInt), false), currency))
@@ -1176,7 +1175,7 @@ func FormatTokenName(balance *types.ExecutionAddressBalance) template.HTML {
 	}
 	symbolTitle := FormatTokenSymbolTitle(balance.Metadata.Symbol)
 	symbol := FormatTokenSymbol(balance.Metadata.Symbol)
-	return template.HTML(fmt.Sprintf(`<a href='/token/Z%x?a=Z%x' title="%s">%s %s</a>`, balance.Token, balance.Address, symbolTitle, logo, symbol))
+	return template.HTML(fmt.Sprintf(`<a href='/token/Q%x?a=Q%x' title="%s">%s %s</a>`, balance.Token, balance.Address, symbolTitle, logo, symbol))
 }
 
 func ToBase64(input []byte) string {

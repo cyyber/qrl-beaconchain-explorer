@@ -113,7 +113,7 @@ func formatAddress(address []byte, token []byte, name string, isContract bool, l
 
 	// setting tooltip & limit name/address if necessary
 
-	addressString := fmt.Sprintf("Z%x", address)
+	addressString := fmt.Sprintf("Q%x", address)
 	if IsAddress(addressString) {
 		addressString = FixAddressCasing(addressString)
 	}
@@ -152,10 +152,10 @@ func formatAddress(address []byte, token []byte, name string, isContract bool, l
 	} else {
 		if token != nil {
 			// link & token
-			ret += fmt.Sprintf(`<a href="/%s/Z%x#erc20Txns" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
+			ret += fmt.Sprintf(`<a href="/%s/Q%x#erc20Txns" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
 		} else {
 			// just link
-			ret += fmt.Sprintf(`<a href="/%s/Z%x" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
+			ret += fmt.Sprintf(`<a href="/%s/Q%x" target="_parent" data-html="true" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="%s">%s</a>`, link, address, tooltip, name)
 		}
 	}
 
@@ -236,12 +236,12 @@ func formatTxHash(address []byte, token []byte, name string, isContract bool, li
 func FormatAddressAsLink(address []byte, name string, isContract bool) template.HTML {
 	ret := ""
 	name = template.HTMLEscapeString(name)
-	addressString := FixAddressCasing(fmt.Sprintf("Z%x", address))
+	addressString := FixAddressCasing(fmt.Sprintf("Q%x", address))
 
 	if len(name) > 0 {
-		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/Z%s\">%s</a> %v", addressString, name, CopyButton(addressString))
+		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/Q%s\">%s</a> %v", addressString, name, CopyButton(addressString))
 	} else {
-		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/Z%s\">%s…%s</a> %v", addressString, addressString[:8], addressString[len(addressString)-6:], CopyButton(addressString))
+		ret = fmt.Sprintf("<a class=\"text-monospace\" href=\"/address/Q%s\">%s…%s</a> %v", addressString, addressString[:8], addressString[len(addressString)-6:], CopyButton(addressString))
 	}
 
 	if isContract {

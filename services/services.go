@@ -380,7 +380,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 
 	latestFinalizedEpoch := LatestFinalizedEpoch()
 	var epochs []*types.IndexPageDataEpochs
-	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligiblezond, globalparticipationrate, votedzond FROM epochs ORDER BY epochs DESC LIMIT 15`)
+	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligiblequanta, globalparticipationrate, votedquanta FROM epochs ORDER BY epochs DESC LIMIT 15`)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving index epoch data: %v", err)
 	}

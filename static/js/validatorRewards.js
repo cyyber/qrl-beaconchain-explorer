@@ -1,5 +1,5 @@
 const VALLIMIT = 200
-const DECIMAL_POINTS_ZOND = 6
+const DECIMAL_POINTS_QRL = 6
 const DECIMAL_POINTS_CURRENCY = 3
 var csrfToken = ""
 var currency = ""
@@ -233,7 +233,7 @@ function showTable(data) {
         data: "1",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZOND))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_QRL))
           return data
         },
       },
@@ -242,7 +242,7 @@ function showTable(data) {
         data: "2",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZOND))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_QRL))
           return data
         },
       },

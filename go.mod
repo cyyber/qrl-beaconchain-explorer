@@ -63,7 +63,6 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/VictoriaMetrics/fastcache v1.12.2 // indirect
 	github.com/alexedwards/scs/v2 v2.5.0 // indirect
-	github.com/allegro/bigcache v1.2.1 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.4.1 // indirect
 	github.com/cncf/udpa/go v0.0.0-20220112060539-c52dc94e7fbe // indirect
 	github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4 // indirect
@@ -155,6 +154,6 @@ replace github.com/grpc-ecosystem/grpc-gateway/v2 => github.com/prysmaticlabs/gr
 
 replace github.com/wealdtech/go-merkletree v1.0.1-0.20190605192610-2bb163c2ea2a => github.com/rocket-pool/go-merkletree v1.0.1-0.20220406020931-c262d9b976dd
 
-replace github.com/theQRL/qrysm => github.com/cyyber/qrysm v0.2.0
+replace github.com/theQRL/qrysm => github.com/rgeraldes24/qrysm v0.0.0-20250902073130-a7e6444b5b66
 
 replace github.com/theQRL/go-zond => github.com/rgeraldes24/go-zond v0.0.0-20250901090932-5b28406187a1

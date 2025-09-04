@@ -307,7 +307,7 @@ func SubmitDilithiumToExecutionChangesNodeJobs() error {
 
 func SubmitDilithiumToExecutionChangesNodeJob(job *types.NodeJob) error {
 	client := &http.Client{Timeout: time.Second * 10}
-	url := fmt.Sprintf("%s/zond/v1/beacon/pool/dilithium_to_execution_changes", utils.Config.NodeJobsProcessor.ClEndpoint)
+	url := fmt.Sprintf("%s/qrl/v1/beacon/pool/dilithium_to_execution_changes", utils.Config.NodeJobsProcessor.ClEndpoint)
 	resp, err := client.Post(url, "application/json", bytes.NewReader(job.RawData))
 	if err != nil {
 		return err
@@ -443,7 +443,7 @@ func SubmitVoluntaryExitNodeJobs() error {
 
 func SubmitVoluntaryExitNodeJob(job *types.NodeJob) error {
 	client := &http.Client{Timeout: time.Second * 10}
-	url := fmt.Sprintf("%s/zond/v1/beacon/pool/voluntary_exits", utils.Config.NodeJobsProcessor.ClEndpoint)
+	url := fmt.Sprintf("%s/qrl/v1/beacon/pool/voluntary_exits", utils.Config.NodeJobsProcessor.ClEndpoint)
 	resp, err := client.Post(url, "application/json", bytes.NewReader(job.RawData))
 	if err != nil {
 		return err
