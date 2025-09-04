@@ -47,7 +47,7 @@ func ExecutionAddress(w http.ResponseWriter, r *http.Request) {
 	addressHex = strings.ToLower(addressHex)
 
 	addressBytes := common.FromHex(addressHex)
-	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address Z%x", addressBytes), templateFiles)
+	data := InitPageData(w, r, "blockchain", "/address", fmt.Sprintf("Address Q%x", addressBytes), templateFiles)
 
 	metadata, err := db.BigtableClient.GetMetadataForAddress(addressBytes, 0, db.SQRCTF1TokensPerAddressLimit)
 	if err != nil {

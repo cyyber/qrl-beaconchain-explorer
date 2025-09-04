@@ -176,9 +176,9 @@ func ApplyEmbeddedDbSchema(version int64) error {
 	return nil
 }
 
-func GetExecutionDepositsJoinConsensusDeposits(query string, length, start uint64, orderBy, orderDir string, latestEpoch, validatorOnlineThresholdSlot uint64) ([]*types.EthOneDepositsData, uint64, error) {
+func GetExecutionDepositsJoinConsensusDeposits(query string, length, start uint64, orderBy, orderDir string, latestEpoch, validatorOnlineThresholdSlot uint64) ([]*types.ExecutionDepositsData, uint64, error) {
 	// Initialize the return values
-	deposits := []*types.EthOneDepositsData{}
+	deposits := []*types.ExecutionDepositsData{}
 	totalCount := uint64(0)
 
 	if orderDir != "desc" && orderDir != "asc" {
@@ -296,9 +296,9 @@ func GetExecutionDepositsJoinConsensusDeposits(query string, length, start uint6
 	return deposits, totalCount, nil
 }
 
-func GetConsensusDeposits(query string, length, start uint64, orderBy, orderDir string) ([]*types.EthTwoDepositData, uint64, error) {
+func GetConsensusDeposits(query string, length, start uint64, orderBy, orderDir string) ([]*types.ConsensusDepositData, uint64, error) {
 	// Initialize the return values
-	deposits := []*types.EthTwoDepositData{}
+	deposits := []*types.ConsensusDepositData{}
 	totalCount := uint64(0)
 
 	if orderDir != "desc" && orderDir != "asc" {

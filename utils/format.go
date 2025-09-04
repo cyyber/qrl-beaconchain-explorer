@@ -1132,7 +1132,7 @@ func FormatTokenBalance(balance *types.ExecutionAddressBalance) template.HTML {
 	</div>`, balance.Token, balance.Address, logo, symbolTitle, symbol, FormatThousandsEnglish(tokenBalance.String())))
 }
 
-func FormatAddressEthBalance(balance *types.ExecutionAddressBalance) template.HTML {
+func formatAddressQuantaBalance(balance *types.ExecutionAddressBalance) template.HTML {
 	e := new(big.Int).SetBytes(balance.Metadata.Decimals)
 	d := new(big.Int).Exp(big.NewInt(10), e, nil)
 	balPlanck := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0)

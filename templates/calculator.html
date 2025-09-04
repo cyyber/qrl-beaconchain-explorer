@@ -249,11 +249,11 @@
 
         this.result.priceChartData = []
         this.result.incomeDollarChartData = []
-        this.result.incomeEthChartData = []
+        this.result.incomeQuantaChartData = []
         this.result.costsDollarChartData = []
-        this.result.costsEthChartData = []
+        this.result.costsQuantaChartData = []
         this.result.profitDollarChartData = []
-        this.result.profitEthChartData = []
+        this.result.profitQuantaChartData = []
         this.result.breakEvenPoint = null
         this.result.start = null
         this.result.numberOfPossibleValidators = "0"
@@ -529,11 +529,11 @@
         this.result.networkIssuanceChartData = []
         this.result.incomeChartData = []
         this.result.incomeDollarChartData = []
-        this.result.incomeEthChartData = []
+        this.result.incomeQuantaChartData = []
         this.result.costsDollarChartData = []
-        this.result.costsEthChartData = []
+        this.result.costsQuantaChartData = []
         this.result.profitDollarChartData = []
-        this.result.profitEthChartData = []
+        this.result.profitQuantaChartData = []
         this.result.breakEvenPoint = null
         this.result.numberOfPossibleValidators = Math.floor(this.params.stake / (40000 * 1e9)).toFixed(0) || "0"
 
@@ -621,12 +621,12 @@
         })
 
         this.result.incomeDollarChartData.push([t, income])
-        this.result.incomeEthChartData.push([t, incomeDollar / price])
+        this.result.incomeQuantaChartData.push([t, incomeDollar / price])
         this.result.costsDollarChartData.push([t, costsDollar])
-        this.result.costsEthChartData.push([t, costsDollar / price])
+        this.result.costsQuantaChartData.push([t, costsDollar / price])
         this.result.profitDollarChartData.push([t, income - costsDollar])
 
-        this.result.profitEthChartData.push([t, (incomeDollar - costsDollar) / price])
+        this.result.profitQuantaChartData.push([t, (incomeDollar - costsDollar) / price])
         // this.result.stakeFeeChartData.push([t, ])
 
         if (!this.result.breakEvenPoint && this.result.profitDollarChartData.length > 1) {

@@ -487,7 +487,7 @@ func stakeEffectivenessChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:        "Stake Effectiveness",
-		Subtitle:     "Stake Effectiveness measures the relation between the sum of all effective balances and the sum of all balances. 100% Stake Effectiveness means that 100% of the locked Ether is used for staking.",
+		Subtitle:     "Stake Effectiveness measures the relation between the sum of all effective balances and the sum of all balances. 100% Stake Effectiveness means that 100% of the locked Quanta is used for staking.",
 		XAxisTitle:   "",
 		YAxisTitle:   "Stake Effectiveness [%]",
 		StackingMode: "false",

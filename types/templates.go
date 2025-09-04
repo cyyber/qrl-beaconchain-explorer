@@ -996,7 +996,7 @@ type DepositsPageData struct {
 }
 
 // EpochsPageData is a struct to hold epoch data for the epochs page
-type EthOneDepositsData struct {
+type ExecutionDepositsData struct {
 	TxHash                []byte    `db:"tx_hash"`
 	TxInput               []byte    `db:"tx_input"`
 	TxIndex               uint64    `db:"tx_index"`
@@ -1012,7 +1012,7 @@ type EthOneDepositsData struct {
 	ValidSignature        bool      `db:"valid_signature"`
 }
 
-type EthTwoDepositData struct {
+type ConsensusDepositData struct {
 	BlockSlot             uint64 `db:"block_slot"`
 	BlockIndex            uint64 `db:"block_index"`
 	Proof                 []byte `db:"proof"`

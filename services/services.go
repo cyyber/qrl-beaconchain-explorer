@@ -1053,7 +1053,7 @@ func getBurnPageData() (*types.BurnPageData, error) {
 		return data, nil
 	}
 
-	// Retrieve the total amount of burned Ether
+	// Retrieve the total amount of burned Quanta
 	if err := db.ReaderDb.Get(&data.TotalBurned, "SELECT SUM(value) FROM chart_series WHERE indicator = 'BURNED_FEES'"); err != nil {
 		return nil, fmt.Errorf("error retrieving total burned amount from chart_series table: %w", err)
 	}
