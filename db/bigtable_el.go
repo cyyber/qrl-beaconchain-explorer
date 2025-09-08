@@ -3594,6 +3594,8 @@ func (bigtable *Bigtable) GetAddressContractInteractionsAtTransactions(transacti
 	return bigtable.GetAddressContractInteractionsAt(requests)
 }
 
+// TODO(now.youtrack.cloud/issue/TZB-1)
+/*
 func (bigtable *Bigtable) SaveAddressName(address []byte, name string) error {
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*30))
 	defer cancel()
@@ -3614,6 +3616,7 @@ func (bigtable *Bigtable) SaveContractMetadata(address []byte, metadata *types.C
 
 	return bigtable.tableMetadata.Apply(ctx, fmt.Sprintf("%s:%x", bigtable.chainId, address), mut)
 }
+*/
 
 func (bigtable *Bigtable) SaveBalances(balances []*types.ExecutionAddressBalance, deleteKeys []string) error {
 	startTime := time.Now()
