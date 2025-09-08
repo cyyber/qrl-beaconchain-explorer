@@ -443,10 +443,10 @@ func lowerAddressFromRequest(w http.ResponseWriter, r *http.Request) (string, er
 	return strings.ToLower(strings.Replace(address, "Q", "", -1)), nil
 }
 
-func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {
-	logger.Errorf("error getting address for QRNS name [%v] not found for %v route: %v", address, r.URL.String(), err)
-	http.Error(w, "Invalid QRNS name", http.StatusInternalServerError)
-}
+// func handleNotFoundJson(address string, w http.ResponseWriter, r *http.Request, err error) {
+// 	logger.Errorf("error getting address for QRNS name [%v] not found for %v route: %v", address, r.URL.String(), err)
+// 	http.Error(w, "Invalid QRNS name", http.StatusInternalServerError)
+// }
 
 func handleNotFoundHtml(w http.ResponseWriter, r *http.Request) {
 	templateFiles := append(layoutTemplateFiles, "execution/addressNotFound.html")
