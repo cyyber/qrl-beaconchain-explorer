@@ -182,7 +182,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorRaw) Transact(opts *b
 
 // Controllers is a free data retrieval call binding the contract method 0xda8c229e.
 //
-// Solidity: function controllers(address ) view returns(bool)
+// Hyperion: function controllers(address ) view returns(bool)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Controllers(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSReverseRegistrar.contract.Call(opts, &out, "controllers", arg0)
@@ -199,21 +199,21 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Controllers(opts *bind.
 
 // Controllers is a free data retrieval call binding the contract method 0xda8c229e.
 //
-// Solidity: function controllers(address ) view returns(bool)
+// Hyperion: function controllers(address ) view returns(bool)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) Controllers(arg0 common.Address) (bool, error) {
 	return _QRNSReverseRegistrar.Contract.Controllers(&_QRNSReverseRegistrar.CallOpts, arg0)
 }
 
 // Controllers is a free data retrieval call binding the contract method 0xda8c229e.
 //
-// Solidity: function controllers(address ) view returns(bool)
+// Hyperion: function controllers(address ) view returns(bool)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCallerSession) Controllers(arg0 common.Address) (bool, error) {
 	return _QRNSReverseRegistrar.Contract.Controllers(&_QRNSReverseRegistrar.CallOpts, arg0)
 }
 
 // DefaultResolver is a free data retrieval call binding the contract method 0x828eab0e.
 //
-// Solidity: function defaultResolver() view returns(address)
+// Hyperion: function defaultResolver() view returns(address)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) DefaultResolver(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSReverseRegistrar.contract.Call(opts, &out, "defaultResolver")
@@ -230,52 +230,21 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) DefaultResolver(opts *b
 
 // DefaultResolver is a free data retrieval call binding the contract method 0x828eab0e.
 //
-// Solidity: function defaultResolver() view returns(address)
+// Hyperion: function defaultResolver() view returns(address)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) DefaultResolver() (common.Address, error) {
 	return _QRNSReverseRegistrar.Contract.DefaultResolver(&_QRNSReverseRegistrar.CallOpts)
 }
 
 // DefaultResolver is a free data retrieval call binding the contract method 0x828eab0e.
 //
-// Solidity: function defaultResolver() view returns(address)
+// Hyperion: function defaultResolver() view returns(address)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCallerSession) DefaultResolver() (common.Address, error) {
 	return _QRNSReverseRegistrar.Contract.DefaultResolver(&_QRNSReverseRegistrar.CallOpts)
 }
 
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Qrns(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _QRNSReverseRegistrar.contract.Call(opts, &out, "qrns")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) Qrns() (common.Address, error) {
-	return _QRNSReverseRegistrar.Contract.Qrns(&_QRNSReverseRegistrar.CallOpts)
-}
-
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSReverseRegistrar *QRNSReverseRegistrarCallerSession) Qrns() (common.Address, error) {
-	return _QRNSReverseRegistrar.Contract.Qrns(&_QRNSReverseRegistrar.CallOpts)
-}
-
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(address addr) pure returns(bytes32)
+// Hyperion: function node(address addr) pure returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Node(opts *bind.CallOpts, addr common.Address) ([32]byte, error) {
 	var out []interface{}
 	err := _QRNSReverseRegistrar.contract.Call(opts, &out, "node", addr)
@@ -292,21 +261,21 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Node(opts *bind.CallOpt
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(address addr) pure returns(bytes32)
+// Hyperion: function node(address addr) pure returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) Node(addr common.Address) ([32]byte, error) {
 	return _QRNSReverseRegistrar.Contract.Node(&_QRNSReverseRegistrar.CallOpts, addr)
 }
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(address addr) pure returns(bytes32)
+// Hyperion: function node(address addr) pure returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCallerSession) Node(addr common.Address) ([32]byte, error) {
 	return _QRNSReverseRegistrar.Contract.Node(&_QRNSReverseRegistrar.CallOpts, addr)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSReverseRegistrar.contract.Call(opts, &out, "owner")
@@ -323,203 +292,234 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Owner(opts *bind.CallOp
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) Owner() (common.Address, error) {
 	return _QRNSReverseRegistrar.Contract.Owner(&_QRNSReverseRegistrar.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarCallerSession) Owner() (common.Address, error) {
 	return _QRNSReverseRegistrar.Contract.Owner(&_QRNSReverseRegistrar.CallOpts)
 }
 
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSReverseRegistrar *QRNSReverseRegistrarCaller) Qrns(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _QRNSReverseRegistrar.contract.Call(opts, &out, "qrns")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) Qrns() (common.Address, error) {
+	return _QRNSReverseRegistrar.Contract.Qrns(&_QRNSReverseRegistrar.CallOpts)
+}
+
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSReverseRegistrar *QRNSReverseRegistrarCallerSession) Qrns() (common.Address, error) {
+	return _QRNSReverseRegistrar.Contract.Qrns(&_QRNSReverseRegistrar.CallOpts)
+}
+
 // Claim is a paid mutator transaction binding the contract method 0x1e83409a.
 //
-// Solidity: function claim(address owner) returns(bytes32)
+// Hyperion: function claim(address owner) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) Claim(opts *bind.TransactOpts, owner common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "claim", owner)
 }
 
 // Claim is a paid mutator transaction binding the contract method 0x1e83409a.
 //
-// Solidity: function claim(address owner) returns(bytes32)
+// Hyperion: function claim(address owner) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) Claim(owner common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.Claim(&_QRNSReverseRegistrar.TransactOpts, owner)
 }
 
 // Claim is a paid mutator transaction binding the contract method 0x1e83409a.
 //
-// Solidity: function claim(address owner) returns(bytes32)
+// Hyperion: function claim(address owner) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) Claim(owner common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.Claim(&_QRNSReverseRegistrar.TransactOpts, owner)
 }
 
 // ClaimForAddr is a paid mutator transaction binding the contract method 0x65669631.
 //
-// Solidity: function claimForAddr(address addr, address owner, address resolver) returns(bytes32)
+// Hyperion: function claimForAddr(address addr, address owner, address resolver) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) ClaimForAddr(opts *bind.TransactOpts, addr common.Address, owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "claimForAddr", addr, owner, resolver)
 }
 
 // ClaimForAddr is a paid mutator transaction binding the contract method 0x65669631.
 //
-// Solidity: function claimForAddr(address addr, address owner, address resolver) returns(bytes32)
+// Hyperion: function claimForAddr(address addr, address owner, address resolver) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) ClaimForAddr(addr common.Address, owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.ClaimForAddr(&_QRNSReverseRegistrar.TransactOpts, addr, owner, resolver)
 }
 
 // ClaimForAddr is a paid mutator transaction binding the contract method 0x65669631.
 //
-// Solidity: function claimForAddr(address addr, address owner, address resolver) returns(bytes32)
+// Hyperion: function claimForAddr(address addr, address owner, address resolver) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) ClaimForAddr(addr common.Address, owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.ClaimForAddr(&_QRNSReverseRegistrar.TransactOpts, addr, owner, resolver)
 }
 
 // ClaimWithResolver is a paid mutator transaction binding the contract method 0x0f5a5466.
 //
-// Solidity: function claimWithResolver(address owner, address resolver) returns(bytes32)
+// Hyperion: function claimWithResolver(address owner, address resolver) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) ClaimWithResolver(opts *bind.TransactOpts, owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "claimWithResolver", owner, resolver)
 }
 
 // ClaimWithResolver is a paid mutator transaction binding the contract method 0x0f5a5466.
 //
-// Solidity: function claimWithResolver(address owner, address resolver) returns(bytes32)
+// Hyperion: function claimWithResolver(address owner, address resolver) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) ClaimWithResolver(owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.ClaimWithResolver(&_QRNSReverseRegistrar.TransactOpts, owner, resolver)
 }
 
 // ClaimWithResolver is a paid mutator transaction binding the contract method 0x0f5a5466.
 //
-// Solidity: function claimWithResolver(address owner, address resolver) returns(bytes32)
+// Hyperion: function claimWithResolver(address owner, address resolver) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) ClaimWithResolver(owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.ClaimWithResolver(&_QRNSReverseRegistrar.TransactOpts, owner, resolver)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "renounceOwnership")
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) RenounceOwnership() (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.RenounceOwnership(&_QRNSReverseRegistrar.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) RenounceOwnership() (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.RenounceOwnership(&_QRNSReverseRegistrar.TransactOpts)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0xe0dba60f.
 //
-// Solidity: function setController(address controller, bool enabled) returns()
+// Hyperion: function setController(address controller, bool enabled) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) SetController(opts *bind.TransactOpts, controller common.Address, enabled bool) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "setController", controller, enabled)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0xe0dba60f.
 //
-// Solidity: function setController(address controller, bool enabled) returns()
+// Hyperion: function setController(address controller, bool enabled) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) SetController(controller common.Address, enabled bool) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetController(&_QRNSReverseRegistrar.TransactOpts, controller, enabled)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0xe0dba60f.
 //
-// Solidity: function setController(address controller, bool enabled) returns()
+// Hyperion: function setController(address controller, bool enabled) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) SetController(controller common.Address, enabled bool) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetController(&_QRNSReverseRegistrar.TransactOpts, controller, enabled)
 }
 
 // SetDefaultResolver is a paid mutator transaction binding the contract method 0xc66485b2.
 //
-// Solidity: function setDefaultResolver(address resolver) returns()
+// Hyperion: function setDefaultResolver(address resolver) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) SetDefaultResolver(opts *bind.TransactOpts, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "setDefaultResolver", resolver)
 }
 
 // SetDefaultResolver is a paid mutator transaction binding the contract method 0xc66485b2.
 //
-// Solidity: function setDefaultResolver(address resolver) returns()
+// Hyperion: function setDefaultResolver(address resolver) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) SetDefaultResolver(resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetDefaultResolver(&_QRNSReverseRegistrar.TransactOpts, resolver)
 }
 
 // SetDefaultResolver is a paid mutator transaction binding the contract method 0xc66485b2.
 //
-// Solidity: function setDefaultResolver(address resolver) returns()
+// Hyperion: function setDefaultResolver(address resolver) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) SetDefaultResolver(resolver common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetDefaultResolver(&_QRNSReverseRegistrar.TransactOpts, resolver)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xc47f0027.
 //
-// Solidity: function setName(string name) returns(bytes32)
+// Hyperion: function setName(string name) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) SetName(opts *bind.TransactOpts, name string) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "setName", name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xc47f0027.
 //
-// Solidity: function setName(string name) returns(bytes32)
+// Hyperion: function setName(string name) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) SetName(name string) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetName(&_QRNSReverseRegistrar.TransactOpts, name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xc47f0027.
 //
-// Solidity: function setName(string name) returns(bytes32)
+// Hyperion: function setName(string name) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) SetName(name string) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetName(&_QRNSReverseRegistrar.TransactOpts, name)
 }
 
 // SetNameForAddr is a paid mutator transaction binding the contract method 0x7a806d6b.
 //
-// Solidity: function setNameForAddr(address addr, address owner, address resolver, string name) returns(bytes32)
+// Hyperion: function setNameForAddr(address addr, address owner, address resolver, string name) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) SetNameForAddr(opts *bind.TransactOpts, addr common.Address, owner common.Address, resolver common.Address, name string) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "setNameForAddr", addr, owner, resolver, name)
 }
 
 // SetNameForAddr is a paid mutator transaction binding the contract method 0x7a806d6b.
 //
-// Solidity: function setNameForAddr(address addr, address owner, address resolver, string name) returns(bytes32)
+// Hyperion: function setNameForAddr(address addr, address owner, address resolver, string name) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) SetNameForAddr(addr common.Address, owner common.Address, resolver common.Address, name string) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetNameForAddr(&_QRNSReverseRegistrar.TransactOpts, addr, owner, resolver, name)
 }
 
 // SetNameForAddr is a paid mutator transaction binding the contract method 0x7a806d6b.
 //
-// Solidity: function setNameForAddr(address addr, address owner, address resolver, string name) returns(bytes32)
+// Hyperion: function setNameForAddr(address addr, address owner, address resolver, string name) returns(bytes32)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) SetNameForAddr(addr common.Address, owner common.Address, resolver common.Address, name string) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.SetNameForAddr(&_QRNSReverseRegistrar.TransactOpts, addr, owner, resolver, name)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.TransferOwnership(&_QRNSReverseRegistrar.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSReverseRegistrar.Contract.TransferOwnership(&_QRNSReverseRegistrar.TransactOpts, newOwner)
 }
@@ -600,7 +600,7 @@ type QRNSReverseRegistrarControllerChanged struct {
 
 // FilterControllerChanged is a free log retrieval operation binding the contract event 0x4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87.
 //
-// Solidity: event ControllerChanged(address indexed controller, bool enabled)
+// Hyperion: event ControllerChanged(address indexed controller, bool enabled)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterControllerChanged(opts *bind.FilterOpts, controller []common.Address) (*QRNSReverseRegistrarControllerChangedIterator, error) {
 
 	var controllerRule []interface{}
@@ -617,7 +617,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterControllerChang
 
 // WatchControllerChanged is a free log subscription operation binding the contract event 0x4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87.
 //
-// Solidity: event ControllerChanged(address indexed controller, bool enabled)
+// Hyperion: event ControllerChanged(address indexed controller, bool enabled)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *QRNSReverseRegistrarControllerChanged, controller []common.Address) (event.Subscription, error) {
 
 	var controllerRule []interface{}
@@ -659,7 +659,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchControllerChange
 
 // ParseControllerChanged is a log parse operation binding the contract event 0x4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87.
 //
-// Solidity: event ControllerChanged(address indexed controller, bool enabled)
+// Hyperion: event ControllerChanged(address indexed controller, bool enabled)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) ParseControllerChanged(log types.Log) (*QRNSReverseRegistrarControllerChanged, error) {
 	event := new(QRNSReverseRegistrarControllerChanged)
 	if err := _QRNSReverseRegistrar.contract.UnpackLog(event, "ControllerChanged", log); err != nil {
@@ -744,7 +744,7 @@ type QRNSReverseRegistrarDefaultResolverChanged struct {
 
 // FilterDefaultResolverChanged is a free log retrieval operation binding the contract event 0xeae17a84d9eb83d8c8eb317f9e7d64857bc363fa51674d996c023f4340c577cf.
 //
-// Solidity: event DefaultResolverChanged(address indexed resolver)
+// Hyperion: event DefaultResolverChanged(address indexed resolver)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterDefaultResolverChanged(opts *bind.FilterOpts, resolver []common.Address) (*QRNSReverseRegistrarDefaultResolverChangedIterator, error) {
 
 	var resolverRule []interface{}
@@ -761,7 +761,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterDefaultResolver
 
 // WatchDefaultResolverChanged is a free log subscription operation binding the contract event 0xeae17a84d9eb83d8c8eb317f9e7d64857bc363fa51674d996c023f4340c577cf.
 //
-// Solidity: event DefaultResolverChanged(address indexed resolver)
+// Hyperion: event DefaultResolverChanged(address indexed resolver)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchDefaultResolverChanged(opts *bind.WatchOpts, sink chan<- *QRNSReverseRegistrarDefaultResolverChanged, resolver []common.Address) (event.Subscription, error) {
 
 	var resolverRule []interface{}
@@ -803,7 +803,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchDefaultResolverC
 
 // ParseDefaultResolverChanged is a log parse operation binding the contract event 0xeae17a84d9eb83d8c8eb317f9e7d64857bc363fa51674d996c023f4340c577cf.
 //
-// Solidity: event DefaultResolverChanged(address indexed resolver)
+// Hyperion: event DefaultResolverChanged(address indexed resolver)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) ParseDefaultResolverChanged(log types.Log) (*QRNSReverseRegistrarDefaultResolverChanged, error) {
 	event := new(QRNSReverseRegistrarDefaultResolverChanged)
 	if err := _QRNSReverseRegistrar.contract.UnpackLog(event, "DefaultResolverChanged", log); err != nil {
@@ -889,7 +889,7 @@ type QRNSReverseRegistrarOwnershipTransferred struct {
 
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*QRNSReverseRegistrarOwnershipTransferredIterator, error) {
 
 	var previousOwnerRule []interface{}
@@ -910,7 +910,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterOwnershipTransf
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *QRNSReverseRegistrarOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
 
 	var previousOwnerRule []interface{}
@@ -956,7 +956,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchOwnershipTransfe
 
 // ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) ParseOwnershipTransferred(log types.Log) (*QRNSReverseRegistrarOwnershipTransferred, error) {
 	event := new(QRNSReverseRegistrarOwnershipTransferred)
 	if err := _QRNSReverseRegistrar.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
@@ -1042,7 +1042,7 @@ type QRNSReverseRegistrarReverseClaimed struct {
 
 // FilterReverseClaimed is a free log retrieval operation binding the contract event 0x6ada868dd3058cf77a48a74489fd7963688e5464b2b0fa957ace976243270e92.
 //
-// Solidity: event ReverseClaimed(address indexed addr, bytes32 indexed node)
+// Hyperion: event ReverseClaimed(address indexed addr, bytes32 indexed node)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterReverseClaimed(opts *bind.FilterOpts, addr []common.Address, node [][32]byte) (*QRNSReverseRegistrarReverseClaimedIterator, error) {
 
 	var addrRule []interface{}
@@ -1063,7 +1063,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) FilterReverseClaimed(
 
 // WatchReverseClaimed is a free log subscription operation binding the contract event 0x6ada868dd3058cf77a48a74489fd7963688e5464b2b0fa957ace976243270e92.
 //
-// Solidity: event ReverseClaimed(address indexed addr, bytes32 indexed node)
+// Hyperion: event ReverseClaimed(address indexed addr, bytes32 indexed node)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchReverseClaimed(opts *bind.WatchOpts, sink chan<- *QRNSReverseRegistrarReverseClaimed, addr []common.Address, node [][32]byte) (event.Subscription, error) {
 
 	var addrRule []interface{}
@@ -1109,7 +1109,7 @@ func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) WatchReverseClaimed(o
 
 // ParseReverseClaimed is a log parse operation binding the contract event 0x6ada868dd3058cf77a48a74489fd7963688e5464b2b0fa957ace976243270e92.
 //
-// Solidity: event ReverseClaimed(address indexed addr, bytes32 indexed node)
+// Hyperion: event ReverseClaimed(address indexed addr, bytes32 indexed node)
 func (_QRNSReverseRegistrar *QRNSReverseRegistrarFilterer) ParseReverseClaimed(log types.Log) (*QRNSReverseRegistrarReverseClaimed, error) {
 	event := new(QRNSReverseRegistrarReverseClaimed)
 	if err := _QRNSReverseRegistrar.contract.UnpackLog(event, "ReverseClaimed", log); err != nil {

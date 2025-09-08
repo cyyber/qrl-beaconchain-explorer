@@ -182,7 +182,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverTransactorRaw) Transact(opts *bind.
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
+// Hyperion: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) ABI(opts *bind.CallOpts, node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "ABI", node, contentTypes)
@@ -200,21 +200,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) ABI(opts *bind.CallOpts, no
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
+// Hyperion: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) ABI(node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
 	return _QRNSPublicResolver.Contract.ABI(&_QRNSPublicResolver.CallOpts, node, contentTypes)
 }
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
+// Hyperion: function ABI(bytes32 node, uint256 contentTypes) view returns(uint256, bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) ABI(node [32]byte, contentTypes *big.Int) (*big.Int, []byte, error) {
 	return _QRNSPublicResolver.Contract.ABI(&_QRNSPublicResolver.CallOpts, node, contentTypes)
 }
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(bytes32 node) view returns(address)
+// Hyperion: function addr(bytes32 node) view returns(address)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) Addr(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "addr", node)
@@ -231,21 +231,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) Addr(opts *bind.CallOpts, n
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(bytes32 node) view returns(address)
+// Hyperion: function addr(bytes32 node) view returns(address)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Addr(node [32]byte) (common.Address, error) {
 	return _QRNSPublicResolver.Contract.Addr(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(bytes32 node) view returns(address)
+// Hyperion: function addr(bytes32 node) view returns(address)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Addr(node [32]byte) (common.Address, error) {
 	return _QRNSPublicResolver.Contract.Addr(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Addr0 is a free data retrieval call binding the contract method 0xf1cb7e06.
 //
-// Solidity: function addr(bytes32 node, uint256 coinType) view returns(bytes)
+// Hyperion: function addr(bytes32 node, uint256 coinType) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) Addr0(opts *bind.CallOpts, node [32]byte, coinType *big.Int) ([]byte, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "addr0", node, coinType)
@@ -262,21 +262,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) Addr0(opts *bind.CallOpts, 
 
 // Addr0 is a free data retrieval call binding the contract method 0xf1cb7e06.
 //
-// Solidity: function addr(bytes32 node, uint256 coinType) view returns(bytes)
+// Hyperion: function addr(bytes32 node, uint256 coinType) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Addr0(node [32]byte, coinType *big.Int) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.Addr0(&_QRNSPublicResolver.CallOpts, node, coinType)
 }
 
 // Addr0 is a free data retrieval call binding the contract method 0xf1cb7e06.
 //
-// Solidity: function addr(bytes32 node, uint256 coinType) view returns(bytes)
+// Hyperion: function addr(bytes32 node, uint256 coinType) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Addr0(node [32]byte, coinType *big.Int) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.Addr0(&_QRNSPublicResolver.CallOpts, node, coinType)
 }
 
 // Contenthash is a free data retrieval call binding the contract method 0xbc1c58d1.
 //
-// Solidity: function contenthash(bytes32 node) view returns(bytes)
+// Hyperion: function contenthash(bytes32 node) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) Contenthash(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "contenthash", node)
@@ -293,21 +293,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) Contenthash(opts *bind.Call
 
 // Contenthash is a free data retrieval call binding the contract method 0xbc1c58d1.
 //
-// Solidity: function contenthash(bytes32 node) view returns(bytes)
+// Hyperion: function contenthash(bytes32 node) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Contenthash(node [32]byte) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.Contenthash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Contenthash is a free data retrieval call binding the contract method 0xbc1c58d1.
 //
-// Solidity: function contenthash(bytes32 node) view returns(bytes)
+// Hyperion: function contenthash(bytes32 node) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Contenthash(node [32]byte) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.Contenthash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
-// Solidity: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
+// Hyperion: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) DnsRecord(opts *bind.CallOpts, node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "dnsRecord", node, name, resource)
@@ -324,21 +324,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) DnsRecord(opts *bind.CallOp
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
-// Solidity: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
+// Hyperion: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) DnsRecord(node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.DnsRecord(&_QRNSPublicResolver.CallOpts, node, name, resource)
 }
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
-// Solidity: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
+// Hyperion: function dnsRecord(bytes32 node, bytes32 name, uint16 resource) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) DnsRecord(node [32]byte, name [32]byte, resource uint16) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.DnsRecord(&_QRNSPublicResolver.CallOpts, node, name, resource)
 }
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
-// Solidity: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
+// Hyperion: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) HasDNSRecords(opts *bind.CallOpts, node [32]byte, name [32]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "hasDNSRecords", node, name)
@@ -355,21 +355,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) HasDNSRecords(opts *bind.Ca
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
-// Solidity: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
+// Hyperion: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) HasDNSRecords(node [32]byte, name [32]byte) (bool, error) {
 	return _QRNSPublicResolver.Contract.HasDNSRecords(&_QRNSPublicResolver.CallOpts, node, name)
 }
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
-// Solidity: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
+// Hyperion: function hasDNSRecords(bytes32 node, bytes32 name) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) HasDNSRecords(node [32]byte, name [32]byte) (bool, error) {
 	return _QRNSPublicResolver.Contract.HasDNSRecords(&_QRNSPublicResolver.CallOpts, node, name)
 }
 
 // InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
 //
-// Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
+// Hyperion: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) InterfaceImplementer(opts *bind.CallOpts, node [32]byte, interfaceID [4]byte) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "interfaceImplementer", node, interfaceID)
@@ -386,21 +386,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) InterfaceImplementer(opts *
 
 // InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
 //
-// Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
+// Hyperion: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
 	return _QRNSPublicResolver.Contract.InterfaceImplementer(&_QRNSPublicResolver.CallOpts, node, interfaceID)
 }
 
 // InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
 //
-// Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
+// Hyperion: function interfaceImplementer(bytes32 node, bytes4 interfaceID) view returns(address)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
 	return _QRNSPublicResolver.Contract.InterfaceImplementer(&_QRNSPublicResolver.CallOpts, node, interfaceID)
 }
 
 // IsApprovedFor is a free data retrieval call binding the contract method 0xa9784b3e.
 //
-// Solidity: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
+// Hyperion: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) IsApprovedFor(opts *bind.CallOpts, owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "isApprovedFor", owner, node, delegate)
@@ -417,21 +417,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) IsApprovedFor(opts *bind.Ca
 
 // IsApprovedFor is a free data retrieval call binding the contract method 0xa9784b3e.
 //
-// Solidity: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
+// Hyperion: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) IsApprovedFor(owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
 	return _QRNSPublicResolver.Contract.IsApprovedFor(&_QRNSPublicResolver.CallOpts, owner, node, delegate)
 }
 
 // IsApprovedFor is a free data retrieval call binding the contract method 0xa9784b3e.
 //
-// Solidity: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
+// Hyperion: function isApprovedFor(address owner, bytes32 node, address delegate) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) IsApprovedFor(owner common.Address, node [32]byte, delegate common.Address) (bool, error) {
 	return _QRNSPublicResolver.Contract.IsApprovedFor(&_QRNSPublicResolver.CallOpts, owner, node, delegate)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address account, address operator) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) IsApprovedForAll(opts *bind.CallOpts, account common.Address, operator common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "isApprovedForAll", account, operator)
@@ -448,21 +448,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) IsApprovedForAll(opts *bind
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address account, address operator) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
 	return _QRNSPublicResolver.Contract.IsApprovedForAll(&_QRNSPublicResolver.CallOpts, account, operator)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address account, address operator) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
 	return _QRNSPublicResolver.Contract.IsApprovedForAll(&_QRNSPublicResolver.CallOpts, account, operator)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(bytes32 node) view returns(string)
+// Hyperion: function name(bytes32 node) view returns(string)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) Name(opts *bind.CallOpts, node [32]byte) (string, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "name", node)
@@ -479,21 +479,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) Name(opts *bind.CallOpts, n
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(bytes32 node) view returns(string)
+// Hyperion: function name(bytes32 node) view returns(string)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Name(node [32]byte) (string, error) {
 	return _QRNSPublicResolver.Contract.Name(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(bytes32 node) view returns(string)
+// Hyperion: function name(bytes32 node) view returns(string)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Name(node [32]byte) (string, error) {
 	return _QRNSPublicResolver.Contract.Name(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
+// Hyperion: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) Pubkey(opts *bind.CallOpts, node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -518,7 +518,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) Pubkey(opts *bind.CallOpts,
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
+// Hyperion: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -528,7 +528,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverSession) Pubkey(node [32]byte) (str
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
+// Hyperion: function pubkey(bytes32 node) view returns(bytes32 x, bytes32 y)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -538,7 +538,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Pubkey(node [32]byte
 
 // RecordVersions is a free data retrieval call binding the contract method 0xd700ff33.
 //
-// Solidity: function recordVersions(bytes32 ) view returns(uint64)
+// Hyperion: function recordVersions(bytes32 ) view returns(uint64)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) RecordVersions(opts *bind.CallOpts, arg0 [32]byte) (uint64, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "recordVersions", arg0)
@@ -555,21 +555,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) RecordVersions(opts *bind.C
 
 // RecordVersions is a free data retrieval call binding the contract method 0xd700ff33.
 //
-// Solidity: function recordVersions(bytes32 ) view returns(uint64)
+// Hyperion: function recordVersions(bytes32 ) view returns(uint64)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) RecordVersions(arg0 [32]byte) (uint64, error) {
 	return _QRNSPublicResolver.Contract.RecordVersions(&_QRNSPublicResolver.CallOpts, arg0)
 }
 
 // RecordVersions is a free data retrieval call binding the contract method 0xd700ff33.
 //
-// Solidity: function recordVersions(bytes32 ) view returns(uint64)
+// Hyperion: function recordVersions(bytes32 ) view returns(uint64)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) RecordVersions(arg0 [32]byte) (uint64, error) {
 	return _QRNSPublicResolver.Contract.RecordVersions(&_QRNSPublicResolver.CallOpts, arg0)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) view returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "supportsInterface", interfaceID)
@@ -586,21 +586,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) SupportsInterface(opts *bin
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) view returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _QRNSPublicResolver.Contract.SupportsInterface(&_QRNSPublicResolver.CallOpts, interfaceID)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) view returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) view returns(bool)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _QRNSPublicResolver.Contract.SupportsInterface(&_QRNSPublicResolver.CallOpts, interfaceID)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(bytes32 node, string key) view returns(string)
+// Hyperion: function text(bytes32 node, string key) view returns(string)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) Text(opts *bind.CallOpts, node [32]byte, key string) (string, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "text", node, key)
@@ -617,21 +617,21 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) Text(opts *bind.CallOpts, n
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(bytes32 node, string key) view returns(string)
+// Hyperion: function text(bytes32 node, string key) view returns(string)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Text(node [32]byte, key string) (string, error) {
 	return _QRNSPublicResolver.Contract.Text(&_QRNSPublicResolver.CallOpts, node, key)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(bytes32 node, string key) view returns(string)
+// Hyperion: function text(bytes32 node, string key) view returns(string)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Text(node [32]byte, key string) (string, error) {
 	return _QRNSPublicResolver.Contract.Text(&_QRNSPublicResolver.CallOpts, node, key)
 }
 
 // Zonehash is a free data retrieval call binding the contract method 0x5c98042b.
 //
-// Solidity: function zonehash(bytes32 node) view returns(bytes)
+// Hyperion: function zonehash(bytes32 node) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCaller) Zonehash(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
 	var out []interface{}
 	err := _QRNSPublicResolver.contract.Call(opts, &out, "zonehash", node)
@@ -648,329 +648,329 @@ func (_QRNSPublicResolver *QRNSPublicResolverCaller) Zonehash(opts *bind.CallOpt
 
 // Zonehash is a free data retrieval call binding the contract method 0x5c98042b.
 //
-// Solidity: function zonehash(bytes32 node) view returns(bytes)
+// Hyperion: function zonehash(bytes32 node) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Zonehash(node [32]byte) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.Zonehash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Zonehash is a free data retrieval call binding the contract method 0x5c98042b.
 //
-// Solidity: function zonehash(bytes32 node) view returns(bytes)
+// Hyperion: function zonehash(bytes32 node) view returns(bytes)
 func (_QRNSPublicResolver *QRNSPublicResolverCallerSession) Zonehash(node [32]byte) ([]byte, error) {
 	return _QRNSPublicResolver.Contract.Zonehash(&_QRNSPublicResolver.CallOpts, node)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0xa4b91a01.
 //
-// Solidity: function approve(bytes32 node, address delegate, bool approved) returns()
+// Hyperion: function approve(bytes32 node, address delegate, bool approved) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) Approve(opts *bind.TransactOpts, node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "approve", node, delegate, approved)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0xa4b91a01.
 //
-// Solidity: function approve(bytes32 node, address delegate, bool approved) returns()
+// Hyperion: function approve(bytes32 node, address delegate, bool approved) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Approve(node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.Approve(&_QRNSPublicResolver.TransactOpts, node, delegate, approved)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0xa4b91a01.
 //
-// Solidity: function approve(bytes32 node, address delegate, bool approved) returns()
+// Hyperion: function approve(bytes32 node, address delegate, bool approved) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) Approve(node [32]byte, delegate common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.Approve(&_QRNSPublicResolver.TransactOpts, node, delegate, approved)
 }
 
 // ClearRecords is a paid mutator transaction binding the contract method 0x3603d758.
 //
-// Solidity: function clearRecords(bytes32 node) returns()
+// Hyperion: function clearRecords(bytes32 node) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) ClearRecords(opts *bind.TransactOpts, node [32]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "clearRecords", node)
 }
 
 // ClearRecords is a paid mutator transaction binding the contract method 0x3603d758.
 //
-// Solidity: function clearRecords(bytes32 node) returns()
+// Hyperion: function clearRecords(bytes32 node) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) ClearRecords(node [32]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.ClearRecords(&_QRNSPublicResolver.TransactOpts, node)
 }
 
 // ClearRecords is a paid mutator transaction binding the contract method 0x3603d758.
 //
-// Solidity: function clearRecords(bytes32 node) returns()
+// Hyperion: function clearRecords(bytes32 node) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) ClearRecords(node [32]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.ClearRecords(&_QRNSPublicResolver.TransactOpts, node)
 }
 
 // Multicall is a paid mutator transaction binding the contract method 0xac9650d8.
 //
-// Solidity: function multicall(bytes[] data) returns(bytes[] results)
+// Hyperion: function multicall(bytes[] data) returns(bytes[] results)
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) Multicall(opts *bind.TransactOpts, data [][]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "multicall", data)
 }
 
 // Multicall is a paid mutator transaction binding the contract method 0xac9650d8.
 //
-// Solidity: function multicall(bytes[] data) returns(bytes[] results)
+// Hyperion: function multicall(bytes[] data) returns(bytes[] results)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) Multicall(data [][]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.Multicall(&_QRNSPublicResolver.TransactOpts, data)
 }
 
 // Multicall is a paid mutator transaction binding the contract method 0xac9650d8.
 //
-// Solidity: function multicall(bytes[] data) returns(bytes[] results)
+// Hyperion: function multicall(bytes[] data) returns(bytes[] results)
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) Multicall(data [][]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.Multicall(&_QRNSPublicResolver.TransactOpts, data)
 }
 
 // MulticallWithNodeCheck is a paid mutator transaction binding the contract method 0xe32954eb.
 //
-// Solidity: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
+// Hyperion: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) MulticallWithNodeCheck(opts *bind.TransactOpts, nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "multicallWithNodeCheck", nodehash, data)
 }
 
 // MulticallWithNodeCheck is a paid mutator transaction binding the contract method 0xe32954eb.
 //
-// Solidity: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
+// Hyperion: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
 func (_QRNSPublicResolver *QRNSPublicResolverSession) MulticallWithNodeCheck(nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.MulticallWithNodeCheck(&_QRNSPublicResolver.TransactOpts, nodehash, data)
 }
 
 // MulticallWithNodeCheck is a paid mutator transaction binding the contract method 0xe32954eb.
 //
-// Solidity: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
+// Hyperion: function multicallWithNodeCheck(bytes32 nodehash, bytes[] data) returns(bytes[] results)
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) MulticallWithNodeCheck(nodehash [32]byte, data [][]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.MulticallWithNodeCheck(&_QRNSPublicResolver.TransactOpts, nodehash, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
+// Hyperion: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetABI(opts *bind.TransactOpts, node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setABI", node, contentType, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
+// Hyperion: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetABI(&_QRNSPublicResolver.TransactOpts, node, contentType, data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
+// Hyperion: function setABI(bytes32 node, uint256 contentType, bytes data) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetABI(node [32]byte, contentType *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetABI(&_QRNSPublicResolver.TransactOpts, node, contentType, data)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0x8b95dd71.
 //
-// Solidity: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
+// Hyperion: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetAddr(opts *bind.TransactOpts, node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setAddr", node, coinType, a)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0x8b95dd71.
 //
-// Solidity: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
+// Hyperion: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetAddr(node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetAddr(&_QRNSPublicResolver.TransactOpts, node, coinType, a)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0x8b95dd71.
 //
-// Solidity: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
+// Hyperion: function setAddr(bytes32 node, uint256 coinType, bytes a) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetAddr(node [32]byte, coinType *big.Int, a []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetAddr(&_QRNSPublicResolver.TransactOpts, node, coinType, a)
 }
 
 // SetAddr0 is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(bytes32 node, address a) returns()
+// Hyperion: function setAddr(bytes32 node, address a) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetAddr0(opts *bind.TransactOpts, node [32]byte, a common.Address) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setAddr0", node, a)
 }
 
 // SetAddr0 is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(bytes32 node, address a) returns()
+// Hyperion: function setAddr(bytes32 node, address a) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetAddr0(node [32]byte, a common.Address) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetAddr0(&_QRNSPublicResolver.TransactOpts, node, a)
 }
 
 // SetAddr0 is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(bytes32 node, address a) returns()
+// Hyperion: function setAddr(bytes32 node, address a) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetAddr0(node [32]byte, a common.Address) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetAddr0(&_QRNSPublicResolver.TransactOpts, node, a)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetApprovalForAll(opts *bind.TransactOpts, operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setApprovalForAll", operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetApprovalForAll(&_QRNSPublicResolver.TransactOpts, operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetApprovalForAll(&_QRNSPublicResolver.TransactOpts, operator, approved)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
+// Hyperion: function setContenthash(bytes32 node, bytes hash) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetContenthash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setContenthash", node, hash)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
+// Hyperion: function setContenthash(bytes32 node, bytes hash) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetContenthash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
+// Hyperion: function setContenthash(bytes32 node, bytes hash) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetContenthash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
-// Solidity: function setDNSRecords(bytes32 node, bytes data) returns()
+// Hyperion: function setDNSRecords(bytes32 node, bytes data) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetDNSRecords(opts *bind.TransactOpts, node [32]byte, data []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setDNSRecords", node, data)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
-// Solidity: function setDNSRecords(bytes32 node, bytes data) returns()
+// Hyperion: function setDNSRecords(bytes32 node, bytes data) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetDNSRecords(node [32]byte, data []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetDNSRecords(&_QRNSPublicResolver.TransactOpts, node, data)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
-// Solidity: function setDNSRecords(bytes32 node, bytes data) returns()
+// Hyperion: function setDNSRecords(bytes32 node, bytes data) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetDNSRecords(node [32]byte, data []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetDNSRecords(&_QRNSPublicResolver.TransactOpts, node, data)
 }
 
 // SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
 //
-// Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
+// Hyperion: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetInterface(opts *bind.TransactOpts, node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setInterface", node, interfaceID, implementer)
 }
 
 // SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
 //
-// Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
+// Hyperion: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetInterface(&_QRNSPublicResolver.TransactOpts, node, interfaceID, implementer)
 }
 
 // SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
 //
-// Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
+// Hyperion: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetInterface(&_QRNSPublicResolver.TransactOpts, node, interfaceID, implementer)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(bytes32 node, string newName) returns()
+// Hyperion: function setName(bytes32 node, string newName) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetName(opts *bind.TransactOpts, node [32]byte, newName string) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setName", node, newName)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(bytes32 node, string newName) returns()
+// Hyperion: function setName(bytes32 node, string newName) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetName(node [32]byte, newName string) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetName(&_QRNSPublicResolver.TransactOpts, node, newName)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(bytes32 node, string newName) returns()
+// Hyperion: function setName(bytes32 node, string newName) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetName(node [32]byte, newName string) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetName(&_QRNSPublicResolver.TransactOpts, node, newName)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
+// Hyperion: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetPubkey(opts *bind.TransactOpts, node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setPubkey", node, x, y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
+// Hyperion: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetPubkey(&_QRNSPublicResolver.TransactOpts, node, x, y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
+// Hyperion: function setPubkey(bytes32 node, bytes32 x, bytes32 y) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetPubkey(node [32]byte, x [32]byte, y [32]byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetPubkey(&_QRNSPublicResolver.TransactOpts, node, x, y)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(bytes32 node, string key, string value) returns()
+// Hyperion: function setText(bytes32 node, string key, string value) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetText(opts *bind.TransactOpts, node [32]byte, key string, value string) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setText", node, key, value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(bytes32 node, string key, string value) returns()
+// Hyperion: function setText(bytes32 node, string key, string value) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetText(&_QRNSPublicResolver.TransactOpts, node, key, value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(bytes32 node, string key, string value) returns()
+// Hyperion: function setText(bytes32 node, string key, string value) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetText(node [32]byte, key string, value string) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetText(&_QRNSPublicResolver.TransactOpts, node, key, value)
 }
 
 // SetZonehash is a paid mutator transaction binding the contract method 0xce3decdc.
 //
-// Solidity: function setZonehash(bytes32 node, bytes hash) returns()
+// Hyperion: function setZonehash(bytes32 node, bytes hash) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactor) SetZonehash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.contract.Transact(opts, "setZonehash", node, hash)
 }
 
 // SetZonehash is a paid mutator transaction binding the contract method 0xce3decdc.
 //
-// Solidity: function setZonehash(bytes32 node, bytes hash) returns()
+// Hyperion: function setZonehash(bytes32 node, bytes hash) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverSession) SetZonehash(node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetZonehash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
 
 // SetZonehash is a paid mutator transaction binding the contract method 0xce3decdc.
 //
-// Solidity: function setZonehash(bytes32 node, bytes hash) returns()
+// Hyperion: function setZonehash(bytes32 node, bytes hash) returns()
 func (_QRNSPublicResolver *QRNSPublicResolverTransactorSession) SetZonehash(node [32]byte, hash []byte) (*types.Transaction, error) {
 	return _QRNSPublicResolver.Contract.SetZonehash(&_QRNSPublicResolver.TransactOpts, node, hash)
 }
@@ -1051,7 +1051,7 @@ type QRNSPublicResolverABIChanged struct {
 
 // FilterABIChanged is a free log retrieval operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
-// Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
+// Hyperion: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterABIChanged(opts *bind.FilterOpts, node [][32]byte, contentType []*big.Int) (*QRNSPublicResolverABIChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1072,7 +1072,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterABIChanged(opts *bi
 
 // WatchABIChanged is a free log subscription operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
-// Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
+// Hyperion: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchABIChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverABIChanged, node [][32]byte, contentType []*big.Int) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1118,7 +1118,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchABIChanged(opts *bin
 
 // ParseABIChanged is a log parse operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
-// Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
+// Hyperion: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseABIChanged(log types.Log) (*QRNSPublicResolverABIChanged, error) {
 	event := new(QRNSPublicResolverABIChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "ABIChanged", log); err != nil {
@@ -1204,7 +1204,7 @@ type QRNSPublicResolverAddrChanged struct {
 
 // FilterAddrChanged is a free log retrieval operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
-// Solidity: event AddrChanged(bytes32 indexed node, address a)
+// Hyperion: event AddrChanged(bytes32 indexed node, address a)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterAddrChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverAddrChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1221,7 +1221,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterAddrChanged(opts *b
 
 // WatchAddrChanged is a free log subscription operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
-// Solidity: event AddrChanged(bytes32 indexed node, address a)
+// Hyperion: event AddrChanged(bytes32 indexed node, address a)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchAddrChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverAddrChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1263,7 +1263,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchAddrChanged(opts *bi
 
 // ParseAddrChanged is a log parse operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
-// Solidity: event AddrChanged(bytes32 indexed node, address a)
+// Hyperion: event AddrChanged(bytes32 indexed node, address a)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseAddrChanged(log types.Log) (*QRNSPublicResolverAddrChanged, error) {
 	event := new(QRNSPublicResolverAddrChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "AddrChanged", log); err != nil {
@@ -1350,7 +1350,7 @@ type QRNSPublicResolverAddressChanged struct {
 
 // FilterAddressChanged is a free log retrieval operation binding the contract event 0x65412581168e88a1e60c6459d7f44ae83ad0832e670826c05a4e2476b57af752.
 //
-// Solidity: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
+// Hyperion: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterAddressChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverAddressChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1367,7 +1367,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterAddressChanged(opts
 
 // WatchAddressChanged is a free log subscription operation binding the contract event 0x65412581168e88a1e60c6459d7f44ae83ad0832e670826c05a4e2476b57af752.
 //
-// Solidity: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
+// Hyperion: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchAddressChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverAddressChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1409,7 +1409,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchAddressChanged(opts 
 
 // ParseAddressChanged is a log parse operation binding the contract event 0x65412581168e88a1e60c6459d7f44ae83ad0832e670826c05a4e2476b57af752.
 //
-// Solidity: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
+// Hyperion: event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseAddressChanged(log types.Log) (*QRNSPublicResolverAddressChanged, error) {
 	event := new(QRNSPublicResolverAddressChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "AddressChanged", log); err != nil {
@@ -1496,7 +1496,7 @@ type QRNSPublicResolverApprovalForAll struct {
 
 // FilterApprovalForAll is a free log retrieval operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterApprovalForAll(opts *bind.FilterOpts, owner []common.Address, operator []common.Address) (*QRNSPublicResolverApprovalForAllIterator, error) {
 
 	var ownerRule []interface{}
@@ -1517,7 +1517,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterApprovalForAll(opts
 
 // WatchApprovalForAll is a free log subscription operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverApprovalForAll, owner []common.Address, operator []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -1563,7 +1563,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchApprovalForAll(opts 
 
 // ParseApprovalForAll is a log parse operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseApprovalForAll(log types.Log) (*QRNSPublicResolverApprovalForAll, error) {
 	event := new(QRNSPublicResolverApprovalForAll)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
@@ -1651,7 +1651,7 @@ type QRNSPublicResolverApproved struct {
 
 // FilterApproved is a free log retrieval operation binding the contract event 0xf0ddb3b04746704017f9aa8bd728fcc2c1d11675041205350018915f5e4750a0.
 //
-// Solidity: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
+// Hyperion: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterApproved(opts *bind.FilterOpts, node [][32]byte, delegate []common.Address, approved []bool) (*QRNSPublicResolverApprovedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1676,7 +1676,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterApproved(opts *bind
 
 // WatchApproved is a free log subscription operation binding the contract event 0xf0ddb3b04746704017f9aa8bd728fcc2c1d11675041205350018915f5e4750a0.
 //
-// Solidity: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
+// Hyperion: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchApproved(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverApproved, node [][32]byte, delegate []common.Address, approved []bool) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1726,7 +1726,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchApproved(opts *bind.
 
 // ParseApproved is a log parse operation binding the contract event 0xf0ddb3b04746704017f9aa8bd728fcc2c1d11675041205350018915f5e4750a0.
 //
-// Solidity: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
+// Hyperion: event Approved(address owner, bytes32 indexed node, address indexed delegate, bool indexed approved)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseApproved(log types.Log) (*QRNSPublicResolverApproved, error) {
 	event := new(QRNSPublicResolverApproved)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "Approved", log); err != nil {
@@ -1812,7 +1812,7 @@ type QRNSPublicResolverContenthashChanged struct {
 
 // FilterContenthashChanged is a free log retrieval operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
-// Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
+// Hyperion: event ContenthashChanged(bytes32 indexed node, bytes hash)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterContenthashChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverContenthashChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1829,7 +1829,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterContenthashChanged(
 
 // WatchContenthashChanged is a free log subscription operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
-// Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
+// Hyperion: event ContenthashChanged(bytes32 indexed node, bytes hash)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchContenthashChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverContenthashChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1871,7 +1871,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchContenthashChanged(o
 
 // ParseContenthashChanged is a log parse operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
-// Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
+// Hyperion: event ContenthashChanged(bytes32 indexed node, bytes hash)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseContenthashChanged(log types.Log) (*QRNSPublicResolverContenthashChanged, error) {
 	event := new(QRNSPublicResolverContenthashChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "ContenthashChanged", log); err != nil {
@@ -1959,7 +1959,7 @@ type QRNSPublicResolverDNSRecordChanged struct {
 
 // FilterDNSRecordChanged is a free log retrieval operation binding the contract event 0x52a608b3303a48862d07a73d82fa221318c0027fbbcfb1b2329bface3f19ff2b.
 //
-// Solidity: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
+// Hyperion: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSRecordChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverDNSRecordChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1976,7 +1976,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSRecordChanged(op
 
 // WatchDNSRecordChanged is a free log subscription operation binding the contract event 0x52a608b3303a48862d07a73d82fa221318c0027fbbcfb1b2329bface3f19ff2b.
 //
-// Solidity: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
+// Hyperion: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSRecordChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverDNSRecordChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2018,7 +2018,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSRecordChanged(opt
 
 // ParseDNSRecordChanged is a log parse operation binding the contract event 0x52a608b3303a48862d07a73d82fa221318c0027fbbcfb1b2329bface3f19ff2b.
 //
-// Solidity: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
+// Hyperion: event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseDNSRecordChanged(log types.Log) (*QRNSPublicResolverDNSRecordChanged, error) {
 	event := new(QRNSPublicResolverDNSRecordChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSRecordChanged", log); err != nil {
@@ -2105,7 +2105,7 @@ type QRNSPublicResolverDNSRecordDeleted struct {
 
 // FilterDNSRecordDeleted is a free log retrieval operation binding the contract event 0x03528ed0c2a3ebc993b12ce3c16bb382f9c7d88ef7d8a1bf290eaf35955a1207.
 //
-// Solidity: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
+// Hyperion: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSRecordDeleted(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverDNSRecordDeletedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2122,7 +2122,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSRecordDeleted(op
 
 // WatchDNSRecordDeleted is a free log subscription operation binding the contract event 0x03528ed0c2a3ebc993b12ce3c16bb382f9c7d88ef7d8a1bf290eaf35955a1207.
 //
-// Solidity: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
+// Hyperion: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSRecordDeleted(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverDNSRecordDeleted, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2164,7 +2164,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSRecordDeleted(opt
 
 // ParseDNSRecordDeleted is a log parse operation binding the contract event 0x03528ed0c2a3ebc993b12ce3c16bb382f9c7d88ef7d8a1bf290eaf35955a1207.
 //
-// Solidity: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
+// Hyperion: event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseDNSRecordDeleted(log types.Log) (*QRNSPublicResolverDNSRecordDeleted, error) {
 	event := new(QRNSPublicResolverDNSRecordDeleted)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSRecordDeleted", log); err != nil {
@@ -2251,7 +2251,7 @@ type QRNSPublicResolverDNSZonehashChanged struct {
 
 // FilterDNSZonehashChanged is a free log retrieval operation binding the contract event 0x8f15ed4b723ef428f250961da8315675b507046737e19319fc1a4d81bfe87f85.
 //
-// Solidity: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
+// Hyperion: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSZonehashChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverDNSZonehashChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2268,7 +2268,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterDNSZonehashChanged(
 
 // WatchDNSZonehashChanged is a free log subscription operation binding the contract event 0x8f15ed4b723ef428f250961da8315675b507046737e19319fc1a4d81bfe87f85.
 //
-// Solidity: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
+// Hyperion: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSZonehashChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverDNSZonehashChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2310,7 +2310,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchDNSZonehashChanged(o
 
 // ParseDNSZonehashChanged is a log parse operation binding the contract event 0x8f15ed4b723ef428f250961da8315675b507046737e19319fc1a4d81bfe87f85.
 //
-// Solidity: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
+// Hyperion: event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseDNSZonehashChanged(log types.Log) (*QRNSPublicResolverDNSZonehashChanged, error) {
 	event := new(QRNSPublicResolverDNSZonehashChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "DNSZonehashChanged", log); err != nil {
@@ -2397,7 +2397,7 @@ type QRNSPublicResolverInterfaceChanged struct {
 
 // FilterInterfaceChanged is a free log retrieval operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
 //
-// Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
+// Hyperion: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterInterfaceChanged(opts *bind.FilterOpts, node [][32]byte, interfaceID [][4]byte) (*QRNSPublicResolverInterfaceChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2418,7 +2418,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterInterfaceChanged(op
 
 // WatchInterfaceChanged is a free log subscription operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
 //
-// Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
+// Hyperion: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchInterfaceChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverInterfaceChanged, node [][32]byte, interfaceID [][4]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2464,7 +2464,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchInterfaceChanged(opt
 
 // ParseInterfaceChanged is a log parse operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
 //
-// Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
+// Hyperion: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseInterfaceChanged(log types.Log) (*QRNSPublicResolverInterfaceChanged, error) {
 	event := new(QRNSPublicResolverInterfaceChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "InterfaceChanged", log); err != nil {
@@ -2550,7 +2550,7 @@ type QRNSPublicResolverNameChanged struct {
 
 // FilterNameChanged is a free log retrieval operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
-// Solidity: event NameChanged(bytes32 indexed node, string name)
+// Hyperion: event NameChanged(bytes32 indexed node, string name)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterNameChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverNameChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2567,7 +2567,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterNameChanged(opts *b
 
 // WatchNameChanged is a free log subscription operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
-// Solidity: event NameChanged(bytes32 indexed node, string name)
+// Hyperion: event NameChanged(bytes32 indexed node, string name)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchNameChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverNameChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2609,7 +2609,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchNameChanged(opts *bi
 
 // ParseNameChanged is a log parse operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
-// Solidity: event NameChanged(bytes32 indexed node, string name)
+// Hyperion: event NameChanged(bytes32 indexed node, string name)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseNameChanged(log types.Log) (*QRNSPublicResolverNameChanged, error) {
 	event := new(QRNSPublicResolverNameChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "NameChanged", log); err != nil {
@@ -2696,7 +2696,7 @@ type QRNSPublicResolverPubkeyChanged struct {
 
 // FilterPubkeyChanged is a free log retrieval operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
-// Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
+// Hyperion: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterPubkeyChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverPubkeyChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2713,7 +2713,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterPubkeyChanged(opts 
 
 // WatchPubkeyChanged is a free log subscription operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
-// Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
+// Hyperion: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchPubkeyChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverPubkeyChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2755,7 +2755,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchPubkeyChanged(opts *
 
 // ParsePubkeyChanged is a log parse operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
-// Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
+// Hyperion: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParsePubkeyChanged(log types.Log) (*QRNSPublicResolverPubkeyChanged, error) {
 	event := new(QRNSPublicResolverPubkeyChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "PubkeyChanged", log); err != nil {
@@ -2843,7 +2843,7 @@ type QRNSPublicResolverTextChanged struct {
 
 // FilterTextChanged is a free log retrieval operation binding the contract event 0x448bc014f1536726cf8d54ff3d6481ed3cbc683c2591ca204274009afa09b1a1.
 //
-// Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
+// Hyperion: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterTextChanged(opts *bind.FilterOpts, node [][32]byte, indexedKey []string) (*QRNSPublicResolverTextChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2864,7 +2864,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterTextChanged(opts *b
 
 // WatchTextChanged is a free log subscription operation binding the contract event 0x448bc014f1536726cf8d54ff3d6481ed3cbc683c2591ca204274009afa09b1a1.
 //
-// Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
+// Hyperion: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchTextChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverTextChanged, node [][32]byte, indexedKey []string) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2910,7 +2910,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchTextChanged(opts *bi
 
 // ParseTextChanged is a log parse operation binding the contract event 0x448bc014f1536726cf8d54ff3d6481ed3cbc683c2591ca204274009afa09b1a1.
 //
-// Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
+// Hyperion: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseTextChanged(log types.Log) (*QRNSPublicResolverTextChanged, error) {
 	event := new(QRNSPublicResolverTextChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "TextChanged", log); err != nil {
@@ -2996,7 +2996,7 @@ type QRNSPublicResolverVersionChanged struct {
 
 // FilterVersionChanged is a free log retrieval operation binding the contract event 0xc6621ccb8f3f5a04bb6502154b2caf6adf5983fe76dfef1cfc9c42e3579db444.
 //
-// Solidity: event VersionChanged(bytes32 indexed node, uint64 newVersion)
+// Hyperion: event VersionChanged(bytes32 indexed node, uint64 newVersion)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterVersionChanged(opts *bind.FilterOpts, node [][32]byte) (*QRNSPublicResolverVersionChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -3013,7 +3013,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) FilterVersionChanged(opts
 
 // WatchVersionChanged is a free log subscription operation binding the contract event 0xc6621ccb8f3f5a04bb6502154b2caf6adf5983fe76dfef1cfc9c42e3579db444.
 //
-// Solidity: event VersionChanged(bytes32 indexed node, uint64 newVersion)
+// Hyperion: event VersionChanged(bytes32 indexed node, uint64 newVersion)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchVersionChanged(opts *bind.WatchOpts, sink chan<- *QRNSPublicResolverVersionChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -3055,7 +3055,7 @@ func (_QRNSPublicResolver *QRNSPublicResolverFilterer) WatchVersionChanged(opts 
 
 // ParseVersionChanged is a log parse operation binding the contract event 0xc6621ccb8f3f5a04bb6502154b2caf6adf5983fe76dfef1cfc9c42e3579db444.
 //
-// Solidity: event VersionChanged(bytes32 indexed node, uint64 newVersion)
+// Hyperion: event VersionChanged(bytes32 indexed node, uint64 newVersion)
 func (_QRNSPublicResolver *QRNSPublicResolverFilterer) ParseVersionChanged(log types.Log) (*QRNSPublicResolverVersionChanged, error) {
 	event := new(QRNSPublicResolverVersionChanged)
 	if err := _QRNSPublicResolver.contract.UnpackLog(event, "VersionChanged", log); err != nil {

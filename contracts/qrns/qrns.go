@@ -1,14 +1,13 @@
 package qrns
 
 import (
-	"github.com/theQRL/qrl-beaconchain-explorer/utils"
-
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
-// TODO(rgeraldes24)
+// TODO(now.youtrack.cloud/issue/TZB-1)
 var QRNSCrontractAddressesQRL = map[string]string{
 	"Q00000000000C2E074eC69A0dFb2997BA6C7d2e1e": "Registry",
 	"Q253553366Da8546fC250F225fe3d25d0C782303b": "QRLRegistrarController",

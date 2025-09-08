@@ -188,7 +188,7 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorRaw) Tran
 
 // MINREGISTRATIONDURATION is a free data retrieval call binding the contract method 0x8a95b09f.
 //
-// Solidity: function MIN_REGISTRATION_DURATION() view returns(uint256)
+// Hyperion: function MIN_REGISTRATION_DURATION() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MINREGISTRATIONDURATION(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "MIN_REGISTRATION_DURATION")
@@ -205,21 +205,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MINREGISTRA
 
 // MINREGISTRATIONDURATION is a free data retrieval call binding the contract method 0x8a95b09f.
 //
-// Solidity: function MIN_REGISTRATION_DURATION() view returns(uint256)
+// Hyperion: function MIN_REGISTRATION_DURATION() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) MINREGISTRATIONDURATION() (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.MINREGISTRATIONDURATION(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // MINREGISTRATIONDURATION is a free data retrieval call binding the contract method 0x8a95b09f.
 //
-// Solidity: function MIN_REGISTRATION_DURATION() view returns(uint256)
+// Hyperion: function MIN_REGISTRATION_DURATION() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) MINREGISTRATIONDURATION() (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.MINREGISTRATIONDURATION(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // Available is a free data retrieval call binding the contract method 0xaeb8ce9b.
 //
-// Solidity: function available(string name) view returns(bool)
+// Hyperion: function available(string name) view returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Available(opts *bind.CallOpts, name string) (bool, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "available", name)
@@ -236,21 +236,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Available(o
 
 // Available is a free data retrieval call binding the contract method 0xaeb8ce9b.
 //
-// Solidity: function available(string name) view returns(bool)
+// Hyperion: function available(string name) view returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Available(name string) (bool, error) {
 	return _QRNSQRLRegistrarController.Contract.Available(&_QRNSQRLRegistrarController.CallOpts, name)
 }
 
 // Available is a free data retrieval call binding the contract method 0xaeb8ce9b.
 //
-// Solidity: function available(string name) view returns(bool)
+// Hyperion: function available(string name) view returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) Available(name string) (bool, error) {
 	return _QRNSQRLRegistrarController.Contract.Available(&_QRNSQRLRegistrarController.CallOpts, name)
 }
 
 // Commitments is a free data retrieval call binding the contract method 0x839df945.
 //
-// Solidity: function commitments(bytes32 ) view returns(uint256)
+// Hyperion: function commitments(bytes32 ) view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Commitments(opts *bind.CallOpts, arg0 [32]byte) (*big.Int, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "commitments", arg0)
@@ -267,21 +267,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Commitments
 
 // Commitments is a free data retrieval call binding the contract method 0x839df945.
 //
-// Solidity: function commitments(bytes32 ) view returns(uint256)
+// Hyperion: function commitments(bytes32 ) view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Commitments(arg0 [32]byte) (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.Commitments(&_QRNSQRLRegistrarController.CallOpts, arg0)
 }
 
 // Commitments is a free data retrieval call binding the contract method 0x839df945.
 //
-// Solidity: function commitments(bytes32 ) view returns(uint256)
+// Hyperion: function commitments(bytes32 ) view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) Commitments(arg0 [32]byte) (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.Commitments(&_QRNSQRLRegistrarController.CallOpts, arg0)
 }
 
 // MakeCommitment is a free data retrieval call binding the contract method 0x65a69dcf.
 //
-// Solidity: function makeCommitment(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) pure returns(bytes32)
+// Hyperion: function makeCommitment(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) pure returns(bytes32)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MakeCommitment(opts *bind.CallOpts, name string, owner common.Address, duration *big.Int, secret [32]byte, resolver common.Address, data [][]byte, reverseRecord bool, ownerControlledFuses uint16) ([32]byte, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "makeCommitment", name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
@@ -298,21 +298,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MakeCommitm
 
 // MakeCommitment is a free data retrieval call binding the contract method 0x65a69dcf.
 //
-// Solidity: function makeCommitment(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) pure returns(bytes32)
+// Hyperion: function makeCommitment(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) pure returns(bytes32)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) MakeCommitment(name string, owner common.Address, duration *big.Int, secret [32]byte, resolver common.Address, data [][]byte, reverseRecord bool, ownerControlledFuses uint16) ([32]byte, error) {
 	return _QRNSQRLRegistrarController.Contract.MakeCommitment(&_QRNSQRLRegistrarController.CallOpts, name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
 }
 
 // MakeCommitment is a free data retrieval call binding the contract method 0x65a69dcf.
 //
-// Solidity: function makeCommitment(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) pure returns(bytes32)
+// Hyperion: function makeCommitment(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) pure returns(bytes32)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) MakeCommitment(name string, owner common.Address, duration *big.Int, secret [32]byte, resolver common.Address, data [][]byte, reverseRecord bool, ownerControlledFuses uint16) ([32]byte, error) {
 	return _QRNSQRLRegistrarController.Contract.MakeCommitment(&_QRNSQRLRegistrarController.CallOpts, name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
 }
 
 // MaxCommitmentAge is a free data retrieval call binding the contract method 0xce1e09c0.
 //
-// Solidity: function maxCommitmentAge() view returns(uint256)
+// Hyperion: function maxCommitmentAge() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MaxCommitmentAge(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "maxCommitmentAge")
@@ -329,21 +329,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MaxCommitme
 
 // MaxCommitmentAge is a free data retrieval call binding the contract method 0xce1e09c0.
 //
-// Solidity: function maxCommitmentAge() view returns(uint256)
+// Hyperion: function maxCommitmentAge() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) MaxCommitmentAge() (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.MaxCommitmentAge(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // MaxCommitmentAge is a free data retrieval call binding the contract method 0xce1e09c0.
 //
-// Solidity: function maxCommitmentAge() view returns(uint256)
+// Hyperion: function maxCommitmentAge() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) MaxCommitmentAge() (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.MaxCommitmentAge(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // MinCommitmentAge is a free data retrieval call binding the contract method 0x8d839ffe.
 //
-// Solidity: function minCommitmentAge() view returns(uint256)
+// Hyperion: function minCommitmentAge() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MinCommitmentAge(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "minCommitmentAge")
@@ -360,21 +360,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) MinCommitme
 
 // MinCommitmentAge is a free data retrieval call binding the contract method 0x8d839ffe.
 //
-// Solidity: function minCommitmentAge() view returns(uint256)
+// Hyperion: function minCommitmentAge() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) MinCommitmentAge() (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.MinCommitmentAge(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // MinCommitmentAge is a free data retrieval call binding the contract method 0x8d839ffe.
 //
-// Solidity: function minCommitmentAge() view returns(uint256)
+// Hyperion: function minCommitmentAge() view returns(uint256)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) MinCommitmentAge() (*big.Int, error) {
 	return _QRNSQRLRegistrarController.Contract.MinCommitmentAge(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // NameWrapper is a free data retrieval call binding the contract method 0xa8e5fbc0.
 //
-// Solidity: function nameWrapper() view returns(address)
+// Hyperion: function nameWrapper() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) NameWrapper(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "nameWrapper")
@@ -391,21 +391,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) NameWrapper
 
 // NameWrapper is a free data retrieval call binding the contract method 0xa8e5fbc0.
 //
-// Solidity: function nameWrapper() view returns(address)
+// Hyperion: function nameWrapper() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) NameWrapper() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.NameWrapper(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // NameWrapper is a free data retrieval call binding the contract method 0xa8e5fbc0.
 //
-// Solidity: function nameWrapper() view returns(address)
+// Hyperion: function nameWrapper() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) NameWrapper() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.NameWrapper(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "owner")
@@ -422,21 +422,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Owner(opts 
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Owner() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.Owner(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) Owner() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.Owner(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // Prices is a free data retrieval call binding the contract method 0xd3419bf3.
 //
-// Solidity: function prices() view returns(address)
+// Hyperion: function prices() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Prices(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "prices")
@@ -453,21 +453,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Prices(opts
 
 // Prices is a free data retrieval call binding the contract method 0xd3419bf3.
 //
-// Solidity: function prices() view returns(address)
+// Hyperion: function prices() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Prices() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.Prices(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // Prices is a free data retrieval call binding the contract method 0xd3419bf3.
 //
-// Solidity: function prices() view returns(address)
+// Hyperion: function prices() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) Prices() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.Prices(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // RentPrice is a free data retrieval call binding the contract method 0x83e7f6ff.
 //
-// Solidity: function rentPrice(string name, uint256 duration) view returns((uint256,uint256) price)
+// Hyperion: function rentPrice(string name, uint256 duration) view returns((uint256,uint256) price)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) RentPrice(opts *bind.CallOpts, name string, duration *big.Int) (IPriceOraclePrice, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "rentPrice", name, duration)
@@ -484,21 +484,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) RentPrice(o
 
 // RentPrice is a free data retrieval call binding the contract method 0x83e7f6ff.
 //
-// Solidity: function rentPrice(string name, uint256 duration) view returns((uint256,uint256) price)
+// Hyperion: function rentPrice(string name, uint256 duration) view returns((uint256,uint256) price)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) RentPrice(name string, duration *big.Int) (IPriceOraclePrice, error) {
 	return _QRNSQRLRegistrarController.Contract.RentPrice(&_QRNSQRLRegistrarController.CallOpts, name, duration)
 }
 
 // RentPrice is a free data retrieval call binding the contract method 0x83e7f6ff.
 //
-// Solidity: function rentPrice(string name, uint256 duration) view returns((uint256,uint256) price)
+// Hyperion: function rentPrice(string name, uint256 duration) view returns((uint256,uint256) price)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) RentPrice(name string, duration *big.Int) (IPriceOraclePrice, error) {
 	return _QRNSQRLRegistrarController.Contract.RentPrice(&_QRNSQRLRegistrarController.CallOpts, name, duration)
 }
 
 // ReverseRegistrar is a free data retrieval call binding the contract method 0x80869853.
 //
-// Solidity: function reverseRegistrar() view returns(address)
+// Hyperion: function reverseRegistrar() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) ReverseRegistrar(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "reverseRegistrar")
@@ -515,21 +515,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) ReverseRegi
 
 // ReverseRegistrar is a free data retrieval call binding the contract method 0x80869853.
 //
-// Solidity: function reverseRegistrar() view returns(address)
+// Hyperion: function reverseRegistrar() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) ReverseRegistrar() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.ReverseRegistrar(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // ReverseRegistrar is a free data retrieval call binding the contract method 0x80869853.
 //
-// Solidity: function reverseRegistrar() view returns(address)
+// Hyperion: function reverseRegistrar() view returns(address)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) ReverseRegistrar() (common.Address, error) {
 	return _QRNSQRLRegistrarController.Contract.ReverseRegistrar(&_QRNSQRLRegistrarController.CallOpts)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) pure returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) pure returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "supportsInterface", interfaceID)
@@ -546,21 +546,21 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) SupportsInt
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) pure returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) pure returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _QRNSQRLRegistrarController.Contract.SupportsInterface(&_QRNSQRLRegistrarController.CallOpts, interfaceID)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) pure returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) pure returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _QRNSQRLRegistrarController.Contract.SupportsInterface(&_QRNSQRLRegistrarController.CallOpts, interfaceID)
 }
 
 // Valid is a free data retrieval call binding the contract method 0x9791c097.
 //
-// Solidity: function valid(string name) pure returns(bool)
+// Hyperion: function valid(string name) pure returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Valid(opts *bind.CallOpts, name string) (bool, error) {
 	var out []interface{}
 	err := _QRNSQRLRegistrarController.contract.Call(opts, &out, "valid", name)
@@ -577,161 +577,161 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCaller) Valid(opts 
 
 // Valid is a free data retrieval call binding the contract method 0x9791c097.
 //
-// Solidity: function valid(string name) pure returns(bool)
+// Hyperion: function valid(string name) pure returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Valid(name string) (bool, error) {
 	return _QRNSQRLRegistrarController.Contract.Valid(&_QRNSQRLRegistrarController.CallOpts, name)
 }
 
 // Valid is a free data retrieval call binding the contract method 0x9791c097.
 //
-// Solidity: function valid(string name) pure returns(bool)
+// Hyperion: function valid(string name) pure returns(bool)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerCallerSession) Valid(name string) (bool, error) {
 	return _QRNSQRLRegistrarController.Contract.Valid(&_QRNSQRLRegistrarController.CallOpts, name)
 }
 
 // Commit is a paid mutator transaction binding the contract method 0xf14fcbc8.
 //
-// Solidity: function commit(bytes32 commitment) returns()
+// Hyperion: function commit(bytes32 commitment) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactor) Commit(opts *bind.TransactOpts, commitment [32]byte) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.contract.Transact(opts, "commit", commitment)
 }
 
 // Commit is a paid mutator transaction binding the contract method 0xf14fcbc8.
 //
-// Solidity: function commit(bytes32 commitment) returns()
+// Hyperion: function commit(bytes32 commitment) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Commit(commitment [32]byte) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Commit(&_QRNSQRLRegistrarController.TransactOpts, commitment)
 }
 
 // Commit is a paid mutator transaction binding the contract method 0xf14fcbc8.
 //
-// Solidity: function commit(bytes32 commitment) returns()
+// Hyperion: function commit(bytes32 commitment) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorSession) Commit(commitment [32]byte) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Commit(&_QRNSQRLRegistrarController.TransactOpts, commitment)
 }
 
 // RecoverFunds is a paid mutator transaction binding the contract method 0x5d3590d5.
 //
-// Solidity: function recoverFunds(address _token, address _to, uint256 _amount) returns()
+// Hyperion: function recoverFunds(address _token, address _to, uint256 _amount) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactor) RecoverFunds(opts *bind.TransactOpts, _token common.Address, _to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.contract.Transact(opts, "recoverFunds", _token, _to, _amount)
 }
 
 // RecoverFunds is a paid mutator transaction binding the contract method 0x5d3590d5.
 //
-// Solidity: function recoverFunds(address _token, address _to, uint256 _amount) returns()
+// Hyperion: function recoverFunds(address _token, address _to, uint256 _amount) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) RecoverFunds(_token common.Address, _to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.RecoverFunds(&_QRNSQRLRegistrarController.TransactOpts, _token, _to, _amount)
 }
 
 // RecoverFunds is a paid mutator transaction binding the contract method 0x5d3590d5.
 //
-// Solidity: function recoverFunds(address _token, address _to, uint256 _amount) returns()
+// Hyperion: function recoverFunds(address _token, address _to, uint256 _amount) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorSession) RecoverFunds(_token common.Address, _to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.RecoverFunds(&_QRNSQRLRegistrarController.TransactOpts, _token, _to, _amount)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x74694a2b.
 //
-// Solidity: function register(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) payable returns()
+// Hyperion: function register(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) payable returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactor) Register(opts *bind.TransactOpts, name string, owner common.Address, duration *big.Int, secret [32]byte, resolver common.Address, data [][]byte, reverseRecord bool, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.contract.Transact(opts, "register", name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x74694a2b.
 //
-// Solidity: function register(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) payable returns()
+// Hyperion: function register(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) payable returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Register(name string, owner common.Address, duration *big.Int, secret [32]byte, resolver common.Address, data [][]byte, reverseRecord bool, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Register(&_QRNSQRLRegistrarController.TransactOpts, name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x74694a2b.
 //
-// Solidity: function register(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) payable returns()
+// Hyperion: function register(string name, address owner, uint256 duration, bytes32 secret, address resolver, bytes[] data, bool reverseRecord, uint16 ownerControlledFuses) payable returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorSession) Register(name string, owner common.Address, duration *big.Int, secret [32]byte, resolver common.Address, data [][]byte, reverseRecord bool, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Register(&_QRNSQRLRegistrarController.TransactOpts, name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
 }
 
 // Renew is a paid mutator transaction binding the contract method 0xacf1a841.
 //
-// Solidity: function renew(string name, uint256 duration) payable returns()
+// Hyperion: function renew(string name, uint256 duration) payable returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactor) Renew(opts *bind.TransactOpts, name string, duration *big.Int) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.contract.Transact(opts, "renew", name, duration)
 }
 
 // Renew is a paid mutator transaction binding the contract method 0xacf1a841.
 //
-// Solidity: function renew(string name, uint256 duration) payable returns()
+// Hyperion: function renew(string name, uint256 duration) payable returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Renew(name string, duration *big.Int) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Renew(&_QRNSQRLRegistrarController.TransactOpts, name, duration)
 }
 
 // Renew is a paid mutator transaction binding the contract method 0xacf1a841.
 //
-// Solidity: function renew(string name, uint256 duration) payable returns()
+// Hyperion: function renew(string name, uint256 duration) payable returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorSession) Renew(name string, duration *big.Int) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Renew(&_QRNSQRLRegistrarController.TransactOpts, name, duration)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.contract.Transact(opts, "renounceOwnership")
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) RenounceOwnership() (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.RenounceOwnership(&_QRNSQRLRegistrarController.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorSession) RenounceOwnership() (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.RenounceOwnership(&_QRNSQRLRegistrarController.TransactOpts)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.TransferOwnership(&_QRNSQRLRegistrarController.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.TransferOwnership(&_QRNSQRLRegistrarController.TransactOpts, newOwner)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x3ccfd60b.
 //
-// Solidity: function withdraw() returns()
+// Hyperion: function withdraw() returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactor) Withdraw(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.contract.Transact(opts, "withdraw")
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x3ccfd60b.
 //
-// Solidity: function withdraw() returns()
+// Hyperion: function withdraw() returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerSession) Withdraw() (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Withdraw(&_QRNSQRLRegistrarController.TransactOpts)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x3ccfd60b.
 //
-// Solidity: function withdraw() returns()
+// Hyperion: function withdraw() returns()
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerTransactorSession) Withdraw() (*types.Transaction, error) {
 	return _QRNSQRLRegistrarController.Contract.Withdraw(&_QRNSQRLRegistrarController.TransactOpts)
 }
@@ -816,7 +816,7 @@ type QRNSQRLRegistrarControllerNameRegistered struct {
 
 // FilterNameRegistered is a free log retrieval operation binding the contract event 0x69e37f151eb98a09618ddaa80c8cfaf1ce5996867c489f45b555b412271ebf27.
 //
-// Solidity: event NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
+// Hyperion: event NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) FilterNameRegistered(opts *bind.FilterOpts, label [][32]byte, owner []common.Address) (*QRNSQRLRegistrarControllerNameRegisteredIterator, error) {
 
 	var labelRule []interface{}
@@ -837,7 +837,7 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) FilterNam
 
 // WatchNameRegistered is a free log subscription operation binding the contract event 0x69e37f151eb98a09618ddaa80c8cfaf1ce5996867c489f45b555b412271ebf27.
 //
-// Solidity: event NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
+// Hyperion: event NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) WatchNameRegistered(opts *bind.WatchOpts, sink chan<- *QRNSQRLRegistrarControllerNameRegistered, label [][32]byte, owner []common.Address) (event.Subscription, error) {
 
 	var labelRule []interface{}
@@ -883,7 +883,7 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) WatchName
 
 // ParseNameRegistered is a log parse operation binding the contract event 0x69e37f151eb98a09618ddaa80c8cfaf1ce5996867c489f45b555b412271ebf27.
 //
-// Solidity: event NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
+// Hyperion: event NameRegistered(string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) ParseNameRegistered(log types.Log) (*QRNSQRLRegistrarControllerNameRegistered, error) {
 	event := new(QRNSQRLRegistrarControllerNameRegistered)
 	if err := _QRNSQRLRegistrarController.contract.UnpackLog(event, "NameRegistered", log); err != nil {
@@ -971,7 +971,7 @@ type QRNSQRLRegistrarControllerNameRenewed struct {
 
 // FilterNameRenewed is a free log retrieval operation binding the contract event 0x3da24c024582931cfaf8267d8ed24d13a82a8068d5bd337d30ec45cea4e506ae.
 //
-// Solidity: event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
+// Hyperion: event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) FilterNameRenewed(opts *bind.FilterOpts, label [][32]byte) (*QRNSQRLRegistrarControllerNameRenewedIterator, error) {
 
 	var labelRule []interface{}
@@ -988,7 +988,7 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) FilterNam
 
 // WatchNameRenewed is a free log subscription operation binding the contract event 0x3da24c024582931cfaf8267d8ed24d13a82a8068d5bd337d30ec45cea4e506ae.
 //
-// Solidity: event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
+// Hyperion: event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) WatchNameRenewed(opts *bind.WatchOpts, sink chan<- *QRNSQRLRegistrarControllerNameRenewed, label [][32]byte) (event.Subscription, error) {
 
 	var labelRule []interface{}
@@ -1030,7 +1030,7 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) WatchName
 
 // ParseNameRenewed is a log parse operation binding the contract event 0x3da24c024582931cfaf8267d8ed24d13a82a8068d5bd337d30ec45cea4e506ae.
 //
-// Solidity: event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
+// Hyperion: event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) ParseNameRenewed(log types.Log) (*QRNSQRLRegistrarControllerNameRenewed, error) {
 	event := new(QRNSQRLRegistrarControllerNameRenewed)
 	if err := _QRNSQRLRegistrarController.contract.UnpackLog(event, "NameRenewed", log); err != nil {
@@ -1116,7 +1116,7 @@ type QRNSQRLRegistrarControllerOwnershipTransferred struct {
 
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*QRNSQRLRegistrarControllerOwnershipTransferredIterator, error) {
 
 	var previousOwnerRule []interface{}
@@ -1137,7 +1137,7 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) FilterOwn
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *QRNSQRLRegistrarControllerOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
 
 	var previousOwnerRule []interface{}
@@ -1183,7 +1183,7 @@ func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) WatchOwne
 
 // ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSQRLRegistrarController *QRNSQRLRegistrarControllerFilterer) ParseOwnershipTransferred(log types.Log) (*QRNSQRLRegistrarControllerOwnershipTransferred, error) {
 	event := new(QRNSQRLRegistrarControllerOwnershipTransferred)
 	if err := _QRNSQRLRegistrarController.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {

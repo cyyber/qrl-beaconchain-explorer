@@ -182,7 +182,7 @@ func (_QRNSRegistry *QRNSRegistryTransactorRaw) Transact(opts *bind.TransactOpts
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address owner, address operator) view returns(bool)
 func (_QRNSRegistry *QRNSRegistryCaller) IsApprovedForAll(opts *bind.CallOpts, owner common.Address, operator common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSRegistry.contract.Call(opts, &out, "isApprovedForAll", owner, operator)
@@ -199,21 +199,21 @@ func (_QRNSRegistry *QRNSRegistryCaller) IsApprovedForAll(opts *bind.CallOpts, o
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address owner, address operator) view returns(bool)
 func (_QRNSRegistry *QRNSRegistrySession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
 	return _QRNSRegistry.Contract.IsApprovedForAll(&_QRNSRegistry.CallOpts, owner, operator)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address owner, address operator) view returns(bool)
 func (_QRNSRegistry *QRNSRegistryCallerSession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
 	return _QRNSRegistry.Contract.IsApprovedForAll(&_QRNSRegistry.CallOpts, owner, operator)
 }
 
 // Old is a free data retrieval call binding the contract method 0xb83f8663.
 //
-// Solidity: function old() view returns(address)
+// Hyperion: function old() view returns(address)
 func (_QRNSRegistry *QRNSRegistryCaller) Old(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSRegistry.contract.Call(opts, &out, "old")
@@ -230,21 +230,21 @@ func (_QRNSRegistry *QRNSRegistryCaller) Old(opts *bind.CallOpts) (common.Addres
 
 // Old is a free data retrieval call binding the contract method 0xb83f8663.
 //
-// Solidity: function old() view returns(address)
+// Hyperion: function old() view returns(address)
 func (_QRNSRegistry *QRNSRegistrySession) Old() (common.Address, error) {
 	return _QRNSRegistry.Contract.Old(&_QRNSRegistry.CallOpts)
 }
 
 // Old is a free data retrieval call binding the contract method 0xb83f8663.
 //
-// Solidity: function old() view returns(address)
+// Hyperion: function old() view returns(address)
 func (_QRNSRegistry *QRNSRegistryCallerSession) Old() (common.Address, error) {
 	return _QRNSRegistry.Contract.Old(&_QRNSRegistry.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(bytes32 node) view returns(address)
+// Hyperion: function owner(bytes32 node) view returns(address)
 func (_QRNSRegistry *QRNSRegistryCaller) Owner(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSRegistry.contract.Call(opts, &out, "owner", node)
@@ -261,21 +261,21 @@ func (_QRNSRegistry *QRNSRegistryCaller) Owner(opts *bind.CallOpts, node [32]byt
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(bytes32 node) view returns(address)
+// Hyperion: function owner(bytes32 node) view returns(address)
 func (_QRNSRegistry *QRNSRegistrySession) Owner(node [32]byte) (common.Address, error) {
 	return _QRNSRegistry.Contract.Owner(&_QRNSRegistry.CallOpts, node)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(bytes32 node) view returns(address)
+// Hyperion: function owner(bytes32 node) view returns(address)
 func (_QRNSRegistry *QRNSRegistryCallerSession) Owner(node [32]byte) (common.Address, error) {
 	return _QRNSRegistry.Contract.Owner(&_QRNSRegistry.CallOpts, node)
 }
 
 // RecordExists is a free data retrieval call binding the contract method 0xf79fe538.
 //
-// Solidity: function recordExists(bytes32 node) view returns(bool)
+// Hyperion: function recordExists(bytes32 node) view returns(bool)
 func (_QRNSRegistry *QRNSRegistryCaller) RecordExists(opts *bind.CallOpts, node [32]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSRegistry.contract.Call(opts, &out, "recordExists", node)
@@ -292,21 +292,21 @@ func (_QRNSRegistry *QRNSRegistryCaller) RecordExists(opts *bind.CallOpts, node 
 
 // RecordExists is a free data retrieval call binding the contract method 0xf79fe538.
 //
-// Solidity: function recordExists(bytes32 node) view returns(bool)
+// Hyperion: function recordExists(bytes32 node) view returns(bool)
 func (_QRNSRegistry *QRNSRegistrySession) RecordExists(node [32]byte) (bool, error) {
 	return _QRNSRegistry.Contract.RecordExists(&_QRNSRegistry.CallOpts, node)
 }
 
 // RecordExists is a free data retrieval call binding the contract method 0xf79fe538.
 //
-// Solidity: function recordExists(bytes32 node) view returns(bool)
+// Hyperion: function recordExists(bytes32 node) view returns(bool)
 func (_QRNSRegistry *QRNSRegistryCallerSession) RecordExists(node [32]byte) (bool, error) {
 	return _QRNSRegistry.Contract.RecordExists(&_QRNSRegistry.CallOpts, node)
 }
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(bytes32 node) view returns(address)
+// Hyperion: function resolver(bytes32 node) view returns(address)
 func (_QRNSRegistry *QRNSRegistryCaller) Resolver(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSRegistry.contract.Call(opts, &out, "resolver", node)
@@ -323,21 +323,21 @@ func (_QRNSRegistry *QRNSRegistryCaller) Resolver(opts *bind.CallOpts, node [32]
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(bytes32 node) view returns(address)
+// Hyperion: function resolver(bytes32 node) view returns(address)
 func (_QRNSRegistry *QRNSRegistrySession) Resolver(node [32]byte) (common.Address, error) {
 	return _QRNSRegistry.Contract.Resolver(&_QRNSRegistry.CallOpts, node)
 }
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(bytes32 node) view returns(address)
+// Hyperion: function resolver(bytes32 node) view returns(address)
 func (_QRNSRegistry *QRNSRegistryCallerSession) Resolver(node [32]byte) (common.Address, error) {
 	return _QRNSRegistry.Contract.Resolver(&_QRNSRegistry.CallOpts, node)
 }
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(bytes32 node) view returns(uint64)
+// Hyperion: function ttl(bytes32 node) view returns(uint64)
 func (_QRNSRegistry *QRNSRegistryCaller) Ttl(opts *bind.CallOpts, node [32]byte) (uint64, error) {
 	var out []interface{}
 	err := _QRNSRegistry.contract.Call(opts, &out, "ttl", node)
@@ -354,161 +354,161 @@ func (_QRNSRegistry *QRNSRegistryCaller) Ttl(opts *bind.CallOpts, node [32]byte)
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(bytes32 node) view returns(uint64)
+// Hyperion: function ttl(bytes32 node) view returns(uint64)
 func (_QRNSRegistry *QRNSRegistrySession) Ttl(node [32]byte) (uint64, error) {
 	return _QRNSRegistry.Contract.Ttl(&_QRNSRegistry.CallOpts, node)
 }
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(bytes32 node) view returns(uint64)
+// Hyperion: function ttl(bytes32 node) view returns(uint64)
 func (_QRNSRegistry *QRNSRegistryCallerSession) Ttl(node [32]byte) (uint64, error) {
 	return _QRNSRegistry.Contract.Ttl(&_QRNSRegistry.CallOpts, node)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSRegistry *QRNSRegistryTransactor) SetApprovalForAll(opts *bind.TransactOpts, operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSRegistry.contract.Transact(opts, "setApprovalForAll", operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSRegistry *QRNSRegistrySession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetApprovalForAll(&_QRNSRegistry.TransactOpts, operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSRegistry *QRNSRegistryTransactorSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetApprovalForAll(&_QRNSRegistry.TransactOpts, operator, approved)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(bytes32 node, address owner) returns()
+// Hyperion: function setOwner(bytes32 node, address owner) returns()
 func (_QRNSRegistry *QRNSRegistryTransactor) SetOwner(opts *bind.TransactOpts, node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.contract.Transact(opts, "setOwner", node, owner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(bytes32 node, address owner) returns()
+// Hyperion: function setOwner(bytes32 node, address owner) returns()
 func (_QRNSRegistry *QRNSRegistrySession) SetOwner(node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetOwner(&_QRNSRegistry.TransactOpts, node, owner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(bytes32 node, address owner) returns()
+// Hyperion: function setOwner(bytes32 node, address owner) returns()
 func (_QRNSRegistry *QRNSRegistryTransactorSession) SetOwner(node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetOwner(&_QRNSRegistry.TransactOpts, node, owner)
 }
 
 // SetRecord is a paid mutator transaction binding the contract method 0xcf408823.
 //
-// Solidity: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistryTransactor) SetRecord(opts *bind.TransactOpts, node [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.contract.Transact(opts, "setRecord", node, owner, resolver, ttl)
 }
 
 // SetRecord is a paid mutator transaction binding the contract method 0xcf408823.
 //
-// Solidity: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistrySession) SetRecord(node [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetRecord(&_QRNSRegistry.TransactOpts, node, owner, resolver, ttl)
 }
 
 // SetRecord is a paid mutator transaction binding the contract method 0xcf408823.
 //
-// Solidity: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistryTransactorSession) SetRecord(node [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetRecord(&_QRNSRegistry.TransactOpts, node, owner, resolver, ttl)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(bytes32 node, address resolver) returns()
+// Hyperion: function setResolver(bytes32 node, address resolver) returns()
 func (_QRNSRegistry *QRNSRegistryTransactor) SetResolver(opts *bind.TransactOpts, node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.contract.Transact(opts, "setResolver", node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(bytes32 node, address resolver) returns()
+// Hyperion: function setResolver(bytes32 node, address resolver) returns()
 func (_QRNSRegistry *QRNSRegistrySession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetResolver(&_QRNSRegistry.TransactOpts, node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(bytes32 node, address resolver) returns()
+// Hyperion: function setResolver(bytes32 node, address resolver) returns()
 func (_QRNSRegistry *QRNSRegistryTransactorSession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetResolver(&_QRNSRegistry.TransactOpts, node, resolver)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns(bytes32)
+// Hyperion: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns(bytes32)
 func (_QRNSRegistry *QRNSRegistryTransactor) SetSubnodeOwner(opts *bind.TransactOpts, node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.contract.Transact(opts, "setSubnodeOwner", node, label, owner)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns(bytes32)
+// Hyperion: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns(bytes32)
 func (_QRNSRegistry *QRNSRegistrySession) SetSubnodeOwner(node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetSubnodeOwner(&_QRNSRegistry.TransactOpts, node, label, owner)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns(bytes32)
+// Hyperion: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns(bytes32)
 func (_QRNSRegistry *QRNSRegistryTransactorSession) SetSubnodeOwner(node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetSubnodeOwner(&_QRNSRegistry.TransactOpts, node, label, owner)
 }
 
 // SetSubnodeRecord is a paid mutator transaction binding the contract method 0x5ef2c7f0.
 //
-// Solidity: function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistryTransactor) SetSubnodeRecord(opts *bind.TransactOpts, node [32]byte, label [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.contract.Transact(opts, "setSubnodeRecord", node, label, owner, resolver, ttl)
 }
 
 // SetSubnodeRecord is a paid mutator transaction binding the contract method 0x5ef2c7f0.
 //
-// Solidity: function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistrySession) SetSubnodeRecord(node [32]byte, label [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetSubnodeRecord(&_QRNSRegistry.TransactOpts, node, label, owner, resolver, ttl)
 }
 
 // SetSubnodeRecord is a paid mutator transaction binding the contract method 0x5ef2c7f0.
 //
-// Solidity: function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistryTransactorSession) SetSubnodeRecord(node [32]byte, label [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetSubnodeRecord(&_QRNSRegistry.TransactOpts, node, label, owner, resolver, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
+// Hyperion: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistryTransactor) SetTTL(opts *bind.TransactOpts, node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.contract.Transact(opts, "setTTL", node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
+// Hyperion: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistrySession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetTTL(&_QRNSRegistry.TransactOpts, node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
+// Hyperion: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_QRNSRegistry *QRNSRegistryTransactorSession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _QRNSRegistry.Contract.SetTTL(&_QRNSRegistry.TransactOpts, node, ttl)
 }
@@ -590,7 +590,7 @@ type QRNSRegistryApprovalForAll struct {
 
 // FilterApprovalForAll is a free log retrieval operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 func (_QRNSRegistry *QRNSRegistryFilterer) FilterApprovalForAll(opts *bind.FilterOpts, owner []common.Address, operator []common.Address) (*QRNSRegistryApprovalForAllIterator, error) {
 
 	var ownerRule []interface{}
@@ -611,7 +611,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) FilterApprovalForAll(opts *bind.Filte
 
 // WatchApprovalForAll is a free log subscription operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 func (_QRNSRegistry *QRNSRegistryFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sink chan<- *QRNSRegistryApprovalForAll, owner []common.Address, operator []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -657,7 +657,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) WatchApprovalForAll(opts *bind.WatchO
 
 // ParseApprovalForAll is a log parse operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 func (_QRNSRegistry *QRNSRegistryFilterer) ParseApprovalForAll(log types.Log) (*QRNSRegistryApprovalForAll, error) {
 	event := new(QRNSRegistryApprovalForAll)
 	if err := _QRNSRegistry.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
@@ -744,7 +744,7 @@ type QRNSRegistryNewOwner struct {
 
 // FilterNewOwner is a free log retrieval operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
 //
-// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
+// Hyperion: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
 func (_QRNSRegistry *QRNSRegistryFilterer) FilterNewOwner(opts *bind.FilterOpts, node [][32]byte, label [][32]byte) (*QRNSRegistryNewOwnerIterator, error) {
 
 	var nodeRule []interface{}
@@ -765,7 +765,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) FilterNewOwner(opts *bind.FilterOpts,
 
 // WatchNewOwner is a free log subscription operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
 //
-// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
+// Hyperion: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
 func (_QRNSRegistry *QRNSRegistryFilterer) WatchNewOwner(opts *bind.WatchOpts, sink chan<- *QRNSRegistryNewOwner, node [][32]byte, label [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -811,7 +811,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) WatchNewOwner(opts *bind.WatchOpts, s
 
 // ParseNewOwner is a log parse operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
 //
-// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
+// Hyperion: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
 func (_QRNSRegistry *QRNSRegistryFilterer) ParseNewOwner(log types.Log) (*QRNSRegistryNewOwner, error) {
 	event := new(QRNSRegistryNewOwner)
 	if err := _QRNSRegistry.contract.UnpackLog(event, "NewOwner", log); err != nil {
@@ -897,7 +897,7 @@ type QRNSRegistryNewResolver struct {
 
 // FilterNewResolver is a free log retrieval operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
 //
-// Solidity: event NewResolver(bytes32 indexed node, address resolver)
+// Hyperion: event NewResolver(bytes32 indexed node, address resolver)
 func (_QRNSRegistry *QRNSRegistryFilterer) FilterNewResolver(opts *bind.FilterOpts, node [][32]byte) (*QRNSRegistryNewResolverIterator, error) {
 
 	var nodeRule []interface{}
@@ -914,7 +914,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) FilterNewResolver(opts *bind.FilterOp
 
 // WatchNewResolver is a free log subscription operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
 //
-// Solidity: event NewResolver(bytes32 indexed node, address resolver)
+// Hyperion: event NewResolver(bytes32 indexed node, address resolver)
 func (_QRNSRegistry *QRNSRegistryFilterer) WatchNewResolver(opts *bind.WatchOpts, sink chan<- *QRNSRegistryNewResolver, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -956,7 +956,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) WatchNewResolver(opts *bind.WatchOpts
 
 // ParseNewResolver is a log parse operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
 //
-// Solidity: event NewResolver(bytes32 indexed node, address resolver)
+// Hyperion: event NewResolver(bytes32 indexed node, address resolver)
 func (_QRNSRegistry *QRNSRegistryFilterer) ParseNewResolver(log types.Log) (*QRNSRegistryNewResolver, error) {
 	event := new(QRNSRegistryNewResolver)
 	if err := _QRNSRegistry.contract.UnpackLog(event, "NewResolver", log); err != nil {
@@ -1042,7 +1042,7 @@ type QRNSRegistryNewTTL struct {
 
 // FilterNewTTL is a free log retrieval operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
 //
-// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
+// Hyperion: event NewTTL(bytes32 indexed node, uint64 ttl)
 func (_QRNSRegistry *QRNSRegistryFilterer) FilterNewTTL(opts *bind.FilterOpts, node [][32]byte) (*QRNSRegistryNewTTLIterator, error) {
 
 	var nodeRule []interface{}
@@ -1059,7 +1059,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) FilterNewTTL(opts *bind.FilterOpts, n
 
 // WatchNewTTL is a free log subscription operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
 //
-// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
+// Hyperion: event NewTTL(bytes32 indexed node, uint64 ttl)
 func (_QRNSRegistry *QRNSRegistryFilterer) WatchNewTTL(opts *bind.WatchOpts, sink chan<- *QRNSRegistryNewTTL, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1101,7 +1101,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) WatchNewTTL(opts *bind.WatchOpts, sin
 
 // ParseNewTTL is a log parse operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
 //
-// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
+// Hyperion: event NewTTL(bytes32 indexed node, uint64 ttl)
 func (_QRNSRegistry *QRNSRegistryFilterer) ParseNewTTL(log types.Log) (*QRNSRegistryNewTTL, error) {
 	event := new(QRNSRegistryNewTTL)
 	if err := _QRNSRegistry.contract.UnpackLog(event, "NewTTL", log); err != nil {
@@ -1187,7 +1187,7 @@ type QRNSRegistryTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
 //
-// Solidity: event Transfer(bytes32 indexed node, address owner)
+// Hyperion: event Transfer(bytes32 indexed node, address owner)
 func (_QRNSRegistry *QRNSRegistryFilterer) FilterTransfer(opts *bind.FilterOpts, node [][32]byte) (*QRNSRegistryTransferIterator, error) {
 
 	var nodeRule []interface{}
@@ -1204,7 +1204,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) FilterTransfer(opts *bind.FilterOpts,
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
 //
-// Solidity: event Transfer(bytes32 indexed node, address owner)
+// Hyperion: event Transfer(bytes32 indexed node, address owner)
 func (_QRNSRegistry *QRNSRegistryFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *QRNSRegistryTransfer, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1246,7 +1246,7 @@ func (_QRNSRegistry *QRNSRegistryFilterer) WatchTransfer(opts *bind.WatchOpts, s
 
 // ParseTransfer is a log parse operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
 //
-// Solidity: event Transfer(bytes32 indexed node, address owner)
+// Hyperion: event Transfer(bytes32 indexed node, address owner)
 func (_QRNSRegistry *QRNSRegistryFilterer) ParseTransfer(log types.Log) (*QRNSRegistryTransfer, error) {
 	event := new(QRNSRegistryTransfer)
 	if err := _QRNSRegistry.contract.UnpackLog(event, "Transfer", log); err != nil {

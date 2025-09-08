@@ -186,40 +186,9 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactorRaw) Transact(opts *bind.Tran
 	return _QRNSDNSRegistrar.Contract.contract.Transact(opts, method, params...)
 }
 
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Qrns(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "qrns")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) Qrns() (common.Address, error) {
-	return _QRNSDNSRegistrar.Contract.Qrns(&_QRNSDNSRegistrar.CallOpts)
-}
-
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) Qrns() (common.Address, error) {
-	return _QRNSDNSRegistrar.Contract.Qrns(&_QRNSDNSRegistrar.CallOpts)
-}
-
 // Inceptions is a free data retrieval call binding the contract method 0x25916d41.
 //
-// Solidity: function inceptions(bytes32 ) view returns(uint32)
+// Hyperion: function inceptions(bytes32 ) view returns(uint32)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Inceptions(opts *bind.CallOpts, arg0 [32]byte) (uint32, error) {
 	var out []interface{}
 	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "inceptions", arg0)
@@ -236,21 +205,21 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Inceptions(opts *bind.CallOpts,
 
 // Inceptions is a free data retrieval call binding the contract method 0x25916d41.
 //
-// Solidity: function inceptions(bytes32 ) view returns(uint32)
+// Hyperion: function inceptions(bytes32 ) view returns(uint32)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) Inceptions(arg0 [32]byte) (uint32, error) {
 	return _QRNSDNSRegistrar.Contract.Inceptions(&_QRNSDNSRegistrar.CallOpts, arg0)
 }
 
 // Inceptions is a free data retrieval call binding the contract method 0x25916d41.
 //
-// Solidity: function inceptions(bytes32 ) view returns(uint32)
+// Hyperion: function inceptions(bytes32 ) view returns(uint32)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) Inceptions(arg0 [32]byte) (uint32, error) {
 	return _QRNSDNSRegistrar.Contract.Inceptions(&_QRNSDNSRegistrar.CallOpts, arg0)
 }
 
 // Oracle is a free data retrieval call binding the contract method 0x7dc0d1d0.
 //
-// Solidity: function oracle() view returns(address)
+// Hyperion: function oracle() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Oracle(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "oracle")
@@ -267,21 +236,21 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Oracle(opts *bind.CallOpts) (co
 
 // Oracle is a free data retrieval call binding the contract method 0x7dc0d1d0.
 //
-// Solidity: function oracle() view returns(address)
+// Hyperion: function oracle() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) Oracle() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.Oracle(&_QRNSDNSRegistrar.CallOpts)
 }
 
 // Oracle is a free data retrieval call binding the contract method 0x7dc0d1d0.
 //
-// Solidity: function oracle() view returns(address)
+// Hyperion: function oracle() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) Oracle() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.Oracle(&_QRNSDNSRegistrar.CallOpts)
 }
 
 // PreviousRegistrar is a free data retrieval call binding the contract method 0xab14ec59.
 //
-// Solidity: function previousRegistrar() view returns(address)
+// Hyperion: function previousRegistrar() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) PreviousRegistrar(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "previousRegistrar")
@@ -298,21 +267,52 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) PreviousRegistrar(opts *bind.Ca
 
 // PreviousRegistrar is a free data retrieval call binding the contract method 0xab14ec59.
 //
-// Solidity: function previousRegistrar() view returns(address)
+// Hyperion: function previousRegistrar() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) PreviousRegistrar() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.PreviousRegistrar(&_QRNSDNSRegistrar.CallOpts)
 }
 
 // PreviousRegistrar is a free data retrieval call binding the contract method 0xab14ec59.
 //
-// Solidity: function previousRegistrar() view returns(address)
+// Hyperion: function previousRegistrar() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) PreviousRegistrar() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.PreviousRegistrar(&_QRNSDNSRegistrar.CallOpts)
 }
 
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Qrns(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "qrns")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) Qrns() (common.Address, error) {
+	return _QRNSDNSRegistrar.Contract.Qrns(&_QRNSDNSRegistrar.CallOpts)
+}
+
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) Qrns() (common.Address, error) {
+	return _QRNSDNSRegistrar.Contract.Qrns(&_QRNSDNSRegistrar.CallOpts)
+}
+
 // Resolver is a free data retrieval call binding the contract method 0x04f3bcec.
 //
-// Solidity: function resolver() view returns(address)
+// Hyperion: function resolver() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Resolver(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "resolver")
@@ -329,21 +329,21 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Resolver(opts *bind.CallOpts) (
 
 // Resolver is a free data retrieval call binding the contract method 0x04f3bcec.
 //
-// Solidity: function resolver() view returns(address)
+// Hyperion: function resolver() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) Resolver() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.Resolver(&_QRNSDNSRegistrar.CallOpts)
 }
 
 // Resolver is a free data retrieval call binding the contract method 0x04f3bcec.
 //
-// Solidity: function resolver() view returns(address)
+// Hyperion: function resolver() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) Resolver() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.Resolver(&_QRNSDNSRegistrar.CallOpts)
 }
 
 // Suffixes is a free data retrieval call binding the contract method 0x30349ebe.
 //
-// Solidity: function suffixes() view returns(address)
+// Hyperion: function suffixes() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Suffixes(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "suffixes")
@@ -360,21 +360,21 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) Suffixes(opts *bind.CallOpts) (
 
 // Suffixes is a free data retrieval call binding the contract method 0x30349ebe.
 //
-// Solidity: function suffixes() view returns(address)
+// Hyperion: function suffixes() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) Suffixes() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.Suffixes(&_QRNSDNSRegistrar.CallOpts)
 }
 
 // Suffixes is a free data retrieval call binding the contract method 0x30349ebe.
 //
-// Solidity: function suffixes() view returns(address)
+// Hyperion: function suffixes() view returns(address)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) Suffixes() (common.Address, error) {
 	return _QRNSDNSRegistrar.Contract.Suffixes(&_QRNSDNSRegistrar.CallOpts)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) pure returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) pure returns(bool)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) SupportsInterface(opts *bind.CallOpts, interfaceID [4]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSDNSRegistrar.contract.Call(opts, &out, "supportsInterface", interfaceID)
@@ -391,98 +391,98 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarCaller) SupportsInterface(opts *bind.Ca
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) pure returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) pure returns(bool)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _QRNSDNSRegistrar.Contract.SupportsInterface(&_QRNSDNSRegistrar.CallOpts, interfaceID)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceID) pure returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceID) pure returns(bool)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarCallerSession) SupportsInterface(interfaceID [4]byte) (bool, error) {
 	return _QRNSDNSRegistrar.Contract.SupportsInterface(&_QRNSDNSRegistrar.CallOpts, interfaceID)
 }
 
 // EnableNode is a paid mutator transaction binding the contract method 0x6f951221.
 //
-// Solidity: function enableNode(bytes domain) returns(bytes32 node)
+// Hyperion: function enableNode(bytes domain) returns(bytes32 node)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactor) EnableNode(opts *bind.TransactOpts, domain []byte) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.contract.Transact(opts, "enableNode", domain)
 }
 
 // EnableNode is a paid mutator transaction binding the contract method 0x6f951221.
 //
-// Solidity: function enableNode(bytes domain) returns(bytes32 node)
+// Hyperion: function enableNode(bytes domain) returns(bytes32 node)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) EnableNode(domain []byte) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.EnableNode(&_QRNSDNSRegistrar.TransactOpts, domain)
 }
 
 // EnableNode is a paid mutator transaction binding the contract method 0x6f951221.
 //
-// Solidity: function enableNode(bytes domain) returns(bytes32 node)
+// Hyperion: function enableNode(bytes domain) returns(bytes32 node)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactorSession) EnableNode(domain []byte) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.EnableNode(&_QRNSDNSRegistrar.TransactOpts, domain)
 }
 
 // ProveAndClaim is a paid mutator transaction binding the contract method 0x29d56630.
 //
-// Solidity: function proveAndClaim(bytes name, (bytes,bytes)[] input) returns()
+// Hyperion: function proveAndClaim(bytes name, (bytes,bytes)[] input) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactor) ProveAndClaim(opts *bind.TransactOpts, name []byte, input []DNSSECRRSetWithSignature) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.contract.Transact(opts, "proveAndClaim", name, input)
 }
 
 // ProveAndClaim is a paid mutator transaction binding the contract method 0x29d56630.
 //
-// Solidity: function proveAndClaim(bytes name, (bytes,bytes)[] input) returns()
+// Hyperion: function proveAndClaim(bytes name, (bytes,bytes)[] input) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) ProveAndClaim(name []byte, input []DNSSECRRSetWithSignature) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.ProveAndClaim(&_QRNSDNSRegistrar.TransactOpts, name, input)
 }
 
 // ProveAndClaim is a paid mutator transaction binding the contract method 0x29d56630.
 //
-// Solidity: function proveAndClaim(bytes name, (bytes,bytes)[] input) returns()
+// Hyperion: function proveAndClaim(bytes name, (bytes,bytes)[] input) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactorSession) ProveAndClaim(name []byte, input []DNSSECRRSetWithSignature) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.ProveAndClaim(&_QRNSDNSRegistrar.TransactOpts, name, input)
 }
 
 // ProveAndClaimWithResolver is a paid mutator transaction binding the contract method 0x06963218.
 //
-// Solidity: function proveAndClaimWithResolver(bytes name, (bytes,bytes)[] input, address resolver, address addr) returns()
+// Hyperion: function proveAndClaimWithResolver(bytes name, (bytes,bytes)[] input, address resolver, address addr) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactor) ProveAndClaimWithResolver(opts *bind.TransactOpts, name []byte, input []DNSSECRRSetWithSignature, resolver common.Address, addr common.Address) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.contract.Transact(opts, "proveAndClaimWithResolver", name, input, resolver, addr)
 }
 
 // ProveAndClaimWithResolver is a paid mutator transaction binding the contract method 0x06963218.
 //
-// Solidity: function proveAndClaimWithResolver(bytes name, (bytes,bytes)[] input, address resolver, address addr) returns()
+// Hyperion: function proveAndClaimWithResolver(bytes name, (bytes,bytes)[] input, address resolver, address addr) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) ProveAndClaimWithResolver(name []byte, input []DNSSECRRSetWithSignature, resolver common.Address, addr common.Address) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.ProveAndClaimWithResolver(&_QRNSDNSRegistrar.TransactOpts, name, input, resolver, addr)
 }
 
 // ProveAndClaimWithResolver is a paid mutator transaction binding the contract method 0x06963218.
 //
-// Solidity: function proveAndClaimWithResolver(bytes name, (bytes,bytes)[] input, address resolver, address addr) returns()
+// Hyperion: function proveAndClaimWithResolver(bytes name, (bytes,bytes)[] input, address resolver, address addr) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactorSession) ProveAndClaimWithResolver(name []byte, input []DNSSECRRSetWithSignature, resolver common.Address, addr common.Address) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.ProveAndClaimWithResolver(&_QRNSDNSRegistrar.TransactOpts, name, input, resolver, addr)
 }
 
 // SetPublicSuffixList is a paid mutator transaction binding the contract method 0x1ecfc411.
 //
-// Solidity: function setPublicSuffixList(address _suffixes) returns()
+// Hyperion: function setPublicSuffixList(address _suffixes) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactor) SetPublicSuffixList(opts *bind.TransactOpts, _suffixes common.Address) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.contract.Transact(opts, "setPublicSuffixList", _suffixes)
 }
 
 // SetPublicSuffixList is a paid mutator transaction binding the contract method 0x1ecfc411.
 //
-// Solidity: function setPublicSuffixList(address _suffixes) returns()
+// Hyperion: function setPublicSuffixList(address _suffixes) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarSession) SetPublicSuffixList(_suffixes common.Address) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.SetPublicSuffixList(&_QRNSDNSRegistrar.TransactOpts, _suffixes)
 }
 
 // SetPublicSuffixList is a paid mutator transaction binding the contract method 0x1ecfc411.
 //
-// Solidity: function setPublicSuffixList(address _suffixes) returns()
+// Hyperion: function setPublicSuffixList(address _suffixes) returns()
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarTransactorSession) SetPublicSuffixList(_suffixes common.Address) (*types.Transaction, error) {
 	return _QRNSDNSRegistrar.Contract.SetPublicSuffixList(&_QRNSDNSRegistrar.TransactOpts, _suffixes)
 }
@@ -565,7 +565,7 @@ type QRNSDNSRegistrarClaim struct {
 
 // FilterClaim is a free log retrieval operation binding the contract event 0x87db02a0e483e2818060eddcbb3488ce44e35aff49a70d92c2aa6c8046cf01e2.
 //
-// Solidity: event Claim(bytes32 indexed node, address indexed owner, bytes dnsname, uint32 inception)
+// Hyperion: event Claim(bytes32 indexed node, address indexed owner, bytes dnsname, uint32 inception)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) FilterClaim(opts *bind.FilterOpts, node [][32]byte, owner []common.Address) (*QRNSDNSRegistrarClaimIterator, error) {
 
 	var nodeRule []interface{}
@@ -586,7 +586,7 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) FilterClaim(opts *bind.Filter
 
 // WatchClaim is a free log subscription operation binding the contract event 0x87db02a0e483e2818060eddcbb3488ce44e35aff49a70d92c2aa6c8046cf01e2.
 //
-// Solidity: event Claim(bytes32 indexed node, address indexed owner, bytes dnsname, uint32 inception)
+// Hyperion: event Claim(bytes32 indexed node, address indexed owner, bytes dnsname, uint32 inception)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) WatchClaim(opts *bind.WatchOpts, sink chan<- *QRNSDNSRegistrarClaim, node [][32]byte, owner []common.Address) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -632,7 +632,7 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) WatchClaim(opts *bind.WatchOp
 
 // ParseClaim is a log parse operation binding the contract event 0x87db02a0e483e2818060eddcbb3488ce44e35aff49a70d92c2aa6c8046cf01e2.
 //
-// Solidity: event Claim(bytes32 indexed node, address indexed owner, bytes dnsname, uint32 inception)
+// Hyperion: event Claim(bytes32 indexed node, address indexed owner, bytes dnsname, uint32 inception)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) ParseClaim(log types.Log) (*QRNSDNSRegistrarClaim, error) {
 	event := new(QRNSDNSRegistrarClaim)
 	if err := _QRNSDNSRegistrar.contract.UnpackLog(event, "Claim", log); err != nil {
@@ -717,7 +717,7 @@ type QRNSDNSRegistrarNewPublicSuffixList struct {
 
 // FilterNewPublicSuffixList is a free log retrieval operation binding the contract event 0x9176b7f47e4504df5e5516c99d90d82ac7cbd49cc77e7f22ba2ac2f2e3a3eba8.
 //
-// Solidity: event NewPublicSuffixList(address suffixes)
+// Hyperion: event NewPublicSuffixList(address suffixes)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) FilterNewPublicSuffixList(opts *bind.FilterOpts) (*QRNSDNSRegistrarNewPublicSuffixListIterator, error) {
 
 	logs, sub, err := _QRNSDNSRegistrar.contract.FilterLogs(opts, "NewPublicSuffixList")
@@ -729,7 +729,7 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) FilterNewPublicSuffixList(opt
 
 // WatchNewPublicSuffixList is a free log subscription operation binding the contract event 0x9176b7f47e4504df5e5516c99d90d82ac7cbd49cc77e7f22ba2ac2f2e3a3eba8.
 //
-// Solidity: event NewPublicSuffixList(address suffixes)
+// Hyperion: event NewPublicSuffixList(address suffixes)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) WatchNewPublicSuffixList(opts *bind.WatchOpts, sink chan<- *QRNSDNSRegistrarNewPublicSuffixList) (event.Subscription, error) {
 
 	logs, sub, err := _QRNSDNSRegistrar.contract.WatchLogs(opts, "NewPublicSuffixList")
@@ -766,7 +766,7 @@ func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) WatchNewPublicSuffixList(opts
 
 // ParseNewPublicSuffixList is a log parse operation binding the contract event 0x9176b7f47e4504df5e5516c99d90d82ac7cbd49cc77e7f22ba2ac2f2e3a3eba8.
 //
-// Solidity: event NewPublicSuffixList(address suffixes)
+// Hyperion: event NewPublicSuffixList(address suffixes)
 func (_QRNSDNSRegistrar *QRNSDNSRegistrarFilterer) ParseNewPublicSuffixList(log types.Log) (*QRNSDNSRegistrarNewPublicSuffixList, error) {
 	event := new(QRNSDNSRegistrarNewPublicSuffixList)
 	if err := _QRNSDNSRegistrar.contract.UnpackLog(event, "NewPublicSuffixList", log); err != nil {

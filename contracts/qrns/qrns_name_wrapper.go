@@ -180,9 +180,9 @@ func (_QRNSNameWrapper *QRNSNameWrapperTransactorRaw) Transact(opts *bind.Transa
 	return _QRNSNameWrapper.Contract.contract.Transact(opts, method, params...)
 }
 
-// Tokqrns is a free data retrieval call binding the contract method 0xed70554d.
+// Tokqrns is a free data retrieval call binding the contract method 0x52c5c28e.
 //
-// Solidity: function _tokqrns(uint256 ) view returns(uint256)
+// Hyperion: function _tokqrns(uint256 ) view returns(uint256)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) Tokqrns(opts *bind.CallOpts, arg0 *big.Int) (*big.Int, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "_tokqrns", arg0)
@@ -197,23 +197,23 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) Tokqrns(opts *bind.CallOpts, arg0
 
 }
 
-// Tokqrns is a free data retrieval call binding the contract method 0xed70554d.
+// Tokqrns is a free data retrieval call binding the contract method 0x52c5c28e.
 //
-// Solidity: function _tokqrns(uint256 ) view returns(uint256)
+// Hyperion: function _tokqrns(uint256 ) view returns(uint256)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Tokqrns(arg0 *big.Int) (*big.Int, error) {
 	return _QRNSNameWrapper.Contract.Tokqrns(&_QRNSNameWrapper.CallOpts, arg0)
 }
 
-// Tokqrns is a free data retrieval call binding the contract method 0xed70554d.
+// Tokqrns is a free data retrieval call binding the contract method 0x52c5c28e.
 //
-// Solidity: function _tokqrns(uint256 ) view returns(uint256)
+// Hyperion: function _tokqrns(uint256 ) view returns(uint256)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Tokqrns(arg0 *big.Int) (*big.Int, error) {
 	return _QRNSNameWrapper.Contract.Tokqrns(&_QRNSNameWrapper.CallOpts, arg0)
 }
 
 // AllFusesBurned is a free data retrieval call binding the contract method 0xadf4960a.
 //
-// Solidity: function allFusesBurned(bytes32 node, uint32 fuseMask) view returns(bool)
+// Hyperion: function allFusesBurned(bytes32 node, uint32 fuseMask) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) AllFusesBurned(opts *bind.CallOpts, node [32]byte, fuseMask uint32) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "allFusesBurned", node, fuseMask)
@@ -230,21 +230,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) AllFusesBurned(opts *bind.CallOpt
 
 // AllFusesBurned is a free data retrieval call binding the contract method 0xadf4960a.
 //
-// Solidity: function allFusesBurned(bytes32 node, uint32 fuseMask) view returns(bool)
+// Hyperion: function allFusesBurned(bytes32 node, uint32 fuseMask) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) AllFusesBurned(node [32]byte, fuseMask uint32) (bool, error) {
 	return _QRNSNameWrapper.Contract.AllFusesBurned(&_QRNSNameWrapper.CallOpts, node, fuseMask)
 }
 
 // AllFusesBurned is a free data retrieval call binding the contract method 0xadf4960a.
 //
-// Solidity: function allFusesBurned(bytes32 node, uint32 fuseMask) view returns(bool)
+// Hyperion: function allFusesBurned(bytes32 node, uint32 fuseMask) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) AllFusesBurned(node [32]byte, fuseMask uint32) (bool, error) {
 	return _QRNSNameWrapper.Contract.AllFusesBurned(&_QRNSNameWrapper.CallOpts, node, fuseMask)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x00fdd58e.
 //
-// Solidity: function balanceOf(address account, uint256 id) view returns(uint256)
+// Hyperion: function balanceOf(address account, uint256 id) view returns(uint256)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) BalanceOf(opts *bind.CallOpts, account common.Address, id *big.Int) (*big.Int, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "balanceOf", account, id)
@@ -261,21 +261,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) BalanceOf(opts *bind.CallOpts, ac
 
 // BalanceOf is a free data retrieval call binding the contract method 0x00fdd58e.
 //
-// Solidity: function balanceOf(address account, uint256 id) view returns(uint256)
+// Hyperion: function balanceOf(address account, uint256 id) view returns(uint256)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) BalanceOf(account common.Address, id *big.Int) (*big.Int, error) {
 	return _QRNSNameWrapper.Contract.BalanceOf(&_QRNSNameWrapper.CallOpts, account, id)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x00fdd58e.
 //
-// Solidity: function balanceOf(address account, uint256 id) view returns(uint256)
+// Hyperion: function balanceOf(address account, uint256 id) view returns(uint256)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) BalanceOf(account common.Address, id *big.Int) (*big.Int, error) {
 	return _QRNSNameWrapper.Contract.BalanceOf(&_QRNSNameWrapper.CallOpts, account, id)
 }
 
 // BalanceOfBatch is a free data retrieval call binding the contract method 0x4e1273f4.
 //
-// Solidity: function balanceOfBatch(address[] accounts, uint256[] ids) view returns(uint256[])
+// Hyperion: function balanceOfBatch(address[] accounts, uint256[] ids) view returns(uint256[])
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) BalanceOfBatch(opts *bind.CallOpts, accounts []common.Address, ids []*big.Int) ([]*big.Int, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "balanceOfBatch", accounts, ids)
@@ -292,21 +292,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) BalanceOfBatch(opts *bind.CallOpt
 
 // BalanceOfBatch is a free data retrieval call binding the contract method 0x4e1273f4.
 //
-// Solidity: function balanceOfBatch(address[] accounts, uint256[] ids) view returns(uint256[])
+// Hyperion: function balanceOfBatch(address[] accounts, uint256[] ids) view returns(uint256[])
 func (_QRNSNameWrapper *QRNSNameWrapperSession) BalanceOfBatch(accounts []common.Address, ids []*big.Int) ([]*big.Int, error) {
 	return _QRNSNameWrapper.Contract.BalanceOfBatch(&_QRNSNameWrapper.CallOpts, accounts, ids)
 }
 
 // BalanceOfBatch is a free data retrieval call binding the contract method 0x4e1273f4.
 //
-// Solidity: function balanceOfBatch(address[] accounts, uint256[] ids) view returns(uint256[])
+// Hyperion: function balanceOfBatch(address[] accounts, uint256[] ids) view returns(uint256[])
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) BalanceOfBatch(accounts []common.Address, ids []*big.Int) ([]*big.Int, error) {
 	return _QRNSNameWrapper.Contract.BalanceOfBatch(&_QRNSNameWrapper.CallOpts, accounts, ids)
 }
 
 // CanExtendSubnames is a free data retrieval call binding the contract method 0x0e4cd725.
 //
-// Solidity: function canExtendSubnames(bytes32 node, address addr) view returns(bool)
+// Hyperion: function canExtendSubnames(bytes32 node, address addr) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) CanExtendSubnames(opts *bind.CallOpts, node [32]byte, addr common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "canExtendSubnames", node, addr)
@@ -323,21 +323,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) CanExtendSubnames(opts *bind.Call
 
 // CanExtendSubnames is a free data retrieval call binding the contract method 0x0e4cd725.
 //
-// Solidity: function canExtendSubnames(bytes32 node, address addr) view returns(bool)
+// Hyperion: function canExtendSubnames(bytes32 node, address addr) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) CanExtendSubnames(node [32]byte, addr common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.CanExtendSubnames(&_QRNSNameWrapper.CallOpts, node, addr)
 }
 
 // CanExtendSubnames is a free data retrieval call binding the contract method 0x0e4cd725.
 //
-// Solidity: function canExtendSubnames(bytes32 node, address addr) view returns(bool)
+// Hyperion: function canExtendSubnames(bytes32 node, address addr) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) CanExtendSubnames(node [32]byte, addr common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.CanExtendSubnames(&_QRNSNameWrapper.CallOpts, node, addr)
 }
 
 // CanModifyName is a free data retrieval call binding the contract method 0x41415eab.
 //
-// Solidity: function canModifyName(bytes32 node, address addr) view returns(bool)
+// Hyperion: function canModifyName(bytes32 node, address addr) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) CanModifyName(opts *bind.CallOpts, node [32]byte, addr common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "canModifyName", node, addr)
@@ -354,21 +354,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) CanModifyName(opts *bind.CallOpts
 
 // CanModifyName is a free data retrieval call binding the contract method 0x41415eab.
 //
-// Solidity: function canModifyName(bytes32 node, address addr) view returns(bool)
+// Hyperion: function canModifyName(bytes32 node, address addr) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) CanModifyName(node [32]byte, addr common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.CanModifyName(&_QRNSNameWrapper.CallOpts, node, addr)
 }
 
 // CanModifyName is a free data retrieval call binding the contract method 0x41415eab.
 //
-// Solidity: function canModifyName(bytes32 node, address addr) view returns(bool)
+// Hyperion: function canModifyName(bytes32 node, address addr) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) CanModifyName(node [32]byte, addr common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.CanModifyName(&_QRNSNameWrapper.CallOpts, node, addr)
 }
 
 // Controllers is a free data retrieval call binding the contract method 0xda8c229e.
 //
-// Solidity: function controllers(address ) view returns(bool)
+// Hyperion: function controllers(address ) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) Controllers(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "controllers", arg0)
@@ -385,52 +385,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) Controllers(opts *bind.CallOpts, 
 
 // Controllers is a free data retrieval call binding the contract method 0xda8c229e.
 //
-// Solidity: function controllers(address ) view returns(bool)
+// Hyperion: function controllers(address ) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Controllers(arg0 common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.Controllers(&_QRNSNameWrapper.CallOpts, arg0)
 }
 
 // Controllers is a free data retrieval call binding the contract method 0xda8c229e.
 //
-// Solidity: function controllers(address ) view returns(bool)
+// Hyperion: function controllers(address ) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Controllers(arg0 common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.Controllers(&_QRNSNameWrapper.CallOpts, arg0)
 }
 
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSNameWrapper *QRNSNameWrapperCaller) Qrns(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _QRNSNameWrapper.contract.Call(opts, &out, "qrns")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSNameWrapper *QRNSNameWrapperSession) Qrns() (common.Address, error) {
-	return _QRNSNameWrapper.Contract.Qrns(&_QRNSNameWrapper.CallOpts)
-}
-
-// Qrns is a free data retrieval call binding the contract method 0x3f15457f.
-//
-// Solidity: function qrns() view returns(address)
-func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Qrns() (common.Address, error) {
-	return _QRNSNameWrapper.Contract.Qrns(&_QRNSNameWrapper.CallOpts)
-}
-
 // GetApproved is a free data retrieval call binding the contract method 0x081812fc.
 //
-// Solidity: function getApproved(uint256 id) view returns(address operator)
+// Hyperion: function getApproved(uint256 id) view returns(address operator)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) GetApproved(opts *bind.CallOpts, id *big.Int) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "getApproved", id)
@@ -447,21 +416,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) GetApproved(opts *bind.CallOpts, 
 
 // GetApproved is a free data retrieval call binding the contract method 0x081812fc.
 //
-// Solidity: function getApproved(uint256 id) view returns(address operator)
+// Hyperion: function getApproved(uint256 id) view returns(address operator)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) GetApproved(id *big.Int) (common.Address, error) {
 	return _QRNSNameWrapper.Contract.GetApproved(&_QRNSNameWrapper.CallOpts, id)
 }
 
 // GetApproved is a free data retrieval call binding the contract method 0x081812fc.
 //
-// Solidity: function getApproved(uint256 id) view returns(address operator)
+// Hyperion: function getApproved(uint256 id) view returns(address operator)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) GetApproved(id *big.Int) (common.Address, error) {
 	return _QRNSNameWrapper.Contract.GetApproved(&_QRNSNameWrapper.CallOpts, id)
 }
 
 // GetData is a free data retrieval call binding the contract method 0x0178fe3f.
 //
-// Solidity: function getData(uint256 id) view returns(address owner, uint32 fuses, uint64 expiry)
+// Hyperion: function getData(uint256 id) view returns(address owner, uint32 fuses, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) GetData(opts *bind.CallOpts, id *big.Int) (struct {
 	Owner  common.Address
 	Fuses  uint32
@@ -489,7 +458,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) GetData(opts *bind.CallOpts, id *
 
 // GetData is a free data retrieval call binding the contract method 0x0178fe3f.
 //
-// Solidity: function getData(uint256 id) view returns(address owner, uint32 fuses, uint64 expiry)
+// Hyperion: function getData(uint256 id) view returns(address owner, uint32 fuses, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) GetData(id *big.Int) (struct {
 	Owner  common.Address
 	Fuses  uint32
@@ -500,7 +469,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperSession) GetData(id *big.Int) (struct {
 
 // GetData is a free data retrieval call binding the contract method 0x0178fe3f.
 //
-// Solidity: function getData(uint256 id) view returns(address owner, uint32 fuses, uint64 expiry)
+// Hyperion: function getData(uint256 id) view returns(address owner, uint32 fuses, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) GetData(id *big.Int) (struct {
 	Owner  common.Address
 	Fuses  uint32
@@ -511,7 +480,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) GetData(id *big.Int) (stru
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address account, address operator) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) IsApprovedForAll(opts *bind.CallOpts, account common.Address, operator common.Address) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "isApprovedForAll", account, operator)
@@ -528,21 +497,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) IsApprovedForAll(opts *bind.CallO
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address account, address operator) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.IsApprovedForAll(&_QRNSNameWrapper.CallOpts, account, operator)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
-// Solidity: function isApprovedForAll(address account, address operator) view returns(bool)
+// Hyperion: function isApprovedForAll(address account, address operator) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) IsApprovedForAll(account common.Address, operator common.Address) (bool, error) {
 	return _QRNSNameWrapper.Contract.IsApprovedForAll(&_QRNSNameWrapper.CallOpts, account, operator)
 }
 
 // IsWrapped is a free data retrieval call binding the contract method 0xd9a50c12.
 //
-// Solidity: function isWrapped(bytes32 parentNode, bytes32 labelhash) view returns(bool)
+// Hyperion: function isWrapped(bytes32 parentNode, bytes32 labelhash) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) IsWrapped(opts *bind.CallOpts, parentNode [32]byte, labelhash [32]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "isWrapped", parentNode, labelhash)
@@ -559,21 +528,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) IsWrapped(opts *bind.CallOpts, pa
 
 // IsWrapped is a free data retrieval call binding the contract method 0xd9a50c12.
 //
-// Solidity: function isWrapped(bytes32 parentNode, bytes32 labelhash) view returns(bool)
+// Hyperion: function isWrapped(bytes32 parentNode, bytes32 labelhash) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) IsWrapped(parentNode [32]byte, labelhash [32]byte) (bool, error) {
 	return _QRNSNameWrapper.Contract.IsWrapped(&_QRNSNameWrapper.CallOpts, parentNode, labelhash)
 }
 
 // IsWrapped is a free data retrieval call binding the contract method 0xd9a50c12.
 //
-// Solidity: function isWrapped(bytes32 parentNode, bytes32 labelhash) view returns(bool)
+// Hyperion: function isWrapped(bytes32 parentNode, bytes32 labelhash) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) IsWrapped(parentNode [32]byte, labelhash [32]byte) (bool, error) {
 	return _QRNSNameWrapper.Contract.IsWrapped(&_QRNSNameWrapper.CallOpts, parentNode, labelhash)
 }
 
 // IsWrapped0 is a free data retrieval call binding the contract method 0xfd0cd0d9.
 //
-// Solidity: function isWrapped(bytes32 node) view returns(bool)
+// Hyperion: function isWrapped(bytes32 node) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) IsWrapped0(opts *bind.CallOpts, node [32]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "isWrapped0", node)
@@ -590,21 +559,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) IsWrapped0(opts *bind.CallOpts, n
 
 // IsWrapped0 is a free data retrieval call binding the contract method 0xfd0cd0d9.
 //
-// Solidity: function isWrapped(bytes32 node) view returns(bool)
+// Hyperion: function isWrapped(bytes32 node) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) IsWrapped0(node [32]byte) (bool, error) {
 	return _QRNSNameWrapper.Contract.IsWrapped0(&_QRNSNameWrapper.CallOpts, node)
 }
 
 // IsWrapped0 is a free data retrieval call binding the contract method 0xfd0cd0d9.
 //
-// Solidity: function isWrapped(bytes32 node) view returns(bool)
+// Hyperion: function isWrapped(bytes32 node) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) IsWrapped0(node [32]byte) (bool, error) {
 	return _QRNSNameWrapper.Contract.IsWrapped0(&_QRNSNameWrapper.CallOpts, node)
 }
 
 // MetadataService is a free data retrieval call binding the contract method 0x53095467.
 //
-// Solidity: function metadataService() view returns(address)
+// Hyperion: function metadataService() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) MetadataService(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "metadataService")
@@ -621,21 +590,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) MetadataService(opts *bind.CallOp
 
 // MetadataService is a free data retrieval call binding the contract method 0x53095467.
 //
-// Solidity: function metadataService() view returns(address)
+// Hyperion: function metadataService() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) MetadataService() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.MetadataService(&_QRNSNameWrapper.CallOpts)
 }
 
 // MetadataService is a free data retrieval call binding the contract method 0x53095467.
 //
-// Solidity: function metadataService() view returns(address)
+// Hyperion: function metadataService() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) MetadataService() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.MetadataService(&_QRNSNameWrapper.CallOpts)
 }
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
-// Solidity: function name() view returns(string)
+// Hyperion: function name() view returns(string)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) Name(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "name")
@@ -652,21 +621,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) Name(opts *bind.CallOpts) (string
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
-// Solidity: function name() view returns(string)
+// Hyperion: function name() view returns(string)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Name() (string, error) {
 	return _QRNSNameWrapper.Contract.Name(&_QRNSNameWrapper.CallOpts)
 }
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
-// Solidity: function name() view returns(string)
+// Hyperion: function name() view returns(string)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Name() (string, error) {
 	return _QRNSNameWrapper.Contract.Name(&_QRNSNameWrapper.CallOpts)
 }
 
 // Names is a free data retrieval call binding the contract method 0x20c38e2b.
 //
-// Solidity: function names(bytes32 ) view returns(bytes)
+// Hyperion: function names(bytes32 ) view returns(bytes)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) Names(opts *bind.CallOpts, arg0 [32]byte) ([]byte, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "names", arg0)
@@ -683,21 +652,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) Names(opts *bind.CallOpts, arg0 [
 
 // Names is a free data retrieval call binding the contract method 0x20c38e2b.
 //
-// Solidity: function names(bytes32 ) view returns(bytes)
+// Hyperion: function names(bytes32 ) view returns(bytes)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Names(arg0 [32]byte) ([]byte, error) {
 	return _QRNSNameWrapper.Contract.Names(&_QRNSNameWrapper.CallOpts, arg0)
 }
 
 // Names is a free data retrieval call binding the contract method 0x20c38e2b.
 //
-// Solidity: function names(bytes32 ) view returns(bytes)
+// Hyperion: function names(bytes32 ) view returns(bytes)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Names(arg0 [32]byte) ([]byte, error) {
 	return _QRNSNameWrapper.Contract.Names(&_QRNSNameWrapper.CallOpts, arg0)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "owner")
@@ -714,21 +683,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) Owner(opts *bind.CallOpts) (commo
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Owner() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.Owner(&_QRNSNameWrapper.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() view returns(address)
+// Hyperion: function owner() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Owner() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.Owner(&_QRNSNameWrapper.CallOpts)
 }
 
 // OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
 //
-// Solidity: function ownerOf(uint256 id) view returns(address owner)
+// Hyperion: function ownerOf(uint256 id) view returns(address owner)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) OwnerOf(opts *bind.CallOpts, id *big.Int) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "ownerOf", id)
@@ -745,21 +714,52 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) OwnerOf(opts *bind.CallOpts, id *
 
 // OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
 //
-// Solidity: function ownerOf(uint256 id) view returns(address owner)
+// Hyperion: function ownerOf(uint256 id) view returns(address owner)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) OwnerOf(id *big.Int) (common.Address, error) {
 	return _QRNSNameWrapper.Contract.OwnerOf(&_QRNSNameWrapper.CallOpts, id)
 }
 
 // OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
 //
-// Solidity: function ownerOf(uint256 id) view returns(address owner)
+// Hyperion: function ownerOf(uint256 id) view returns(address owner)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) OwnerOf(id *big.Int) (common.Address, error) {
 	return _QRNSNameWrapper.Contract.OwnerOf(&_QRNSNameWrapper.CallOpts, id)
 }
 
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSNameWrapper *QRNSNameWrapperCaller) Qrns(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _QRNSNameWrapper.contract.Call(opts, &out, "qrns")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSNameWrapper *QRNSNameWrapperSession) Qrns() (common.Address, error) {
+	return _QRNSNameWrapper.Contract.Qrns(&_QRNSNameWrapper.CallOpts)
+}
+
+// Qrns is a free data retrieval call binding the contract method 0x0a105d31.
+//
+// Hyperion: function qrns() view returns(address)
+func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Qrns() (common.Address, error) {
+	return _QRNSNameWrapper.Contract.Qrns(&_QRNSNameWrapper.CallOpts)
+}
+
 // Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function registrar() view returns(address)
+// Hyperion: function registrar() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) Registrar(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "registrar")
@@ -776,21 +776,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) Registrar(opts *bind.CallOpts) (c
 
 // Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function registrar() view returns(address)
+// Hyperion: function registrar() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Registrar() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.Registrar(&_QRNSNameWrapper.CallOpts)
 }
 
 // Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function registrar() view returns(address)
+// Hyperion: function registrar() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Registrar() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.Registrar(&_QRNSNameWrapper.CallOpts)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceId) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) SupportsInterface(opts *bind.CallOpts, interfaceId [4]byte) (bool, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "supportsInterface", interfaceId)
@@ -807,21 +807,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) SupportsInterface(opts *bind.Call
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceId) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
 	return _QRNSNameWrapper.Contract.SupportsInterface(&_QRNSNameWrapper.CallOpts, interfaceId)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
+// Hyperion: function supportsInterface(bytes4 interfaceId) view returns(bool)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
 	return _QRNSNameWrapper.Contract.SupportsInterface(&_QRNSNameWrapper.CallOpts, interfaceId)
 }
 
 // UpgradeContract is a free data retrieval call binding the contract method 0x1f4e1504.
 //
-// Solidity: function upgradeContract() view returns(address)
+// Hyperion: function upgradeContract() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) UpgradeContract(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "upgradeContract")
@@ -838,21 +838,21 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) UpgradeContract(opts *bind.CallOp
 
 // UpgradeContract is a free data retrieval call binding the contract method 0x1f4e1504.
 //
-// Solidity: function upgradeContract() view returns(address)
+// Hyperion: function upgradeContract() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) UpgradeContract() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.UpgradeContract(&_QRNSNameWrapper.CallOpts)
 }
 
 // UpgradeContract is a free data retrieval call binding the contract method 0x1f4e1504.
 //
-// Solidity: function upgradeContract() view returns(address)
+// Hyperion: function upgradeContract() view returns(address)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) UpgradeContract() (common.Address, error) {
 	return _QRNSNameWrapper.Contract.UpgradeContract(&_QRNSNameWrapper.CallOpts)
 }
 
 // Uri is a free data retrieval call binding the contract method 0x0e89341c.
 //
-// Solidity: function uri(uint256 tokenId) view returns(string)
+// Hyperion: function uri(uint256 tokenId) view returns(string)
 func (_QRNSNameWrapper *QRNSNameWrapperCaller) Uri(opts *bind.CallOpts, tokenId *big.Int) (string, error) {
 	var out []interface{}
 	err := _QRNSNameWrapper.contract.Call(opts, &out, "uri", tokenId)
@@ -869,560 +869,560 @@ func (_QRNSNameWrapper *QRNSNameWrapperCaller) Uri(opts *bind.CallOpts, tokenId 
 
 // Uri is a free data retrieval call binding the contract method 0x0e89341c.
 //
-// Solidity: function uri(uint256 tokenId) view returns(string)
+// Hyperion: function uri(uint256 tokenId) view returns(string)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Uri(tokenId *big.Int) (string, error) {
 	return _QRNSNameWrapper.Contract.Uri(&_QRNSNameWrapper.CallOpts, tokenId)
 }
 
 // Uri is a free data retrieval call binding the contract method 0x0e89341c.
 //
-// Solidity: function uri(uint256 tokenId) view returns(string)
+// Hyperion: function uri(uint256 tokenId) view returns(string)
 func (_QRNSNameWrapper *QRNSNameWrapperCallerSession) Uri(tokenId *big.Int) (string, error) {
 	return _QRNSNameWrapper.Contract.Uri(&_QRNSNameWrapper.CallOpts, tokenId)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address to, uint256 tokenId) returns()
+// Hyperion: function approve(address to, uint256 tokenId) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) Approve(opts *bind.TransactOpts, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "approve", to, tokenId)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address to, uint256 tokenId) returns()
+// Hyperion: function approve(address to, uint256 tokenId) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Approve(to common.Address, tokenId *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Approve(&_QRNSNameWrapper.TransactOpts, to, tokenId)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
-// Solidity: function approve(address to, uint256 tokenId) returns()
+// Hyperion: function approve(address to, uint256 tokenId) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) Approve(to common.Address, tokenId *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Approve(&_QRNSNameWrapper.TransactOpts, to, tokenId)
 }
 
 // ExtendExpiry is a paid mutator transaction binding the contract method 0x6e5d6ad2.
 //
-// Solidity: function extendExpiry(bytes32 parentNode, bytes32 labelhash, uint64 expiry) returns(uint64)
+// Hyperion: function extendExpiry(bytes32 parentNode, bytes32 labelhash, uint64 expiry) returns(uint64)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) ExtendExpiry(opts *bind.TransactOpts, parentNode [32]byte, labelhash [32]byte, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "extendExpiry", parentNode, labelhash, expiry)
 }
 
 // ExtendExpiry is a paid mutator transaction binding the contract method 0x6e5d6ad2.
 //
-// Solidity: function extendExpiry(bytes32 parentNode, bytes32 labelhash, uint64 expiry) returns(uint64)
+// Hyperion: function extendExpiry(bytes32 parentNode, bytes32 labelhash, uint64 expiry) returns(uint64)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) ExtendExpiry(parentNode [32]byte, labelhash [32]byte, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.ExtendExpiry(&_QRNSNameWrapper.TransactOpts, parentNode, labelhash, expiry)
 }
 
 // ExtendExpiry is a paid mutator transaction binding the contract method 0x6e5d6ad2.
 //
-// Solidity: function extendExpiry(bytes32 parentNode, bytes32 labelhash, uint64 expiry) returns(uint64)
+// Hyperion: function extendExpiry(bytes32 parentNode, bytes32 labelhash, uint64 expiry) returns(uint64)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) ExtendExpiry(parentNode [32]byte, labelhash [32]byte, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.ExtendExpiry(&_QRNSNameWrapper.TransactOpts, parentNode, labelhash, expiry)
 }
 
-// OnSQRCTN1Received is a paid mutator transaction binding the contract method 0x150b7a02.
+// OnSQRCTN1Received is a paid mutator transaction binding the contract method 0x182fbc43.
 //
-// Solidity: function onSQRCTN1Received(address to, address , uint256 tokenId, bytes data) returns(bytes4)
+// Hyperion: function onSQRCTN1Received(address to, address , uint256 tokenId, bytes data) returns(bytes4)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) OnSQRCTN1Received(opts *bind.TransactOpts, to common.Address, arg1 common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "onSQRCTN1Received", to, arg1, tokenId, data)
 }
 
-// OnSQRCTN1Received is a paid mutator transaction binding the contract method 0x150b7a02.
+// OnSQRCTN1Received is a paid mutator transaction binding the contract method 0x182fbc43.
 //
-// Solidity: function onSQRCTN1Received(address to, address , uint256 tokenId, bytes data) returns(bytes4)
+// Hyperion: function onSQRCTN1Received(address to, address , uint256 tokenId, bytes data) returns(bytes4)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) OnSQRCTN1Received(to common.Address, arg1 common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.OnSQRCTN1Received(&_QRNSNameWrapper.TransactOpts, to, arg1, tokenId, data)
 }
 
-// OnSQRCTN1Received is a paid mutator transaction binding the contract method 0x150b7a02.
+// OnSQRCTN1Received is a paid mutator transaction binding the contract method 0x182fbc43.
 //
-// Solidity: function onSQRCTN1Received(address to, address , uint256 tokenId, bytes data) returns(bytes4)
+// Hyperion: function onSQRCTN1Received(address to, address , uint256 tokenId, bytes data) returns(bytes4)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) OnSQRCTN1Received(to common.Address, arg1 common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.OnSQRCTN1Received(&_QRNSNameWrapper.TransactOpts, to, arg1, tokenId, data)
 }
 
 // RecoverFunds is a paid mutator transaction binding the contract method 0x5d3590d5.
 //
-// Solidity: function recoverFunds(address _token, address _to, uint256 _amount) returns()
+// Hyperion: function recoverFunds(address _token, address _to, uint256 _amount) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) RecoverFunds(opts *bind.TransactOpts, _token common.Address, _to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "recoverFunds", _token, _to, _amount)
 }
 
 // RecoverFunds is a paid mutator transaction binding the contract method 0x5d3590d5.
 //
-// Solidity: function recoverFunds(address _token, address _to, uint256 _amount) returns()
+// Hyperion: function recoverFunds(address _token, address _to, uint256 _amount) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) RecoverFunds(_token common.Address, _to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.RecoverFunds(&_QRNSNameWrapper.TransactOpts, _token, _to, _amount)
 }
 
 // RecoverFunds is a paid mutator transaction binding the contract method 0x5d3590d5.
 //
-// Solidity: function recoverFunds(address _token, address _to, uint256 _amount) returns()
+// Hyperion: function recoverFunds(address _token, address _to, uint256 _amount) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) RecoverFunds(_token common.Address, _to common.Address, _amount *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.RecoverFunds(&_QRNSNameWrapper.TransactOpts, _token, _to, _amount)
 }
 
-// RegisterAndWrapQRL2LD is a paid mutator transaction binding the contract method 0xa4014982.
+// RegisterAndWrapQRL2LD is a paid mutator transaction binding the contract method 0xb8ab320d.
 //
-// Solidity: function registerAndWrapQRL2LD(string label, address wrappedOwner, uint256 duration, address resolver, uint16 ownerControlledFuses) returns(uint256 registrarExpiry)
+// Hyperion: function registerAndWrapQRL2LD(string label, address wrappedOwner, uint256 duration, address resolver, uint16 ownerControlledFuses) returns(uint256 registrarExpiry)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) RegisterAndWrapQRL2LD(opts *bind.TransactOpts, label string, wrappedOwner common.Address, duration *big.Int, resolver common.Address, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "registerAndWrapQRL2LD", label, wrappedOwner, duration, resolver, ownerControlledFuses)
 }
 
-// RegisterAndWrapQRL2LD is a paid mutator transaction binding the contract method 0xa4014982.
+// RegisterAndWrapQRL2LD is a paid mutator transaction binding the contract method 0xb8ab320d.
 //
-// Solidity: function registerAndWrapQRL2LD(string label, address wrappedOwner, uint256 duration, address resolver, uint16 ownerControlledFuses) returns(uint256 registrarExpiry)
+// Hyperion: function registerAndWrapQRL2LD(string label, address wrappedOwner, uint256 duration, address resolver, uint16 ownerControlledFuses) returns(uint256 registrarExpiry)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) RegisterAndWrapQRL2LD(label string, wrappedOwner common.Address, duration *big.Int, resolver common.Address, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.RegisterAndWrapQRL2LD(&_QRNSNameWrapper.TransactOpts, label, wrappedOwner, duration, resolver, ownerControlledFuses)
 }
 
-// RegisterAndWrapQRL2LD is a paid mutator transaction binding the contract method 0xa4014982.
+// RegisterAndWrapQRL2LD is a paid mutator transaction binding the contract method 0xb8ab320d.
 //
-// Solidity: function registerAndWrapQRL2LD(string label, address wrappedOwner, uint256 duration, address resolver, uint16 ownerControlledFuses) returns(uint256 registrarExpiry)
+// Hyperion: function registerAndWrapQRL2LD(string label, address wrappedOwner, uint256 duration, address resolver, uint16 ownerControlledFuses) returns(uint256 registrarExpiry)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) RegisterAndWrapQRL2LD(label string, wrappedOwner common.Address, duration *big.Int, resolver common.Address, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.RegisterAndWrapQRL2LD(&_QRNSNameWrapper.TransactOpts, label, wrappedOwner, duration, resolver, ownerControlledFuses)
 }
 
 // Renew is a paid mutator transaction binding the contract method 0xc475abff.
 //
-// Solidity: function renew(uint256 tokenId, uint256 duration) returns(uint256 expires)
+// Hyperion: function renew(uint256 tokenId, uint256 duration) returns(uint256 expires)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) Renew(opts *bind.TransactOpts, tokenId *big.Int, duration *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "renew", tokenId, duration)
 }
 
 // Renew is a paid mutator transaction binding the contract method 0xc475abff.
 //
-// Solidity: function renew(uint256 tokenId, uint256 duration) returns(uint256 expires)
+// Hyperion: function renew(uint256 tokenId, uint256 duration) returns(uint256 expires)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Renew(tokenId *big.Int, duration *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Renew(&_QRNSNameWrapper.TransactOpts, tokenId, duration)
 }
 
 // Renew is a paid mutator transaction binding the contract method 0xc475abff.
 //
-// Solidity: function renew(uint256 tokenId, uint256 duration) returns(uint256 expires)
+// Hyperion: function renew(uint256 tokenId, uint256 duration) returns(uint256 expires)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) Renew(tokenId *big.Int, duration *big.Int) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Renew(&_QRNSNameWrapper.TransactOpts, tokenId, duration)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "renounceOwnership")
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) RenounceOwnership() (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.RenounceOwnership(&_QRNSNameWrapper.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
-// Solidity: function renounceOwnership() returns()
+// Hyperion: function renounceOwnership() returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) RenounceOwnership() (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.RenounceOwnership(&_QRNSNameWrapper.TransactOpts)
 }
 
 // SafeBatchTransferFrom is a paid mutator transaction binding the contract method 0x2eb2c2d6.
 //
-// Solidity: function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) returns()
+// Hyperion: function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SafeBatchTransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, ids []*big.Int, amounts []*big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "safeBatchTransferFrom", from, to, ids, amounts, data)
 }
 
 // SafeBatchTransferFrom is a paid mutator transaction binding the contract method 0x2eb2c2d6.
 //
-// Solidity: function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) returns()
+// Hyperion: function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SafeBatchTransferFrom(from common.Address, to common.Address, ids []*big.Int, amounts []*big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SafeBatchTransferFrom(&_QRNSNameWrapper.TransactOpts, from, to, ids, amounts, data)
 }
 
 // SafeBatchTransferFrom is a paid mutator transaction binding the contract method 0x2eb2c2d6.
 //
-// Solidity: function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) returns()
+// Hyperion: function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SafeBatchTransferFrom(from common.Address, to common.Address, ids []*big.Int, amounts []*big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SafeBatchTransferFrom(&_QRNSNameWrapper.TransactOpts, from, to, ids, amounts, data)
 }
 
 // SafeTransferFrom is a paid mutator transaction binding the contract method 0xf242432a.
 //
-// Solidity: function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) returns()
+// Hyperion: function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SafeTransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, id *big.Int, amount *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "safeTransferFrom", from, to, id, amount, data)
 }
 
 // SafeTransferFrom is a paid mutator transaction binding the contract method 0xf242432a.
 //
-// Solidity: function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) returns()
+// Hyperion: function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SafeTransferFrom(from common.Address, to common.Address, id *big.Int, amount *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SafeTransferFrom(&_QRNSNameWrapper.TransactOpts, from, to, id, amount, data)
 }
 
 // SafeTransferFrom is a paid mutator transaction binding the contract method 0xf242432a.
 //
-// Solidity: function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) returns()
+// Hyperion: function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SafeTransferFrom(from common.Address, to common.Address, id *big.Int, amount *big.Int, data []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SafeTransferFrom(&_QRNSNameWrapper.TransactOpts, from, to, id, amount, data)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetApprovalForAll(opts *bind.TransactOpts, operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setApprovalForAll", operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetApprovalForAll(&_QRNSNameWrapper.TransactOpts, operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
-// Solidity: function setApprovalForAll(address operator, bool approved) returns()
+// Hyperion: function setApprovalForAll(address operator, bool approved) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetApprovalForAll(&_QRNSNameWrapper.TransactOpts, operator, approved)
 }
 
 // SetChildFuses is a paid mutator transaction binding the contract method 0x33c69ea9.
 //
-// Solidity: function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) returns()
+// Hyperion: function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetChildFuses(opts *bind.TransactOpts, parentNode [32]byte, labelhash [32]byte, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setChildFuses", parentNode, labelhash, fuses, expiry)
 }
 
 // SetChildFuses is a paid mutator transaction binding the contract method 0x33c69ea9.
 //
-// Solidity: function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) returns()
+// Hyperion: function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetChildFuses(parentNode [32]byte, labelhash [32]byte, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetChildFuses(&_QRNSNameWrapper.TransactOpts, parentNode, labelhash, fuses, expiry)
 }
 
 // SetChildFuses is a paid mutator transaction binding the contract method 0x33c69ea9.
 //
-// Solidity: function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) returns()
+// Hyperion: function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetChildFuses(parentNode [32]byte, labelhash [32]byte, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetChildFuses(&_QRNSNameWrapper.TransactOpts, parentNode, labelhash, fuses, expiry)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0xe0dba60f.
 //
-// Solidity: function setController(address controller, bool active) returns()
+// Hyperion: function setController(address controller, bool active) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetController(opts *bind.TransactOpts, controller common.Address, active bool) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setController", controller, active)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0xe0dba60f.
 //
-// Solidity: function setController(address controller, bool active) returns()
+// Hyperion: function setController(address controller, bool active) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetController(controller common.Address, active bool) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetController(&_QRNSNameWrapper.TransactOpts, controller, active)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0xe0dba60f.
 //
-// Solidity: function setController(address controller, bool active) returns()
+// Hyperion: function setController(address controller, bool active) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetController(controller common.Address, active bool) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetController(&_QRNSNameWrapper.TransactOpts, controller, active)
 }
 
 // SetFuses is a paid mutator transaction binding the contract method 0x402906fc.
 //
-// Solidity: function setFuses(bytes32 node, uint16 ownerControlledFuses) returns(uint32)
+// Hyperion: function setFuses(bytes32 node, uint16 ownerControlledFuses) returns(uint32)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetFuses(opts *bind.TransactOpts, node [32]byte, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setFuses", node, ownerControlledFuses)
 }
 
 // SetFuses is a paid mutator transaction binding the contract method 0x402906fc.
 //
-// Solidity: function setFuses(bytes32 node, uint16 ownerControlledFuses) returns(uint32)
+// Hyperion: function setFuses(bytes32 node, uint16 ownerControlledFuses) returns(uint32)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetFuses(node [32]byte, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetFuses(&_QRNSNameWrapper.TransactOpts, node, ownerControlledFuses)
 }
 
 // SetFuses is a paid mutator transaction binding the contract method 0x402906fc.
 //
-// Solidity: function setFuses(bytes32 node, uint16 ownerControlledFuses) returns(uint32)
+// Hyperion: function setFuses(bytes32 node, uint16 ownerControlledFuses) returns(uint32)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetFuses(node [32]byte, ownerControlledFuses uint16) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetFuses(&_QRNSNameWrapper.TransactOpts, node, ownerControlledFuses)
 }
 
 // SetMetadataService is a paid mutator transaction binding the contract method 0x1534e177.
 //
-// Solidity: function setMetadataService(address _metadataService) returns()
+// Hyperion: function setMetadataService(address _metadataService) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetMetadataService(opts *bind.TransactOpts, _metadataService common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setMetadataService", _metadataService)
 }
 
 // SetMetadataService is a paid mutator transaction binding the contract method 0x1534e177.
 //
-// Solidity: function setMetadataService(address _metadataService) returns()
+// Hyperion: function setMetadataService(address _metadataService) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetMetadataService(_metadataService common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetMetadataService(&_QRNSNameWrapper.TransactOpts, _metadataService)
 }
 
 // SetMetadataService is a paid mutator transaction binding the contract method 0x1534e177.
 //
-// Solidity: function setMetadataService(address _metadataService) returns()
+// Hyperion: function setMetadataService(address _metadataService) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetMetadataService(_metadataService common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetMetadataService(&_QRNSNameWrapper.TransactOpts, _metadataService)
 }
 
 // SetRecord is a paid mutator transaction binding the contract method 0xcf408823.
 //
-// Solidity: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetRecord(opts *bind.TransactOpts, node [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setRecord", node, owner, resolver, ttl)
 }
 
 // SetRecord is a paid mutator transaction binding the contract method 0xcf408823.
 //
-// Solidity: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetRecord(node [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetRecord(&_QRNSNameWrapper.TransactOpts, node, owner, resolver, ttl)
 }
 
 // SetRecord is a paid mutator transaction binding the contract method 0xcf408823.
 //
-// Solidity: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
+// Hyperion: function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetRecord(node [32]byte, owner common.Address, resolver common.Address, ttl uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetRecord(&_QRNSNameWrapper.TransactOpts, node, owner, resolver, ttl)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(bytes32 node, address resolver) returns()
+// Hyperion: function setResolver(bytes32 node, address resolver) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetResolver(opts *bind.TransactOpts, node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setResolver", node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(bytes32 node, address resolver) returns()
+// Hyperion: function setResolver(bytes32 node, address resolver) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetResolver(&_QRNSNameWrapper.TransactOpts, node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(bytes32 node, address resolver) returns()
+// Hyperion: function setResolver(bytes32 node, address resolver) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetResolver(&_QRNSNameWrapper.TransactOpts, node, resolver)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0xc658e086.
 //
-// Solidity: function setSubnodeOwner(bytes32 parentNode, string label, address owner, uint32 fuses, uint64 expiry) returns(bytes32 node)
+// Hyperion: function setSubnodeOwner(bytes32 parentNode, string label, address owner, uint32 fuses, uint64 expiry) returns(bytes32 node)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetSubnodeOwner(opts *bind.TransactOpts, parentNode [32]byte, label string, owner common.Address, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setSubnodeOwner", parentNode, label, owner, fuses, expiry)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0xc658e086.
 //
-// Solidity: function setSubnodeOwner(bytes32 parentNode, string label, address owner, uint32 fuses, uint64 expiry) returns(bytes32 node)
+// Hyperion: function setSubnodeOwner(bytes32 parentNode, string label, address owner, uint32 fuses, uint64 expiry) returns(bytes32 node)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetSubnodeOwner(parentNode [32]byte, label string, owner common.Address, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetSubnodeOwner(&_QRNSNameWrapper.TransactOpts, parentNode, label, owner, fuses, expiry)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0xc658e086.
 //
-// Solidity: function setSubnodeOwner(bytes32 parentNode, string label, address owner, uint32 fuses, uint64 expiry) returns(bytes32 node)
+// Hyperion: function setSubnodeOwner(bytes32 parentNode, string label, address owner, uint32 fuses, uint64 expiry) returns(bytes32 node)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetSubnodeOwner(parentNode [32]byte, label string, owner common.Address, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetSubnodeOwner(&_QRNSNameWrapper.TransactOpts, parentNode, label, owner, fuses, expiry)
 }
 
 // SetSubnodeRecord is a paid mutator transaction binding the contract method 0x24c1af44.
 //
-// Solidity: function setSubnodeRecord(bytes32 parentNode, string label, address owner, address resolver, uint64 ttl, uint32 fuses, uint64 expiry) returns(bytes32 node)
+// Hyperion: function setSubnodeRecord(bytes32 parentNode, string label, address owner, address resolver, uint64 ttl, uint32 fuses, uint64 expiry) returns(bytes32 node)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetSubnodeRecord(opts *bind.TransactOpts, parentNode [32]byte, label string, owner common.Address, resolver common.Address, ttl uint64, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setSubnodeRecord", parentNode, label, owner, resolver, ttl, fuses, expiry)
 }
 
 // SetSubnodeRecord is a paid mutator transaction binding the contract method 0x24c1af44.
 //
-// Solidity: function setSubnodeRecord(bytes32 parentNode, string label, address owner, address resolver, uint64 ttl, uint32 fuses, uint64 expiry) returns(bytes32 node)
+// Hyperion: function setSubnodeRecord(bytes32 parentNode, string label, address owner, address resolver, uint64 ttl, uint32 fuses, uint64 expiry) returns(bytes32 node)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetSubnodeRecord(parentNode [32]byte, label string, owner common.Address, resolver common.Address, ttl uint64, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetSubnodeRecord(&_QRNSNameWrapper.TransactOpts, parentNode, label, owner, resolver, ttl, fuses, expiry)
 }
 
 // SetSubnodeRecord is a paid mutator transaction binding the contract method 0x24c1af44.
 //
-// Solidity: function setSubnodeRecord(bytes32 parentNode, string label, address owner, address resolver, uint64 ttl, uint32 fuses, uint64 expiry) returns(bytes32 node)
+// Hyperion: function setSubnodeRecord(bytes32 parentNode, string label, address owner, address resolver, uint64 ttl, uint32 fuses, uint64 expiry) returns(bytes32 node)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetSubnodeRecord(parentNode [32]byte, label string, owner common.Address, resolver common.Address, ttl uint64, fuses uint32, expiry uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetSubnodeRecord(&_QRNSNameWrapper.TransactOpts, parentNode, label, owner, resolver, ttl, fuses, expiry)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
+// Hyperion: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetTTL(opts *bind.TransactOpts, node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setTTL", node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
+// Hyperion: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetTTL(&_QRNSNameWrapper.TransactOpts, node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
+// Hyperion: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetTTL(&_QRNSNameWrapper.TransactOpts, node, ttl)
 }
 
 // SetUpgradeContract is a paid mutator transaction binding the contract method 0xb6bcad26.
 //
-// Solidity: function setUpgradeContract(address _upgradeAddress) returns()
+// Hyperion: function setUpgradeContract(address _upgradeAddress) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) SetUpgradeContract(opts *bind.TransactOpts, _upgradeAddress common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "setUpgradeContract", _upgradeAddress)
 }
 
 // SetUpgradeContract is a paid mutator transaction binding the contract method 0xb6bcad26.
 //
-// Solidity: function setUpgradeContract(address _upgradeAddress) returns()
+// Hyperion: function setUpgradeContract(address _upgradeAddress) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) SetUpgradeContract(_upgradeAddress common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetUpgradeContract(&_QRNSNameWrapper.TransactOpts, _upgradeAddress)
 }
 
 // SetUpgradeContract is a paid mutator transaction binding the contract method 0xb6bcad26.
 //
-// Solidity: function setUpgradeContract(address _upgradeAddress) returns()
+// Hyperion: function setUpgradeContract(address _upgradeAddress) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) SetUpgradeContract(_upgradeAddress common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.SetUpgradeContract(&_QRNSNameWrapper.TransactOpts, _upgradeAddress)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.TransferOwnership(&_QRNSNameWrapper.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(address newOwner) returns()
+// Hyperion: function transferOwnership(address newOwner) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.TransferOwnership(&_QRNSNameWrapper.TransactOpts, newOwner)
 }
 
 // Unwrap is a paid mutator transaction binding the contract method 0xd8c9921a.
 //
-// Solidity: function unwrap(bytes32 parentNode, bytes32 labelhash, address controller) returns()
+// Hyperion: function unwrap(bytes32 parentNode, bytes32 labelhash, address controller) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) Unwrap(opts *bind.TransactOpts, parentNode [32]byte, labelhash [32]byte, controller common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "unwrap", parentNode, labelhash, controller)
 }
 
 // Unwrap is a paid mutator transaction binding the contract method 0xd8c9921a.
 //
-// Solidity: function unwrap(bytes32 parentNode, bytes32 labelhash, address controller) returns()
+// Hyperion: function unwrap(bytes32 parentNode, bytes32 labelhash, address controller) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Unwrap(parentNode [32]byte, labelhash [32]byte, controller common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Unwrap(&_QRNSNameWrapper.TransactOpts, parentNode, labelhash, controller)
 }
 
 // Unwrap is a paid mutator transaction binding the contract method 0xd8c9921a.
 //
-// Solidity: function unwrap(bytes32 parentNode, bytes32 labelhash, address controller) returns()
+// Hyperion: function unwrap(bytes32 parentNode, bytes32 labelhash, address controller) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) Unwrap(parentNode [32]byte, labelhash [32]byte, controller common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Unwrap(&_QRNSNameWrapper.TransactOpts, parentNode, labelhash, controller)
 }
 
-// UnwrapQRL2LD is a paid mutator transaction binding the contract method 0x8b4dfa75.
+// UnwrapQRL2LD is a paid mutator transaction binding the contract method 0x492fe605.
 //
-// Solidity: function unwrapQRL2LD(bytes32 labelhash, address registrant, address controller) returns()
+// Hyperion: function unwrapQRL2LD(bytes32 labelhash, address registrant, address controller) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) UnwrapQRL2LD(opts *bind.TransactOpts, labelhash [32]byte, registrant common.Address, controller common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "unwrapQRL2LD", labelhash, registrant, controller)
 }
 
-// UnwrapQRL2LD is a paid mutator transaction binding the contract method 0x8b4dfa75.
+// UnwrapQRL2LD is a paid mutator transaction binding the contract method 0x492fe605.
 //
-// Solidity: function unwrapQRL2LD(bytes32 labelhash, address registrant, address controller) returns()
+// Hyperion: function unwrapQRL2LD(bytes32 labelhash, address registrant, address controller) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) UnwrapQRL2LD(labelhash [32]byte, registrant common.Address, controller common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.UnwrapQRL2LD(&_QRNSNameWrapper.TransactOpts, labelhash, registrant, controller)
 }
 
-// UnwrapQRL2LD is a paid mutator transaction binding the contract method 0x8b4dfa75.
+// UnwrapQRL2LD is a paid mutator transaction binding the contract method 0x492fe605.
 //
-// Solidity: function unwrapQRL2LD(bytes32 labelhash, address registrant, address controller) returns()
+// Hyperion: function unwrapQRL2LD(bytes32 labelhash, address registrant, address controller) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) UnwrapQRL2LD(labelhash [32]byte, registrant common.Address, controller common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.UnwrapQRL2LD(&_QRNSNameWrapper.TransactOpts, labelhash, registrant, controller)
 }
 
 // Upgrade is a paid mutator transaction binding the contract method 0xc93ab3fd.
 //
-// Solidity: function upgrade(bytes name, bytes extraData) returns()
+// Hyperion: function upgrade(bytes name, bytes extraData) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) Upgrade(opts *bind.TransactOpts, name []byte, extraData []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "upgrade", name, extraData)
 }
 
 // Upgrade is a paid mutator transaction binding the contract method 0xc93ab3fd.
 //
-// Solidity: function upgrade(bytes name, bytes extraData) returns()
+// Hyperion: function upgrade(bytes name, bytes extraData) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Upgrade(name []byte, extraData []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Upgrade(&_QRNSNameWrapper.TransactOpts, name, extraData)
 }
 
 // Upgrade is a paid mutator transaction binding the contract method 0xc93ab3fd.
 //
-// Solidity: function upgrade(bytes name, bytes extraData) returns()
+// Hyperion: function upgrade(bytes name, bytes extraData) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) Upgrade(name []byte, extraData []byte) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Upgrade(&_QRNSNameWrapper.TransactOpts, name, extraData)
 }
 
 // Wrap is a paid mutator transaction binding the contract method 0xeb8ae530.
 //
-// Solidity: function wrap(bytes name, address wrappedOwner, address resolver) returns()
+// Hyperion: function wrap(bytes name, address wrappedOwner, address resolver) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) Wrap(opts *bind.TransactOpts, name []byte, wrappedOwner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "wrap", name, wrappedOwner, resolver)
 }
 
 // Wrap is a paid mutator transaction binding the contract method 0xeb8ae530.
 //
-// Solidity: function wrap(bytes name, address wrappedOwner, address resolver) returns()
+// Hyperion: function wrap(bytes name, address wrappedOwner, address resolver) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperSession) Wrap(name []byte, wrappedOwner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Wrap(&_QRNSNameWrapper.TransactOpts, name, wrappedOwner, resolver)
 }
 
 // Wrap is a paid mutator transaction binding the contract method 0xeb8ae530.
 //
-// Solidity: function wrap(bytes name, address wrappedOwner, address resolver) returns()
+// Hyperion: function wrap(bytes name, address wrappedOwner, address resolver) returns()
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) Wrap(name []byte, wrappedOwner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.Wrap(&_QRNSNameWrapper.TransactOpts, name, wrappedOwner, resolver)
 }
 
-// WrapQRL2LD is a paid mutator transaction binding the contract method 0x8cf8b41e.
+// WrapQRL2LD is a paid mutator transaction binding the contract method 0xe5b5d62a.
 //
-// Solidity: function wrapQRL2LD(string label, address wrappedOwner, uint16 ownerControlledFuses, address resolver) returns(uint64 expiry)
+// Hyperion: function wrapQRL2LD(string label, address wrappedOwner, uint16 ownerControlledFuses, address resolver) returns(uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactor) WrapQRL2LD(opts *bind.TransactOpts, label string, wrappedOwner common.Address, ownerControlledFuses uint16, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.contract.Transact(opts, "wrapQRL2LD", label, wrappedOwner, ownerControlledFuses, resolver)
 }
 
-// WrapQRL2LD is a paid mutator transaction binding the contract method 0x8cf8b41e.
+// WrapQRL2LD is a paid mutator transaction binding the contract method 0xe5b5d62a.
 //
-// Solidity: function wrapQRL2LD(string label, address wrappedOwner, uint16 ownerControlledFuses, address resolver) returns(uint64 expiry)
+// Hyperion: function wrapQRL2LD(string label, address wrappedOwner, uint16 ownerControlledFuses, address resolver) returns(uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperSession) WrapQRL2LD(label string, wrappedOwner common.Address, ownerControlledFuses uint16, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.WrapQRL2LD(&_QRNSNameWrapper.TransactOpts, label, wrappedOwner, ownerControlledFuses, resolver)
 }
 
-// WrapQRL2LD is a paid mutator transaction binding the contract method 0x8cf8b41e.
+// WrapQRL2LD is a paid mutator transaction binding the contract method 0xe5b5d62a.
 //
-// Solidity: function wrapQRL2LD(string label, address wrappedOwner, uint16 ownerControlledFuses, address resolver) returns(uint64 expiry)
+// Hyperion: function wrapQRL2LD(string label, address wrappedOwner, uint16 ownerControlledFuses, address resolver) returns(uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperTransactorSession) WrapQRL2LD(label string, wrappedOwner common.Address, ownerControlledFuses uint16, resolver common.Address) (*types.Transaction, error) {
 	return _QRNSNameWrapper.Contract.WrapQRL2LD(&_QRNSNameWrapper.TransactOpts, label, wrappedOwner, ownerControlledFuses, resolver)
 }
@@ -1504,7 +1504,7 @@ type QRNSNameWrapperApproval struct {
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
+// Hyperion: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, approved []common.Address, tokenId []*big.Int) (*QRNSNameWrapperApprovalIterator, error) {
 
 	var ownerRule []interface{}
@@ -1529,7 +1529,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterApproval(opts *bind.Filte
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
+// Hyperion: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperApproval, owner []common.Address, approved []common.Address, tokenId []*big.Int) (event.Subscription, error) {
 
 	var ownerRule []interface{}
@@ -1579,7 +1579,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchApproval(opts *bind.WatchO
 
 // ParseApproval is a log parse operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
-// Solidity: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
+// Hyperion: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseApproval(log types.Log) (*QRNSNameWrapperApproval, error) {
 	event := new(QRNSNameWrapperApproval)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "Approval", log); err != nil {
@@ -1666,7 +1666,7 @@ type QRNSNameWrapperApprovalForAll struct {
 
 // FilterApprovalForAll is a free log retrieval operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed account, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed account, address indexed operator, bool approved)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterApprovalForAll(opts *bind.FilterOpts, account []common.Address, operator []common.Address) (*QRNSNameWrapperApprovalForAllIterator, error) {
 
 	var accountRule []interface{}
@@ -1687,7 +1687,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterApprovalForAll(opts *bind
 
 // WatchApprovalForAll is a free log subscription operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed account, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed account, address indexed operator, bool approved)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperApprovalForAll, account []common.Address, operator []common.Address) (event.Subscription, error) {
 
 	var accountRule []interface{}
@@ -1733,7 +1733,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchApprovalForAll(opts *bind.
 
 // ParseApprovalForAll is a log parse operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
-// Solidity: event ApprovalForAll(address indexed account, address indexed operator, bool approved)
+// Hyperion: event ApprovalForAll(address indexed account, address indexed operator, bool approved)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseApprovalForAll(log types.Log) (*QRNSNameWrapperApprovalForAll, error) {
 	event := new(QRNSNameWrapperApprovalForAll)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
@@ -1819,7 +1819,7 @@ type QRNSNameWrapperControllerChanged struct {
 
 // FilterControllerChanged is a free log retrieval operation binding the contract event 0x4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87.
 //
-// Solidity: event ControllerChanged(address indexed controller, bool active)
+// Hyperion: event ControllerChanged(address indexed controller, bool active)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterControllerChanged(opts *bind.FilterOpts, controller []common.Address) (*QRNSNameWrapperControllerChangedIterator, error) {
 
 	var controllerRule []interface{}
@@ -1836,7 +1836,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterControllerChanged(opts *b
 
 // WatchControllerChanged is a free log subscription operation binding the contract event 0x4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87.
 //
-// Solidity: event ControllerChanged(address indexed controller, bool active)
+// Hyperion: event ControllerChanged(address indexed controller, bool active)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperControllerChanged, controller []common.Address) (event.Subscription, error) {
 
 	var controllerRule []interface{}
@@ -1878,7 +1878,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchControllerChanged(opts *bi
 
 // ParseControllerChanged is a log parse operation binding the contract event 0x4c97694570a07277810af7e5669ffd5f6a2d6b74b6e9a274b8b870fd5114cf87.
 //
-// Solidity: event ControllerChanged(address indexed controller, bool active)
+// Hyperion: event ControllerChanged(address indexed controller, bool active)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseControllerChanged(log types.Log) (*QRNSNameWrapperControllerChanged, error) {
 	event := new(QRNSNameWrapperControllerChanged)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "ControllerChanged", log); err != nil {
@@ -1964,7 +1964,7 @@ type QRNSNameWrapperExpiryExtended struct {
 
 // FilterExpiryExtended is a free log retrieval operation binding the contract event 0xf675815a0817338f93a7da433f6bd5f5542f1029b11b455191ac96c7f6a9b132.
 //
-// Solidity: event ExpiryExtended(bytes32 indexed node, uint64 expiry)
+// Hyperion: event ExpiryExtended(bytes32 indexed node, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterExpiryExtended(opts *bind.FilterOpts, node [][32]byte) (*QRNSNameWrapperExpiryExtendedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1981,7 +1981,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterExpiryExtended(opts *bind
 
 // WatchExpiryExtended is a free log subscription operation binding the contract event 0xf675815a0817338f93a7da433f6bd5f5542f1029b11b455191ac96c7f6a9b132.
 //
-// Solidity: event ExpiryExtended(bytes32 indexed node, uint64 expiry)
+// Hyperion: event ExpiryExtended(bytes32 indexed node, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchExpiryExtended(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperExpiryExtended, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2023,7 +2023,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchExpiryExtended(opts *bind.
 
 // ParseExpiryExtended is a log parse operation binding the contract event 0xf675815a0817338f93a7da433f6bd5f5542f1029b11b455191ac96c7f6a9b132.
 //
-// Solidity: event ExpiryExtended(bytes32 indexed node, uint64 expiry)
+// Hyperion: event ExpiryExtended(bytes32 indexed node, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseExpiryExtended(log types.Log) (*QRNSNameWrapperExpiryExtended, error) {
 	event := new(QRNSNameWrapperExpiryExtended)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "ExpiryExtended", log); err != nil {
@@ -2109,7 +2109,7 @@ type QRNSNameWrapperFusesSet struct {
 
 // FilterFusesSet is a free log retrieval operation binding the contract event 0x39873f00c80f4f94b7bd1594aebcf650f003545b74824d57ddf4939e3ff3a34b.
 //
-// Solidity: event FusesSet(bytes32 indexed node, uint32 fuses)
+// Hyperion: event FusesSet(bytes32 indexed node, uint32 fuses)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterFusesSet(opts *bind.FilterOpts, node [][32]byte) (*QRNSNameWrapperFusesSetIterator, error) {
 
 	var nodeRule []interface{}
@@ -2126,7 +2126,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterFusesSet(opts *bind.Filte
 
 // WatchFusesSet is a free log subscription operation binding the contract event 0x39873f00c80f4f94b7bd1594aebcf650f003545b74824d57ddf4939e3ff3a34b.
 //
-// Solidity: event FusesSet(bytes32 indexed node, uint32 fuses)
+// Hyperion: event FusesSet(bytes32 indexed node, uint32 fuses)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchFusesSet(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperFusesSet, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2168,7 +2168,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchFusesSet(opts *bind.WatchO
 
 // ParseFusesSet is a log parse operation binding the contract event 0x39873f00c80f4f94b7bd1594aebcf650f003545b74824d57ddf4939e3ff3a34b.
 //
-// Solidity: event FusesSet(bytes32 indexed node, uint32 fuses)
+// Hyperion: event FusesSet(bytes32 indexed node, uint32 fuses)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseFusesSet(log types.Log) (*QRNSNameWrapperFusesSet, error) {
 	event := new(QRNSNameWrapperFusesSet)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "FusesSet", log); err != nil {
@@ -2254,7 +2254,7 @@ type QRNSNameWrapperNameUnwrapped struct {
 
 // FilterNameUnwrapped is a free log retrieval operation binding the contract event 0xee2ba1195c65bcf218a83d874335c6bf9d9067b4c672f3c3bf16cf40de7586c4.
 //
-// Solidity: event NameUnwrapped(bytes32 indexed node, address owner)
+// Hyperion: event NameUnwrapped(bytes32 indexed node, address owner)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterNameUnwrapped(opts *bind.FilterOpts, node [][32]byte) (*QRNSNameWrapperNameUnwrappedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2271,7 +2271,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterNameUnwrapped(opts *bind.
 
 // WatchNameUnwrapped is a free log subscription operation binding the contract event 0xee2ba1195c65bcf218a83d874335c6bf9d9067b4c672f3c3bf16cf40de7586c4.
 //
-// Solidity: event NameUnwrapped(bytes32 indexed node, address owner)
+// Hyperion: event NameUnwrapped(bytes32 indexed node, address owner)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchNameUnwrapped(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperNameUnwrapped, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2313,7 +2313,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchNameUnwrapped(opts *bind.W
 
 // ParseNameUnwrapped is a log parse operation binding the contract event 0xee2ba1195c65bcf218a83d874335c6bf9d9067b4c672f3c3bf16cf40de7586c4.
 //
-// Solidity: event NameUnwrapped(bytes32 indexed node, address owner)
+// Hyperion: event NameUnwrapped(bytes32 indexed node, address owner)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseNameUnwrapped(log types.Log) (*QRNSNameWrapperNameUnwrapped, error) {
 	event := new(QRNSNameWrapperNameUnwrapped)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "NameUnwrapped", log); err != nil {
@@ -2402,7 +2402,7 @@ type QRNSNameWrapperNameWrapped struct {
 
 // FilterNameWrapped is a free log retrieval operation binding the contract event 0x8ce7013e8abebc55c3890a68f5a27c67c3f7efa64e584de5fb22363c606fd340.
 //
-// Solidity: event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry)
+// Hyperion: event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterNameWrapped(opts *bind.FilterOpts, node [][32]byte) (*QRNSNameWrapperNameWrappedIterator, error) {
 
 	var nodeRule []interface{}
@@ -2419,7 +2419,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterNameWrapped(opts *bind.Fi
 
 // WatchNameWrapped is a free log subscription operation binding the contract event 0x8ce7013e8abebc55c3890a68f5a27c67c3f7efa64e584de5fb22363c606fd340.
 //
-// Solidity: event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry)
+// Hyperion: event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchNameWrapped(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperNameWrapped, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -2461,7 +2461,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchNameWrapped(opts *bind.Wat
 
 // ParseNameWrapped is a log parse operation binding the contract event 0x8ce7013e8abebc55c3890a68f5a27c67c3f7efa64e584de5fb22363c606fd340.
 //
-// Solidity: event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry)
+// Hyperion: event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseNameWrapped(log types.Log) (*QRNSNameWrapperNameWrapped, error) {
 	event := new(QRNSNameWrapperNameWrapped)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "NameWrapped", log); err != nil {
@@ -2547,7 +2547,7 @@ type QRNSNameWrapperOwnershipTransferred struct {
 
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*QRNSNameWrapperOwnershipTransferredIterator, error) {
 
 	var previousOwnerRule []interface{}
@@ -2568,7 +2568,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterOwnershipTransferred(opts
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
 
 	var previousOwnerRule []interface{}
@@ -2614,7 +2614,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchOwnershipTransferred(opts 
 
 // ParseOwnershipTransferred is a log parse operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+// Hyperion: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseOwnershipTransferred(log types.Log) (*QRNSNameWrapperOwnershipTransferred, error) {
 	event := new(QRNSNameWrapperOwnershipTransferred)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
@@ -2703,7 +2703,7 @@ type QRNSNameWrapperTransferBatch struct {
 
 // FilterTransferBatch is a free log retrieval operation binding the contract event 0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb.
 //
-// Solidity: event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)
+// Hyperion: event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterTransferBatch(opts *bind.FilterOpts, operator []common.Address, from []common.Address, to []common.Address) (*QRNSNameWrapperTransferBatchIterator, error) {
 
 	var operatorRule []interface{}
@@ -2728,7 +2728,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterTransferBatch(opts *bind.
 
 // WatchTransferBatch is a free log subscription operation binding the contract event 0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb.
 //
-// Solidity: event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)
+// Hyperion: event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchTransferBatch(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperTransferBatch, operator []common.Address, from []common.Address, to []common.Address) (event.Subscription, error) {
 
 	var operatorRule []interface{}
@@ -2778,7 +2778,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchTransferBatch(opts *bind.W
 
 // ParseTransferBatch is a log parse operation binding the contract event 0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb.
 //
-// Solidity: event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)
+// Hyperion: event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseTransferBatch(log types.Log) (*QRNSNameWrapperTransferBatch, error) {
 	event := new(QRNSNameWrapperTransferBatch)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "TransferBatch", log); err != nil {
@@ -2867,7 +2867,7 @@ type QRNSNameWrapperTransferSingle struct {
 
 // FilterTransferSingle is a free log retrieval operation binding the contract event 0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62.
 //
-// Solidity: event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
+// Hyperion: event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterTransferSingle(opts *bind.FilterOpts, operator []common.Address, from []common.Address, to []common.Address) (*QRNSNameWrapperTransferSingleIterator, error) {
 
 	var operatorRule []interface{}
@@ -2892,7 +2892,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterTransferSingle(opts *bind
 
 // WatchTransferSingle is a free log subscription operation binding the contract event 0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62.
 //
-// Solidity: event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
+// Hyperion: event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchTransferSingle(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperTransferSingle, operator []common.Address, from []common.Address, to []common.Address) (event.Subscription, error) {
 
 	var operatorRule []interface{}
@@ -2942,7 +2942,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchTransferSingle(opts *bind.
 
 // ParseTransferSingle is a log parse operation binding the contract event 0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62.
 //
-// Solidity: event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
+// Hyperion: event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseTransferSingle(log types.Log) (*QRNSNameWrapperTransferSingle, error) {
 	event := new(QRNSNameWrapperTransferSingle)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "TransferSingle", log); err != nil {
@@ -3028,7 +3028,7 @@ type QRNSNameWrapperURI struct {
 
 // FilterURI is a free log retrieval operation binding the contract event 0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b.
 //
-// Solidity: event URI(string value, uint256 indexed id)
+// Hyperion: event URI(string value, uint256 indexed id)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterURI(opts *bind.FilterOpts, id []*big.Int) (*QRNSNameWrapperURIIterator, error) {
 
 	var idRule []interface{}
@@ -3045,7 +3045,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) FilterURI(opts *bind.FilterOpts
 
 // WatchURI is a free log subscription operation binding the contract event 0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b.
 //
-// Solidity: event URI(string value, uint256 indexed id)
+// Hyperion: event URI(string value, uint256 indexed id)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchURI(opts *bind.WatchOpts, sink chan<- *QRNSNameWrapperURI, id []*big.Int) (event.Subscription, error) {
 
 	var idRule []interface{}
@@ -3087,7 +3087,7 @@ func (_QRNSNameWrapper *QRNSNameWrapperFilterer) WatchURI(opts *bind.WatchOpts, 
 
 // ParseURI is a log parse operation binding the contract event 0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b.
 //
-// Solidity: event URI(string value, uint256 indexed id)
+// Hyperion: event URI(string value, uint256 indexed id)
 func (_QRNSNameWrapper *QRNSNameWrapperFilterer) ParseURI(log types.Log) (*QRNSNameWrapperURI, error) {
 	event := new(QRNSNameWrapperURI)
 	if err := _QRNSNameWrapper.contract.UnpackLog(event, "URI", log); err != nil {
