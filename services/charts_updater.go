@@ -682,8 +682,7 @@ func depositsChartData() (*types.GenericChartData, error) {
 		Time      time.Time `db:"time"`
 		Value     float64   `db:"value"`
 	}{}
-
-	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = any('{EL_VALID_DEPOSITS_QRL, EL_INVALID_DEPOSITS_QRL, CL_DEPOSITS_QRL}') ORDER BY time")
+	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = any('{EL_VALID_DEPOSITS_QUANTA, EL_INVALID_DEPOSITS_QUANTA, CL_DEPOSITS_QUANTA}') ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
