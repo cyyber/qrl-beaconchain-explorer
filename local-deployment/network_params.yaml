@@ -22,3 +22,4 @@ tx_spammer_params:
   max_pending: 20
   max_wallets: 20
   tx_spammer_extra_args: []
+  
