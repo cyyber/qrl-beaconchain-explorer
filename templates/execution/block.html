@@ -77,7 +77,7 @@
               {{ if gt .TxCount 0 }}
                 <div class="row border-bottom p-3 mx-0">
                   <div class="col-md-2">Lowest gas price:</div>
-                  <div class="col-md-10">{{ formatAmount .LowestGasPrice "GPlanck" 0 }}</div>
+                  <div class="col-md-10">{{ formatAmount .LowestGasPrice "Shor" 0 }}</div>
                 </div>
               {{ end }}
               <div class="row border-bottom p-3 mx-0">
@@ -88,7 +88,7 @@
               </div>
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-2">Base fee:</div>
-                <div class="col-md-10">{{ formatAmount .BaseFeePerGas "GPlanck" 5 }}</div>
+                <div class="col-md-10">{{ formatAmount .BaseFeePerGas "Shor" 5 }}</div>
               </div>
               <div class="row border-bottom p-3 mx-0">
                 <div class="col-md-2">Burned fees:</div>

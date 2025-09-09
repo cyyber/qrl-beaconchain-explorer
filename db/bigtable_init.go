@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 )
@@ -35,9 +35,9 @@ func InitBigtableSchema() error {
 	tables["metadata"] = map[string]gcp_bigtable.GCPolicy{
 		ACCOUNT_METADATA_FAMILY:  nil,
 		CONTRACT_METADATA_FAMILY: nil,
-		ZRC20_METADATA_FAMILY:    nil,
-		ZRC721_METADATA_FAMILY:   nil,
-		ZRC1155_METADATA_FAMILY:  nil,
+		SQRCTF1_METADATA_FAMILY:  nil,
+		SQRCTN1_METADATA_FAMILY:  nil,
+		SQRCTB1_METADATA_FAMILY:  nil,
 		SERIES_FAMILY:            gcp_bigtable.MaxVersionsGCPolicy(1),
 	}
 	tables["metadata_updates"] = map[string]gcp_bigtable.GCPolicy{

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/coocood/freecache"
 	"github.com/sirupsen/logrus"

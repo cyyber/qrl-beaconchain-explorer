@@ -139,10 +139,6 @@ github.com/cpuguy83/go-md2man/v2 v2.0.0/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsr
 github.com/cpuguy83/go-md2man/v2 v2.0.3 h1:qMCsGGgs+MAzDFyp9LpAe1Lqy/fY/qCovCm0qnXZOBM=
 github.com/cpuguy83/go-md2man/v2 v2.0.3/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
-github.com/cyyber/go-zond v0.2.1-0.20250430092150-d9b1e2ea3867 h1:yIuRt1qZCuhUFgZf5Xq6AYT56MR7yVU3IpViNnEzof0=
-github.com/cyyber/go-zond v0.2.1-0.20250430092150-d9b1e2ea3867/go.mod h1:tVPKU1GQiE2ZDjPBbjPIkll4ULSi7KVWAmUKamd7/zs=
-github.com/cyyber/qrysm v0.2.0 h1:C55CpYsAD1VaCI9z8T/VLgMN1LJv67UOcMdeKX5+L/Y=
-github.com/cyyber/qrysm v0.2.0/go.mod h1:4feGzFoFhQ9Hep3al36gZ5Y6ZYggC/gKRcZmoqSsI6E=
 github.com/d4l3k/messagediff v1.2.1 h1:ZcAIMYsUg0EAp9X+tt8/enBE/Q8Yd5kzPynLyKptt9U=
 github.com/d4l3k/messagediff v1.2.1/go.mod h1:Oozbb1TVXFac9FtSIxHBMnBCq2qeH/2KkEQxENCrlLo=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -517,6 +513,10 @@ github.com/prysmaticlabs/protoc-gen-go-cast v0.0.0-20230228205207-28762a7b9294 h
 github.com/prysmaticlabs/protoc-gen-go-cast v0.0.0-20230228205207-28762a7b9294/go.mod h1:ZVEbRdnMkGhp/pu35zq4SXxtvUwWK0J1MATtekZpH2Y=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
+github.com/rgeraldes24/go-zond v0.0.0-20250901090932-5b28406187a1 h1:PfQCCl4VUvOpG9NX2Q5LgePiR6JvP1h7//Xsh7C5eWQ=
+github.com/rgeraldes24/go-zond v0.0.0-20250901090932-5b28406187a1/go.mod h1:7LdYdNTiPW2m/pHqlA+4+66RSyMPCCknFcP8UMdcoGE=
+github.com/rgeraldes24/qrysm v0.0.0-20250902073130-a7e6444b5b66 h1:CXZb1BuZyqnb4NhoJ2qobNnymmBDCNzTNnIcBpWIhZ0=
+github.com/rgeraldes24/qrysm v0.0.0-20250902073130-a7e6444b5b66/go.mod h1:cu8TeqId4tBvlVwj5B2ZfrLSW0TkANjjpIaPtUIxW1I=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.4 h1:8TfxU8dW6PdqD27gjM8MVNuicgxIjxpm4K7x4jp8sis=
 github.com/rivo/uniseg v0.4.4/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=

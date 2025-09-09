@@ -1,0 +1,118 @@
+package handlers
+
+import (
+	"encoding/json"
+	"fmt"
+	"html/template"
+	"math/big"
+	"net/http"
+	"strings"
+
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+
+	"github.com/gorilla/mux"
+	"github.com/shopspring/decimal"
+	"github.com/theQRL/go-zond/common"
+	"golang.org/x/sync/errgroup"
+)
+
+func ExecutionToken(w http.ResponseWriter, r *http.Request) {
+	templateFiles := append(layoutTemplateFiles, "execution/token.html")
+	var executionTokenTemplate = templates.GetTemplate(templateFiles...)
+
+	w.Header().Set("Content-Type", "text/html")
+	vars := mux.Vars(r)
+	token := common.FromHex(strings.TrimPrefix(vars["token"], "Q"))
+
+	address := common.FromHex(strings.TrimPrefix(r.URL.Query().Get("a"), "Q"))
+
+	g := new(errgroup.Group)
+	g.SetLimit(3)
+
+	var txns *types.DataTableResponse
+	var metadata *types.SQRCTF1Metadata
+	var balance *types.ExecutionAddressBalance
+	// var holders *types.DataTableResponse
+
+	g.Go(func() error {
+		var err error
+		txns, err = db.BigtableClient.GetTokenTransactionsTableData(token, address, "")
+		return err
+	})
+
+	g.Go(func() error {
+		var err error
+		metadata, err = db.BigtableClient.GetSQRCTF1MetadataForAddress(token)
+		return err
+	})
+
+	if address != nil {
+		g.Go(func() error {
+			var err error
+			balance, err = db.BigtableClient.GetBalanceForAddress(address, token)
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		if handleTemplateError(w, r, "executionToken.go", "ExecutionToken", "g.Wait()", err) != nil {
+			return // an error has occurred and was processed
+		}
+		return
+	}
+
+	pngStr, pngStrInverse, err := utils.GenerateQRCodeForAddress(token)
+	if err != nil {
+		logger.WithError(err).Errorf("error generating qr code for address %v", token)
+	}
+
+	data := InitPageData(w, r, "blockchain", "/token", fmt.Sprintf("Token 0x%x", token), templateFiles)
+
+	tokenDecimals := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.Decimals), 0)
+	tokenDiv := decimal.NewFromInt(10).Pow(tokenDecimals)
+	tokenSupply := decimal.NewFromBigInt(new(big.Int).SetBytes(metadata.TotalSupply), 0).DivRound(tokenDiv, 18)
+
+	data.Data = types.ExecutionTokenPageData{
+		Token:          fmt.Sprintf("%x", token),
+		Address:        fmt.Sprintf("%x", address),
+		TransfersTable: txns,
+		Metadata:       metadata,
+		Balance:        balance,
+		QRCode:         pngStr,
+		QRCodeInverse:  pngStrInverse,
+		Supply:         template.HTML(utils.FormatThousandsEnglish(tokenSupply.StringFixed(6))),
+	}
+
+	if handleTemplateError(w, r, "executionToken.go", "ExecutionToken", "Done", executionTokenTemplate.ExecuteTemplate(w, "layout", data)) != nil {
+		return // an error has occurred and was processed
+	}
+}
+
+func ExecutionTokenTransfers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	q := r.URL.Query()
+	vars := mux.Vars(r)
+
+	token := common.FromHex(strings.TrimPrefix(vars["token"], "Q"))
+	address := common.FromHex(strings.TrimPrefix(q.Get("a"), "Q"))
+	pageToken := q.Get("pageToken")
+
+	// logger.Infof("GETTING TRANSACTION table data for address: %v search: %v draw: %v start: %v length: %v", address, search, draw, start, length)
+	data, err := db.BigtableClient.GetTokenTransactionsTableData(token, address, pageToken)
+	if err != nil {
+		utils.LogError(err, "error getting execution block table data", 0)
+	}
+
+	// logger.Infof("GOT TX: %+v", data)
+
+	err = json.NewEncoder(w).Encode(data)
+	if err != nil {
+		logger.Errorf("error enconding json response for %v route: %v", r.URL.String(), err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+}

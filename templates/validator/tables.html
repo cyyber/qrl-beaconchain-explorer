@@ -396,14 +396,14 @@
               <span>Your withdrawal credential were successfully changed</span>
             {{ end }}
             <span>during epoch <span>{{ epochOfSlot .DilithiumChange.Slot | formatEpoch }}</span><span> and slot </span><span class="mr-1">{{ formatBlockSlot .DilithiumChange.Slot }}</span>.</span>
-            The signature included (<span class="mr-1">{{ formatHash .DilithiumChange.Signature true }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="{{ formatHash .DilithiumChange.Signature false }}"></i></span>) was signed by your Dilithium private key and can be verified with your Dilithium public key (<span>{{ formatHash .DilithiumChange.DilithiumPubkey true }}</span><i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="{{ formatHash .DilithiumChange.DilithiumPubkey false }}"></i>). Payouts will be sent to <span> {{ formatEth1Address .DilithiumChange.Address }}</span>.
+            The signature included (<span class="mr-1">{{ formatHash .DilithiumChange.Signature true }} <i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="{{ formatHash .DilithiumChange.Signature false }}"></i></span>) was signed by your Dilithium private key and can be verified with your Dilithium public key (<span>{{ formatHash .DilithiumChange.DilithiumPubkey true }}</span><i class="fa fa-copy text-muted p-1" role="button" data-toggle="tooltip" title="Copy to clipboard" data-clipboard-text="{{ formatHash .DilithiumChange.DilithiumPubkey false }}"></i>). Payouts will be sent to <span> {{ formatExecutionAddress .DilithiumChange.Address }}</span>.
           </div>
         {{ end }}
       {{ end }}
       <h4 class="my-3">Execution Layer</h4>
-      <h6 class="">This table displays the deposits made to the Zond staking deposit contract.</h6>
+      <h6 class="">This table displays the deposits made to the QRL staking deposit contract.</h6>
       <div class="table-responsive card card-body p-0">
-        <table class="table" style="margin-top: 0 !important;" id="deposits-eth1-table" width="100%">
+        <table class="table" style="margin-top: 0 !important;" id="deposits-execution-table" width="100%">
           <thead>
             <tr>
               <th>From Address</th>
@@ -416,11 +416,11 @@
             </tr>
           </thead>
           <tbody>
-            {{ range $i, $deposit := .Deposits.Eth1Deposits }}
+            {{ range $i, $deposit := .Deposits.ExecutionDeposits }}
               <tr>
                 <td>{{ formatAddressAsLink $deposit.FromAddress $deposit.FromName false }}</td>
-                <td>{{ formatEth1TxHash $deposit.TxHash }}</td>
-                <td>{{ formatEth1Block $deposit.BlockNumber }}</td>
+                <td>{{ formatExecutionTxHash $deposit.TxHash }}</td>
+                <td>{{ formatExecutionBlock $deposit.BlockNumber }}</td>
                 <td>{{ formatTimestamp $deposit.BlockTs }}</td>
                 <td>
                   {{ if $.Data.ShowMultipleWithdrawalCredentialsWarning }}
@@ -428,7 +428,7 @@
                   {{ end }}
                   {{ formatWithdawalCredentials $deposit.WithdrawalCredentials true }}
                 </td>
-                <td>{{ formatDepositAmount $deposit.Amount "Zond" }}</td>
+                <td>{{ formatDepositAmount $deposit.Amount "Quanta" }}</td>
                 <td>
                   {{ if $deposit.ValidSignature }}
                     <span class="badge badge-pill bg-success text-white" style="font-size: 12px; font-weight: 500;">{{ $deposit.ValidSignature }}</span>
@@ -445,9 +445,9 @@
     <div class="text-center my-3">
       <i class="fas fa-arrow-down"></i>
     </div>
-    <div class="table-eth2">
+    <div class="table-consensus">
       <h4 class="my-3">Consensus Layer</h4>
-      {{ if not .Deposits.Eth2Deposits }}
+      {{ if not .Deposits.ConsensusDeposits }}
         <h6 class="">No beacon chain deposits found for this validator. It takes <a href="https://kb.beaconcha.in/ethereum-2.0-and-depositing-process">around {{ .InclusionDelay }} hours</a> for a deposit to be processed by the beacon chain.</h6>
         <div class="wip d-flex justify-content-center p-3">
           <svg style="width: 100%; height: auto; max-height: 200px;" id="a1bb6ffe-8d83-4899-8fa0-fcb3165ea164" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 884.595 628.60077">
@@ -564,7 +564,7 @@
       {{ else }}
         <h6 class="">This table displays the deposits received and processed by the beacon chain.</h6>
         <div class="table-responsive p-0 card card-body my-3">
-          <table class="table" style="margin-top: 0 !important" id="deposits-eth2-table" width="100%">
+          <table class="table" style="margin-top: 0 !important" id="deposits-consensus-table" width="100%">
             <thead>
               <tr>
                 <th>Epoch</th>
@@ -577,7 +577,7 @@
               </tr>
             </thead>
             <tbody>
-              {{ range $i, $deposit := .Deposits.Eth2Deposits }}
+              {{ range $i, $deposit := .Deposits.ConsensusDeposits }}
                 <tr>
                   <td>{{ epochOfSlot $deposit.BlockSlot | formatEpoch }}</td>
                   <td>{{ formatBlockSlot $deposit.BlockSlot }}</td>
@@ -588,7 +588,7 @@
                     {{ end }}
                     {{ formatWithdawalCredentials $deposit.Withdrawalcredentials true }}
                   </td>
-                  <td>{{ formatDepositAmount $deposit.Amount "Zond" }}</td>
+                  <td>{{ formatDepositAmount $deposit.Amount "Quanta" }}</td>
                   <!-- <td>{{ formatHash $deposit.Proof }}</td> -->
                   <td>
                     {{ formatHash $deposit.Signature }}
@@ -846,8 +846,8 @@
         <td><span data-toggle="tooltip" data-placement="top" title="Entering">{{ .NetworkStats.EnteringValidators }}</span>/<span data-toggle="tooltip" data-placement="top" title="Exiting">{{ .NetworkStats.ExitingValidators }}</span></td>
       </tr>
       <tr>
-        <th scope="row">Staked Zond</th>
-        <td>{{ .NetworkStats.StakedZond }}</td>
+        <th scope="row">Staked Quanta</th>
+        <td>{{ .NetworkStats.StakedQuanta }}</td>
       </tr>
       <tr>
         <th scope="row">Average Balance</th>

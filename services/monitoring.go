@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -99,7 +99,7 @@ func startElDataMonitoringService() {
 		}
 		firstRun = false
 
-		// check latest eth1 indexed block
+		// check latest execution indexed block
 		numberBlocksTable, err := db.BigtableClient.GetLastBlockInBlocksTable()
 		if err != nil {
 			errorMsg := fmt.Errorf("error: could not retrieve latest block number from the blocks table: %v", err)
@@ -113,12 +113,12 @@ func startElDataMonitoringService() {
 			continue
 		}
 		if blockBlocksTable.Time.AsTime().Before(time.Now().Add(time.Minute * -13)) {
-			errorMsg := fmt.Errorf("error: last block in blocks table is more than 13 minutes old (check eth1 indexer)")
+			errorMsg := fmt.Errorf("error: last block in blocks table is more than 13 minutes old (check execution indexer)")
 			ReportStatus(name, errorMsg.Error(), nil)
 			continue
 		}
 
-		// check if eth1 indices are up to date
+		// check if execution indices are up to date
 		numberDataTable, err := db.BigtableClient.GetLastBlockInDataTable()
 		if err != nil {
 			errorMsg := fmt.Errorf("error: could not retrieve latest block number from the data table: %v", err)
@@ -127,7 +127,7 @@ func startElDataMonitoringService() {
 		}
 
 		if numberDataTable < numberBlocksTable-32 {
-			errorMsg := fmt.Errorf("error: data table is lagging behind the blocks table (check eth1 indexer)")
+			errorMsg := fmt.Errorf("error: data table is lagging behind the blocks table (check execution indexer)")
 			ReportStatus(name, errorMsg.Error(), nil)
 			continue
 		}

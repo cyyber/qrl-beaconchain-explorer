@@ -13,11 +13,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
@@ -285,13 +285,13 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			SELECT COUNT(*) as total, COALESCE(MAX(block_ts),NOW()) AS block_ts
 			FROM (
 				SELECT publickey, SUM(amount) AS amount, MAX(block_ts) as block_ts
-				FROM eth1_deposits
+				FROM execution_deposits
 				WHERE valid_signature = true
 				GROUP BY publickey
 				HAVING SUM(amount) >= 40000e9
 			) a`)
 		if err != nil {
-			return nil, fmt.Errorf("error retrieving eth1 deposits: %v", err)
+			return nil, fmt.Errorf("error retrieving execution deposits: %v", err)
 		}
 
 		if deposit.Total == 0 { // see if there are any genesis validators
@@ -326,14 +326,14 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		// enough deposits
 		// if data.DepositedTotal > data.DepositThreshold {
 		// 	if depositThresholdReached.Load() == nil {
-		// 		eth1BlockDepositReached.Store(*threshold)
+		// 		executionBlockDepositReached.Store(*threshold)
 		// 		depositThresholdReached.Store(true)
 		// 	}
-		// 	eth1Block := eth1BlockDepositReached.Load().(time.Time)
+		// 	executionBlock := executionBlockDepositReached.Load().(time.Time)
 
-		// 	if !(startSlotTime == time.Unix(0, 0)) && eth1Block.Add(genesisDelay).After(minGenesisTime) {
+		// 	if !(startSlotTime == time.Unix(0, 0)) && executionBlock.Add(genesisDelay).After(minGenesisTime) {
 		// 		// Network starts after min genesis time
-		// 		data.NetworkStartTs = eth1Block.Add(time.Second * time.Duration(utils.Config.Chain.ClConfig.GenesisDelay)).Unix()
+		// 		data.NetworkStartTs = executionBlock.Add(time.Second * time.Duration(utils.Config.Chain.ClConfig.GenesisDelay)).Unix()
 		// 	} else {
 		// 		data.NetworkStartTs = minGenesisTime.Unix()
 		// 	}
@@ -380,7 +380,7 @@ func getIndexPageData() (*types.IndexPageData, error) {
 
 	latestFinalizedEpoch := LatestFinalizedEpoch()
 	var epochs []*types.IndexPageDataEpochs
-	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligiblezond, globalparticipationrate, votedzond FROM epochs ORDER BY epochs DESC LIMIT 15`)
+	err = db.ReaderDb.Select(&epochs, `SELECT epoch, finalized , eligiblequanta, globalparticipationrate, votedquanta FROM epochs ORDER BY epochs DESC LIMIT 15`)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving index epoch data: %v", err)
 	}
@@ -388,9 +388,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 	for _, epoch := range epochs {
 		epoch.Ts = utils.EpochToTime(epoch.Epoch)
 		epoch.FinalizedFormatted = utils.FormatYesNo(epoch.Finalized)
-		epoch.VotedZondFormatted = utils.FormatBalance(epoch.VotedZond, "Zond")
-		epoch.EligibleZondFormatted = utils.FormatEligibleBalance(epoch.EligibleZond, "Zond")
-		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedZond, epoch.GlobalParticipationRate, "Zond")
+		epoch.VotedQuantaFormatted = utils.FormatBalance(epoch.VotedQuanta, "Quanta")
+		epoch.EligibleQuantaFormatted = utils.FormatEligibleBalance(epoch.EligibleQuanta, "Quanta")
+		epoch.GlobalParticipationRateFormatted = utils.FormatGlobalParticipationRate(epoch.VotedQuanta, epoch.GlobalParticipationRate, "Quanta")
 		epochsMap[epoch.Epoch] = true
 	}
 
@@ -450,12 +450,12 @@ func getIndexPageData() (*types.IndexPageData, error) {
 				Ts:                               utils.EpochToTime(block.Epoch),
 				Finalized:                        false,
 				FinalizedFormatted:               utils.FormatYesNo(false),
-				EligibleZond:                     0,
-				EligibleZondFormatted:            utils.FormatEligibleBalance(0, "Zond"),
+				EligibleQuanta:                   0,
+				EligibleQuantaFormatted:          utils.FormatEligibleBalance(0, "Quanta"),
 				GlobalParticipationRate:          0,
 				GlobalParticipationRateFormatted: utils.FormatGlobalParticipationRate(0, 1, ""),
-				VotedZond:                        0,
-				VotedZondFormatted:               "",
+				VotedQuanta:                      0,
+				VotedQuantaFormatted:             "",
 			})
 			epochsMap[block.Epoch] = true
 		}
@@ -493,9 +493,9 @@ func getIndexPageData() (*types.IndexPageData, error) {
 		epochLowerBound = epoch - 1600
 	}
 	var epochHistory []*types.IndexPageEpochHistory
-	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligiblezond, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
+	err = db.WriterDb.Select(&epochHistory, "SELECT epoch, eligiblequanta, validatorscount, (epoch <= $3) AS finalized, averagevalidatorbalance FROM epochs WHERE epoch < $1 and epoch > $2 ORDER BY epoch", epoch, epochLowerBound, latestFinalizedEpoch)
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving staked Zond history: %v", err)
+		return nil, fmt.Errorf("error retrieving staked Quanta history: %v", err)
 	}
 
 	if len(epochHistory) > 0 {
@@ -503,19 +503,19 @@ func getIndexPageData() (*types.IndexPageData, error) {
 			if epochHistory[i].Finalized {
 				data.CurrentFinalizedEpoch = epochHistory[i].Epoch
 				data.FinalityDelay = FinalizationDelay()
-				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "Zond"))
+				data.AverageBalance = string(utils.FormatBalance(uint64(epochHistory[i].AverageValidatorBalance), "Quanta"))
 				break
 			}
 		}
 
-		data.StakedZond = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleZond, "Zond"))
+		data.StakedQuanta = string(utils.FormatBalance(epochHistory[len(epochHistory)-1].EligibleQuanta, "Quanta"))
 		data.ActiveValidators = epochHistory[len(epochHistory)-1].ValidatorsCount
 	}
 
-	data.StakedZondChartData = make([][]float64, len(epochHistory))
+	data.StakedQuantaChartData = make([][]float64, len(epochHistory))
 	data.ActiveValidatorsChartData = make([][]float64, len(epochHistory))
 	for i, history := range epochHistory {
-		data.StakedZondChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleZond).InexactFloat64()}
+		data.StakedQuantaChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), utils.ClToMainCurrency(history.EligibleQuanta).InexactFloat64()}
 		data.ActiveValidatorsChartData[i] = []float64{float64(utils.EpochToTime(history.Epoch).Unix() * 1000), float64(history.ValidatorsCount)}
 	}
 
@@ -666,7 +666,7 @@ func LatestSlotVizMetrics() []*types.SlotVizEpochs {
 	return []*types.SlotVizEpochs{}
 }
 
-// LatestState returns statistics about the current eth2 state
+// LatestState returns statistics about the current consensus state
 func LatestState() *types.LatestState {
 	data := &types.LatestState{}
 	data.CurrentEpoch = LatestEpoch()
@@ -773,7 +773,7 @@ func getGasNowData() (*types.GasNowPageData, error) {
 		return nil, err
 	}
 	var raw json.RawMessage
-	err = client.Call(&raw, "zond_getBlockByNumber", "pending", true)
+	err = client.Call(&raw, "qrl_getBlockByNumber", "pending", true)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving pending block data: %.1000s", err) // limit error message to 1000 characters
 	}
@@ -1033,7 +1033,7 @@ func getBurnPageData() (*types.BurnPageData, error) {
 	start := time.Now()
 
 	latestFinalizedEpoch := LatestFinalizedEpoch()
-	latestBlock := LatestEth1BlockNumber()
+	latestBlock := LatestExecutionBlockNumber()
 
 	lookbackEpoch := latestFinalizedEpoch - 10
 	if lookbackEpoch > latestFinalizedEpoch {
@@ -1053,7 +1053,7 @@ func getBurnPageData() (*types.BurnPageData, error) {
 		return data, nil
 	}
 
-	// Retrieve the total amount of burned Ether
+	// Retrieve the total amount of burned Quanta
 	if err := db.ReaderDb.Get(&data.TotalBurned, "SELECT SUM(value) FROM chart_series WHERE indicator = 'BURNED_FEES'"); err != nil {
 		return nil, fmt.Errorf("error retrieving total burned amount from chart_series table: %w", err)
 	}

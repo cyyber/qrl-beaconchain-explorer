@@ -166,8 +166,8 @@ CREATE TABLE IF NOT EXISTS
         deposits_amount BIGINT,
         withdrawals INT,
         withdrawals_amount BIGINT,
-        cl_rewards_gplanck BIGINT,
-        cl_rewards_gplanck_total BIGINT,
+        cl_rewards_shor BIGINT,
+        cl_rewards_shor_total BIGINT,
         el_rewards_planck DECIMAL,
         el_rewards_planck_total DECIMAL,
         PRIMARY KEY (validatorindex, DAY)
@@ -225,9 +225,9 @@ CREATE TABLE IF NOT EXISTS
         averagevalidatorbalance BIGINT NOT NULL,
         totalvalidatorbalance BIGINT NOT NULL,
         finalized bool,
-        eligiblezond BIGINT,
+        eligiblequanta BIGINT,
         globalparticipationrate FLOAT,
-        votedzond BIGINT,
+        votedquanta BIGINT,
         rewards_exported bool NOT NULL DEFAULT FALSE,
         PRIMARY KEY (epoch)
     );
@@ -243,9 +243,9 @@ CREATE TABLE IF NOT EXISTS
         randaoreveal bytea,
         graffiti bytea,
         graffiti_text TEXT NULL,
-        eth1data_depositroot bytea,
-        eth1data_depositcount INT NOT NULL,
-        eth1data_blockhash bytea,
+        executiondata_depositroot bytea,
+        executiondata_depositcount INT NOT NULL,
+        executiondata_blockhash bytea,
         syncaggregate_bits bytea,
         syncaggregate_signatures bytea[],
         syncaggregate_participation FLOAT NOT NULL DEFAULT 0,
@@ -295,7 +295,7 @@ CREATE TABLE IF NOT EXISTS
         validatorindex INT NOT NULL,
         address bytea NOT NULL,
         amount BIGINT NOT NULL,
-        -- in GPlanck
+        -- in Shor
         PRIMARY KEY (block_slot, block_root, withdrawalindex)
     );
 
@@ -444,7 +444,7 @@ CREATE TABLE IF NOT EXISTS
     );
     
 CREATE TABLE IF NOT EXISTS
-    eth1_deposits (
+    execution_deposits (
         tx_hash bytea NOT NULL,
         tx_input bytea NOT NULL,
         tx_index INT NOT NULL,
@@ -461,12 +461,12 @@ CREATE TABLE IF NOT EXISTS
         PRIMARY KEY (tx_hash, merkletree_index)
     );
 
-CREATE INDEX IF NOT EXISTS idx_eth1_deposits ON eth1_deposits (publickey);
+CREATE INDEX IF NOT EXISTS idx_execution_deposits ON execution_deposits (publickey);
 
-CREATE INDEX IF NOT EXISTS idx_eth1_deposits_from_address ON eth1_deposits (from_address);
+CREATE INDEX IF NOT EXISTS idx_execution_deposits_from_address ON execution_deposits (from_address);
 
 CREATE TABLE IF NOT EXISTS
-    eth1_deposits_aggregated (
+    execution_deposits_aggregated (
         from_address bytea NOT NULL,
         amount BIGINT NOT NULL,
         validcount INT NOT NULL,

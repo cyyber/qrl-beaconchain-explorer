@@ -1,4 +1,4 @@
-zond_module = import_module("github.com/theQRL/zond-package/main.star")
+qrl_module = import_module("github.com/theQRL/qrl-package/main.star")
 
 POSTGRES_PORT_ID = "postgres"
 POSTGRES_DB = "db"
@@ -63,5 +63,5 @@ def run(plan, args):
 		}
 	)
 	
-	# Spin up a local zond testnet
-	zond_module.run(plan, args)
+	# Spin up a local qrl testnet
+	qrl_module.run(plan, args)

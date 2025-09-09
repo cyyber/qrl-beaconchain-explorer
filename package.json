@@ -1,7 +1,7 @@
 {
-  "name": "zond-beaconchain-explorer",
+  "name": "qrl-beaconchain-explorer",
   "version": "1.0.0",
-  "description": "The explorer provides a comprehensive and easy to use interface for the Zond beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.",
+  "description": "The explorer provides a comprehensive and easy to use interface for the QRL beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -20,15 +20,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/theQRL/zond-beaconchain-explorer.git"
+    "url": "git+https://github.com/theQRL/qrl-beaconchain-explorer.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/theQRL/zond-beaconchain-explorer/issues"
+    "url": "https://github.com/theQRL/qrl-beaconchain-explorer/issues"
   },
-  "homepage": "https://github.com/theQRL/zond-beaconchain-explorer#readme",
+  "homepage": "https://github.com/theQRL/qrl-beaconchain-explorer#readme",
   "dependencies": {
     "eslint": "^8.18.0",
     "eslint-plugin-html": "^6.2.0",

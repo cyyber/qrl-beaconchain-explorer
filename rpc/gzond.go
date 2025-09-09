@@ -8,19 +8,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/zrc20"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/sqrctf1"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/sirupsen/logrus"
-	zond "github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/common"
 	"github.com/theQRL/go-zond/common/hexutil"
 	gzond_types "github.com/theQRL/go-zond/core/types"
+	"github.com/theQRL/go-zond/qrlclient"
 	gzond_rpc "github.com/theQRL/go-zond/rpc"
-	"github.com/theQRL/go-zond/zondclient"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -28,7 +28,7 @@ import (
 type GzondClient struct {
 	endpoint     string
 	rpcClient    *gzond_rpc.Client
-	zondClient   *zondclient.Client
+	qrlClient    *qrlclient.Client
 	chainID      *big.Int
 	multiChecker *Balance
 }
@@ -101,21 +101,21 @@ func NewGzondClient(endpoint string) (*GzondClient, error) {
 
 	client.rpcClient = rpcClient
 
-	zondClient, err := zondclient.Dial(client.endpoint)
+	qrlClient, err := qrlclient.Dial(client.endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("error dialing rpc node: %v", err)
 	}
-	client.zondClient = zondClient
+	client.qrlClient = qrlClient
 
-	addr, _ := common.NewAddressFromString("Zb1F8e55c7f64D203C1400B9D8555d050F94aDF39")
-	client.multiChecker, err = NewBalance(addr, client.zondClient)
+	addr, _ := common.NewAddressFromString("Qb1F8e55c7f64D203C1400B9D8555d050F94aDF39")
+	client.multiChecker, err = NewBalance(addr, client.qrlClient)
 	if err != nil {
 		return nil, fmt.Errorf("error initiation balance checker contract: %v", err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	chainID, err := client.zondClient.ChainID(ctx)
+	chainID, err := client.qrlClient.ChainID(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error getting chainid of rpcclient: %w", err)
 	}
@@ -126,11 +126,11 @@ func NewGzondClient(endpoint string) (*GzondClient, error) {
 
 func (client *GzondClient) Close() {
 	client.rpcClient.Close()
-	client.zondClient.Close()
+	client.qrlClient.Close()
 }
 
-func (client *GzondClient) GetNativeClient() *zondclient.Client {
-	return client.zondClient
+func (client *GzondClient) GetNativeClient() *qrlclient.Client {
+	return client.qrlClient
 }
 
 func (client *GzondClient) GetBlockNumberByHash(hash string) (uint64, error) {
@@ -142,21 +142,21 @@ func (client *GzondClient) GetBlockNumberByHash(hash string) (uint64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	block, err := client.zondClient.BlockByHash(ctx, common.HexToHash(hash))
+	block, err := client.qrlClient.BlockByHash(ctx, common.HexToHash(hash))
 	if err != nil {
 		return 0, err
 	}
 	return block.NumberU64(), nil
 }
 
-func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetBlockTimings, error) {
+func (client *GzondClient) GetBlock(number int64) (*types.ExecutionBlock, *types.GetBlockTimings, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	start := time.Now()
 	timings := &types.GetBlockTimings{}
 
-	block, err := client.zondClient.BlockByNumber(ctx, big.NewInt(int64(number)))
+	block, err := client.qrlClient.BlockByNumber(ctx, big.NewInt(int64(number)))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -164,7 +164,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 	timings.Headers = time.Since(start)
 	start = time.Now()
 
-	c := &types.Eth1Block{
+	c := &types.ExecutionBlock{
 		Hash:         block.Hash().Bytes(),
 		ParentHash:   block.ParentHash().Bytes(),
 		Coinbase:     block.Coinbase().Bytes(),
@@ -178,7 +178,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 		Extra:        block.Extra(),
 		Random:       block.Random().Bytes(),
 		Bloom:        block.Bloom().Bytes(),
-		Transactions: []*types.Eth1Transaction{},
+		Transactions: []*types.ExecutionTransaction{},
 	}
 
 	if block.BaseFee() != nil {
@@ -201,7 +201,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 			from = sender.Bytes()
 		}
 
-		pbTx := &types.Eth1Transaction{
+		pbTx := &types.ExecutionTransaction{
 			Type:                 uint32(tx.Type()),
 			Nonce:                tx.Nonce(),
 			MaxPriorityFeePerGas: tx.GasTipCap().Bytes(),
@@ -213,7 +213,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 			ChainId:              tx.ChainId().Bytes(),
 			AccessList:           []*types.AccessList{},
 			Hash:                 tx.Hash().Bytes(),
-			Itx:                  []*types.Eth1InternalTransaction{},
+			Itx:                  []*types.ExecutionInternalTransaction{},
 		}
 
 		if tx.To() != nil {
@@ -225,7 +225,7 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 
 	for i := range reqs {
 		reqs[i] = gzond_rpc.BatchElem{
-			Method: "zond_getTransactionReceipt",
+			Method: "qrl_getTransactionReceipt",
 			Args:   []interface{}{txs[i].Hash().String()},
 			Result: &receipts[i],
 		}
@@ -251,10 +251,10 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 		c.Transactions[i].CommulativeGasUsed = r.CumulativeGasUsed
 		c.Transactions[i].GasUsed = r.GasUsed
 		c.Transactions[i].LogsBloom = r.Bloom[:]
-		c.Transactions[i].Logs = make([]*types.Eth1Log, 0, len(r.Logs))
+		c.Transactions[i].Logs = make([]*types.ExecutionLog, 0, len(r.Logs))
 
 		for _, l := range r.Logs {
-			pbLog := &types.Eth1Log{
+			pbLog := &types.ExecutionLog{
 				Address: l.Address.Bytes(),
 				Data:    l.Data,
 				Removed: l.Removed,
@@ -271,11 +271,11 @@ func (client *GzondClient) GetBlock(number int64) (*types.Eth1Block, *types.GetB
 	return c, timings, nil
 }
 
-func (client *GzondClient) GetLatestEth1BlockNumber() (uint64, error) {
+func (client *GzondClient) GetLatestExecutionBlockNumber() (uint64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	latestBlock, err := client.zondClient.BlockByNumber(ctx, nil)
+	latestBlock, err := client.qrlClient.BlockByNumber(ctx, nil)
 	if err != nil {
 		return 0, fmt.Errorf("error getting latest block: %v", err)
 	}
@@ -301,7 +301,7 @@ type GzondTraceCallResult struct {
 	Type                string
 }
 
-func toCallArg(msg zond.CallMsg) interface{} {
+func toCallArg(msg qrl.CallMsg) interface{} {
 	arg := map[string]interface{}{
 		"from": msg.From,
 		"to":   msg.To,
@@ -319,15 +319,15 @@ func toCallArg(msg zond.CallMsg) interface{} {
 	return arg
 }
 
-func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*types.Eth1AddressBalance, error) {
+func (client *GzondClient) GetBalances(pairs []*types.ExecutionAddressBalance) ([]*types.ExecutionAddressBalance, error) {
 	batchElements := make([]gzond_rpc.BatchElem, 0, len(pairs))
 
-	ret := make([]*types.Eth1AddressBalance, len(pairs))
+	ret := make([]*types.ExecutionAddressBalance, len(pairs))
 
 	for i, pair := range pairs {
 		result := ""
 
-		ret[i] = &types.Eth1AddressBalance{
+		ret[i] = &types.ExecutionAddressBalance{
 			Address: pair.Address,
 			Token:   pair.Token,
 		}
@@ -335,20 +335,20 @@ func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*ty
 		if len(pair.Token) < 20 {
 			addr := common.BytesToAddress(pair.Address)
 			batchElements = append(batchElements, gzond_rpc.BatchElem{
-				Method: "zond_getBalance",
+				Method: "qrl_getBalance",
 				Args:   []interface{}{addr, "latest"},
 				Result: &result,
 			})
 		} else {
 			to := common.BytesToAddress(pair.Token)
-			msg := zond.CallMsg{
+			msg := qrl.CallMsg{
 				To:   &to,
 				Gas:  1000000,
 				Data: common.Hex2Bytes(fmt.Sprintf("70a08231000000000000000000000000%x", pair.Address)),
 			}
 
 			batchElements = append(batchElements, gzond_rpc.BatchElem{
-				Method: "zond_call",
+				Method: "qrl_call",
 				Args:   []interface{}{toCallArg(msg), "latest"},
 				Result: &result,
 			})
@@ -362,7 +362,7 @@ func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*ty
 
 	for i, el := range batchElements {
 		if el.Error != nil {
-			logrus.Warnf("error in batch call: %v", el.Error) // PPR: are smart contracts that pretend to implement the zrc20 standard but are somehow buggy
+			logrus.Warnf("error in batch call: %v", el.Error) // PPR: are smart contracts that pretend to implement the sqrctf1 standard but are somehow buggy
 		}
 
 		res := strings.TrimPrefix(*el.Result.(*string), "0x")
@@ -372,17 +372,17 @@ func (client *GzondClient) GetBalances(pairs []*types.Eth1AddressBalance) ([]*ty
 	return ret, nil
 }
 
-func (client *GzondClient) GetZRC20TokenMetadata(token []byte) (*types.ZRC20Metadata, error) {
+func (client *GzondClient) GetSQRCTF1TokenMetadata(token []byte) (*types.SQRCTF1Metadata, error) {
 	logger.Infof("retrieving metadata for token %x", token)
 
-	contract, err := zrc20.NewZrc20(common.BytesToAddress(token), client.zondClient)
+	contract, err := sqrctf1.NewSqrcTf1(common.BytesToAddress(token), client.qrlClient)
 	if err != nil {
-		return nil, fmt.Errorf("error getting token-contract: zrc20.NewZrc20: %w", err)
+		return nil, fmt.Errorf("error getting token-contract: sqrctf1.NewSqrcTf1: %w", err)
 	}
 
 	g := new(errgroup.Group)
 
-	ret := &types.ZRC20Metadata{}
+	ret := &types.SQRCTF1Metadata{}
 
 	g.Go(func() error {
 		symbol, err := contract.Symbol(nil)
@@ -423,8 +423,8 @@ func (client *GzondClient) GetZRC20TokenMetadata(token []byte) (*types.ZRC20Meta
 	}
 
 	if len(ret.Decimals) == 0 && ret.Symbol == "" && len(ret.TotalSupply) == 0 {
-		// it's possible that a token contract implements the ZRC20 interfaces but does not return any values; we use a backup in this case
-		ret = &types.ZRC20Metadata{
+		// it's possible that a token contract implements the SQRCTF1 interfaces but does not return any values; we use a backup in this case
+		ret = &types.SQRCTF1Metadata{
 			Decimals:    []byte{0x0},
 			Symbol:      "UNKNOWN",
 			TotalSupply: []byte{0x0}}

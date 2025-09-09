@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
 
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
@@ -136,7 +136,7 @@ func ElToCurrency(valIf interface{}, currency string) decimal.Decimal {
 	return val.DivRound(decimal.NewFromInt(ElCurrencyDivisor), 18)
 }
 
-func ClToCurrencyGplanck(valIf interface{}, currency string) decimal.Decimal {
+func ClToCurrencyShor(valIf interface{}, currency string) decimal.Decimal {
 	return IfToDec(valIf)
 }
 
@@ -155,7 +155,7 @@ func formatCurrencyString(valIf interface{}, digitsAfterComma int, showCurrencyS
 
 	currencyStr := ""
 	if showCurrencySymbol {
-		currencyStr = " Zond"
+		currencyStr = " Quanta"
 	}
 
 	amountStr := ""
@@ -239,8 +239,8 @@ func IfToDec(valIf interface{}) decimal.Decimal {
 }
 
 func FormatBalanceChangeFormatted(balance *int64, currencyName string, details *itypes.ValidatorEpochIncome) template.HTML {
-	currencySymbol := "GPlanck"
-	currencyFunc := ClToCurrencyGplanck
+	currencySymbol := "Shor"
+	currencyFunc := ClToCurrencyShor
 	if currencyName != MainCurrency {
 		currencySymbol = currencyName
 		currencyFunc = ClToCurrency
@@ -306,9 +306,9 @@ func FormatBalanceChange(balance *int64, currency string) template.HTML {
 			return template.HTML("<span> 0 " + currency + "</span>")
 		}
 		if *balance < 0 {
-			return template.HTML(fmt.Sprintf("<span class=\"text-danger float-right\">%s GPlanck</span>", FormatAddCommasFormatted(ClToCurrencyGplanck(*balance, currency).InexactFloat64(), 0)))
+			return template.HTML(fmt.Sprintf("<span class=\"text-danger float-right\">%s Shor</span>", FormatAddCommasFormatted(ClToCurrencyShor(*balance, currency).InexactFloat64(), 0)))
 		}
-		return template.HTML(fmt.Sprintf("<span class=\"text-success float-right\">+%s GPlanck</span>", FormatAddCommasFormatted(ClToCurrencyGplanck(*balance, currency).InexactFloat64(), 0)))
+		return template.HTML(fmt.Sprintf("<span class=\"text-success float-right\">+%s Shor</span>", FormatAddCommasFormatted(ClToCurrencyShor(*balance, currency).InexactFloat64(), 0)))
 	}
 	if balance == nil {
 		return template.HTML("<span> 0 " + currency + "</span>")
@@ -477,7 +477,7 @@ func FormatTransactionType(txnType uint8) string {
 	}
 }
 
-// FormatCurrentBalance will return the current balance formated as string with 9 digits after the comma (1 gplanck = 1e9 eth)
+// FormatCurrentBalance will return the current balance formated as string with 9 digits after the comma (1 shor = 1e9 eth)
 func FormatCurrentBalance(balanceInt uint64, currency string) template.HTML {
 	return template.HTML(fmt.Sprintf(`%s %v`, exchangeAndTrim(MainCurrency, currency, float64(balanceInt), false), currency))
 }
@@ -499,31 +499,31 @@ func FormatEpoch(epoch uint64) template.HTML {
 	return template.HTML(fmt.Sprintf("<a href=\"/epoch/%d\">%s</a>", epoch, FormatAddCommas(epoch)))
 }
 
-// FormatEth1AddressStringLowerCase will return the eth1-address formated as html string in lower case
-func FormatEth1AddressStringLowerCase(addr []byte) template.HTML {
+// FormatExecutionAddressStringLowerCase will return the execution-address formated as html string in lower case
+func FormatExecutionAddressStringLowerCase(addr []byte) template.HTML {
 	return template.HTML(fmt.Sprintf("0x%x", addr))
 }
 
-// FormatEth1Address will return the eth1-address formated as html
-func FormatEth1Address(addr []byte) template.HTML {
-	eth1Addr := FixAddressCasing(fmt.Sprintf("Z%x", addr))
-	copyBtn := CopyButton(eth1Addr)
-	return template.HTML(fmt.Sprintf("<a href=\"/address/%s\" class=\"text-monospace\">%s…</a>%s", eth1Addr, eth1Addr[:8], copyBtn))
+// FormatExecutionAddress will return the execution-address formated as html
+func FormatExecutionAddress(addr []byte) template.HTML {
+	executionAddr := FixAddressCasing(fmt.Sprintf("Q%x", addr))
+	copyBtn := CopyButton(executionAddr)
+	return template.HTML(fmt.Sprintf("<a href=\"/address/%s\" class=\"text-monospace\">%s…</a>%s", executionAddr, executionAddr[:8], copyBtn))
 }
 
-// FormatEth1Block will return the eth1-block formated as html
-func FormatEth1Block(block uint64) template.HTML {
+// FormatExecutionBlock will return the execution-block formated as html
+func FormatExecutionBlock(block uint64) template.HTML {
 	return template.HTML(fmt.Sprintf("<a href=\"/block/%[1]d\">%[1]d</a>", block))
 }
 
-// FormatEth1BlockHash will return the eth1-block formated as html
-func FormatEth1BlockHash(block []byte) template.HTML {
+// FormatExecutionBlockHash will return the execution-block formated as html
+func FormatExecutionBlockHash(block []byte) template.HTML {
 	copyBtn := CopyButton(hex.EncodeToString(block))
 	return template.HTML(fmt.Sprintf("<a href=\"/block/%#[1]x\">%#[1]x</a>%s", block, copyBtn))
 }
 
-// FormatEth1TxHash will return the eth1-tx-hash formated as html
-func FormatEth1TxHash(hash []byte) template.HTML {
+// FormatExecutionTxHash will return the execution-tx-hash formated as html
+func FormatExecutionTxHash(hash []byte) template.HTML {
 	copyBtn := CopyButton(hex.EncodeToString(hash))
 	return template.HTML(fmt.Sprintf(`<i class="fas fa-male mr-2"></i><a style="font-family: 'Roboto Mono'" href="/tx/0x%x">0x%v…</a>%v`, hash, hex.EncodeToString(hash)[:6], copyBtn))
 }
@@ -596,7 +596,7 @@ func FormatHash(hash []byte, trunc_opt ...bool) template.HTML {
 */
 func FormatHashRaw(hash []byte, trunc_opt ...bool) string {
 	s := fmt.Sprintf("%#x", hash)
-	if len(s) == 42 { // if it's an address, we checksum it (Z + 40)
+	if len(s) == 42 { // if it's an address, we checksum it (Q + 40)
 		s = common.BytesToAddress(hash).Hex()
 	}
 	if len(s) >= 10 && (len(trunc_opt) < 1 || trunc_opt[0]) {
@@ -615,13 +615,13 @@ func WithdrawalCredentialsToAddress(credentials []byte) ([]byte, error) {
 
 // AddressToWithdrawalCredentials converts a valid address to withdrawalCredentials
 func AddressToWithdrawalCredentials(address []byte) ([]byte, error) {
-	if IsAddress(fmt.Sprintf("Z%#x", address)) {
+	if IsAddress(fmt.Sprintf("Q%#x", address)) {
 		credentials := make([]byte, 12, 32)
 		credentials[0] = 0x01
 		credentials = append(credentials, address...)
 		return credentials, nil
 	}
-	return nil, fmt.Errorf("invalid zond address")
+	return nil, fmt.Errorf("invalid qrl address")
 }
 
 func FormatHashWithCopy(hash []byte) template.HTML {
@@ -1080,7 +1080,7 @@ func DerefString(str *string) string {
 	return ""
 }
 
-func FormatZond(num string) string {
+func FormatQuanta(num string) string {
 	floatNum, _ := strconv.ParseFloat(num, 64)
 	return fmt.Sprintf("%.4f", floatNum/math.Pow10(18)) + " " + MainCurrency
 }
@@ -1093,7 +1093,7 @@ func FormatFloat(num float64, precision int) string {
 	return string(r)
 }
 
-func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
+func FormatTokenBalance(balance *types.ExecutionAddressBalance) template.HTML {
 	p := message.NewPrinter(language.English)
 
 	tokenDecimals := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Metadata.Decimals), 0)
@@ -1110,7 +1110,7 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 	return template.HTML(p.Sprintf(`
 	<div class="token-balance-col token-name text-truncate d-flex align-items-center justify-content-between flex-wrap">
 		<div class="token-icon p-1">
-			<a href='/token/Z%x?a=Z%x'>
+			<a href='/token/Q%x?a=Q%x'>
 				<span>%s</span> <span title="%s">%s</span>
 			</a> 
 		</div>
@@ -1132,20 +1132,20 @@ func FormatTokenBalance(balance *types.Eth1AddressBalance) template.HTML {
 	</div>`, balance.Token, balance.Address, logo, symbolTitle, symbol, FormatThousandsEnglish(tokenBalance.String())))
 }
 
-func FormatAddressEthBalance(balance *types.Eth1AddressBalance) template.HTML {
+func formatAddressQuantaBalance(balance *types.ExecutionAddressBalance) template.HTML {
 	e := new(big.Int).SetBytes(balance.Metadata.Decimals)
 	d := new(big.Int).Exp(big.NewInt(10), e, nil)
 	balPlanck := decimal.NewFromBigInt(new(big.Int).SetBytes(balance.Balance), 0)
-	balZond := balPlanck.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
+	balQuanta := balPlanck.DivRound(decimal.NewFromBigInt(d, 0), int32(e.Int64()))
 
 	p := message.NewPrinter(language.English)
 	return template.HTML(p.Sprintf(`
 		<div class="d-flex align-items-center">
-			<span class="token-holdings">%v Zond</span>
-		</div>`, balZond))
+			<span class="token-holdings">%v Quanta</span>
+		</div>`, balQuanta))
 }
 
-func FormatTokenValue(balance *types.Eth1AddressBalance, fullAmountTooltip bool) template.HTML {
+func FormatTokenValue(balance *types.ExecutionAddressBalance, fullAmountTooltip bool) template.HTML {
 	decimals := new(big.Int).SetBytes(balance.Metadata.Decimals)
 	p := message.NewPrinter(language.English)
 	mul := decimal.NewFromFloat(float64(10)).Pow(decimal.NewFromBigInt(decimals, 0))
@@ -1160,7 +1160,7 @@ func FormatTokenValue(balance *types.Eth1AddressBalance, fullAmountTooltip bool)
 	return template.HTML(p.Sprintf("<span%s>%s</span>", tooltip, tokenValueFormatted))
 }
 
-func FormatZrc20Decimals(balance []byte, metadata *types.ZRC20Metadata) decimal.Decimal {
+func FormatSqrcTf1Decimals(balance []byte, metadata *types.SQRCTF1Metadata) decimal.Decimal {
 	decimals := new(big.Int).SetBytes(metadata.Decimals)
 	mul := decimal.NewFromFloat(float64(10)).Pow(decimal.NewFromBigInt(decimals, 0))
 	num := decimal.NewFromBigInt(new(big.Int).SetBytes(balance), 0)
@@ -1168,14 +1168,14 @@ func FormatZrc20Decimals(balance []byte, metadata *types.ZRC20Metadata) decimal.
 	return num.DivRound(mul, int32(decimals.Int64()))
 }
 
-func FormatTokenName(balance *types.Eth1AddressBalance) template.HTML {
+func FormatTokenName(balance *types.ExecutionAddressBalance) template.HTML {
 	logo := ""
 	if len(balance.Metadata.Logo) != 0 {
 		logo = fmt.Sprintf(`<img style="height: 20px;" src="data:image/png;base64, %s">`, base64.StdEncoding.EncodeToString(balance.Metadata.Logo))
 	}
 	symbolTitle := FormatTokenSymbolTitle(balance.Metadata.Symbol)
 	symbol := FormatTokenSymbol(balance.Metadata.Symbol)
-	return template.HTML(fmt.Sprintf(`<a href='/token/Z%x?a=Z%x' title="%s">%s %s</a>`, balance.Token, balance.Address, symbolTitle, logo, symbol))
+	return template.HTML(fmt.Sprintf(`<a href='/token/Q%x?a=Q%x' title="%s">%s %s</a>`, balance.Token, balance.Address, symbolTitle, logo, symbol))
 }
 
 func ToBase64(input []byte) string {
@@ -1183,7 +1183,7 @@ func ToBase64(input []byte) string {
 }
 
 // FormatBalance will return a string for a balance
-func FormatEth1TxStatus(status uint64) template.HTML {
+func FormatExecutionTxStatus(status uint64) template.HTML {
 	if status == 1 {
 		return template.HTML("<h5 class=\"m-0\"><span class=\"badge badge-success badge-pill align-middle text-white\"><i class=\"fas fa-check-circle\"></i> Success</span></h5>")
 	} else {
@@ -1191,7 +1191,7 @@ func FormatEth1TxStatus(status uint64) template.HTML {
 	}
 }
 
-// FormatEth1AddressFull will return the eth1-address formated as html
-func FormatEth1AddressFull(addr common.Address) template.HTML {
+// FormatExecutionAddressFull will return the execution-address formated as html
+func FormatExecutionAddressFull(addr common.Address) template.HTML {
 	return FormatAddress(addr.Bytes(), nil, "", false, false, true)
 }

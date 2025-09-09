@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"strings"
 
-	zond "github.com/theQRL/go-zond"
+	qrl "github.com/theQRL/go-zond"
 	"github.com/theQRL/go-zond/accounts/abi"
 	"github.com/theQRL/go-zond/accounts/abi/bind"
 	"github.com/theQRL/go-zond/common"
@@ -21,7 +21,7 @@ var (
 	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
-	_ = zond.NotFound
+	_ = qrl.NotFound
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -37,29 +37,29 @@ var BalanceMetaData = &bind.MetaData{
 // Deprecated: Use BalanceMetaData.ABI instead.
 var BalanceABI = BalanceMetaData.ABI
 
-// Balance is an auto generated Go binding around a Zond contract.
+// Balance is an auto generated Go binding around a QRL contract.
 type Balance struct {
 	BalanceCaller     // Read-only binding to the contract
 	BalanceTransactor // Write-only binding to the contract
 	BalanceFilterer   // Log filterer for contract events
 }
 
-// BalanceCaller is an auto generated read-only Go binding around a Zond contract.
+// BalanceCaller is an auto generated read-only Go binding around a QRL contract.
 type BalanceCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// BalanceTransactor is an auto generated write-only Go binding around a Zond contract.
+// BalanceTransactor is an auto generated write-only Go binding around a QRL contract.
 type BalanceTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// BalanceFilterer is an auto generated log filtering Go binding around a Zond contract events.
+// BalanceFilterer is an auto generated log filtering Go binding around a QRL contract events.
 type BalanceFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// BalanceSession is an auto generated Go binding around a Zond contract,
+// BalanceSession is an auto generated Go binding around a QRL contract,
 // with pre-set call and transact options.
 type BalanceSession struct {
 	Contract     *Balance          // Generic contract binding to set the session for
@@ -67,31 +67,31 @@ type BalanceSession struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// BalanceCallerSession is an auto generated read-only Go binding around a Zond contract,
+// BalanceCallerSession is an auto generated read-only Go binding around a QRL contract,
 // with pre-set call options.
 type BalanceCallerSession struct {
 	Contract *BalanceCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts  // Call options to use throughout this session
 }
 
-// BalanceTransactorSession is an auto generated write-only Go binding around a Zond contract,
+// BalanceTransactorSession is an auto generated write-only Go binding around a QRL contract,
 // with pre-set transact options.
 type BalanceTransactorSession struct {
 	Contract     *BalanceTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts  // Transaction auth options to use throughout this session
 }
 
-// BalanceRaw is an auto generated low-level Go binding around a Zond contract.
+// BalanceRaw is an auto generated low-level Go binding around a QRL contract.
 type BalanceRaw struct {
 	Contract *Balance // Generic contract binding to access the raw methods on
 }
 
-// BalanceCallerRaw is an auto generated low-level read-only Go binding around a Zond contract.
+// BalanceCallerRaw is an auto generated low-level read-only Go binding around a QRL contract.
 type BalanceCallerRaw struct {
 	Contract *BalanceCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// BalanceTransactorRaw is an auto generated low-level write-only Go binding around a Zond contract.
+// BalanceTransactorRaw is an auto generated low-level write-only Go binding around a QRL contract.
 type BalanceTransactorRaw struct {
 	Contract *BalanceTransactor // Generic write-only contract binding to access the raw methods on
 }

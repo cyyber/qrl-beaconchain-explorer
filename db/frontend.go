@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
 
 	"github.com/jmoiron/sqlx"
 )

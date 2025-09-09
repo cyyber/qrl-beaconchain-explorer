@@ -1,12 +1,12 @@
-# Zond Beacon Chain Explorer
+# QRL Beacon Chain Explorer
 
-The explorer provides a comprehensive and easy to use interface for the Zond beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
+The explorer provides a comprehensive and easy to use interface for the QRL beacon chain. It makes it easy to view proposed blocks, follow attestations and monitor your staking activity.
 
 ## About
 
 The explorer is built using golang and utilizes a PostgreSQL database for storing and indexing data. 
 
-**Warning:** The explorer is still under heavy active development. More or less everything might change without prior notice and we cannot guarantee any backwards compatibility for now. Once the Zond ecosystem matures we will be able to provide stronger guarantees about the updatability of the explorer.
+**Warning:** The explorer is still under heavy active development. More or less everything might change without prior notice and we cannot guarantee any backwards compatibility for now. Once the QRL ecosystem matures we will be able to provide stronger guarantees about the updatability of the explorer.
 
 ## Features
 
@@ -19,7 +19,7 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
 - Website
   - Validator Dashboard with status, income, balance, attestations, proposals and charts
   - Overviews about blocks, slots, epochs, transactions, validators, slashings and the mempool
-  - Stats and info about Zond clients
+  - Stats and info about QRL clients
   - Charts about various stats
 
 - Tools
@@ -30,7 +30,7 @@ The explorer is built using golang and utilizes a PostgreSQL database for storin
 
 ## Getting started
 
-We currently do not provide any pre-built binaries of the explorer. Docker images are available at https://hub.docker.com/repository/docker/qrledger/zond-beaconchain-explorer.
+We currently do not provide any pre-built binaries of the explorer. Docker images are available at https://hub.docker.com/repository/docker/qrledger/qrl-beaconchain-explorer.
 
 - Download the latest version of the Qrysm beacon chain client and start it with the `--archive` flag set
 - Wait till the client finishes the initial sync

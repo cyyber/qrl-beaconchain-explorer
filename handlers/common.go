@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/gorilla/mux"
 	utilMath "github.com/protolambda/zrnt/eth2/util/math"
@@ -296,10 +296,10 @@ func GetValidatorEarnings(validators []uint64) (*types.ValidatorEarnings, map[ui
 		TotalDeposits: int64(totalDeposits),
 		ProposalData:  validatorProposalData,
 	}
-	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, "Zond")
-	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, "Zond")
-	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, "Zond")
-	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, "Zond")
+	earnings.LastDayFormatted = utils.FormatIncomeClEl(earnings.Income1d, "Quanta")
+	earnings.LastWeekFormatted = utils.FormatIncomeClEl(earnings.Income7d, "Quanta")
+	earnings.LastMonthFormatted = utils.FormatIncomeClEl(earnings.Income31d, "Quanta")
+	earnings.TotalFormatted = utils.FormatIncomeClEl(earnings.IncomeTotal, "Quanta")
 	earnings.TotalBalance = "<b>" + utils.FormatClCurrency(totalBalance, 5, true, false, false, false) + "</b>"
 	return earnings, balancesMap, nil
 }
@@ -422,7 +422,7 @@ func getAvgSyncCommitteeInterval(validatorsCount int) float64 {
 	return 1 / probability
 }
 
-// LatestState will return common information that about the current state of the eth2 chain
+// LatestState will return common information that about the current state of the consensus chain
 func LatestState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", utils.Config.Chain.ClConfig.SecondsPerSlot)) // set local cache to the seconds per slot interval
@@ -553,7 +553,7 @@ func getExecutionChartData(indices []uint64, lowerBoundDay uint64) ([]*types.Cha
 		consData := consMap[block.Number]
 		day := int64(consData.Epoch / epochsPerDay)
 
-		totalReward := utils.PlanckToZond(utils.Eth1TotalReward(block)).InexactFloat64()
+		totalReward := utils.PlanckToQuanta(utils.ExecutionTotalReward(block)).InexactFloat64()
 
 		// Add the reward to the existing reward for the day or set it if not previously set
 		dayRewardMap[day] += totalReward

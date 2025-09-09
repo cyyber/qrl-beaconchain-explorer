@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jmoiron/sqlx"
@@ -25,7 +25,7 @@ import (
 	"github.com/pressly/goose/v3"
 	"github.com/sirupsen/logrus"
 	qrysm_deposit "github.com/theQRL/qrysm/contracts/deposit"
-	zondpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
+	qrysmpb "github.com/theQRL/qrysm/proto/qrysm/v1alpha1"
 )
 
 //go:embed migrations/*.sql
@@ -176,9 +176,9 @@ func ApplyEmbeddedDbSchema(version int64) error {
 	return nil
 }
 
-func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy, orderDir string, latestEpoch, validatorOnlineThresholdSlot uint64) ([]*types.EthOneDepositsData, uint64, error) {
+func GetExecutionDepositsJoinConsensusDeposits(query string, length, start uint64, orderBy, orderDir string, latestEpoch, validatorOnlineThresholdSlot uint64) ([]*types.ExecutionDepositsData, uint64, error) {
 	// Initialize the return values
-	deposits := []*types.EthOneDepositsData{}
+	deposits := []*types.ExecutionDepositsData{}
 	totalCount := uint64(0)
 
 	if orderDir != "desc" && orderDir != "asc" {
@@ -202,33 +202,33 @@ func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy
 
 	// Define the base queries
 	deposistsCountQuery := `
-		SELECT COUNT(*) FROM eth1_deposits as eth1
+		SELECT COUNT(*) FROM execution_deposits as execution
 		%s`
 
 	deposistsQuery := `
 		SELECT 
-			eth1.tx_hash as tx_hash,
-			eth1.tx_input as tx_input,
-			eth1.tx_index as tx_index,
-			eth1.block_number as block_number,
-			eth1.block_ts as block_ts,
-			eth1.from_address as from_address,
-			eth1.publickey as publickey,
-			eth1.withdrawal_credentials as withdrawal_credentials,
-			eth1.amount as amount,
-			eth1.signature as signature,
-			eth1.merkletree_index as merkletree_index,
-			eth1.valid_signature as valid_signature,
+			execution.tx_hash as tx_hash,
+			execution.tx_input as tx_input,
+			execution.tx_index as tx_index,
+			execution.block_number as block_number,
+			execution.block_ts as block_ts,
+			execution.from_address as from_address,
+			execution.publickey as publickey,
+			execution.withdrawal_credentials as withdrawal_credentials,
+			execution.amount as amount,
+			execution.signature as signature,
+			execution.merkletree_index as merkletree_index,
+			execution.valid_signature as valid_signature,
 			COALESCE(v.state, 'deposited') as state
 		FROM
-			eth1_deposits as eth1
+			execution_deposits as execution
 		LEFT JOIN
 			(
 				SELECT pubkey, status AS state
 				FROM validators
 			) as v
 		ON
-			v.pubkey = eth1.publickey
+			v.pubkey = execution.publickey
 		%s
 		ORDER BY %s %s
 		LIMIT $1
@@ -259,22 +259,22 @@ func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy
 
 	param = hash
 	if utils.IsHash(trimmedQuery) {
-		searchQuery = `WHERE eth1.publickey = $3`
+		searchQuery = `WHERE execution.publickey = $3`
 	} else if utils.IsTxHash(trimmedQuery) {
 		// Withdrawal credentials have the same length as a tx hash
 		if utils.IsValidWithdrawalCredentials(trimmedQuery) {
 			searchQuery = `
 				WHERE 
-					eth1.tx_hash = $3
-					OR eth1.withdrawal_credentials = $3`
+					execution.tx_hash = $3
+					OR execution.withdrawal_credentials = $3`
 		} else {
-			searchQuery = `WHERE eth1.tx_hash = $3`
+			searchQuery = `WHERE execution.tx_hash = $3`
 		}
 	} else if utils.IsAddress(trimmedQuery) {
-		searchQuery = `WHERE eth1.from_address = $3`
+		searchQuery = `WHERE execution.from_address = $3`
 	} else if uiQuery, parseErr := strconv.ParseUint(query, 10, 31); parseErr == nil { // Limit to 31 bits to stay within math.MaxInt32
 		param = uiQuery
-		searchQuery = `WHERE eth1.block_number = $3`
+		searchQuery = `WHERE execution.block_number = $3`
 	} else {
 		// The query does not fulfill any of the requirements for a search
 		return deposits, totalCount, nil
@@ -296,9 +296,9 @@ func GetEth1DepositsJoinEth2Deposits(query string, length, start uint64, orderBy
 	return deposits, totalCount, nil
 }
 
-func GetEth2Deposits(query string, length, start uint64, orderBy, orderDir string) ([]*types.EthTwoDepositData, uint64, error) {
+func GetConsensusDeposits(query string, length, start uint64, orderBy, orderDir string) ([]*types.ConsensusDepositData, uint64, error) {
 	// Initialize the return values
-	deposits := []*types.EthTwoDepositData{}
+	deposits := []*types.ConsensusDepositData{}
 	totalCount := uint64(0)
 
 	if orderDir != "desc" && orderDir != "asc" {
@@ -375,8 +375,8 @@ func GetEth2Deposits(query string, length, start uint64, orderBy, orderDir strin
 	} else if utils.IsAddress(trimmedQuery) {
 		param = hash
 		searchQuery = `
-				LEFT JOIN eth1_deposits ON blocks_deposits.publickey = eth1_deposits.publickey
-				WHERE eth1_deposits.from_address = $3`
+				LEFT JOIN execution_deposits ON blocks_deposits.publickey = execution_deposits.publickey
+				WHERE execution_deposits.from_address = $3`
 	} else if uiQuery, parseErr := strconv.ParseUint(query, 10, 31); parseErr == nil { // Limit to 31 bits to stay within math.MaxInt32
 		param = uiQuery
 		searchQuery = `WHERE blocks_deposits.block_slot = $3`
@@ -507,21 +507,21 @@ func GetValidatorIndex(publicKey []byte) (uint64, error) {
 	return index, err
 }
 
-// GetValidatorDeposits will return eth1- and eth2-deposits for a public key from the database
+// GetValidatorDeposits will return execution- and consensus-deposits for a public key from the database
 func GetValidatorDeposits(publicKey []byte) (*types.ValidatorDeposits, error) {
 	deposits := &types.ValidatorDeposits{}
-	err := ReaderDb.Select(&deposits.Eth1Deposits, `
+	err := ReaderDb.Select(&deposits.ExecutionDeposits, `
 		SELECT tx_hash, tx_input, tx_index, block_number, EXTRACT(epoch FROM block_ts)::INT as block_ts, from_address, publickey, withdrawal_credentials, amount, signature, merkletree_index, valid_signature
-		FROM eth1_deposits WHERE publickey = $1 ORDER BY block_number ASC`, publicKey)
+		FROM execution_deposits WHERE publickey = $1 ORDER BY block_number ASC`, publicKey)
 	if err != nil {
 		return nil, err
 	}
-	if len(deposits.Eth1Deposits) > 0 {
-		deposits.LastEth1DepositTs = deposits.Eth1Deposits[len(deposits.Eth1Deposits)-1].BlockTs
+	if len(deposits.ExecutionDeposits) > 0 {
+		deposits.LastExecutionDepositTs = deposits.ExecutionDeposits[len(deposits.ExecutionDeposits)-1].BlockTs
 
 		// retrieve address names from bigtable
 		names := make(map[string]string)
-		for _, v := range deposits.Eth1Deposits {
+		for _, v := range deposits.ExecutionDeposits {
 			names[string(v.FromAddress)] = ""
 		}
 		names, _, err = BigtableClient.GetAddressesNamesArMetadata(&names, nil)
@@ -529,12 +529,12 @@ func GetValidatorDeposits(publicKey []byte) (*types.ValidatorDeposits, error) {
 			return nil, err
 		}
 
-		for k, v := range deposits.Eth1Deposits {
-			deposits.Eth1Deposits[k].FromName = names[string(v.FromAddress)]
+		for k, v := range deposits.ExecutionDeposits {
+			deposits.ExecutionDeposits[k].FromName = names[string(v.FromAddress)]
 		}
 	}
 
-	err = ReaderDb.Select(&deposits.Eth2Deposits, `
+	err = ReaderDb.Select(&deposits.ConsensusDeposits, `
 		SELECT 
 			blocks_deposits.block_slot,
 			blocks_deposits.block_index,
@@ -640,9 +640,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount, 
 			averagevalidatorbalance, 
 			totalvalidatorbalance,
-			eligiblezond, 
+			eligiblequanta, 
 			globalparticipationrate, 
-			votedzond,
+			votedquanta,
 			finalized
 		)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
@@ -657,9 +657,9 @@ func SaveEpoch(epoch uint64, validators []*types.Validator, client rpc.Client, t
 			validatorscount         = excluded.validatorscount,
 			averagevalidatorbalance = excluded.averagevalidatorbalance,
 			totalvalidatorbalance   = excluded.totalvalidatorbalance,
-			eligiblezond             = excluded.eligiblezond,
+			eligiblequanta          = excluded.eligiblequanta,
 			globalparticipationrate = excluded.globalparticipationrate,
-			votedzond                = excluded.votedzond,
+			votedquanta             = excluded.votedquanta,
 			finalized               = excluded.finalized`,
 		epoch,
 		0,
@@ -1027,7 +1027,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 	defer stmtExecutionPayload.Close()
 
 	stmtBlock, err := tx.Prepare(`
-		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, randaoreveal, graffiti, graffiti_text, eth1data_depositroot, eth1data_depositcount, eth1data_blockhash, syncaggregate_bits, syncaggregate_signatures, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, syncaggregate_participation, proposer, status, exec_parent_hash, exec_fee_recipient, exec_state_root, exec_receipts_root, exec_logs_bloom, exec_random, exec_block_number, exec_gas_limit, exec_gas_used, exec_timestamp, exec_extra_data, exec_base_fee_per_gas, exec_block_hash, exec_transactions_count)
+		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, randaoreveal, graffiti, graffiti_text, executiondata_depositroot, executiondata_depositcount, executiondata_blockhash, syncaggregate_bits, syncaggregate_signatures, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, syncaggregate_participation, proposer, status, exec_parent_hash, exec_fee_recipient, exec_state_root, exec_receipts_root, exec_logs_bloom, exec_random, exec_block_number, exec_gas_limit, exec_gas_used, exec_timestamp, exec_extra_data, exec_base_fee_per_gas, exec_block_hash, exec_transactions_count)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37)
 		ON CONFLICT (slot, blockroot) DO NOTHING`)
 	if err != nil {
@@ -1214,9 +1214,9 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 				b.RandaoReveal,
 				b.Graffiti,
 				utils.GraffitiToString(b.Graffiti),
-				b.Eth1Data.DepositRoot,
-				b.Eth1Data.DepositCount,
-				b.Eth1Data.BlockHash,
+				b.ExecutionData.DepositRoot,
+				b.ExecutionData.DepositCount,
+				b.ExecutionData.BlockHash,
 				syncAggBits,
 				pq.Array(syncAggSigs),
 				len(b.ProposerSlashings),
@@ -1299,7 +1299,7 @@ func saveBlocks(blocks map[uint64]map[string]*types.Block, tx *sqlx.Tx, forceSlo
 
 			for i, d := range b.Deposits {
 
-				err := qrysm_deposit.VerifyDepositSignature(&zondpb.Deposit_Data{
+				err := qrysm_deposit.VerifyDepositSignature(&qrysmpb.Deposit_Data{
 					PublicKey:             d.PublicKey,
 					WithdrawalCredentials: d.WithdrawalCredentials,
 					Amount:                d.Amount,
@@ -1345,9 +1345,9 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 
 	_, err := tx.Exec(`
 		UPDATE epochs SET
-			eligiblezond = $1,
+			eligiblequanta = $1,
 			globalparticipationrate = $2,
-			votedzond = $3,
+			votedquanta = $3,
 			finalized = $4,
 			blockscount = (SELECT COUNT(*) FROM blocks WHERE epoch = $5 AND status = '1'),
 			proposerslashingscount = (SELECT COALESCE(SUM(proposerslashingscount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
@@ -1357,7 +1357,7 @@ func UpdateEpochStatus(stats *types.ValidatorParticipation, tx *sqlx.Tx) error {
 			withdrawalcount = (SELECT COALESCE(SUM(withdrawalcount),0) FROM blocks WHERE epoch = $5 AND status = '1'),
 			voluntaryexitscount = (SELECT COALESCE(SUM(voluntaryexitscount),0) FROM blocks WHERE epoch = $5 AND status = '1')
 		WHERE epoch = $5`,
-		stats.EligibleZond, stats.GlobalParticipationRate, stats.VotedZond, stats.Finalized, stats.Epoch)
+		stats.EligibleQuanta, stats.GlobalParticipationRate, stats.VotedQuanta, stats.Finalized, stats.Epoch)
 
 	return err
 }
@@ -1420,7 +1420,7 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 		return err
 	}
 
-	// efficiently collect the tnx that pushed each validator over 40000 Zond.
+	// efficiently collect the tnx that pushed each validator over 40000 quanta.
 	_, err = tx.Exec(`
 		UPDATE validator_queue_deposits 
 		SET 
@@ -1447,7 +1447,7 @@ func UpdateQueueDeposits(tx *sqlx.Tx) error {
 			FROM CumSum
 			/* join so we can retrieve the validator index again */
 			left join validators on validators.pubkey = CumSum.publickey
-			/* we want the deposit that pushed the cum sum over 40000 Zond */
+			/* we want the deposit that pushed the cum sum over 40000 Quanta */
 			WHERE cumTotal>=40000000000000
 			ORDER BY publickey, cumTotal asc 
 		) AS data
@@ -1537,11 +1537,11 @@ func GetPendingValidatorCount() (uint64, error) {
 	return count, nil
 }
 
-func GetTotalEligibleZond() (uint64, error) {
+func GetTotalEligibleQuanta() (uint64, error) {
 	var total uint64
 
 	err := ReaderDb.Get(&total, `
-		SELECT eligiblezond FROM epochs ORDER BY epoch DESC LIMIT 1
+		SELECT eligiblequanta FROM epochs ORDER BY epoch DESC LIMIT 1
 	`)
 	if err == sql.ErrNoRows {
 		return 0, nil

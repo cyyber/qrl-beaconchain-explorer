@@ -74,7 +74,7 @@
           RUB: 15277.44,
           USD: 208.96,
         }
-        this.config.totalZondSupply = 105000000000000000
+        this.config.totalQuantaSupply = 105000000000000000
         this.config.showCosts = false
 
         // the param key, encoding function, decoding function, include in url params bool, update element function
@@ -241,7 +241,7 @@
         this.params.stakingFee = 0
         this.params.reinvest = false
         this.params.networkStake = 0
-        this.params.networkStakePercent = this.config.minNetworkStake / this.config.totalZondSupply
+        this.params.networkStakePercent = this.config.minNetworkStake / this.config.totalQuantaSupply
         this.params.networkOnlineProbability = 0
         this.params.totalStakeMonthlyChange = 0
 
@@ -249,11 +249,11 @@
 
         this.result.priceChartData = []
         this.result.incomeDollarChartData = []
-        this.result.incomeEthChartData = []
+        this.result.incomeQuantaChartData = []
         this.result.costsDollarChartData = []
-        this.result.costsEthChartData = []
+        this.result.costsQuantaChartData = []
         this.result.profitDollarChartData = []
-        this.result.profitEthChartData = []
+        this.result.profitQuantaChartData = []
         this.result.breakEvenPoint = null
         this.result.start = null
         this.result.numberOfPossibleValidators = "0"
@@ -272,7 +272,7 @@
         })
 
         document.getElementById("staking-variable-totalStake-slider").oninput = function () {
-          document.getElementById("staking-variable-totalStake-percentage").innerText = `${(((this.value * 1e9) / self.config.totalZondSupply) * 100).toFixed(2)} %`
+          document.getElementById("staking-variable-totalStake-percentage").innerText = `${(((this.value * 1e9) / self.config.totalQuantaSupply) * 100).toFixed(2)} %`
           document.getElementById("staking-variable-totalStake").value = this.value
         }
         document.getElementById("staking-variable-totalStake-slider").onchange = () => {
@@ -365,20 +365,20 @@
                   data.result = parseFloat(data.result)
                   console.log("parsed", data.result)
                 } catch (e) {
-                  console.err("could not parse zond supply", e)
+                  console.err("could not parse quanta supply", e)
                 }
               }
-              if (data && data.result && data.result > this.config.totalZondSupply) {
+              if (data && data.result && data.result > this.config.totalQuantaSupply) {
                 console.log("updating totalsupply")
-                this.config.totalZondSupply = data.result / 1e9
+                this.config.totalQuantaSupply = data.result / 1e9
               }
-              var zondSupply = this.config.totalZondSupply / 1e9
-              document.getElementById("staking-variable-totalStake").setAttribute("max", zondSupply)
+              var quantaSupply = this.config.totalQuantaSupply / 1e9
+              document.getElementById("staking-variable-totalStake").setAttribute("max", quantaSupply)
               if (document.getElementById("staking-variable-totalStake").getAttribute("value") === "0") {
-                document.getElementById("staking-variable-totalStake").setAttribute("value", zondSupply * 0.01)
+                document.getElementById("staking-variable-totalStake").setAttribute("value", quantaSupply * 0.01)
               }
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", zondSupply)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", zondSupply * 0.0025)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", quantaSupply)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", quantaSupply * 0.0025)
               count += 1
               if (count == 2) {
                 resolve()
@@ -386,11 +386,11 @@
             })
             .catch((err) => {
               console.error(err)
-              var zondSupply = this.config.totalZondSupply / 1e9
-              document.getElementById("staking-variable-totalStake").setAttribute("max", zondSupply)
-              document.getElementById("staking-variable-totalStake").setAttribute("value", zondSupply * 0.01)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", zondSupply)
-              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", zondSupply * 0.0025)
+              var quantaSupply = this.config.totalQuantaSupply / 1e9
+              document.getElementById("staking-variable-totalStake").setAttribute("max", quantaSupply)
+              document.getElementById("staking-variable-totalStake").setAttribute("value", quantaSupply * 0.01)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("max", quantaSupply)
+              document.getElementById("staking-variable-totalStake-slider").setAttribute("step", quantaSupply * 0.0025)
               count += 1
               if (count == 2) {
                 resolve()
@@ -518,22 +518,22 @@
         if (p.stakingFee > 1) {
           p.stakingFee = 1
         }
-        p.networkStakePercent = p.networkStake / this.config.totalZondSupply
+        p.networkStakePercent = p.networkStake / this.config.totalQuantaSupply
       }
 
       calculate() {
         // this calculation is only a rough estimation, it calculates the total
-        // network issuance based ond total staked Zond and online-probability
+        // network issuance based ond total staked Quanta and online-probability
         // of the network.
         this.result.priceChartData = []
         this.result.networkIssuanceChartData = []
         this.result.incomeChartData = []
         this.result.incomeDollarChartData = []
-        this.result.incomeEthChartData = []
+        this.result.incomeQuantaChartData = []
         this.result.costsDollarChartData = []
-        this.result.costsEthChartData = []
+        this.result.costsQuantaChartData = []
         this.result.profitDollarChartData = []
-        this.result.profitEthChartData = []
+        this.result.profitQuantaChartData = []
         this.result.breakEvenPoint = null
         this.result.numberOfPossibleValidators = Math.floor(this.params.stake / (40000 * 1e9)).toFixed(0) || "0"
 
@@ -556,8 +556,8 @@
 
         var now = Date.now()
         var yourStake = this.params.stake
-        var incomeGplanck = this.params.stake
-        var incomeDollar = (incomeGplanck * price) / 1e9
+        var incomeShor = this.params.stake
+        var incomeDollar = (incomeShor * price) / 1e9
         var incomeAll = 0
 
         this.result.start = now
@@ -595,16 +595,16 @@
           price = price * (1 + priceChangePerEpoch)
           if (this.params.stakingFee > 0) {
             costs += (valRewards * (yourStake / valStake) * this.params.stakingFee * price) / 1e9
-            incomeGplanck += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
+            incomeShor += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
             if (this.params.reinvest) yourStake += valRewards * (yourStake / valStake) * (1 - this.params.stakingFee)
           } else {
-            incomeGplanck += valRewards * (yourStake / valStake)
+            incomeShor += valRewards * (yourStake / valStake)
           }
           costs += costsPerEpoch
           var day = ((i + 1) / epochsPerDay) | 0
           if (day > this.result.incomeDollarChartData.length - 1) {
             var t = now + (i + 1) * 12 * 32 * 1000
-            this.fillChartData(t, (incomeGplanck * price) / 1e9, costs, price)
+            this.fillChartData(t, (incomeShor * price) / 1e9, costs, price)
             this.result.networkIssuanceChartData.push([t, (100 * incomeAll) / totalStake])
           }
         }
@@ -621,12 +621,12 @@
         })
 
         this.result.incomeDollarChartData.push([t, income])
-        this.result.incomeEthChartData.push([t, incomeDollar / price])
+        this.result.incomeQuantaChartData.push([t, incomeDollar / price])
         this.result.costsDollarChartData.push([t, costsDollar])
-        this.result.costsEthChartData.push([t, costsDollar / price])
+        this.result.costsQuantaChartData.push([t, costsDollar / price])
         this.result.profitDollarChartData.push([t, income - costsDollar])
 
-        this.result.profitEthChartData.push([t, (incomeDollar - costsDollar) / price])
+        this.result.profitQuantaChartData.push([t, (incomeDollar - costsDollar) / price])
         // this.result.stakeFeeChartData.push([t, ])
 
         if (!this.result.breakEvenPoint && this.result.profitDollarChartData.length > 1) {
@@ -648,15 +648,15 @@
 
         document.getElementById("staking-variable-totalStake-percentage").innerText = `${(this.params.networkStakePercent * 100).toFixed(2)} %`
 
-        document.getElementById("stake1d").innerHTML = `${this.result.incomeChartData[1].y.toFixed(4)} Zond (${symbol}${formatNumberSpacing(this.result.incomeChartData[1].income.toFixed(2))})`
-        document.getElementById("stake7d").innerHTML = `${this.result.incomeChartData[7].y.toFixed(4)} Zond (${symbol}${formatNumberSpacing(this.result.incomeChartData[7].income.toFixed(2))})`
-        document.getElementById("stake31d").innerHTML = `${this.result.incomeChartData[31].y.toFixed(4)} Zond (${symbol}${formatNumberSpacing(this.result.incomeChartData[31].income.toFixed(2))})`
-        document.getElementById("stake365d").innerHTML = `${this.result.incomeChartData[365].y.toFixed(4)} Zond (${symbol}${formatNumberSpacing(this.result.incomeChartData[365].income.toFixed(2))})`
+        document.getElementById("stake1d").innerHTML = `${this.result.incomeChartData[1].y.toFixed(4)} Quanta (${symbol}${formatNumberSpacing(this.result.incomeChartData[1].income.toFixed(2))})`
+        document.getElementById("stake7d").innerHTML = `${this.result.incomeChartData[7].y.toFixed(4)} Quanta (${symbol}${formatNumberSpacing(this.result.incomeChartData[7].income.toFixed(2))})`
+        document.getElementById("stake31d").innerHTML = `${this.result.incomeChartData[31].y.toFixed(4)} Quanta (${symbol}${formatNumberSpacing(this.result.incomeChartData[31].income.toFixed(2))})`
+        document.getElementById("stake365d").innerHTML = `${this.result.incomeChartData[365].y.toFixed(4)} Quanta (${symbol}${formatNumberSpacing(this.result.incomeChartData[365].income.toFixed(2))})`
 
-        document.getElementById("stakeChange1d").innerHTML = `${(this.result.incomeChartData[1].y - this.params.stake / 1e9).toFixed(4)} Zond (${symbol}${formatNumberSpacing((this.result.incomeChartData[1].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
-        document.getElementById("stakeChange7d").innerHTML = `${(this.result.incomeChartData[7].y - this.params.stake / 1e9).toFixed(4)} Zond (${symbol}${formatNumberSpacing((this.result.incomeChartData[7].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
-        document.getElementById("stakeChange31d").innerHTML = `${(this.result.incomeChartData[31].y - this.params.stake / 1e9).toFixed(4)} Zond (${symbol}${formatNumberSpacing((this.result.incomeChartData[31].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
-        document.getElementById("stakeChange365d").innerHTML = `${(this.result.incomeChartData[365].y - this.params.stake / 1e9).toFixed(4)} Zond (${symbol}${formatNumberSpacing((this.result.incomeChartData[365].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange1d").innerHTML = `${(this.result.incomeChartData[1].y - this.params.stake / 1e9).toFixed(4)} Quanta (${symbol}${formatNumberSpacing((this.result.incomeChartData[1].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange7d").innerHTML = `${(this.result.incomeChartData[7].y - this.params.stake / 1e9).toFixed(4)} Quanta (${symbol}${formatNumberSpacing((this.result.incomeChartData[7].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange31d").innerHTML = `${(this.result.incomeChartData[31].y - this.params.stake / 1e9).toFixed(4)} Quanta (${symbol}${formatNumberSpacing((this.result.incomeChartData[31].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
+        document.getElementById("stakeChange365d").innerHTML = `${(this.result.incomeChartData[365].y - this.params.stake / 1e9).toFixed(4)} Quanta (${symbol}${formatNumberSpacing((this.result.incomeChartData[365].income - (this.params.stake / 1e9) * this.params.price).toFixed(2))})`
 
         document.getElementById("return1d").innerHTML = `${symbol}${formatNumberSpacing(this.result.profitDollarChartData[1][1].toFixed(2))}`
         document.getElementById("return7d").innerHTML = `${symbol}${formatNumberSpacing(this.result.profitDollarChartData[7][1].toFixed(2))}`
@@ -686,7 +686,7 @@
           yAxis: [
             {
               title: {
-                text: "Stake in Zond",
+                text: "Stake in Quanta",
               },
               offset: 30,
             },
@@ -702,7 +702,7 @@
           data: this.result.incomeChartData,
           tooltip: {
             pointFormatter: function () {
-              return `<span style="color:${this.color}">●</span> ${this.series.name} <b>${this.y.toFixed(3)} Zond </b>(${symbol}${formatNumberSpacing(this.options.income.toFixed(2))})<br>`
+              return `<span style="color:${this.color}">●</span> ${this.series.name} <b>${this.y.toFixed(3)} Quanta </b>(${symbol}${formatNumberSpacing(this.options.income.toFixed(2))})<br>`
             },
           },
         })
@@ -858,13 +858,13 @@
       <div class="row my-3">
         <div class="col-xl-4 col-md-5 col-sm-12 py-3 variables">
           <div class="stake">
-            <h5 class="mb-0">Your Zond Stake <span id="yourStake-currency"></span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="This value represents the amount of Zond you want to use for staking. If you are not staking on a pool it must be a multiple of 40000, since validators can only join the network with a minimum of 40000 Zond."></i></h5>
+            <h5 class="mb-0">Your Quanta Stake <span id="yourStake-currency"></span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="This value represents the amount of Quanta you want to use for staking. If you are not staking on a pool it must be a multiple of 40000, since validators can only join the network with a minimum of 40000 Quanta."></i></h5>
             <div class="justify-content-between d-flex p-3 pb-0 align-content-center">
               <input id="staking-variable-yourStake" class="staking-variable form-control col-6" type="text" value="40000" />
-              <h5 class="mb-0 mt-1" id="validator-count col-6"><span id="validator-count">0</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="The total number of validators that can be added to the network with your stake. A minimum of 40000 Zond is needed for a validator to participate in the network. Ignore this value when you are staking over a pool."></i></h5>
+              <h5 class="mb-0 mt-1" id="validator-count col-6"><span id="validator-count">0</span> <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="The total number of validators that can be added to the network with your stake. A minimum of 40000 Quanta is needed for a validator to participate in the network. Ignore this value when you are staking over a pool."></i></h5>
             </div>
             <div class="p-3 pt-0">
-              <span id="staking-variable-yourStake-validation" class="input-validation">Your zond stake must be greater than 0</span>
+              <span id="staking-variable-yourStake-validation" class="input-validation">Your quanta stake must be greater than 0</span>
             </div>
           </div>
           <div class="accordion" id="calculator-accordion">
@@ -896,14 +896,14 @@
                     </div>
                   </div>
                   <div class="setting">
-                    <h6>Zond price in <span class="currency-key">USD</span></h6>
+                    <h6>Quanta price in <span class="currency-key">USD</span></h6>
                     <input id="staking-variable-price" class="staking-variable form-control" type="text" value="1" />
-                    <span id="staking-variable-price-validation" class="input-validation">Zond price must be greater than 0</span>
+                    <span id="staking-variable-price-validation" class="input-validation">Quanta price must be greater than 0</span>
                   </div>
                   <div class="setting">
                     <h6>Monthly price change in %</h6>
                     <input id="staking-variable-priceChangePerMonth" class="staking-variable form-control" type="text" value="0" />
-                    <span id="staking-variable-priceChangePerMonth-validation" class="input-validation">Zond price change must be a percentage greater or equal to 0</span>
+                    <span id="staking-variable-priceChangePerMonth-validation" class="input-validation">Quanta price change must be a percentage greater or equal to 0</span>
                   </div>
                   <div class="setting">
                     <h6>Initial one-time-costs in <span class="currency-key">USD</span></h6>
@@ -944,8 +944,8 @@
                   <div class="setting">
                     <div class="d-flex justify-content-between">
                       <h6 width="50%">
-                        Total staked <span id="totalStake-currency">Zond</span>
-                        <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="Total staked Zond is the sum of effective balances of all active validators attesting in the network."></i>
+                        Total staked <span id="totalStake-currency">Quanta</span>
+                        <i class="fas fa-info-circle fa-sm" data-toggle="tooltip" title="Total staked Quanta is the sum of effective balances of all active validators attesting in the network."></i>
                       </h6>
                       <span id="staking-variable-totalStake-percentage"></span>
                     </div>
@@ -979,8 +979,8 @@
               <tbody>
                 <tr>
                   <th>Duration</th>
-                  <th>Zond Stake</th>
-                  <th>Zond Reward</th>
+                  <th>Quanta Stake</th>
+                  <th>Quanta Reward</th>
                   <th>Return</th>
                   <th>Return in %</th>
                 </tr>

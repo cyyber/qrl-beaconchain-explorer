@@ -7,10 +7,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
 // Will return the gas now page
@@ -20,7 +20,7 @@ func GasNow(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	data := InitPageData(w, r, "gasnow", "/gasnow", fmt.Sprintf("%v Gplanck", 34), templateFiles)
+	data := InitPageData(w, r, "gasnow", "/gasnow", fmt.Sprintf("%v Shor", 34), templateFiles)
 
 	now := time.Now().Truncate(time.Minute)
 	lastWeek := time.Now().Truncate(time.Minute).Add(-utils.Week)

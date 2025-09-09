@@ -11,13 +11,13 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 
 	"github.com/coocood/freecache"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -60,8 +60,8 @@ func main() {
 	configPath := flag.String("config", "", "Path to the config file, if empty string defaults will be used")
 
 	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// enableZnsUpdater := flag.Bool("zns.enabled", false, "Enable zns update process")
-	// znsBatchSize := flag.Int64("zns.batch", 200, "Batch size for zns updates")
+	// enableQrnsUpdater := flag.Bool("qrns.enabled", false, "Enable qrns update process")
+	// qrnsBatchSize := flag.Int64("qrns.batch", 200, "Batch size for qrns updates")
 
 	flag.Parse()
 
@@ -157,17 +157,17 @@ func main() {
 		return
 	}
 
-	transforms := make([]func(blk *types.Eth1Block, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
+	transforms := make([]func(blk *types.ExecutionBlock, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
 	transforms = append(transforms,
 		bt.TransformBlock,
 		bt.TransformTx,
 		bt.TransformItx,
-		bt.TransformZRC20,
-		bt.TransformZRC721,
-		bt.TransformZRC1155,
+		bt.TransformSQRCTF1,
+		bt.TransformSQRCTN1,
+		bt.TransformSQRCTB1,
 		bt.TransformWithdrawals,
 		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// bt.TransformZnsNameRegistered,
+		// bt.TransformQrnsNameRegistered,
 		bt.TransformContract)
 
 	cache := freecache.NewCache(100 * 1024 * 1024) // 100 MB limit
@@ -226,7 +226,7 @@ func main() {
 			continue
 		}
 
-		lastBlockFromNode, err := client.GetLatestEth1BlockNumber()
+		lastBlockFromNode, err := client.GetLatestExecutionBlockNumber()
 		if err != nil {
 			lastBlockFromNodeSameCount++
 			if lastBlockFromNodeSameCount > 20 { // nearly 5 minutes no new block
@@ -355,10 +355,10 @@ func main() {
 		}
 
 		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// if *enableZnsUpdater {
-		// 	err := bt.ImportZnsUpdates(client.GetNativeClient(), *znsBatchSize)
+		// if *enableQrnsUpdater {
+		// 	err := bt.ImportQrnsUpdates(client.GetNativeClient(), *qrnsBatchSize)
 		// 	if err != nil {
-		// 		utils.LogError(err, "error importing zns updates", 0, nil)
+		// 		utils.LogError(err, "error importing qrns updates", 0, nil)
 		// 		continue
 		// 	}
 		// }
@@ -453,7 +453,7 @@ func ProcessMetadataUpdates(bt *db.Bigtable, client *rpc.GzondClient, prefix str
 			return
 		}
 
-		balances := make([]*types.Eth1AddressBalance, 0, len(pairs))
+		balances := make([]*types.ExecutionAddressBalance, 0, len(pairs))
 		for b := 0; b < len(pairs); b += batchSize {
 			start := b
 			end := b + batchSize
@@ -518,7 +518,7 @@ func IndexFromNode(bt *db.Bigtable, client *rpc.GzondClient, start, end, concurr
 			// TODO(now.youtrack.cloud/issue/TZB-7)
 			bc, timings, err := client.GetBlock(i /*, traceMode*/)
 			if err != nil {
-				return fmt.Errorf("error getting block: %v from zond node err: %w", i, err)
+				return fmt.Errorf("error getting block: %v from qrl execution node err: %w", i, err)
 			}
 
 			metrics.TaskDuration.WithLabelValues("rpc_el_get_block_headers").Observe(timings.Headers.Seconds())

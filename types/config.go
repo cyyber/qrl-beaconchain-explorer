@@ -65,9 +65,9 @@ type Config struct {
 		} `yaml:"node"`
 		DepositContractFirstBlock uint64 `yaml:"depositContractFirstBlock" envconfig:"INDEXER_DEPOSIT_CONTRACT_FIRST_BLOCK"`
 		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// ZnsTransformer struct {
-		// 	ValidRegistrarContracts []string `yaml:"validRegistrarContracts" envconfig:"ZNS_VALID_REGISTRAR_CONTRACTS"`
-		// } `yaml:"znsTransformer"`
+		// QrnsTransformer           struct {
+		// 	ValidRegistrarContracts []string `yaml:"validRegistrarContracts" envconfig:"QRNS_VALID_REGISTRAR_CONTRACTS"`
+		// } `yaml:"qrnsTransformer"`
 	} `yaml:"indexer"`
 	Frontend struct {
 		Debug              bool   `yaml:"debug" envconfig:"FRONTEND_DEBUG"`
@@ -166,10 +166,10 @@ type ConfigJsonResponse struct {
 		GenesisForkVersion                   string `json:"GENESIS_FORK_VERSION"`
 		GenesisDelay                         string `json:"GENESIS_DELAY"`
 		SecondsPerSlot                       string `json:"SECONDS_PER_SLOT"`
-		SecondsPerEth1Block                  string `json:"SECONDS_PER_ETH1_BLOCK"`
+		SecondsPerExecutionBlock             string `json:"SECONDS_PER_EXECUTION_BLOCK"`
 		MinValidatorWithdrawabilityDelay     string `json:"MIN_VALIDATOR_WITHDRAWABILITY_DELAY"`
 		ShardCommitteePeriod                 string `json:"SHARD_COMMITTEE_PERIOD"`
-		Eth1FollowDistance                   string `json:"ETH1_FOLLOW_DISTANCE"`
+		ExecutionFollowDistance              string `json:"EXECUTION_FOLLOW_DISTANCE"`
 		SubnetsPerNode                       string `json:"SUBNETS_PER_NODE"`
 		InactivityScoreBias                  string `json:"INACTIVITY_SCORE_BIAS"`
 		InactivityScoreRecoveryRate          string `json:"INACTIVITY_SCORE_RECOVERY_RATE"`
@@ -196,7 +196,7 @@ type ConfigJsonResponse struct {
 		SlotsPerEpoch                        string `json:"SLOTS_PER_EPOCH"`
 		MinSeedLookahead                     string `json:"MIN_SEED_LOOKAHEAD"`
 		MaxSeedLookahead                     string `json:"MAX_SEED_LOOKAHEAD"`
-		EpochsPerEth1VotingPeriod            string `json:"EPOCHS_PER_ETH1_VOTING_PERIOD"`
+		EpochsPerExecutionVotingPeriod       string `json:"EPOCHS_PER_EXECUTION_VOTING_PERIOD"`
 		SlotsPerHistoricalRoot               string `json:"SLOTS_PER_HISTORICAL_ROOT"`
 		MinEpochsToInactivityPenalty         string `json:"MIN_EPOCHS_TO_INACTIVITY_PENALTY"`
 		EpochsPerHistoricalVector            string `json:"EPOCHS_PER_HISTORICAL_VECTOR"`

@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
 
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
@@ -125,7 +125,7 @@ type IndexPageData struct {
 	ActiveValidators          uint64                 `json:"active_validators"`
 	EnteringValidators        uint64                 `json:"entering_validators"`
 	ExitingValidators         uint64                 `json:"exiting_validators"`
-	StakedZond                string                 `json:"staked_zond"`
+	StakedQuanta              string                 `json:"staked_quanta"`
 	AverageBalance            string                 `json:"average_balance"`
 	DepositedTotal            float64                `json:"deposit_total"`
 	DepositThreshold          float64                `json:"deposit_threshold"`
@@ -134,7 +134,7 @@ type IndexPageData struct {
 	MinGenesisTime            int64                  `json:"minGenesisTime"`
 	Blocks                    []*IndexPageDataBlocks `json:"blocks"`
 	Epochs                    []*IndexPageDataEpochs `json:"epochs"`
-	StakedZondChartData       [][]float64            `json:"staked_zond_chart_data"`
+	StakedQuantaChartData     [][]float64            `json:"staked_quanta_chart_data"`
 	ActiveValidatorsChartData [][]float64            `json:"active_validators_chart_data"`
 	Title                     template.HTML          `json:"title"`
 	Subtitle                  template.HTML          `json:"subtitle"`
@@ -159,12 +159,12 @@ type IndexPageDataEpochs struct {
 	Ts                               time.Time     `json:"ts"`
 	Finalized                        bool          `json:"finalized"`
 	FinalizedFormatted               template.HTML `json:"finalized_formatted"`
-	EligibleZond                     uint64        `json:"eligiblezond"`
-	EligibleZondFormatted            template.HTML `json:"eligiblezond_formatted"`
+	EligibleQuanta                   uint64        `json:"eligiblequanta"`
+	EligibleQuantaFormatted          template.HTML `json:"eligiblequanta_formatted"`
 	GlobalParticipationRate          float64       `json:"globalparticipationrate"`
 	GlobalParticipationRateFormatted template.HTML `json:"globalparticipationrate_formatted"`
-	VotedZond                        uint64        `json:"votedzond"`
-	VotedZondFormatted               template.HTML `json:"votedzond_formatted"`
+	VotedQuanta                      uint64        `json:"votedquanta"`
+	VotedQuantaFormatted             template.HTML `json:"votedquanta_formatted"`
 }
 
 // IndexPageDataBlocks is a struct to hold detail data for the main web page
@@ -196,7 +196,7 @@ type IndexPageDataBlocks struct {
 type IndexPageEpochHistory struct {
 	Epoch                   uint64 `db:"epoch"`
 	ValidatorsCount         uint64 `db:"validatorscount"`
-	EligibleZond            uint64 `db:"eligiblezond"`
+	EligibleQuanta          uint64 `db:"eligiblequanta"`
 	Finalized               bool   `db:"finalized"`
 	AverageValidatorBalance uint64 `db:"averagevalidatorbalance"`
 }
@@ -334,7 +334,7 @@ type ValidatorPageData struct {
 	IncomeHistoryChartData          []*ChartDataPoint
 	ExecutionIncomeHistoryData      []*ChartDataPoint
 	Deposits                        *ValidatorDeposits
-	Eth1DepositAddress              []byte
+	ExecutionDepositAddress         []byte
 	FlashMessage                    string
 	// User                                     *User
 	AttestationInclusionEffectiveness        float64
@@ -366,7 +366,7 @@ type ValidatorStatsTableRow struct {
 	Day                    int64         `db:"day"`
 	StartBalance           sql.NullInt64 `db:"start_balance"`
 	EndBalance             sql.NullInt64 `db:"end_balance"`
-	Income                 int64         `db:"cl_rewards_gplanck"`
+	Income                 int64         `db:"cl_rewards_shor"`
 	IncomeExchangeRate     float64       `db:"-"`
 	IncomeExchangeCurrency string        `db:"-"`
 	IncomeExchanged        float64       `db:"-"`
@@ -418,7 +418,7 @@ type ValidatorBalanceHistory struct {
 // ValidatorBalanceHistory is a struct for the validator income history data
 type ValidatorIncomeHistory struct {
 	Day              int64         `db:"day"` // day can be -1 which is pre-genesis
-	ClRewards        int64         `db:"cl_rewards_gplanck"`
+	ClRewards        int64         `db:"cl_rewards_shor"`
 	EndBalance       sql.NullInt64 `db:"end_balance"`
 	StartBalance     sql.NullInt64 `db:"start_balance"`
 	DepositAmount    sql.NullInt64 `db:"deposits_amount"`
@@ -514,37 +514,37 @@ type VotesVisChartData struct {
 
 // BlockPageData is a struct block data used in the block/slot page
 type BlockPageData struct {
-	Epoch                   uint64  `db:"epoch"`
-	EpochFinalized          bool    `db:"epoch_finalized"`
-	PrevEpochFinalized      bool    `db:"prev_epoch_finalized"`
-	EpochParticipationRate  float64 `db:"epoch_participation_rate"`
-	Ts                      time.Time
-	NextSlot                uint64
-	PreviousSlot            uint64
-	Proposer                uint64        `db:"proposer"`
-	BlockRoot               []byte        `db:"blockroot"`
-	ParentRoot              []byte        `db:"parentroot"`
-	StateRoot               []byte        `db:"stateroot"`
-	Signature               []byte        `db:"signature"`
-	RandaoReveal            []byte        `db:"randaoreveal"`
-	Graffiti                []byte        `db:"graffiti"`
-	ProposerName            string        `db:"name"`
-	Eth1dataDepositroot     []byte        `db:"eth1data_depositroot"`
-	Eth1dataDepositcount    uint64        `db:"eth1data_depositcount"`
-	Eth1dataBlockhash       []byte        `db:"eth1data_blockhash"`
-	SyncAggregateBits       []byte        `db:"syncaggregate_bits"`
-	SyncAggregateSignatures pq.ByteaArray `db:"syncaggregate_signatures"`
-	SyncAggParticipation    float64       `db:"syncaggregate_participation"`
-	ProposerSlashingsCount  uint64        `db:"proposerslashingscount"`
-	AttesterSlashingsCount  uint64        `db:"attesterslashingscount"`
-	AttestationsCount       uint64        `db:"attestationscount"`
-	DepositsCount           uint64        `db:"depositscount"`
-	WithdrawalCount         uint64        `db:"withdrawalcount"`
-	DilithiumChangeCount    uint64        `db:"dilithium_change_count"`
-	VoluntaryExitscount     uint64        `db:"voluntaryexitscount"`
-	SlashingsCount          uint64
-	VotesCount              uint64
-	VotingValidatorsCount   uint64
+	Epoch                     uint64  `db:"epoch"`
+	EpochFinalized            bool    `db:"epoch_finalized"`
+	PrevEpochFinalized        bool    `db:"prev_epoch_finalized"`
+	EpochParticipationRate    float64 `db:"epoch_participation_rate"`
+	Ts                        time.Time
+	NextSlot                  uint64
+	PreviousSlot              uint64
+	Proposer                  uint64        `db:"proposer"`
+	BlockRoot                 []byte        `db:"blockroot"`
+	ParentRoot                []byte        `db:"parentroot"`
+	StateRoot                 []byte        `db:"stateroot"`
+	Signature                 []byte        `db:"signature"`
+	RandaoReveal              []byte        `db:"randaoreveal"`
+	Graffiti                  []byte        `db:"graffiti"`
+	ProposerName              string        `db:"name"`
+	ExecutiondataDepositroot  []byte        `db:"executiondata_depositroot"`
+	ExecutiondataDepositcount uint64        `db:"executiondata_depositcount"`
+	ExecutiondataBlockhash    []byte        `db:"executiondata_blockhash"`
+	SyncAggregateBits         []byte        `db:"syncaggregate_bits"`
+	SyncAggregateSignatures   pq.ByteaArray `db:"syncaggregate_signatures"`
+	SyncAggParticipation      float64       `db:"syncaggregate_participation"`
+	ProposerSlashingsCount    uint64        `db:"proposerslashingscount"`
+	AttesterSlashingsCount    uint64        `db:"attesterslashingscount"`
+	AttestationsCount         uint64        `db:"attestationscount"`
+	DepositsCount             uint64        `db:"depositscount"`
+	WithdrawalCount           uint64        `db:"withdrawalcount"`
+	DilithiumChangeCount      uint64        `db:"dilithium_change_count"`
+	VoluntaryExitscount       uint64        `db:"voluntaryexitscount"`
+	SlashingsCount            uint64
+	VotesCount                uint64
+	VotingValidatorsCount     uint64
 
 	ExecParentHash        []byte        `db:"exec_parent_hash"`
 	ExecFeeRecipient      []byte        `db:"exec_fee_recipient"`
@@ -565,7 +565,7 @@ type BlockPageData struct {
 
 	Withdrawals []*Withdrawals
 
-	ExecutionData *Eth1BlockPageData
+	ExecutionData *ExecutionBlockPageData
 
 	Attestations      []*BlockPageAttestation // Attestations included in this block
 	VoluntaryExits    []*BlockPageVoluntaryExits
@@ -724,9 +724,9 @@ type EpochsPageData struct {
 	ValidatorsCount         uint64  `db:"validatorscount"`
 	AverageValidatorBalance uint64  `db:"averagevalidatorbalance"`
 	Finalized               bool    `db:"finalized"`
-	EligibleZond            uint64  `db:"eligiblezond"`
+	EligibleQuanta          uint64  `db:"eligiblequanta"`
 	GlobalParticipationRate float64 `db:"globalparticipationrate"`
-	VotedZond               uint64  `db:"votedzond"`
+	VotedQuanta             uint64  `db:"votedquanta"`
 }
 
 // EpochPageData is a struct to hold detailed epoch data for the epoch page
@@ -744,9 +744,9 @@ type EpochPageData struct {
 	ValidatorsCount         uint64        `db:"validatorscount"`
 	AverageValidatorBalance uint64        `db:"averagevalidatorbalance"`
 	Finalized               bool          `db:"finalized"`
-	EligibleZond            uint64        `db:"eligiblezond"`
+	EligibleQuanta          uint64        `db:"eligiblequanta"`
 	GlobalParticipationRate float64       `db:"globalparticipationrate"`
-	VotedZond               uint64        `db:"votedzond"`
+	VotedQuanta             uint64        `db:"votedquanta"`
 
 	Blocks []*IndexPageDataBlocks
 
@@ -794,10 +794,10 @@ type SearchAheadGraffitiResult []struct {
 	Count    string `db:"count" json:"count,omitempty"`
 }
 
-// SearchAheadEth1Result is a struct to hold the search ahead eth1 results
-type SearchAheadEth1Result []struct {
-	Publickey   string `db:"publickey" json:"publickey,omitempty"`
-	Eth1Address string `db:"from_address" json:"address,omitempty"`
+// SearchAheadExecutionResult is a struct to hold the search ahead execution results
+type SearchAheadExecutionResult []struct {
+	Publickey        string `db:"publickey" json:"publickey,omitempty"`
+	ExecutionAddress string `db:"from_address" json:"address,omitempty"`
 }
 
 // SearchAheadValidatorsResult is a struct to hold the search ahead validators results
@@ -996,7 +996,7 @@ type DepositsPageData struct {
 }
 
 // EpochsPageData is a struct to hold epoch data for the epochs page
-type EthOneDepositsData struct {
+type ExecutionDepositsData struct {
 	TxHash                []byte    `db:"tx_hash"`
 	TxInput               []byte    `db:"tx_input"`
 	TxIndex               uint64    `db:"tx_index"`
@@ -1012,7 +1012,7 @@ type EthOneDepositsData struct {
 	ValidSignature        bool      `db:"valid_signature"`
 }
 
-type EthTwoDepositData struct {
+type ConsensusDepositData struct {
 	BlockSlot             uint64 `db:"block_slot"`
 	BlockIndex            uint64 `db:"block_index"`
 	Proof                 []byte `db:"proof"`
@@ -1024,9 +1024,9 @@ type EthTwoDepositData struct {
 }
 
 type ValidatorDeposits struct {
-	Eth1Deposits      []Eth1Deposit
-	LastEth1DepositTs int64
-	Eth2Deposits      []Eth2Deposit
+	ExecutionDeposits      []ExecutionDeposit
+	LastExecutionDepositTs int64
+	ConsensusDeposits      []ConsensusDeposit
 }
 
 type Empty struct {
@@ -1080,22 +1080,22 @@ type DataTableSaveStateColumns struct {
 	Search  DataTableSaveStateSearch `json:"search"`
 }
 
-type Eth1AddressPageData struct {
+type ExecutionAddressPageData struct {
 	Address            string `json:"address"`
-	ZnsName            string `json:"znsName"`
+	QrnsName           string `json:"qrnsName"`
 	IsContract         bool
 	QRCode             string `json:"qr_code_base64"`
 	QRCodeInverse      string
-	Metadata           *Eth1AddressMetadata
+	Metadata           *ExecutionAddressMetadata
 	WithdrawalsSummary template.HTML
 	BlocksMinedTable   *DataTableResponse
 	TransactionsTable  *DataTableResponse
 	InternalTxnsTable  *DataTableResponse
-	Zrc20Table         *DataTableResponse
-	Zrc721Table        *DataTableResponse
-	Zrc1155Table       *DataTableResponse
+	SqrcTf1Table       *DataTableResponse
+	SqrcTn1Table       *DataTableResponse
+	SqrcTb1Table       *DataTableResponse
 	WithdrawalsTable   *DataTableResponse
-	Tabs               []Eth1AddressPageTabs
+	Tabs               []ExecutionAddressPageTabs
 }
 
 type ContractInteractionType uint8
@@ -1106,31 +1106,31 @@ const (
 	CONTRACT_PRESENT  ContractInteractionType = 2
 )
 
-type Eth1AddressPageTabs struct {
+type ExecutionAddressPageTabs struct {
 	Id   string
 	Href string
 	Text string
 	Data *DataTableResponse
 }
 
-type Eth1AddressMetadata struct {
-	Balances                []*Eth1AddressBalance
-	ZRC20TokenLimit         uint64
-	ZRC20TokenLimitExceeded bool
-	ZRC20                   *ZRC20Metadata
-	Name                    string
-	Tags                    []template.HTML
-	EthBalance              *Eth1AddressBalance
+type ExecutionAddressMetadata struct {
+	Balances                  []*ExecutionAddressBalance
+	SQRCTF1TokenLimit         uint64
+	SQRCTF1TokenLimitExceeded bool
+	SQRCTF1                   *SQRCTF1Metadata
+	Name                      string
+	Tags                      []template.HTML
+	QuantaBalance             *ExecutionAddressBalance
 }
 
-type Eth1AddressBalance struct {
+type ExecutionAddressBalance struct {
 	Address  []byte
 	Token    []byte
 	Balance  []byte
-	Metadata *ZRC20Metadata
+	Metadata *SQRCTF1Metadata
 }
 
-type ZRC20Metadata struct {
+type SQRCTF1Metadata struct {
 	Decimals     []byte
 	Symbol       string
 	Name         string
@@ -1142,11 +1142,11 @@ type ZRC20Metadata struct {
 	Price        []byte
 }
 
-func (metadata ZRC20Metadata) MarshalBinary() ([]byte, error) {
+func (metadata SQRCTF1Metadata) MarshalBinary() ([]byte, error) {
 	return json.Marshal(metadata)
 }
 
-func (metadata ZRC20Metadata) UnmarshalBinary(data []byte) error {
+func (metadata SQRCTF1Metadata) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, &metadata)
 }
 
@@ -1156,13 +1156,13 @@ type ContractMetadata struct {
 	ABIJson []byte
 }
 
-type Eth1TokenPageData struct {
+type ExecutionTokenPageData struct {
 	Token            string `json:"token"`
 	Address          string `json:"address"`
 	QRCode           string `json:"qr_code_base64"`
 	QRCodeInverse    string
-	Metadata         *ZRC20Metadata
-	Balance          *Eth1AddressBalance
+	Metadata         *SQRCTF1Metadata
+	Balance          *ExecutionAddressBalance
 	Holders          template.HTML `json:"holders"`
 	Transfers        template.HTML `json:"transfers"`
 	Price            template.HTML `json:"price"`
@@ -1208,7 +1208,7 @@ type EpochInfo struct {
 	Participation float64 `db:"globalparticipationrate"`
 }
 
-type Eth1TxData struct {
+type ExecutionTxData struct {
 	From         common.Address
 	To           *common.Address
 	InternalTxns []ITransaction
@@ -1240,27 +1240,27 @@ type Eth1TxData struct {
 	IsContractCreation          bool
 	CallData                    string
 	Method                      string
-	Events                      []*Eth1EventData
+	Events                      []*ExecutionEventData
 	Transfers                   []*Transfer
 	DepositContractInteractions []DepositContractInteraction
 }
 
-type Eth1EventData struct {
+type ExecutionEventData struct {
 	Address     common.Address
 	Name        string
 	Topics      []common.Hash
 	Data        []byte
-	DecodedData map[string]Eth1DecodedEventData
+	DecodedData map[string]ExecutionDecodedEventData
 }
 
-type Eth1DecodedEventData struct {
+type ExecutionDecodedEventData struct {
 	Type    string
 	Value   string
 	Raw     string
 	Address common.Address
 }
 
-type Eth1BlockPageData struct {
+type ExecutionBlockPageData struct {
 	Number          uint64
 	PreviousBlock   uint64
 	NextBlock       uint64
@@ -1278,11 +1278,11 @@ type Eth1BlockPageData struct {
 	BaseFeePerGas   *big.Int
 	BurnedFees      *big.Int
 	Extra           string
-	Txs             []Eth1BlockPageTransaction
+	Txs             []ExecutionBlockPageTransaction
 	State           string
 }
 
-type Eth1BlockPageTransaction struct {
+type ExecutionBlockPageTransaction struct {
 	Hash          string
 	HashFormatted template.HTML
 	From          string

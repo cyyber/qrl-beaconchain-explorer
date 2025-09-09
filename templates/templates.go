@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
 )

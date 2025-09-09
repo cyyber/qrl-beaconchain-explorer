@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
 )
 
 func Burn(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	templateFiles := append(layoutTemplateFiles, "burn.html")
-	data := InitPageData(w, r, "burn", "/burn", "Zond Burned", templateFiles)
+	data := InitPageData(w, r, "burn", "/burn", "Quanta Burned", templateFiles)
 
 	var burnTemplate = templates.GetTemplate(templateFiles...)
 

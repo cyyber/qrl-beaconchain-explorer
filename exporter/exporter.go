@@ -3,10 +3,10 @@ package exporter
 import (
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/sirupsen/logrus"
 )
@@ -18,7 +18,7 @@ var Client *rpc.Client
 // Start will start the export of data from rpc into the database
 func Start(client rpc.Client) {
 	go networkLivenessUpdater(client)
-	go eth1DepositsExporter()
+	go executionDepositsExporter()
 	go genesisDepositsExporter(client)
 	go syncCommitteesExporter(client)
 	go syncCommitteesCountExporter()
@@ -161,18 +161,18 @@ func genesisDepositsExporter(client rpc.Client) {
 			}
 		}
 
-		// hydrate the eth1 deposit signature for all genesis validators that have a corresponding eth1 deposit
+		// hydrate the execution deposit signature for all genesis validators that have a corresponding execution deposit
 		_, err = tx.Exec(`
 			UPDATE blocks_deposits 
 			SET signature = a.signature 
 			FROM (
 				SELECT DISTINCT ON(publickey) publickey, signature 
-				FROM eth1_deposits 
+				FROM execution_deposits 
 				WHERE valid_signature = true) AS a 
 			WHERE block_slot = 0 AND blocks_deposits.publickey = a.publickey AND blocks_deposits.signature = '\x'`)
 		if err != nil {
 			tx.Rollback()
-			logger.Errorf("error hydrating eth1 data into genesis-deposits: %v", err)
+			logger.Errorf("error hydrating execution data into genesis-deposits: %v", err)
 			time.Sleep(time.Minute)
 			continue
 		}

@@ -6,15 +6,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
-	zond_rewards "github.com/theQRL/zond-beaconchain-explorer/zond-rewards"
-	"github.com/theQRL/zond-beaconchain-explorer/zond-rewards/beacon"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	qrl_rewards "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards"
+	"github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/beacon"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sirupsen/logrus"
@@ -230,7 +230,7 @@ func export(epoch uint64, bt *db.Bigtable, client *beacon.Client, elClient *stri
 	start := time.Now()
 	logrus.Infof("retrieving rewards details for epoch %v", epoch)
 
-	rewards, err := zond_rewards.GetRewardsForEpoch(epoch, client, *elClient)
+	rewards, err := qrl_rewards.GetRewardsForEpoch(epoch, client, *elClient)
 
 	if err != nil {
 		return fmt.Errorf("error retrieving reward details for epoch %v: %v", epoch, err)

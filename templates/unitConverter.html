@@ -23,28 +23,28 @@
         case "mplanck":
           planck = value.mul(10e5)
           break
-        case "gplanck":
+        case "shor":
           planck = value.mul(10e8)
           break
-        case "tplanck":
+        case "kshor":
           planck = value.mul(10e11)
           break
-        case "pplanck":
+        case "mshor":
           planck = value.mul(10e14)
           break
-        case "zond":
+        case "quanta":
           planck = value.mul(10e17)
           break
-        case "kzond":
+        case "kquanta":
           planck = value.mul(10e20)
           break
-        case "mzond":
+        case "mquanta":
           planck = value.mul(10e23)
           break
-        case "gzond":
+        case "gquanta":
           planck = value.mul(10e26)
           break
-        case "tzond":
+        case "tquanta":
           planck = value.mul(10e29)
           break
       }
@@ -52,14 +52,14 @@
       $("#planck").val(planck.toFixed())
       $("#kplanck").val(planck.div(10e2).toFixed())
       $("#mplanck").val(planck.div(10e5).toFixed())
-      $("#gplanck").val(planck.div(10e8).toFixed())
-      $("#tplanck").val(planck.div(10e11).toFixed())
-      $("#pplanck").val(planck.div(10e14).toFixed())
-      $("#zond").val(planck.div(10e17).toFixed())
-      $("#kzond").val(planck.div(10e20).toFixed())
-      $("#mzond").val(planck.div(10e23).toFixed())
-      $("#gzond").val(planck.div(10e26).toFixed())
-      $("#tzond").val(planck.div(10e29).toFixed())
+      $("#shor").val(planck.div(10e8).toFixed())
+      $("#kshor").val(planck.div(10e11).toFixed())
+      $("#mshor").val(planck.div(10e14).toFixed())
+      $("#quanta").val(planck.div(10e17).toFixed())
+      $("#kquanta").val(planck.div(10e20).toFixed())
+      $("#mquanta").val(planck.div(10e23).toFixed())
+      $("#gquanta").val(planck.div(10e26).toFixed())
+      $("#tquanta").val(planck.div(10e29).toFixed())
     })
   </script>
 {{ end }}
@@ -81,7 +81,7 @@
     </div>
     <div class="row mt-4">
       <div class="col-md-12">
-        <p><span class="fas fa-lightbulb mr-1"></span> INFO: Zond uses a lot of different units like Planck, GPlanck and Zond. You can use this tool to convert between them.</p>
+        <p><span class="fas fa-lightbulb mr-1"></span> INFO: QRL uses a lot of different units like Planck, Shor and Quanta. You can use this tool to convert between them.</p>
       </div>
     </div>
     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
@@ -103,51 +103,51 @@
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="gplanck" type="text" value="1000000000" />
+      <input class="form-control" id="shor" type="text" value="1000000000" />
       <div class="input-group-append">
-        <div class="input-group-text bg-info text-white" style="width: 150px;">GPlanck</div>
+        <div class="input-group-text bg-info text-white" style="width: 150px;">Shor</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="tplanck" type="text" value="1000000" />
+      <input class="form-control" id="kshor" type="text" value="1000000" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">TPlanck</div>
+        <div class="input-group-text" style="width: 150px;">KShor</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="pplanck" type="text" value="1000" />
+      <input class="form-control" id="mshor" type="text" value="1000" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">PPlanck</div>
+        <div class="input-group-text" style="width: 150px;">MShor</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="zond" type="text" value="1" />
+      <input class="form-control" id="quanta" type="text" value="1" />
       <div class="input-group-append">
-        <div class="input-group-text bg-primary text-white" style="width: 150px;">Zond</div>
+        <div class="input-group-text bg-primary text-white" style="width: 150px;">Quanta</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="kzond" type="text" value="0.001" />
+      <input class="form-control" id="kquanta" type="text" value="0.001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">KZond</div>
+        <div class="input-group-text" style="width: 150px;">KQuanta</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="mzond" type="text" value="0.000001" />
+      <input class="form-control" id="mquanta" type="text" value="0.000001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">MZond</div>
+        <div class="input-group-text" style="width: 150px;">MQuanta</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="gzond" type="text" value="0.000000001" />
+      <input class="form-control" id="gquanta" type="text" value="0.000000001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">GZond</div>
+        <div class="input-group-text" style="width: 150px;">GQuanta</div>
       </div>
     </div>
     <div class="input-group mt-2 mr-sm-2 mb-sm-0">
-      <input class="form-control" id="tzond" type="text" value="0.000000000001" />
+      <input class="form-control" id="tquanta" type="text" value="0.000000000001" />
       <div class="input-group-append">
-        <div class="input-group-text" style="width: 150px;">TZond</div>
+        <div class="input-group-text" style="width: 150px;">TQuanta</div>
       </div>
     </div>
   </div>

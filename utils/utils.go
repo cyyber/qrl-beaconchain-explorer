@@ -28,8 +28,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/theQRL/zond-beaconchain-explorer/config"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/config"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
 
 	"github.com/carlmjohnson/requests"
 	"github.com/kelseyhightower/envconfig"
@@ -75,11 +75,11 @@ func GetTemplateFuncs() template.FuncMap {
 		"fixAddressCasing":                        FixAddressCasing,
 		"formatAddressLong":                       FormatAddressLong,
 		"formatHashLong":                          FormatHashLong,
-		"formatEth1Block":                         FormatEth1Block,
-		"formatEth1BlockHash":                     FormatEth1BlockHash,
-		"formatEth1Address":                       FormatEth1Address,
-		"formatEth1AddressStringLowerCase":        FormatEth1AddressStringLowerCase,
-		"formatEth1TxHash":                        FormatEth1TxHash,
+		"formatExecutionBlock":                    FormatExecutionBlock,
+		"formatExecutionBlockHash":                FormatExecutionBlockHash,
+		"formatExecutionAddress":                  FormatExecutionAddress,
+		"formatExecutionAddressStringLowerCase":   FormatExecutionAddressStringLowerCase,
+		"formatExecutionTxHash":                   FormatExecutionTxHash,
 		"formatGraffiti":                          FormatGraffiti,
 		"formatHash":                              FormatHash,
 		"formatWithdawalCredentials":              FormatWithdawalCredentials,
@@ -107,7 +107,7 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatAttestationInclusionEffectiveness": FormatAttestationInclusionEffectiveness,
 		"formatValidatorTags":                     FormatValidatorTags,
 		"formatValidatorTag":                      FormatValidatorTag,
-		"formatZond":                              FormatZond,
+		"formatQuanta":                            FormatQuanta,
 		"formatFloat":                             FormatFloat,
 		"formatAmount":                            FormatAmount,
 		"formatBigAmount":                         FormatBigAmount,
@@ -163,9 +163,9 @@ func GetTemplateFuncs() template.FuncMap {
 		"formatAddCommas": FormatAddCommas,
 		"encodeToString":  hex.EncodeToString,
 
-		"formatTokenBalance":      FormatTokenBalance,
-		"formatAddressEthBalance": FormatAddressEthBalance,
-		"toBase64":                ToBase64,
+		"formatTokenBalance":         FormatTokenBalance,
+		"formatAddressQuantaBalance": formatAddressQuantaBalance,
+		"toBase64":                   ToBase64,
 		"bytesToNumberString": func(input []byte) string {
 			return new(big.Int).SetBytes(input).String()
 		},
@@ -181,9 +181,9 @@ func GetTemplateFuncs() template.FuncMap {
 			}
 			return num
 		},
-		// ETH1 related formatting
-		"formatEth1TxStatus":    FormatEth1TxStatus,
-		"formatEth1AddressFull": FormatEth1AddressFull,
+		// Execution related formatting
+		"formatExecutionTxStatus":    FormatExecutionTxStatus,
+		"formatExecutionAddressFull": FormatExecutionAddressFull,
 		"byteToString": func(num []byte) string {
 			return string(num)
 		},
@@ -310,12 +310,12 @@ func TimeToEpoch(ts time.Time) int64 {
 	return (ts.Unix() - int64(Config.Chain.GenesisTimestamp)) / int64(Config.Chain.ClConfig.SecondsPerSlot) / int64(Config.Chain.ClConfig.SlotsPerEpoch)
 }
 
-func PlanckToZond(planck *big.Int) decimal.Decimal {
-	return decimal.NewFromBigInt(planck, 0).DivRound(decimal.NewFromInt(params.Zond), 18)
+func PlanckToQuanta(planck *big.Int) decimal.Decimal {
+	return decimal.NewFromBigInt(planck, 0).DivRound(decimal.NewFromInt(params.Quanta), 18)
 }
 
-func PlanckBytesToZond(planck []byte) decimal.Decimal {
-	return PlanckToZond(new(big.Int).SetBytes(planck))
+func PlanckBytesToQuanta(planck []byte) decimal.Decimal {
+	return PlanckToQuanta(new(big.Int).SetBytes(planck))
 }
 
 // WaitForCtrlC will block/wait until a control-c is pressed
@@ -358,7 +358,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 	}
 
 	if cfg.Frontend.SiteBrand == "" {
-		cfg.Frontend.SiteBrand = "Zond Explorer"
+		cfg.Frontend.SiteBrand = "QRL Explorer"
 	}
 
 	if cfg.Chain.ClConfigPath == "" {
@@ -382,7 +382,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 		jr := &types.ConfigJsonResponse{}
 
 		err := requests.
-			URL(nodeEndpoint + "/zond/v1/config/spec").
+			URL(nodeEndpoint + "/qrl/v1/config/spec").
 			ToJSON(jr).
 			Fetch(context.Background())
 
@@ -398,10 +398,10 @@ func ReadConfig(cfg *types.Config, path string) error {
 			GenesisForkVersion:               jr.Data.GenesisForkVersion,
 			GenesisDelay:                     mustParseUint(jr.Data.GenesisDelay),
 			SecondsPerSlot:                   mustParseUint(jr.Data.SecondsPerSlot),
-			SecondsPerEth1Block:              mustParseUint(jr.Data.SecondsPerEth1Block),
+			SecondsPerExecutionBlock:         mustParseUint(jr.Data.SecondsPerExecutionBlock),
 			MinValidatorWithdrawabilityDelay: mustParseUint(jr.Data.MinValidatorWithdrawabilityDelay),
 			ShardCommitteePeriod:             mustParseUint(jr.Data.ShardCommitteePeriod),
-			Eth1FollowDistance:               mustParseUint(jr.Data.Eth1FollowDistance),
+			ExecutionFollowDistance:          mustParseUint(jr.Data.ExecutionFollowDistance),
 			InactivityScoreBias:              mustParseUint(jr.Data.InactivityScoreBias),
 			InactivityScoreRecoveryRate:      mustParseUint(jr.Data.InactivityScoreRecoveryRate),
 			EjectionBalance:                  mustParseUint(jr.Data.EjectionBalance),
@@ -427,7 +427,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 			SlotsPerEpoch:                    mustParseUint(jr.Data.SlotsPerEpoch),
 			MinSeedLookahead:                 mustParseUint(jr.Data.MinSeedLookahead),
 			MaxSeedLookahead:                 mustParseUint(jr.Data.MaxSeedLookahead),
-			EpochsPerEth1VotingPeriod:        mustParseUint(jr.Data.EpochsPerEth1VotingPeriod),
+			EpochsPerExecutionVotingPeriod:   mustParseUint(jr.Data.EpochsPerExecutionVotingPeriod),
 			SlotsPerHistoricalRoot:           mustParseUint(jr.Data.SlotsPerHistoricalRoot),
 			MinEpochsToInactivityPenalty:     mustParseUint(jr.Data.MinEpochsToInactivityPenalty),
 			EpochsPerHistoricalVector:        mustParseUint(jr.Data.EpochsPerHistoricalVector),
@@ -470,7 +470,7 @@ func ReadConfig(cfg *types.Config, path string) error {
 		gtr := &GenesisResponse{}
 
 		err = requests.
-			URL(nodeEndpoint + "/zond/v1/beacon/genesis").
+			URL(nodeEndpoint + "/qrl/v1/beacon/genesis").
 			ToJSON(gtr).
 			Fetch(context.Background())
 
@@ -531,16 +531,16 @@ func ReadConfig(cfg *types.Config, path string) error {
 	// }
 
 	if cfg.Frontend.SiteTitle == "" {
-		cfg.Frontend.SiteTitle = "Zond Explorer"
+		cfg.Frontend.SiteTitle = "QRL Explorer"
 	}
 
 	if cfg.Frontend.Keywords == "" {
-		cfg.Frontend.Keywords = "zond block explorer, zond block explorer, beacon chain explorer, zond blockchain explorer"
+		cfg.Frontend.Keywords = "qrl block explorer, qrl block explorer, beacon chain explorer, qrl blockchain explorer"
 	}
 
 	if cfg.Chain.Id != 0 {
 		switch cfg.Chain.Name {
-		case "mainnet", "zond":
+		case "mainnet", "qrl":
 			cfg.Chain.Id = 1
 		}
 	}
@@ -623,30 +623,30 @@ func IsApiRequest(r *http.Request) bool {
 	return ok && len(query) > 0 && query[0] == "json"
 }
 
-var zondAddressRE = regexp.MustCompile("^Z[0-9a-fA-F]{40}$")
+var qrlAddressRE = regexp.MustCompile("^Q[0-9a-fA-F]{40}$")
 var withdrawalCredentialsRE = regexp.MustCompile("^(0x)?00[0-9a-fA-F]{62}$")
 var withdrawalCredentialsAddressRE = regexp.MustCompile("^(0x)?" + BeginningOfSetWithdrawalCredentials + "[0-9a-fA-F]{40}$")
 var txHashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{64}$")
 var zeroHashRE = regexp.MustCompile("^(0x)?0+$")
 var hashRE = regexp.MustCompile("^(0x)?[0-9a-fA-F]{96}$")
 
-// IsAddress verifies whether a string represents a zond address.
+// IsAddress verifies whether a string represents a qrl address.
 func IsAddress(s string) bool {
-	return zondAddressRE.MatchString(s)
+	return qrlAddressRE.MatchString(s)
 }
 
-// IsValidTxHash verifies whether a string represents a valid zond tx-hash.
+// IsValidTxHash verifies whether a string represents a valid qrl tx-hash.
 func IsValidTxHash(s string) bool {
 	return !zeroHashRE.MatchString(s) && txHashRE.MatchString(s)
 }
 
-// IsTxHash verifies whether a string represents a zond tx-hash.
+// IsTxHash verifies whether a string represents a qrl tx-hash.
 // In contrast to IsValidTxHash, this also returns true for the 0x0 address
 func IsTxHash(s string) bool {
 	return txHashRE.MatchString(s)
 }
 
-// IsHash verifies whether a string represents a zond hash.
+// IsHash verifies whether a string represents a qrl hash.
 func IsHash(s string) bool {
 	return hashRE.MatchString(s)
 }
@@ -750,7 +750,7 @@ func FormatThousandsEnglish(number string) string {
 // returns two transparent base64 encoded img strings for dark and light theme
 // the first has a black QR code the second a white QR code
 func GenerateQRCodeForAddress(address []byte) (string, string, error) {
-	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("Z%x", address)), qrcode.Medium)
+	q, err := qrcode.New(FixAddressCasing(fmt.Sprintf("Q%x", address)), qrcode.Medium)
 	if err != nil {
 		return "", "", err
 	}
@@ -791,7 +791,7 @@ func isMaliciousToken(symbol string) bool {
 	containsUrls := len(xurls.Relaxed.FindAllString(symbol, -1)) > 0
 	isConfusable := len(confusables.IsConfusable(symbol, false, []string{"LATIN", "COMMON"})) > 0
 	isMixedScript := confusables.IsMixedScript(symbol, nil)
-	return containsUrls || isConfusable || isMixedScript || strings.ToUpper(symbol) == "Zond"
+	return containsUrls || isConfusable || isMixedScript || strings.ToUpper(symbol) == "QRL"
 }
 
 func ReverseSlice[S ~[]E, E any](s S) {

@@ -8,12 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/aybabtme/uniplot/histogram"
 )
@@ -26,7 +26,7 @@ type chartHandler struct {
 var ChartHandlers = map[string]chartHandler{
 	"blocks":             {1, blocksChartData},
 	"validators":         {2, activeValidatorsChartData},
-	"staked_zond":        {3, stakedZondChartData},
+	"staked_quanta":      {3, stakedQuantaChartData},
 	"average_balance":    {4, averageBalanceChartData},
 	"network_liveness":   {5, networkLivenessChartData},
 	"participation_rate": {6, participationRateChartData},
@@ -301,7 +301,7 @@ func activeValidatorsChartData() (*types.GenericChartData, error) {
 	return chartData, nil
 }
 
-func stakedZondChartData() (*types.GenericChartData, error) {
+func stakedQuantaChartData() (*types.GenericChartData, error) {
 	if LatestEpoch() == 0 {
 		return nil, fmt.Errorf("chart-data not available pre-genesis")
 	}
@@ -312,7 +312,7 @@ func stakedZondChartData() (*types.GenericChartData, error) {
 		Value     float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'STAKED_ZOND' ORDER BY time")
+	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'STAKED_QUANTA' ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -323,16 +323,16 @@ func stakedZondChartData() (*types.GenericChartData, error) {
 	}
 
 	chartData := &types.GenericChartData{
-		Title:                           "Staked Zond",
-		Subtitle:                        "History of daily staked Zond, which is the sum of all Effective Balances.",
+		Title:                           "Staked Quanta",
+		Subtitle:                        "History of daily staked Quanta, which is the sum of all Effective Balances.",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Zond",
+		YAxisTitle:                      "Quanta",
 		StackingMode:                    "false",
 		Type:                            "column",
 		ColumnDataGroupingApproximation: "close",
 		Series: []*types.GenericChartDataSeries{
 			{
-				Name: "Staked Zond",
+				Name: "Staked Quanta",
 				Data: series,
 			},
 		},
@@ -352,7 +352,7 @@ func averageBalanceChartData() (*types.GenericChartData, error) {
 		Value     float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'AVG_VALIDATOR_BALANCE_ZOND' ORDER BY time")
+	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = 'AVG_VALIDATOR_BALANCE_QUANTA' ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -366,13 +366,13 @@ func averageBalanceChartData() (*types.GenericChartData, error) {
 		Title:                           "Validator Balance",
 		Subtitle:                        "Average Daily Validator Balance.",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Zond",
+		YAxisTitle:                      "Quanta",
 		StackingMode:                    "false",
 		Type:                            "column",
 		ColumnDataGroupingApproximation: "average",
 		Series: []*types.GenericChartDataSeries{
 			{
-				Name: "Average Balance [Zond]",
+				Name: "Average Balance [Quanta]",
 				Data: series,
 			},
 		},
@@ -487,7 +487,7 @@ func stakeEffectivenessChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:        "Stake Effectiveness",
-		Subtitle:     "Stake Effectiveness measures the relation between the sum of all effective balances and the sum of all balances. 100% Stake Effectiveness means that 100% of the locked Ether is used for staking.",
+		Subtitle:     "Stake Effectiveness measures the relation between the sum of all effective balances and the sum of all balances. 100% Stake Effectiveness means that 100% of the locked Quanta is used for staking.",
 		XAxisTitle:   "",
 		YAxisTitle:   "Stake Effectiveness [%]",
 		StackingMode: "false",
@@ -539,7 +539,7 @@ func balanceDistributionChartData() (*types.GenericChartData, error) {
 		Subtitle:             fmt.Sprintf("Histogram of Balances at epoch %d.", epoch),
 		XAxisTitle:           "Balance",
 		YAxisTitle:           "# of Validators",
-		XAxisLabelsFormatter: template.JS(`function(){ return this.value+' ZOND' }`),
+		XAxisLabelsFormatter: template.JS(`function(){ return this.value+' QUANTA' }`),
 		StackingMode:         "false",
 		Type:                 "column",
 		Series: []*types.GenericChartDataSeries{
@@ -590,7 +590,7 @@ func effectiveBalanceDistributionChartData() (*types.GenericChartData, error) {
 		Subtitle:             fmt.Sprintf("Histogram of Effective Balances at epoch %d.", epoch),
 		XAxisTitle:           "Effective Balance",
 		YAxisTitle:           "# of Validators",
-		XAxisLabelsFormatter: template.JS(`function(){ return this.value+' ZOND' }`),
+		XAxisLabelsFormatter: template.JS(`function(){ return this.value+' QUANTA' }`),
 		StackingMode:         "false",
 		Type:                 "column",
 		Series: []*types.GenericChartDataSeries{
@@ -682,8 +682,7 @@ func depositsChartData() (*types.GenericChartData, error) {
 		Time      time.Time `db:"time"`
 		Value     float64   `db:"value"`
 	}{}
-
-	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = any('{EL_VALID_DEPOSITS_ZOND, EL_INVALID_DEPOSITS_ZOND, CL_DEPOSITS_ZOND}') ORDER BY time")
+	err := db.ReaderDb.Select(&data, "SELECT time, value, indicator FROM chart_series WHERE indicator = any('{EL_VALID_DEPOSITS_QUANTA, EL_INVALID_DEPOSITS_QUANTA, CL_DEPOSITS_QUANTA}') ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -694,11 +693,11 @@ func depositsChartData() (*types.GenericChartData, error) {
 
 	for _, d := range data {
 		switch d.Indicator {
-		case "EL_VALID_DEPOSITS_ZOND":
+		case "EL_VALID_DEPOSITS_QUANTA":
 			elValidSeries = append(elValidSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
-		case "EL_INVALID_DEPOSITS_ZOND":
+		case "EL_INVALID_DEPOSITS_QUANTA":
 			elInvalidSeries = append(elInvalidSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
-		case "CL_DEPOSITS_ZOND":
+		case "CL_DEPOSITS_QUANTA":
 			clSeries = append(clSeries, []float64{float64(d.Time.UnixMilli()), d.Value})
 		default:
 			return nil, fmt.Errorf("unexpected indicator %v when generating depositsChartData", d.Indicator)
@@ -707,28 +706,28 @@ func depositsChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:        "Deposits",
-		Subtitle:     "Daily Amount of deposited Zond.",
+		Subtitle:     "Daily Amount of deposited Quanta.",
 		XAxisTitle:   "Income",
-		YAxisTitle:   "Deposited Zond",
+		YAxisTitle:   "Deposited Quanta",
 		StackingMode: "normal",
 		Type:         "column",
 		Series: []*types.GenericChartDataSeries{
 			{
 				Name:  "Consensus",
 				Data:  clSeries,
-				Stack: "eth2",
+				Stack: "consensus",
 				Color: "#66bce9",
 			},
 			{
 				Name:  "Execution (success)",
 				Data:  elValidSeries,
-				Stack: "eth1",
+				Stack: "execution",
 				Color: "#7dc382",
 			},
 			{
 				Name:  "Execution (failed)",
 				Data:  elInvalidSeries,
-				Stack: "eth1",
+				Stack: "execution",
 				Color: "#f3454a",
 			},
 		},
@@ -747,7 +746,7 @@ func withdrawalsChartData() (*types.GenericChartData, error) {
 		Value float64   `db:"value"`
 	}{}
 
-	err := db.ReaderDb.Select(&rows, "SELECT time, value FROM chart_series WHERE indicator = 'WITHDRAWALS_ZOND' ORDER BY time")
+	err := db.ReaderDb.Select(&rows, "SELECT time, value FROM chart_series WHERE indicator = 'WITHDRAWALS_QUANTA' ORDER BY time")
 	if err != nil {
 		return nil, err
 	}
@@ -763,9 +762,9 @@ func withdrawalsChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:        "Withdrawals",
-		Subtitle:     "Daily Amount of withdrawals in Zond.",
+		Subtitle:     "Daily Amount of withdrawals in Quanta.",
 		XAxisTitle:   "",
-		YAxisTitle:   "Withdrawals Zond",
+		YAxisTitle:   "Withdrawals Quanta",
 		StackingMode: "normal",
 		Type:         "column",
 		Series: []*types.GenericChartDataSeries{
@@ -845,9 +844,9 @@ func BurnedFeesChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:                           "Burned Fees",
-		Subtitle:                        "Evolution of the total number of Zond burned with EIP 1559",
+		Subtitle:                        "Evolution of the total number of Quanta burned with EIP 1559",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Burned Fees [Zond]",
+		YAxisTitle:                      "Burned Fees [Quanta]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",
@@ -1040,10 +1039,10 @@ func TotalEmissionChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		// IsNormalChart: true,
-		Title:                           "Total Zond Supply",
-		Subtitle:                        "Evolution of the total Zond supply",
+		Title:                           "Total Quanta Supply",
+		Subtitle:                        "Evolution of the total Quanta supply",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Total Supply [Zond]",
+		YAxisTitle:                      "Total Supply [Quanta]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",
@@ -1097,7 +1096,7 @@ func AvgGasPrice() (*types.GenericChartData, error) {
 		Title:                           "Average Gas Price",
 		Subtitle:                        "The average gas price for non-EIP1559 transaction.",
 		XAxisTitle:                      "",
-		YAxisTitle:                      "Gas Price [GPlanck]",
+		YAxisTitle:                      "Gas Price [Shor]",
 		StackingMode:                    "false",
 		Type:                            "area",
 		ColumnDataGroupingApproximation: "average",
@@ -1300,7 +1299,7 @@ func AvgBlockUtilChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:                           "Average Block Usage",
-		Subtitle:                        "Evolution of the average utilization of Zond blocks",
+		Subtitle:                        "Evolution of the average utilization of QRL blocks",
 		XAxisTitle:                      "",
 		YAxisTitle:                      "Block Usage [%]",
 		StackingMode:                    "false",
@@ -1354,7 +1353,7 @@ func MarketCapChartData() (*types.GenericChartData, error) {
 
 	chartData := &types.GenericChartData{
 		Title:                           "Market Cap",
-		Subtitle:                        "The Evolution of the Zond Market Cap.",
+		Subtitle:                        "The Evolution of the QRL Market Cap.",
 		XAxisTitle:                      "",
 		YAxisTitle:                      "Market Cap [$]",
 		StackingMode:                    "false",

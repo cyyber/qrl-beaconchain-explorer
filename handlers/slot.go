@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/juliangruber/go-intersect"
 	"github.com/lib/pq"
@@ -128,10 +128,10 @@ func Slot(w http.ResponseWriter, r *http.Request) {
 
 	if slotPageData.Status == 1 && (slotPageData.ExecBlockNumber.Int64 > 0 || slotPageData.Slot == 0) {
 		// slot has corresponding execution block, fetch execution data
-		eth1BlockPageData, err := GetExecutionBlockPageData(uint64(slotPageData.ExecBlockNumber.Int64), 10)
+		executionBlockPageData, err := GetExecutionBlockPageData(uint64(slotPageData.ExecBlockNumber.Int64), 10)
 		// if err != nil, simply show slot view without block
 		if err == nil {
-			slotPageData.ExecutionData = eth1BlockPageData
+			slotPageData.ExecutionData = executionBlockPageData
 		}
 	}
 	data := InitPageData(w, r, "blockchain", fmt.Sprintf("/slot/%v", slotPageData.Slot), fmt.Sprintf("Slot %v", slotOrHash), slotTemplateFiles)
@@ -221,9 +221,9 @@ func GetSlotPageData(blockSlot uint64) (*types.BlockPageData, error) {
 			blocks.signature,
 			blocks.randaoreveal,
 			blocks.graffiti,
-			blocks.eth1data_depositroot,
-			blocks.eth1data_depositcount,
-			blocks.eth1data_blockhash,
+			blocks.executiondata_depositroot,
+			blocks.executiondata_depositcount,
+			blocks.executiondata_blockhash,
 			blocks.syncaggregate_bits,
 			blocks.syncaggregate_signatures,
 			blocks.syncaggregate_participation,
@@ -460,7 +460,7 @@ func SlotDepositData(w http.ResponseWriter, r *http.Request) {
 		tableData = append(tableData, []interface{}{
 			i + 1 + int(start),
 			utils.FormatPublicKey(deposit.PublicKey),
-			utils.FormatBalance(deposit.Amount, "Zond"),
+			utils.FormatBalance(deposit.Amount, "Quanta"),
 			utils.FormatWithdawalCredentials(deposit.WithdrawalCredentials, true),
 			fmt.Sprintf("0x%v", hex.EncodeToString(deposit.Signature)),
 			utils.FormatHash(deposit.Signature, true),
@@ -674,9 +674,9 @@ func BlockTransactionsData(w http.ResponseWriter, r *http.Request) {
 			Method:        methodFormatted,
 			FromFormatted: v.FromFormatted,
 			ToFormatted:   v.ToFormatted,
-			Value:         utils.FormatAmountFormatted(v.Value, "Zond", 5, 0, true, true, false),
-			Fee:           utils.FormatAmountFormatted(v.Fee, "Zond", 5, 0, true, true, false),
-			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "GPlanck", 5, 0, true, true, false),
+			Value:         utils.FormatAmountFormatted(v.Value, "Quanta", 5, 0, true, true, false),
+			Fee:           utils.FormatAmountFormatted(v.Fee, "Quanta", 5, 0, true, true, false),
+			GasPrice:      utils.FormatAmountFormatted(v.GasPrice, "Shor", 5, 0, true, true, false),
 		}
 	}
 

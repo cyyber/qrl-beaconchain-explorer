@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"context"
-
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -15,13 +14,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cmd/misc/commands"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/exporter"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
+	"github.com/theQRL/qrl-beaconchain-explorer/cmd/misc/commands"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/exporter"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 
 	"github.com/coocood/freecache"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -65,7 +64,7 @@ func main() {
 	statsPartitionCommand := commands.StatsMigratorCommand{}
 
 	configPath := flag.String("config", "config/default.config.yml", "Path to the config file")
-	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-eth1-blocks, update-aggregation-bits, index-missing-blocks, export-epoch-missed-slots, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats")
+	flag.StringVar(&opts.Command, "command", "", "command to run, available: applyDbSchema, initBigtableSchema, epoch-export, debug-rewards, debug-blocks, clear-bigtable, index-old-execution-blocks, update-aggregation-bits, index-missing-blocks, export-epoch-missed-slots, export-genesis-validators, update-block-finalization-sequentially, nameValidatorsByRanges, export-stats-totals, export-sync-committee-periods, export-sync-committee-validator-stats, partition-validator-stats")
 	flag.Uint64Var(&opts.StartEpoch, "start-epoch", 0, "start epoch")
 	flag.Uint64Var(&opts.EndEpoch, "end-epoch", 0, "end epoch")
 	flag.Uint64Var(&opts.User, "user", 0, "user id")
@@ -80,7 +79,7 @@ func main() {
 	flag.Uint64Var(&opts.EndBlock, "blocks.end", 0, "Block to finish indexing")
 	flag.Uint64Var(&opts.DataConcurrency, "data.concurrency", 30, "Concurrency to use when indexing data from bigtable")
 	flag.Uint64Var(&opts.BatchSize, "data.batchSize", 1000, "Batch size")
-	flag.StringVar(&opts.Transformers, "transformers", "", "Comma separated list of transformers used by the eth1 indexer")
+	flag.StringVar(&opts.Transformers, "transformers", "", "Comma separated list of transformers used by the execution indexer")
 	flag.StringVar(&opts.ValidatorNameRanges, "validator-name-ranges", "https://config.dencun-devnet-8.ethpandaops.io/api/v1/nodes/validator-ranges", "url to or json of validator-ranges (format must be: {'ranges':{'X-Y':'name'}})")
 	flag.StringVar(&opts.Addresses, "addresses", "", "Comma separated list of addresses that should be processed by the command")
 	flag.StringVar(&opts.Columns, "columns", "", "Comma separated list of columns that should be affected by the command")
@@ -292,8 +291,8 @@ func main() {
 		err = debugBlocks()
 	case "clear-bigtable":
 		clearBigtable(opts.Table, opts.Family, opts.Columns, opts.Key, opts.DryRun, bt)
-	case "index-old-eth1-blocks":
-		indexOldEth1Blocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, gzondClient)
+	case "index-old-execution-blocks":
+		indexOldExecutionBlocks(opts.StartBlock, opts.EndBlock, opts.BatchSize, opts.DataConcurrency, opts.Transformers, bt, gzondClient)
 	case "update-aggregation-bits":
 		updateAggregationBits(rpcClient, opts.StartEpoch, opts.EndEpoch, opts.DataConcurrency)
 	case "update-block-finalization-sequentially":
@@ -381,7 +380,7 @@ func main() {
 		}
 
 		_, err = tx.Exec(`
-		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, syncaggregate_participation, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, proposer, status, exec_transactions_count, eth1data_depositcount)
+		INSERT INTO blocks (epoch, slot, blockroot, parentroot, stateroot, signature, syncaggregate_participation, proposerslashingscount, attesterslashingscount, attestationscount, depositscount, withdrawalcount, voluntaryexitscount, proposer, status, exec_transactions_count, executiondata_depositcount)
 		VALUES (0, 0, '\x'::bytea, '\x'::bytea, '\x'::bytea, '\x'::bytea, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 		ON CONFLICT (slot, blockroot) DO NOTHING`)
 		if err != nil {
@@ -409,10 +408,10 @@ func main() {
 		statsPartitionCommand.Config.DryRun = opts.DryRun
 		err = statsPartitionCommand.StartStatsPartitionCommand()
 	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// case "fix-zns":
-	// 	err = fixZns(gzondClient)
-	// case "fix-zns-addresses":
-	// 	err = fixZnsAddresses(gzondClient)
+	// case "fix-qrns":
+	// 	err = fixQrns(gzondClient)
+	// case "fix-qrns-addresses":
+	// 	err = fixQrnsAddresses(gzondClient)
 	case "fix-epochs":
 		err = fixEpochs()
 	default:
@@ -456,18 +455,18 @@ func fixEpoch(e uint64) error {
 
 // TODO(now.youtrack.cloud/issue/TZB-1)
 /*
-func fixZns(gzondClient *rpc.GzondClient) error {
-	logrus.WithField("dry", opts.DryRun).Infof("command: fix-zns")
+func fixQrns(gzondClient *rpc.GzondClient) error {
+	logrus.WithField("dry", opts.DryRun).Infof("command: fix-qrns")
 	addrs := []struct {
-		Address []byte `db:"address"`
-		ZnsName string `db:"zns_name"`
+		Address  []byte `db:"address"`
+		QrnsName string `db:"qrns_name"`
 	}{}
-	err := db.WriterDb.Select(&addrs, `select address, zns_name from zns where is_primary_name = true`)
+	err := db.WriterDb.Select(&addrs, `select address, qrns_name from qrns where is_primary_name = true`)
 	if err != nil {
 		return err
 	}
 
-	logrus.Infof("found %v zns entries", len(addrs))
+	logrus.Infof("found %v qrns entries", len(addrs))
 
 	g := new(errgroup.Group)
 	g.SetLimit(10) // limit load on the node
@@ -485,7 +484,7 @@ func fixZns(gzondClient *rpc.GzondClient) error {
 		for _, addr := range batch {
 			addr := addr
 			g.Go(func() error {
-				znsAddr, err := go_zns.Resolve(gzondClient.GetNativeClient(), addr.ZnsName)
+				qrnsAddr, err := go_qrns.Resolve(gzondClient.GetNativeClient(), addr.QrnsName)
 				if err != nil {
 					if err.Error() == "unregistered name" ||
 						err.Error() == "no address" ||
@@ -493,9 +492,9 @@ func fixZns(gzondClient *rpc.GzondClient) error {
 						err.Error() == "abi: attempting to unmarshall an empty string while arguments are expected" ||
 						strings.Contains(err.Error(), "execution reverted") ||
 						err.Error() == "invalid jump destination" {
-						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting zns entry")
+						logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.QrnsName, "reason": fmt.Sprintf("failed resolve: %v", err.Error())}).Warnf("deleting qrns entry")
 						if !opts.DryRun {
-							_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
+							_, err = db.WriterDb.Exec(`delete from qrns where address = $1 and qrns_name = $2`, addr.Address, addr.QrnsName)
 							if err != nil {
 								return err
 							}
@@ -506,22 +505,22 @@ func fixZns(gzondClient *rpc.GzondClient) error {
 				}
 
 				dbAddr := common.BytesToAddress(addr.Address)
-				if dbAddr.Cmp(znsAddr) != 0 {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("dbAddr != resolved znsAddr: %#x != %#x", addr.Address, znsAddr.Bytes())}).Warnf("deleting zns entry")
+				if dbAddr.Cmp(qrnsAddr) != 0 {
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.QrnsName, "reason": fmt.Sprintf("dbAddr != resolved qrnsAddr: %#x != %#x", addr.Address, qrnsAddr.Bytes())}).Warnf("deleting qrns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from zns where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
+						_, err = db.WriterDb.Exec(`delete from qrns where address = $1 and qrns_name = $2`, addr.Address, addr.QrnsName)
 						if err != nil {
 							return err
 						}
 					}
 				}
 
-				reverseName, err := go_zns.ReverseResolve(gzondClient.GetNativeClient(), dbAddr)
+				reverseName, err := go_qrns.ReverseResolve(gzondClient.GetNativeClient(), dbAddr)
 				if err != nil {
 					if err.Error() == "not a resolver" || err.Error() == "no resolution" {
-						logrus.WithFields(logrus.Fields{"addr": dbAddr, "name": addr.ZnsName, "reason": fmt.Sprintf("failed reverse-resolve: %v", err.Error())}).Warnf("updating zns entry: is_primary_name = false")
+						logrus.WithFields(logrus.Fields{"addr": dbAddr, "name": addr.QrnsName, "reason": fmt.Sprintf("failed reverse-resolve: %v", err.Error())}).Warnf("updating qrns entry: is_primary_name = false")
 						if !opts.DryRun {
-							_, err = db.WriterDb.Exec(`update zns set is_primary_name = false where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
+							_, err = db.WriterDb.Exec(`update qrns set is_primary_name = false where address = $1 and qrns_name = $2`, addr.Address, addr.QrnsName)
 							if err != nil {
 								return err
 							}
@@ -531,10 +530,10 @@ func fixZns(gzondClient *rpc.GzondClient) error {
 					return err
 				}
 
-				if reverseName != addr.ZnsName {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.ZnsName, "reason": fmt.Sprintf("resolved != reverseResolved: %v != %v", addr.ZnsName, reverseName)}).Warnf("updating zns entry: is_primary_name = false")
+				if reverseName != addr.QrnsName {
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%#x", addr.Address), "name": addr.QrnsName, "reason": fmt.Sprintf("resolved != reverseResolved: %v != %v", addr.QrnsName, reverseName)}).Warnf("updating qrns entry: is_primary_name = false")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`update zns set is_primary_name = false where address = $1 and zns_name = $2`, addr.Address, addr.ZnsName)
+						_, err = db.WriterDb.Exec(`update qrns set is_primary_name = false where address = $1 and qrns_name = $2`, addr.Address, addr.QrnsName)
 						if err != nil {
 							return err
 						}
@@ -554,15 +553,15 @@ func fixZns(gzondClient *rpc.GzondClient) error {
 	return nil
 }
 
-func fixZnsAddresses(gzondClient *rpc.GzondClient) error {
-	logrus.WithFields(logrus.Fields{"dry": opts.DryRun}).Infof("command: fix-zns-addresses")
+func fixQrnsAddresses(gzondClient *rpc.GzondClient) error {
+	logrus.WithFields(logrus.Fields{"dry": opts.DryRun}).Infof("command: fix-qrns-addresses")
 	if opts.Addresses == "" {
 		return errors.New("no addresses specified")
 	}
 
 	type DbEntry struct {
 		NameHash      []byte    `db:"name_hash"`
-		ZnsName       string    `db:"zns_name"`
+		QrnsName      string    `db:"qrns_name"`
 		Address       []byte    `db:"address"`
 		IsPrimaryName bool      `db:"is_primary_name"`
 		ValidTo       time.Time `db:"valid_to"`
@@ -576,40 +575,40 @@ func fixZnsAddresses(gzondClient *rpc.GzondClient) error {
 		addr := common.HexToAddress(addrHex)
 
 		dbEntry := &DbEntry{}
-		err := db.WriterDb.Get(dbEntry, `select name_hash, zns_name, address, is_primary_name, valid_to from zns where address = $1`, addr.Bytes())
+		err := db.WriterDb.Get(dbEntry, `select name_hash, qrns_name, address, is_primary_name, valid_to from qrns where address = $1`, addr.Bytes())
 		if err != nil && err != sql.ErrNoRows {
-			return fmt.Errorf("error getting zns entry for addr [%v]: %w", addr.Hex(), err)
+			return fmt.Errorf("error getting qrns entry for addr [%v]: %w", addr.Hex(), err)
 		}
 		if err == sql.ErrNoRows {
 			dbEntry = nil
 		}
 
-		name, err := go_zns.ReverseResolve(gzondClient.GetNativeClient(), addr)
+		name, err := go_qrns.ReverseResolve(gzondClient.GetNativeClient(), addr)
 		if err != nil {
 			if err.Error() == "not a resolver" ||
 				err.Error() == "no resolution" {
 				logrus.WithFields(logrus.Fields{"addr": addr.Hex()}).Warnf("error reverse-resolving name: %v", err)
 				if dbEntry != nil {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error reverse-resolving name: %v", err)}).Warnf("deleting zns entry")
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error reverse-resolving name: %v", err)}).Warnf("deleting qrns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
+						_, err = db.WriterDb.Exec(`delete from qrns where address = $1`, addr.Bytes())
 						if err != nil {
-							return fmt.Errorf("error deleting zns entry: %w", err)
+							return fmt.Errorf("error deleting qrns entry: %w", err)
 						}
 					}
 				}
 				continue
 			} else {
-				return fmt.Errorf("error go_zns.ReverseResolve for addr %v: %w", addr.Hex(), err)
+				return fmt.Errorf("error go_qrns.ReverseResolve for addr %v: %w", addr.Hex(), err)
 			}
 		}
 
-		if !strings.HasSuffix(name, ".eth") {
-			logrus.Infof("need to add .eth to %v for addr %v", name, addr.Hex())
-			name = name + ".eth"
+		if !strings.HasSuffix(name, ".qrl") {
+			logrus.Infof("need to add .qrl to %v for addr %v", name, addr.Hex())
+			name = name + ".qrl"
 		}
 
-		resolvedAddr, err := go_zns.Resolve(gzondClient.GetNativeClient(), name)
+		resolvedAddr, err := go_qrns.Resolve(gzondClient.GetNativeClient(), name)
 		if err != nil {
 			if err.Error() == "unregistered name" ||
 				err.Error() == "no address" ||
@@ -618,62 +617,62 @@ func fixZnsAddresses(gzondClient *rpc.GzondClient) error {
 				strings.Contains(err.Error(), "execution reverted") ||
 				err.Error() == "invalid jump destination" {
 				if dbEntry != nil {
-					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error resolving name: %v", err)}).Warnf("deleting zns entry")
+					logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("error resolving name: %v", err)}).Warnf("deleting qrns entry")
 					if !opts.DryRun {
-						_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
+						_, err = db.WriterDb.Exec(`delete from qrns where address = $1`, addr.Bytes())
 						if err != nil {
-							return fmt.Errorf("error deleting zns entry: %w", err)
+							return fmt.Errorf("error deleting qrns entry: %w", err)
 						}
 					}
 				}
 			} else {
-				return fmt.Errorf("error go_zns.Resolve(%v) for addr %v: %w", name, addr.Hex(), err)
+				return fmt.Errorf("error go_qrns.Resolve(%v) for addr %v: %w", name, addr.Hex(), err)
 			}
 		}
 
 		if !bytes.Equal(resolvedAddr.Bytes(), addr.Bytes()) {
-			logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("addr != resolvedAddr: %v != %v", addr.Hex(), resolvedAddr.Hex())}).Warnf("deleting zns entry")
+			logrus.WithFields(logrus.Fields{"addr": fmt.Sprintf("%v", addr.Hex()), "reason": fmt.Sprintf("addr != resolvedAddr: %v != %v", addr.Hex(), resolvedAddr.Hex())}).Warnf("deleting qrns entry")
 			if !opts.DryRun {
-				_, err = db.WriterDb.Exec(`delete from zns where address = $1`, addr.Bytes())
+				_, err = db.WriterDb.Exec(`delete from qrns where address = $1`, addr.Bytes())
 				if err != nil {
-					return fmt.Errorf("error deleting zns entry: %w", err)
+					return fmt.Errorf("error deleting qrns entry: %w", err)
 				}
 			}
 		}
 
-		nameHash, err := go_zns.NameHash(name)
+		nameHash, err := go_qrns.NameHash(name)
 		if err != nil {
-			return fmt.Errorf("error go_zns.NameHash(%v) for addr %v: %w", name, addr.Hex(), err)
+			return fmt.Errorf("error go_qrns.NameHash(%v) for addr %v: %w", name, addr.Hex(), err)
 		}
 		parts := strings.Split(name, ".")
 		mainName := strings.Join(parts[len(parts)-2:], ".")
-		znsName, err := go_zns.NewName(gzondClient.GetNativeClient(), mainName)
+		qrnsName, err := go_qrns.NewName(gzondClient.GetNativeClient(), mainName)
 		if err != nil {
-			return fmt.Errorf("error could not create name via go_zns.NewName for [%v]: %w", name, err)
+			return fmt.Errorf("error could not create name via go_qrns.NewName for [%v]: %w", name, err)
 		}
-		expires, err := znsName.Expires()
+		expires, err := qrnsName.Expires()
 		if err != nil {
-			return fmt.Errorf("error could not get zns expire date for [%v]: %w", name, err)
+			return fmt.Errorf("error could not get qrns expire date for [%v]: %w", name, err)
 		}
 
-		if dbEntry == nil || dbEntry.ZnsName != name || !bytes.Equal(dbEntry.NameHash, nameHash[:]) || !bytes.Equal(dbEntry.Address, resolvedAddr.Bytes()) || dbEntry.ValidTo != expires {
+		if dbEntry == nil || dbEntry.QrnsName != name || !bytes.Equal(dbEntry.NameHash, nameHash[:]) || !bytes.Equal(dbEntry.Address, resolvedAddr.Bytes()) || dbEntry.ValidTo != expires {
 			logFields := logrus.Fields{"resolvedAddr": resolvedAddr, "addr": addr.Hex(), "name": name, "nameHash": fmt.Sprintf("%#x", nameHash), "expires": expires}
 			if dbEntry == nil {
 				logFields["db"] = "nil"
-				logrus.WithFields(logFields).Warnf("adding zns entry")
+				logrus.WithFields(logFields).Warnf("adding qrns entry")
 			} else {
-				logFields["db.name"] = dbEntry.ZnsName
+				logFields["db.name"] = dbEntry.QrnsName
 				logFields["db.nameHash"] = fmt.Sprintf("%#x", dbEntry.NameHash)
 				logFields["db.addr"] = fmt.Sprintf("%#x", dbEntry.Address)
 				logFields["db.expire"] = dbEntry.ValidTo
-				logrus.WithFields(logFields).Warnf("updating zns entry")
+				logrus.WithFields(logFields).Warnf("updating qrns entry")
 			}
 
 			if !opts.DryRun {
 				_, err = db.WriterDb.Exec(`
-					INSERT INTO zns (
+					INSERT INTO qrns (
 						name_hash,
-						zns_name,
+						qrns_name,
 						address,
 						is_primary_name,
 						valid_to)
@@ -681,13 +680,13 @@ func fixZnsAddresses(gzondClient *rpc.GzondClient) error {
 					ON CONFLICT
 						(name_hash)
 					DO UPDATE SET
-						zns_name = excluded.zns_name,
+						qrns_name = excluded.qrns_name,
 						address = excluded.address,
 						is_primary_name = excluded.is_primary_name,
 						valid_to = excluded.valid_to`,
 					nameHash[:], name, addr.Bytes(), true, expires)
 				if err != nil {
-					return fmt.Errorf("error writing zns data for addr [%v]: %w", addr.Hex(), err)
+					return fmt.Errorf("error writing qrns data for addr [%v]: %w", addr.Hex(), err)
 				}
 			}
 		}
@@ -715,8 +714,8 @@ func fixExecTransactionsCount() error {
 		if lastBlock > int64(endBlockNumber) {
 			lastBlock = int64(endBlockNumber)
 		}
-		blocksChan := make(chan *types.Eth1Block, batchSize)
-		go func(stream chan *types.Eth1Block) {
+		blocksChan := make(chan *types.ExecutionBlock, batchSize)
+		go func(stream chan *types.ExecutionBlock) {
 			high := lastBlock
 			low := lastBlock - batchSize + 1
 			if int64(firstBlock) > low {
@@ -1122,10 +1121,10 @@ func compareRewards(dayStart uint64, dayEnd uint64, validator uint64, bt *db.Big
 		var dbRewards *int64
 		err = db.ReaderDb.Get(&dbRewards, `
 		SELECT 
-		COALESCE(cl_rewards_gplanck, 0) AS cl_rewards_gplanck
+		COALESCE(cl_rewards_shor, 0) AS cl_rewards_shor
 		FROM validator_stats WHERE validatorindex = $2 AND day = $1`, day, validator)
 		if err != nil {
-			logrus.Fatalf("error getting cl_rewards_gplanck from db: %v", err)
+			logrus.Fatalf("error getting cl_rewards_shor from db: %v", err)
 			return
 		}
 		if tot != *dbRewards {
@@ -1237,12 +1236,12 @@ func indexMissingBlocks(start uint64, end uint64, bt *db.Bigtable, client *rpc.G
 				}
 			}
 
-			indexOldEth1Blocks(block, block, 1, 1, "all", bt, client)
+			indexOldExecutionBlocks(block, block, 1, 1, "all", bt, client)
 		}
 	}
 }
 
-func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.GzondClient) {
+func indexOldExecutionBlocks(startBlock uint64, endBlock uint64, batchSize uint64, concurrency uint64, transformerFlag string, bt *db.Bigtable, client *rpc.GzondClient) {
 	if endBlock > 0 && endBlock < startBlock {
 		utils.LogError(nil, fmt.Sprintf("endBlock [%v] < startBlock [%v]", endBlock, startBlock), 0)
 		return
@@ -1256,19 +1255,19 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 		return
 	}
 
-	transforms := make([]func(blk *types.Eth1Block, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
+	transforms := make([]func(blk *types.ExecutionBlock, cache *freecache.Cache) (*types.BulkMutations, *types.BulkMutations, error), 0)
 
 	logrus.Infof("transformerFlag: %v", transformerFlag)
 	transformerList := strings.Split(transformerFlag, ",")
 	if transformerFlag == "all" {
-		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformZRC20", "TransformZRC721", "TransformZRC1155", "TransformWithdrawals", "TransformZnsNameRegistered", "TransformContract"}
+		transformerList = []string{"TransformBlock", "TransformTx", "TransformItx", "TransformSQRCTF1", "TransformSQRCTN1", "TransformSQRCTB1", "TransformWithdrawals", "TransformQrnsNameRegistered", "TransformContract"}
 	} else if len(transformerList) == 0 {
 		utils.LogError(nil, "no transformer functions provided", 0)
 		return
 	}
 	logrus.Infof("transformers: %v", transformerList)
 	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// importZNSChanges := false
+	// importQRNSChanges := false
 	/**
 	* Add additional transformers you want to sync to this switch case
 	**/
@@ -1280,18 +1279,18 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 			transforms = append(transforms, bt.TransformTx)
 		case "TransformItx":
 			transforms = append(transforms, bt.TransformItx)
-		case "TransformZRC20":
-			transforms = append(transforms, bt.TransformZRC20)
-		case "TransformZRC721":
-			transforms = append(transforms, bt.TransformZRC721)
-		case "TransformZRC1155":
-			transforms = append(transforms, bt.TransformZRC1155)
+		case "TransformSQRCTF1":
+			transforms = append(transforms, bt.TransformSQRCTF1)
+		case "TransformSQRCTN1":
+			transforms = append(transforms, bt.TransformSQRCTN1)
+		case "TransformSQRCTB1":
+			transforms = append(transforms, bt.TransformSQRCTB1)
 		case "TransformWithdrawals":
 			transforms = append(transforms, bt.TransformWithdrawals)
 		// TODO(now.youtrack.cloud/issue/TZB-1)
-		// case "TransformZnsNameRegistered":
-		// 	transforms = append(transforms, bt.TransformZnsNameRegistered)
-		// 	importZNSChanges = true
+		// case "TransformQrnsNameRegistered":
+		// 	transforms = append(transforms, bt.TransformQrnsNameRegistered)
+		// 	importQRNSChanges = true
 		case "TransformContract":
 			transforms = append(transforms, bt.TransformContract)
 		default:
@@ -1328,9 +1327,9 @@ func indexOldEth1Blocks(startBlock uint64, endBlock uint64, batchSize uint64, co
 	}
 
 	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// if importZNSChanges {
-	// 	if err := bt.ImportZnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
-	// 		utils.LogError(err, "error importing zns from events", 0)
+	// if importQRNSChanges {
+	// 	if err := bt.ImportQrnsUpdates(client.GetNativeClient(), math.MaxInt64); err != nil {
+	// 		utils.LogError(err, "error importing qrns from events", 0)
 	// 		return
 	// 	}
 	// }
@@ -1351,7 +1350,7 @@ func exportStatsTotals(columns string, dayStart, dayEnd, concurrency uint64) {
 	// validate columns input
 	columnsSlice := strings.Split(columns, ",")
 	validColumns := []string{
-		"cl_rewards_gplanck_total",
+		"cl_rewards_shor_total",
 		"el_rewards_planck_total",
 		"missed_attestations_total",
 		"participated_sync_total",

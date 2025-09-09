@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
 type states struct {
@@ -307,8 +307,8 @@ func ValidatorsData(w http.ResponseWriter, r *http.Request) {
 				fmt.Sprintf("%x", v.PublicKey),
 				fmt.Sprintf("%v", v.ValidatorIndex),
 				[]interface{}{
-					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), "Zond"),
-					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), "Zond"),
+					fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(utils.ClCurrencyDivisor), "Quanta"),
+					fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(utils.ClCurrencyDivisor), "Quanta"),
 				},
 				v.State,
 				[]interface{}{

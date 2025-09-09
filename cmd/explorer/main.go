@@ -11,19 +11,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/exporter"
-	"github.com/theQRL/zond-beaconchain-explorer/handlers"
-	"github.com/theQRL/zond-beaconchain-explorer/metrics"
-	"github.com/theQRL/zond-beaconchain-explorer/ratelimit"
-	"github.com/theQRL/zond-beaconchain-explorer/rpc"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/static"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	"github.com/theQRL/zond-beaconchain-explorer/version"
-	zondclients "github.com/theQRL/zond-beaconchain-explorer/zondClients"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/exporter"
+	"github.com/theQRL/qrl-beaconchain-explorer/handlers"
+	"github.com/theQRL/qrl-beaconchain-explorer/metrics"
+	qrlclients "github.com/theQRL/qrl-beaconchain-explorer/qrlClients"
+	"github.com/theQRL/qrl-beaconchain-explorer/ratelimit"
+	"github.com/theQRL/qrl-beaconchain-explorer/rpc"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/static"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/version"
 
 	"github.com/gorilla/mux"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -209,9 +209,9 @@ func main() {
 	router.HandleFunc("/api/healthz-loadbalancer", handlers.ApiHealthzLoadbalancer).Methods("GET", "HEAD")
 
 	if !utils.Config.Frontend.Debug {
-		logrus.Infof("initializing zondclients")
-		zondclients.Init()
-		logrus.Infof("zondclients initialized")
+		logrus.Infof("initializing qrlclients")
+		qrlclients.Init()
+		logrus.Infof("qrlclients initialized")
 	}
 
 	if cfg.Frontend.SessionSecret == "" {
@@ -238,24 +238,24 @@ func main() {
 	router.HandleFunc("/slots/finder", handlers.SlotFinder).Methods("GET")
 	router.HandleFunc("/slots", handlers.Slots).Methods("GET")
 	router.HandleFunc("/slots/data", handlers.SlotsData).Methods("GET")
-	router.HandleFunc("/blocks", handlers.Eth1Blocks).Methods("GET")
-	router.HandleFunc("/blocks/data", handlers.Eth1BlocksData).Methods("GET")
-	router.HandleFunc("/address/{address}", handlers.Eth1Address).Methods("GET")
-	router.HandleFunc("/address/{address}/blocks", handlers.Eth1AddressBlocksMined).Methods("GET")
-	router.HandleFunc("/address/{address}/withdrawals", handlers.Eth1AddressWithdrawals).Methods("GET")
-	router.HandleFunc("/address/{address}/transactions", handlers.Eth1AddressTransactions).Methods("GET")
-	router.HandleFunc("/address/{address}/internalTxns", handlers.Eth1AddressInternalTransactions).Methods("GET")
-	router.HandleFunc("/address/{address}/zrc20", handlers.Eth1AddressZrc20Transactions).Methods("GET")
-	router.HandleFunc("/address/{address}/zrc721", handlers.Eth1AddressZrc721Transactions).Methods("GET")
-	router.HandleFunc("/address/{address}/zrc1155", handlers.Eth1AddressZrc1155Transactions).Methods("GET")
-	router.HandleFunc("/token/{token}", handlers.Eth1Token).Methods("GET")
-	router.HandleFunc("/token/{token}/transfers", handlers.Eth1TokenTransfers).Methods("GET")
-	router.HandleFunc("/transactions", handlers.Eth1Transactions).Methods("GET")
-	router.HandleFunc("/transactions/data", handlers.Eth1TransactionsData).Methods("GET")
-	router.HandleFunc("/block/{block}", handlers.Eth1Block).Methods("GET")
+	router.HandleFunc("/blocks", handlers.ExecutionBlocks).Methods("GET")
+	router.HandleFunc("/blocks/data", handlers.ExecutionBlocksData).Methods("GET")
+	router.HandleFunc("/address/{address}", handlers.ExecutionAddress).Methods("GET")
+	router.HandleFunc("/address/{address}/blocks", handlers.ExecutionAddressBlocksMined).Methods("GET")
+	router.HandleFunc("/address/{address}/withdrawals", handlers.ExecutionAddressWithdrawals).Methods("GET")
+	router.HandleFunc("/address/{address}/transactions", handlers.ExecutionAddressTransactions).Methods("GET")
+	router.HandleFunc("/address/{address}/internalTxns", handlers.ExecutionAddressInternalTransactions).Methods("GET")
+	router.HandleFunc("/address/{address}/sqrctf1", handlers.ExecutionAddressSqrcTf1Transactions).Methods("GET")
+	router.HandleFunc("/address/{address}/sqrctn1", handlers.ExecutionAddressSqrcTn1Transactions).Methods("GET")
+	router.HandleFunc("/address/{address}/sqrctb1", handlers.ExecutionAddressSqrcTb1Transactions).Methods("GET")
+	router.HandleFunc("/token/{token}", handlers.ExecutionToken).Methods("GET")
+	router.HandleFunc("/token/{token}/transfers", handlers.ExecutionTokenTransfers).Methods("GET")
+	router.HandleFunc("/transactions", handlers.ExecutionTransactions).Methods("GET")
+	router.HandleFunc("/transactions/data", handlers.ExecutionTransactionsData).Methods("GET")
+	router.HandleFunc("/block/{block}", handlers.ExecutionBlock).Methods("GET")
 	router.HandleFunc("/block/{block}/transactions", handlers.BlockTransactionsData).Methods("GET")
-	router.HandleFunc("/tx/{hash}", handlers.Eth1TransactionTx).Methods("GET")
-	router.HandleFunc("/tx/{hash}/data", handlers.Eth1TransactionTxData).Methods("GET")
+	router.HandleFunc("/tx/{hash}", handlers.ExecutionTransactionTx).Methods("GET")
+	router.HandleFunc("/tx/{hash}/data", handlers.ExecutionTransactionTxData).Methods("GET")
 	router.HandleFunc("/mempool", handlers.MempoolView).Methods("GET")
 	router.HandleFunc("/burn", handlers.Burn).Methods("GET")
 	router.HandleFunc("/burn/data", handlers.BurnPageData).Methods("GET")
@@ -289,8 +289,8 @@ func main() {
 	router.HandleFunc("/validators/withdrawals/data", handlers.WithdrawalsData).Methods("GET")
 	router.HandleFunc("/validators/withdrawals/dilithium", handlers.DilithiumChangeData).Methods("GET")
 	router.HandleFunc("/validators/deposits", handlers.Deposits).Methods("GET")
-	router.HandleFunc("/validators/initiated-deposits/data", handlers.Eth1DepositsData).Methods("GET")
-	router.HandleFunc("/validators/included-deposits/data", handlers.Eth2DepositsData).Methods("GET")
+	router.HandleFunc("/validators/initiated-deposits/data", handlers.ExecutionDepositsData).Methods("GET")
+	router.HandleFunc("/validators/included-deposits/data", handlers.ConsensusDepositsData).Methods("GET")
 
 	router.HandleFunc("/heatmap", handlers.Heatmap).Methods("GET")
 
@@ -314,10 +314,11 @@ func main() {
 
 	router.HandleFunc("/tables/{tableId}/state", handlers.GetDataTableStateChanges).Methods("GET")
 	router.HandleFunc("/tables/{tableId}/state", handlers.SetDataTableStateChanges).Methods("PUT")
-	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// router.HandleFunc("/zns/{search}", handlers.ZnsSearch).Methods("GET")
 
-	router.HandleFunc("/zondClients", handlers.ZondClientsServices).Methods("GET")
+	// TODO(now.youtrack.cloud/issue/TZB-1)
+	// router.HandleFunc("/qrns/{search}", handlers.QrnsSearch).Methods("GET")
+
+	router.HandleFunc("/qrlClients", handlers.QRLClientsServices).Methods("GET")
 
 	// TODO(now.youtrack.cloud/issue/TZB-13)
 	// router.HandleFunc("/rewards", handlers.ValidatorRewards).Methods("GET")

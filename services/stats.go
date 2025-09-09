@@ -5,10 +5,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/cache"
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/cache"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 )
 
 func statsUpdater(wg *sync.WaitGroup) {
@@ -45,18 +45,18 @@ func statsUpdater(wg *sync.WaitGroup) {
 func calculateStats() (*types.Stats, error) {
 	stats := types.Stats{}
 
-	topDeposits, err := eth1TopDepositers()
+	topDeposits, err := executionTopDepositers()
 	if err != nil {
 		return nil, err
 	}
 	stats.TopDepositors = topDeposits
-	invalidCount, err := eth1InvalidDeposits()
+	invalidCount, err := executionInvalidDeposits()
 	if err != nil {
 		return nil, err
 	}
 	stats.InvalidDepositCount = invalidCount
 
-	uniqueValidatorCount, err := eth1UniqueValidatorsCount()
+	uniqueValidatorCount, err := executionUniqueValidatorsCount()
 	if err != nil {
 		return nil, err
 	}
@@ -142,14 +142,14 @@ func calculateStats() (*types.Stats, error) {
 	return &stats, nil
 }
 
-func eth1TopDepositers() (*[]types.StatsTopDepositors, error) {
+func executionTopDepositers() (*[]types.StatsTopDepositors, error) {
 	topDepositors := []types.StatsTopDepositors{}
 
 	err := db.WriterDb.Select(&topDepositors, `
 	SELECT 
 		ENCODE(from_address::bytea, 'hex') as from_address, 
 		count(from_address) as count 
-	FROM eth1_deposits
+	FROM execution_deposits
 	where valid_signature = true 
 	GROUP BY 
 		from_address
@@ -162,13 +162,13 @@ func eth1TopDepositers() (*[]types.StatsTopDepositors, error) {
 	return &topDepositors, nil
 }
 
-func eth1InvalidDeposits() (*uint64, error) {
+func executionInvalidDeposits() (*uint64, error) {
 	count := uint64(0)
 
 	err := db.WriterDb.Get(&count, `
 	SELECT 
 		count(*) as count
-	FROM eth1_deposits
+	FROM execution_deposits
 	WHERE
 	  valid_signature = false
 	`)
@@ -179,7 +179,7 @@ func eth1InvalidDeposits() (*uint64, error) {
 	return &count, nil
 }
 
-func eth1UniqueValidatorsCount() (*uint64, error) {
+func executionUniqueValidatorsCount() (*uint64, error) {
 	count := uint64(0)
 
 	err := db.WriterDb.Get(&count, `
@@ -191,7 +191,7 @@ func eth1UniqueValidatorsCount() (*uint64, error) {
 			publickey, 
 			sum(amount) 
 		FROM 
-			eth1_deposits 
+			execution_deposits 
 		WHERE 
 			valid_signature = true 
 		GROUP BY 

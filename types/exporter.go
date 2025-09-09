@@ -62,8 +62,8 @@ type EpochData struct {
 type ValidatorParticipation struct {
 	Epoch                   uint64
 	GlobalParticipationRate float32
-	VotedZond               uint64
-	EligibleZond            uint64
+	VotedQuanta             uint64
+	EligibleQuanta          uint64
 	Finalized               bool
 }
 
@@ -111,7 +111,7 @@ type Block struct {
 	Signature                        []byte
 	RandaoReveal                     []byte
 	Graffiti                         []byte
-	Eth1Data                         *Eth1Data
+	ExecutionData                    *ExecutionData
 	BodyRoot                         []byte
 	ProposerSlashings                []*ProposerSlashing
 	AttesterSlashings                []*AttesterSlashing
@@ -199,8 +199,8 @@ type WithdrawalsNotification struct {
 	Pubkey         []byte `json:"pubkey"`
 }
 
-// Eth1Data is a struct to hold the ETH1 data
-type Eth1Data struct {
+// ExecutionData is a struct to hold the Execution data
+type ExecutionData struct {
 	DepositRoot  []byte
 	DepositCount uint64
 	BlockHash    []byte
@@ -288,8 +288,8 @@ type EpochAssignments struct {
 	SyncAssignments     []uint64
 }
 
-// Eth1Deposit is a struct to hold eth1-deposit data
-type Eth1Deposit struct {
+// ExecutionDeposit is a struct to hold execution-deposit data
+type ExecutionDeposit struct {
 	TxHash                []byte `db:"tx_hash"`
 	TxInput               []byte `db:"tx_input"`
 	TxIndex               uint64 `db:"tx_index"`
@@ -306,8 +306,8 @@ type Eth1Deposit struct {
 	ValidSignature        bool   `db:"valid_signature"`
 }
 
-// Eth2Deposit is a struct to hold eth2-deposit data
-type Eth2Deposit struct {
+// ConsensusDeposit is a struct to hold consensus-deposit data
+type ConsensusDeposit struct {
 	BlockSlot             uint64 `db:"block_slot"`
 	BlockIndex            uint64 `db:"block_index"`
 	BlockRoot             []byte `db:"block_root"`
@@ -387,8 +387,8 @@ type ValidatorStatsTableDbRow struct {
 	WithdrawalsAmount      int64 `db:"withdrawals_amount"`
 	WithdrawalsAmountTotal int64 `db:"withdrawals_amount_total"`
 
-	ClRewardsGPlanck      int64 `db:"cl_rewards_gplanck"`
-	ClRewardsGPlanckTotal int64 `db:"cl_rewards_gplanck_total"`
+	ClRewardsShor      int64 `db:"cl_rewards_shor"`
+	ClRewardsShorTotal int64 `db:"cl_rewards_shor_total"`
 
 	ClPerformance1d   int64 `db:"-"`
 	ClPerformance7d   int64 `db:"-"`

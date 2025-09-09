@@ -17,8 +17,8 @@ chain:
 # Frontend config
 frontend:
   imprint: "templates/imprint.example.html}**" # Path to the imprint page content
-  siteName: "Zond Explorer" # Name of the site, displayed in the title tag
-  siteSubtitle: "Showing the <a href='https://theqrl.org'>Zond Testnet</a>" # Subtitle shown on the main page
+  siteName: "QRL Explorer" # Name of the site, displayed in the title tag
+  siteSubtitle: "Showing the <a href='https://theqrl.org'>QRL Testnet</a>" # Subtitle shown on the main page
   server:
     host: "localhost" # Address to listen on
     port: "3333" # Port to listen on

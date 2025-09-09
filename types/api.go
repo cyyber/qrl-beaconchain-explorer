@@ -13,10 +13,7 @@ type ApiResponse struct {
 	Data   interface{} `json:"data"`
 }
 
-// TODO(now.youtrack.cloud/issue/TZB-1)
-/*
-type ZnsDomainResponse struct {
+type QrnsDomainResponse struct {
 	Address string `json:"address"`
 	Domain  string `json:"domain"`
 }
-*/

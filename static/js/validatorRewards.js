@@ -1,5 +1,5 @@
 const VALLIMIT = 200
-const DECIMAL_POINTS_ZOND = 6
+const DECIMAL_POINTS_QRL = 6
 const DECIMAL_POINTS_CURRENCY = 3
 var csrfToken = ""
 var currency = ""
@@ -47,18 +47,18 @@ function create_typeahead(input_container) {
     },
   })
   bhValidators.remote.transport._get = debounce(bhValidators.remote.transport, bhValidators.remote.transport._get)
-  var bhEth1Addresses = new Bloodhound({
+  var bhExecutionAddresses = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     identify: function (obj) {
-      return obj.eth1_address
+      return obj.execution_address
     },
     remote: {
-      url: "/search/indexed_validators_by_eth1_addresses/%QUERY",
+      url: "/search/indexed_validators_by_execution_addresses/%QUERY",
       wildcard: "%QUERY",
     },
   })
-  bhEth1Addresses.remote.transport._get = debounce(bhEth1Addresses.remote.transport, bhEth1Addresses.remote.transport._get)
+  bhExecutionAddresses.remote.transport._get = debounce(bhExecutionAddresses.remote.transport, bhExecutionAddresses.remote.transport._get)
   var bhName = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -106,13 +106,13 @@ function create_typeahead(input_container) {
     {
       limit: 5,
       name: "addresses",
-      source: bhEth1Addresses,
+      source: bhExecutionAddresses,
       display: "address",
       templates: {
-        header: "<h3>Validators by Zond Addresses</h3>",
+        header: "<h3>Validators by QRL Addresses</h3>",
         suggestion: function (data) {
           var len = data.validator_indices.length > VALLIMIT ? VALLIMIT + "+" : data.validator_indices.length
-          return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">${data.eth1_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
+          return `<div class="text-monospace high-contrast" style="display:flex"><div class="text-truncate" style="flex:1 1 auto;">${data.execution_address}</div><div style="max-width:fit-content;white-space:nowrap;">${len}</div></div>`
         },
       },
     },
@@ -209,7 +209,7 @@ function showTable(data) {
       $("#form-div").removeClass("d-flex").addClass("d-none")
       $("#table-div").removeClass("d-none")
       $("#subscriptions-div").addClass("d-none")
-      $("#total-income-zond-span").html("Zond " + data.total_zond)
+      $("#total-income-quanta-span").html("Quanta " + data.total_quanta)
       $("#totals-div").removeClass("d-none")
       $(".dt-button").addClass("ml-2 ")
       hideSpinner()
@@ -233,7 +233,7 @@ function showTable(data) {
         data: "1",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZOND))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_QRL))
           return data
         },
       },
@@ -242,7 +242,7 @@ function showTable(data) {
         data: "2",
         orderable: true,
         render: function (data, type, row, meta) {
-          // return (parseFloat(data).toFixed(DECIMAL_POINTS_ZOND))
+          // return (parseFloat(data).toFixed(DECIMAL_POINTS_QRL))
           return data
         },
       },

@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
 )
 
 // Will return the slot finder page

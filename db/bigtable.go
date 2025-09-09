@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
-	itypes "github.com/theQRL/zond-beaconchain-explorer/zond-rewards/types"
+	itypes "github.com/theQRL/qrl-beaconchain-explorer/qrl-rewards/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	gcp_bigtable "cloud.google.com/go/bigtable"
 	"github.com/go-redis/redis/v8"

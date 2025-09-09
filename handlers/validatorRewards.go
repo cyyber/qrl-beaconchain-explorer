@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/gorilla/csrf"
 )
@@ -26,7 +26,7 @@ func ValidatorRewards(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	data := InitPageData(w, r, "services", "/rewards", "Zond Validator Rewards", templateFiles)
+	data := InitPageData(w, r, "services", "/rewards", "QRL Validator Rewards", templateFiles)
 
 	data.Data = rewardsResp{CsrfField: csrf.TemplateField(r)}
 

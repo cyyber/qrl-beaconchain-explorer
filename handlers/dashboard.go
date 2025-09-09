@@ -16,11 +16,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"github.com/lib/pq"
 	"github.com/theQRL/go-zond/common"
@@ -184,7 +184,7 @@ func checkValidatorsQuery(validatorIndices []uint64, validatorPubkeys [][]byte) 
 	}
 
 	if len(validatorPubkeys) > 0 {
-		err := db.ReaderDb.Get(&validatorCount, `SELECT COUNT(DISTINCT publickey) AS distinct_count FROM eth1_deposits WHERE publickey = ANY($1)`, validatorPubkeys)
+		err := db.ReaderDb.Get(&validatorCount, `SELECT COUNT(DISTINCT publickey) AS distinct_count FROM execution_deposits WHERE publickey = ANY($1)`, validatorPubkeys)
 		if err != nil {
 			return err
 		}
@@ -742,7 +742,7 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 		SELECT
 			publickey,
 			from_address
-		FROM eth1_deposits
+		FROM execution_deposits
 		WHERE publickey = ANY($1)`, pubkeyFilter)
 	if err != nil {
 		utils.LogError(err, "error retrieving validator deposists", 0, errFieldMap)
@@ -849,8 +849,8 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 			fmt.Sprintf("%x", v.PublicKey),
 			indexInfo,
 			[]interface{}{
-				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9), "Zond"),
-				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9), "Zond"),
+				fmt.Sprintf("%.4f %v", float64(v.CurrentBalance)/float64(1e9), "Quanta"),
+				fmt.Sprintf("%.1f %v", float64(v.EffectiveBalance)/float64(1e9), "Quanta"),
 			},
 			[]interface{}{
 				v.ValidatorIndex,
@@ -901,7 +901,7 @@ func DashboardDataValidators(w http.ResponseWriter, r *http.Request) {
 			v.MissedProposals,
 		})
 
-		tableData[i] = append(tableData[i], utils.FormatIncome(v.Performance7d, "Zond", true))
+		tableData[i] = append(tableData[i], utils.FormatIncome(v.Performance7d, "Quanta", true))
 
 		validatorDeposits := validatorsDepositsMap[hex.EncodeToString(v.PublicKey)]
 		if validatorDeposits != nil {

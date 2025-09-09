@@ -11,11 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/theQRL/zond-beaconchain-explorer/db"
-	"github.com/theQRL/zond-beaconchain-explorer/services"
-	"github.com/theQRL/zond-beaconchain-explorer/templates"
-	"github.com/theQRL/zond-beaconchain-explorer/types"
-	"github.com/theQRL/zond-beaconchain-explorer/utils"
+	"github.com/theQRL/qrl-beaconchain-explorer/db"
+	"github.com/theQRL/qrl-beaconchain-explorer/services"
+	"github.com/theQRL/qrl-beaconchain-explorer/templates"
+	"github.com/theQRL/qrl-beaconchain-explorer/types"
+	"github.com/theQRL/qrl-beaconchain-explorer/utils"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -50,13 +50,13 @@ func Withdrawals(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// WithdrawalsData will return eth1-deposits as json
+// WithdrawalsData will return execution-deposits as json
 func WithdrawalsData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 
 	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
+	// search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)
@@ -200,7 +200,7 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 			utils.FormatValidator(w.ValidatorIndex),
 			utils.FormatTimestamp(utils.SlotToTime(w.Slot).Unix()),
 			utils.FormatAddressWithLimits(w.Address, names[string(w.Address)], false, "address", visibleDigitsForHash+5, 18, true),
-			utils.FormatAmount(new(big.Int).Mul(new(big.Int).SetUint64(w.Amount), big.NewInt(1e9)), "Zond", 6),
+			utils.FormatAmount(new(big.Int).Mul(new(big.Int).SetUint64(w.Amount), big.NewInt(1e9)), "Quanta", 6),
 		}
 	}
 
@@ -222,13 +222,13 @@ func WithdrawalsTableData(draw uint64, search string, length, start uint64, orde
 	return data, nil
 }
 
-// Eth1DepositsData will return eth1-deposits as json
+// ExecutionDepositsData will return execution-deposits as json
 func DilithiumChangeData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	q := r.URL.Query()
 
 	// TODO(now.youtrack.cloud/issue/TZB-1)
-	// search := ReplaceZnsNameWithAddress(q.Get("search[value]"))
+	// search := ReplaceQrnsNameWithAddress(q.Get("search[value]"))
 	search := q.Get("search[value]")
 
 	draw, err := strconv.ParseUint(q.Get("draw"), 10, 64)
