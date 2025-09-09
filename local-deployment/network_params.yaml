@@ -1,6 +1,7 @@
+# Full configuration reference [here](https://github.com/theQRL/qrl-package?tab=readme-ov-file#configuration).
 participants:
   - el_type: gzond
-    el_image: qrledger/go-zond
+    el_image: qrledger/go-zond:stable
     cl_type: qrysm
     cl_image: qrledger/qrysm:beacon-chain-latest
     vc_type: qrysm
@@ -19,5 +20,5 @@ tx_spammer_params:
   scenario: eoatx
   throughput: 20
   max_pending: 20
-  max_wallets: 50
+  max_wallets: 20
   tx_spammer_extra_args: []
